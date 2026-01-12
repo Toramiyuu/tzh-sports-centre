@@ -1,0 +1,66 @@
+// TZH Badminton Booking System - Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  name         String
+  phone        String    @unique
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  bookings     Booking[]
+
+  @@map("users")
+}
+
+model Court {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  isActive    Boolean   @default(true) @map("is_active")
+  hourlyRate  Float     @map("hourly_rate")
+  bookings    Booking[]
+
+  @@map("courts")
+}
+
+model Booking {
+  id              String   @id @default(cuid())
+  userId          String?  @map("user_id") // Optional - null for guest bookings
+  courtId         Int      @map("court_id")
+  sport           String   @default("badminton") // badminton, pickleball
+  bookingDate     DateTime @map("booking_date")
+  startTime       String   @map("start_time")
+  endTime         String   @map("end_time")
+  totalAmount     Float    @map("total_amount")
+  status          String   @default("pending") // pending, confirmed, cancelled
+  paymentIntentId String?  @map("payment_intent_id")
+  // Guest booking fields
+  guestName       String?  @map("guest_name")
+  guestPhone      String?  @map("guest_phone")
+  guestEmail      String?  @map("guest_email")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user  User?  @relation(fields: [userId], references: [id])
+  court Court @relation(fields: [courtId], references: [id])
+
+  @@map("bookings")
+}
+
+model TimeSlot {
+  id          Int    @id @default(autoincrement())
+  slotTime    String @map("slot_time") // "09:00", "10:00", etc.
+  displayName String @map("display_name") // "9:00 AM", "10:00 AM", etc.
+
+  @@map("time_slots")
+}
