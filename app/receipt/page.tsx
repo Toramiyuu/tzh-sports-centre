@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Search, CalendarDays, Clock, Loader2, Receipt } from 'lucide-react'
+import { Search, CalendarDays, Clock, Loader2, Receipt, History } from 'lucide-react'
 
 interface Booking {
   id: string
@@ -29,6 +29,7 @@ export default function ReceiptPage() {
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
   const [error, setError] = useState('')
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'previous'>('upcoming')
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,6 +54,7 @@ export default function ReceiptPage() {
 
       setBookings(data.bookings || [])
       setSearched(true)
+      setActiveTab('upcoming') // Reset to upcoming when searching
     } catch (err) {
       setError('An unexpected error occurred')
     } finally {
@@ -77,18 +79,23 @@ export default function ReceiptPage() {
     return sport === 'badminton' ? (
       <Badge className="bg-blue-100 text-blue-700">Badminton</Badge>
     ) : (
-      <Badge className="bg-green-100 text-green-700">Pickleball</Badge>
+      <Badge className="bg-orange-100 text-orange-700">Pickleball</Badge>
     )
   }
 
   // Separate bookings into upcoming and past
   const now = new Date()
-  const upcomingBookings = bookings.filter(
-    (b) => new Date(b.bookingDate) >= new Date(now.toDateString())
-  )
-  const pastBookings = bookings.filter(
-    (b) => new Date(b.bookingDate) < new Date(now.toDateString())
-  )
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+  const upcomingBookings = bookings
+    .filter((b) => new Date(b.bookingDate) >= today)
+    .sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime())
+
+  const pastBookings = bookings
+    .filter((b) => new Date(b.bookingDate) < today)
+    .sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime())
+
+  const displayedBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -157,22 +164,80 @@ export default function ReceiptPage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-8">
-              {/* Upcoming Bookings */}
-              {upcomingBookings.length > 0 && (
+            <div>
+              {/* Tabs */}
+              <div className="flex gap-2 mb-6">
+                <button
+                  onClick={() => setActiveTab('upcoming')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                    activeTab === 'upcoming'
+                      ? 'bg-zinc-900 text-white'
+                      : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                  }`}
+                >
+                  <CalendarDays className="w-4 h-4" />
+                  Upcoming
+                  {upcomingBookings.length > 0 && (
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                      activeTab === 'upcoming' ? 'bg-white/20' : 'bg-zinc-300'
+                    }`}>
+                      {upcomingBookings.length}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab('previous')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                    activeTab === 'previous'
+                      ? 'bg-zinc-900 text-white'
+                      : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                  }`}
+                >
+                  <History className="w-4 h-4" />
+                  Previous
+                  {pastBookings.length > 0 && (
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                      activeTab === 'previous' ? 'bg-white/20' : 'bg-zinc-300'
+                    }`}>
+                      {pastBookings.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* Booking List */}
+              {displayedBookings.length === 0 ? (
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <CalendarDays className="w-5 h-5" />
-                      Upcoming Bookings ({upcomingBookings.length})
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                  <CardContent className="py-12 text-center">
+                    {activeTab === 'upcoming' ? (
+                      <>
+                        <CalendarDays className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">No upcoming bookings</h3>
+                        <p className="text-gray-600">
+                          You don&apos;t have any upcoming court bookings.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <History className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">No previous bookings</h3>
+                        <p className="text-gray-600">
+                          You don&apos;t have any past court bookings.
+                        </p>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="p-4">
                     <div className="space-y-3">
-                      {upcomingBookings.map((booking) => (
+                      {displayedBookings.map((booking) => (
                         <div
                           key={booking.id}
-                          className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                          className={`flex items-center justify-between p-4 bg-gray-50 rounded-lg ${
+                            activeTab === 'previous' ? 'opacity-75' : ''
+                          }`}
                         >
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
@@ -199,49 +264,6 @@ export default function ReceiptPage() {
                             <p className="text-xs text-gray-500">
                               Booked {format(new Date(booking.createdAt), 'MMM d')}
                             </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Past Bookings */}
-              {pastBookings.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-gray-600">
-                      <Clock className="w-5 h-5" />
-                      Past Bookings ({pastBookings.length})
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3 opacity-75">
-                      {pastBookings.map((booking) => (
-                        <div
-                          key={booking.id}
-                          className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                        >
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{booking.court}</span>
-                              {getSportBadge(booking.sport)}
-                              {getStatusBadge(booking.status)}
-                            </div>
-                            <div className="flex items-center gap-4 text-sm text-gray-600">
-                              <span className="flex items-center gap-1">
-                                <CalendarDays className="w-4 h-4" />
-                                {format(new Date(booking.bookingDate), 'EEE, MMM d, yyyy')}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-4 h-4" />
-                                {booking.startTime} - {booking.endTime}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-semibold">RM{booking.totalAmount.toFixed(2)}</p>
                           </div>
                         </div>
                       ))}

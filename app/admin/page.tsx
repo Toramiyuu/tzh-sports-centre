@@ -2,7 +2,9 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Shield, CheckCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Shield, Calendar, Users, Settings } from 'lucide-react'
+import Link from 'next/link'
 
 export default async function AdminPage() {
   const session = await auth()
@@ -15,28 +17,49 @@ export default async function AdminPage() {
     redirect('/')
   }
 
+  const adminFeatures = [
+    {
+      title: 'Manage Bookings',
+      description: 'View, add, and cancel court bookings',
+      icon: Calendar,
+      href: '/admin/bookings',
+      color: 'bg-blue-100 text-blue-600',
+    },
+  ]
+
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-            <Shield className="w-6 h-6 text-green-600" />
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+            <Shield className="w-5 h-5 text-green-600" />
           </div>
-          <CardTitle className="text-2xl">Admin Panel</CardTitle>
-          <CardDescription>
-            Welcome, {session.user.name}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-center">
-          <div className="flex items-center justify-center gap-2 text-green-600 mb-4">
-            <CheckCircle className="w-5 h-5" />
-            <span className="font-medium">It works!</span>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Admin Panel</h1>
+            <p className="text-gray-600">Welcome, {session.user.name}</p>
           </div>
-          <p className="text-sm text-gray-600">
-            You have admin access. This page will be expanded with management features.
-          </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        {adminFeatures.map((feature) => (
+          <Link key={feature.href} href={feature.href}>
+            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${feature.color}`}>
+                    <feature.icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    <CardDescription>{feature.description}</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+          </Link>
+        ))}
+      </div>
     </div>
   )
 }

@@ -10,11 +10,41 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User } from 'lucide-react'
+import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Repeat } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
 import { isAdmin } from '@/lib/admin'
 
-// Pickleball flat rate
+// Hourly rates
+const BADMINTON_RATE = 15
+const BADMINTON_PEAK_RATE = 18 // 6 PM onwards
+const BADMINTON_PEAK_START = '18:00' // 6 PM
 const PICKLEBALL_RATE = 25
+const PICKLEBALL_MIN_HOURS = 2
+
+// Format time slot to show range (e.g., "9:00 AM" -> "9:00 - 10:00 AM")
+const formatTimeRange = (displayName: string): string => {
+  // Parse the time (e.g., "9:00 AM" or "12:00 PM")
+  const match = displayName.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
+  if (!match) return displayName
+
+  let hour = parseInt(match[1])
+  const minutes = match[2]
+  const period = match[3].toUpperCase()
+
+  // Calculate end hour
+  let endHour = hour + 1
+  let endPeriod = period
+
+  if (hour === 11 && period === 'AM') {
+    endPeriod = 'PM'
+  } else if (hour === 11 && period === 'PM') {
+    endPeriod = 'AM' // midnight
+  } else if (hour === 12) {
+    endHour = 1
+  }
+
+  return `${hour}:${minutes} - ${endHour}:${minutes} ${endPeriod}`
+}
 
 interface Court {
   id: number
@@ -67,6 +97,7 @@ export default function BookingPage() {
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
   const [guestEmail, setGuestEmail] = useState('')
+  const [makeRecurring, setMakeRecurring] = useState(false)
 
   // Fix hydration mismatch by only rendering calendar after mount
   useEffect(() => {
@@ -99,9 +130,52 @@ export default function BookingPage() {
     fetchAvailability()
   }, [selectedDate])
 
-  // Get hourly rate based on sport
-  const getHourlyRate = (court: Court) => {
-    return sport === 'pickleball' ? PICKLEBALL_RATE : court.hourlyRate
+  // Get hourly rate based on sport and time slot
+  // Badminton: 15 RM normally, 18 RM from 6 PM onwards
+  // Pickleball: 25 RM always
+  const getHourlyRate = (slotTime?: string) => {
+    if (sport === 'pickleball') return PICKLEBALL_RATE
+    // Badminton: check if peak hours (6 PM onwards)
+    if (slotTime && slotTime >= BADMINTON_PEAK_START) {
+      return BADMINTON_PEAK_RATE
+    }
+    return BADMINTON_RATE
+  }
+
+  // Get the next consecutive slot for a court
+  const getNextSlot = (court: Court, currentSlotTime: string): SlotAvailability | null => {
+    const courtAvailability = availability.find(ca => ca.court.id === court.id)
+    if (!courtAvailability) return null
+
+    const currentIndex = courtAvailability.slots.findIndex(s => s.slotTime === currentSlotTime)
+    if (currentIndex === -1 || currentIndex >= courtAvailability.slots.length - 1) return null
+
+    return courtAvailability.slots[currentIndex + 1]
+  }
+
+  // Get the previous slot for a court
+  const getPreviousSlot = (court: Court, currentSlotTime: string): SlotAvailability | null => {
+    const courtAvailability = availability.find(ca => ca.court.id === court.id)
+    if (!courtAvailability) return null
+
+    const currentIndex = courtAvailability.slots.findIndex(s => s.slotTime === currentSlotTime)
+    if (currentIndex <= 0) return null
+
+    return courtAvailability.slots[currentIndex - 1]
+  }
+
+  // Check if a slot is part of a pickleball pair (the second hour of a 2-hour booking)
+  const isSecondHourOfPickleballPair = (courtId: number, slotTime: string): boolean => {
+    if (sport !== 'pickleball') return false
+
+    const courtAvailability = availability.find(ca => ca.court.id === courtId)
+    if (!courtAvailability) return false
+
+    const currentIndex = courtAvailability.slots.findIndex(s => s.slotTime === slotTime)
+    if (currentIndex <= 0) return false
+
+    const previousSlot = courtAvailability.slots[currentIndex - 1]
+    return isSlotSelected(courtId, previousSlot.slotTime)
   }
 
   // Toggle slot selection
@@ -114,19 +188,83 @@ export default function BookingPage() {
       (s) => s.courtId === court.id && s.slotTime === slot.slotTime
     )
 
-    if (existing) {
-      setSelectedSlots(selectedSlots.filter((s) => s !== existing))
+    if (sport === 'pickleball') {
+      // For pickleball, handle 2-hour consecutive booking
+      if (existing) {
+        // Check if this is the first hour of a pair - remove both slots
+        const nextSlot = getNextSlot(court, slot.slotTime)
+        if (nextSlot && isSlotSelected(court.id, nextSlot.slotTime)) {
+          // This is the first hour, remove both
+          setSelectedSlots(selectedSlots.filter(
+            (s) => !(s.courtId === court.id && (s.slotTime === slot.slotTime || s.slotTime === nextSlot.slotTime))
+          ))
+        } else {
+          // This is the second hour, remove both (find the first hour)
+          const prevSlot = getPreviousSlot(court, slot.slotTime)
+          if (prevSlot && isSlotSelected(court.id, prevSlot.slotTime)) {
+            setSelectedSlots(selectedSlots.filter(
+              (s) => !(s.courtId === court.id && (s.slotTime === slot.slotTime || s.slotTime === prevSlot.slotTime))
+            ))
+          } else {
+            // Single slot somehow, just remove it
+            setSelectedSlots(selectedSlots.filter((s) => s !== existing))
+          }
+        }
+      } else {
+        // Adding new pickleball slots - need 2 consecutive hours
+        const nextSlot = getNextSlot(court, slot.slotTime)
+
+        if (!nextSlot) {
+          setError('Pickleball requires 2 consecutive hours. This is the last time slot.')
+          return
+        }
+
+        if (!nextSlot.available) {
+          setError('Pickleball requires 2 consecutive hours. The next hour is not available.')
+          return
+        }
+
+        // Check if next slot is already selected (part of another pair)
+        if (isSlotSelected(court.id, nextSlot.slotTime)) {
+          setError('The next hour is already part of another booking.')
+          return
+        }
+
+        // Add both slots
+        setSelectedSlots([
+          ...selectedSlots,
+          {
+            courtId: court.id,
+            courtName: court.name,
+            slotTime: slot.slotTime,
+            displayName: slot.displayName,
+            hourlyRate: getHourlyRate(slot.slotTime),
+          },
+          {
+            courtId: court.id,
+            courtName: court.name,
+            slotTime: nextSlot.slotTime,
+            displayName: nextSlot.displayName,
+            hourlyRate: getHourlyRate(nextSlot.slotTime),
+          },
+        ])
+      }
     } else {
-      setSelectedSlots([
-        ...selectedSlots,
-        {
-          courtId: court.id,
-          courtName: court.name,
-          slotTime: slot.slotTime,
-          displayName: slot.displayName,
-          hourlyRate: getHourlyRate(court),
-        },
-      ])
+      // Badminton - single hour selection
+      if (existing) {
+        setSelectedSlots(selectedSlots.filter((s) => s !== existing))
+      } else {
+        setSelectedSlots([
+          ...selectedSlots,
+          {
+            courtId: court.id,
+            courtName: court.name,
+            slotTime: slot.slotTime,
+            displayName: slot.displayName,
+            hourlyRate: getHourlyRate(slot.slotTime),
+          },
+        ])
+      }
     }
   }
 
@@ -140,8 +278,19 @@ export default function BookingPage() {
   // Calculate total
   const total = selectedSlots.reduce((sum, slot) => sum + slot.hourlyRate, 0)
 
+  // Check if pickleball minimum hours requirement is met
+  const validatePickleballMinimum = () => {
+    if (sport === 'pickleball' && selectedSlots.length < PICKLEBALL_MIN_HOURS) {
+      setError(`Pickleball requires a minimum of ${PICKLEBALL_MIN_HOURS} hours booking`)
+      return false
+    }
+    return true
+  }
+
   // Handle guest booking
   const handleGuestBooking = async () => {
+    if (!validatePickleballMinimum()) return
+
     if (!guestName.trim()) {
       setError('Please enter your name')
       return
@@ -156,6 +305,7 @@ export default function BookingPage() {
     setSuccess('')
 
     try {
+      // Create the regular booking
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -181,11 +331,46 @@ export default function BookingPage() {
         return
       }
 
-      setSuccess(`Booking confirmed! ${data.count} slot(s) booked. Please pay at counter.`)
+      // If recurring is selected, also create recurring booking(s)
+      if (makeRecurring && selectedSlots.length > 0) {
+        const dayOfWeek = selectedDate.getDay()
+        // Group slots by court
+        const slotsByCourtMap = selectedSlots.reduce((acc, slot) => {
+          if (!acc[slot.courtId]) {
+            acc[slot.courtId] = []
+          }
+          acc[slot.courtId].push(slot)
+          return acc
+        }, {} as Record<number, typeof selectedSlots>)
+
+        // Create recurring booking for each court
+        for (const [courtId, slots] of Object.entries(slotsByCourtMap)) {
+          const sortedSlots = slots.sort((a, b) => a.slotTime.localeCompare(b.slotTime))
+          await fetch('/api/recurring-bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              courtId: parseInt(courtId),
+              sport,
+              dayOfWeek,
+              startTime: sortedSlots[0].slotTime,
+              startDate: selectedDate.toISOString(),
+              guestName: guestName.trim(),
+              guestPhone: guestPhone.trim(),
+              isAdminBooking: false,
+              consecutiveHours: sortedSlots.length,
+            }),
+          })
+        }
+      }
+
+      const recurringMsg = makeRecurring ? ' This will repeat weekly.' : ''
+      setSuccess(`Booking confirmed! ${data.count} slot(s) booked.${recurringMsg} Please pay at counter.`)
       setSelectedSlots([])
       setGuestName('')
       setGuestPhone('')
       setGuestEmail('')
+      setMakeRecurring(false)
       // Refresh availability
       await fetchAvailability()
     } catch (err) {
@@ -197,6 +382,8 @@ export default function BookingPage() {
 
   // Handle test booking (admin only)
   const handleTestBooking = async () => {
+    if (!validatePickleballMinimum()) return
+
     if (!session) {
       router.push('/auth/login?callbackUrl=/booking')
       return
@@ -262,7 +449,7 @@ export default function BookingPage() {
               }`}
             >
               Badminton
-              <span className="ml-2 text-xs text-gray-400">RM30-35/hr</span>
+              <span className="ml-2 text-xs text-gray-400">RM15/hr (RM18 after 6PM)</span>
             </button>
             <button
               onClick={() => setSport('pickleball')}
@@ -273,7 +460,7 @@ export default function BookingPage() {
               }`}
             >
               Pickleball
-              <span className="ml-2 text-xs text-gray-400">RM25/hr</span>
+              <span className="ml-2 text-xs text-gray-400">RM25/hr (2hr min)</span>
             </button>
           </nav>
         </div>
@@ -347,9 +534,6 @@ export default function BookingPage() {
                             className="p-2 text-center text-sm font-medium text-gray-600 border-b"
                           >
                             {ca.court.name}
-                            <div className="text-xs text-gray-400 font-normal">
-                              RM{getHourlyRate(ca.court)}/hr
-                            </div>
                           </th>
                         ))}
                       </tr>
@@ -357,12 +541,13 @@ export default function BookingPage() {
                     <tbody>
                       {availability[0]?.slots.map((slot, idx) => (
                         <tr key={slot.id} className={idx % 2 === 0 ? 'bg-gray-50' : ''}>
-                          <td className="p-2 text-sm font-medium text-gray-700 border-b">
-                            {slot.displayName}
+                          <td className="p-2 text-sm font-medium text-gray-700 border-b whitespace-nowrap">
+                            {formatTimeRange(slot.displayName)}
                           </td>
                           {availability.map((ca) => {
                             const courtSlot = ca.slots[idx]
                             const selected = isSlotSelected(ca.court.id, courtSlot.slotTime)
+                            const slotRate = getHourlyRate(courtSlot.slotTime)
                             return (
                               <td key={ca.court.id} className="p-2 text-center border-b">
                                 <button
@@ -384,7 +569,7 @@ export default function BookingPage() {
                                     ? 'Booked'
                                     : selected
                                     ? 'Selected'
-                                    : 'Available'}
+                                    : `RM${slotRate}`}
                                 </button>
                               </td>
                             )
@@ -449,7 +634,7 @@ export default function BookingPage() {
                           <Badge variant="outline" className="mr-2">
                             {slot.courtName}
                           </Badge>
-                          <span className="text-sm">{slot.displayName}</span>
+                          <span className="text-sm">{formatTimeRange(slot.displayName)}</span>
                         </div>
                         <span className="text-sm font-medium">
                           RM{slot.hourlyRate}
@@ -502,6 +687,20 @@ export default function BookingPage() {
                               onChange={(e) => setGuestEmail(e.target.value)}
                               className="h-9"
                             />
+                          </div>
+                          <div className="flex items-center space-x-2 pt-2">
+                            <Checkbox
+                              id="makeRecurring"
+                              checked={makeRecurring}
+                              onCheckedChange={(checked) => setMakeRecurring(checked as boolean)}
+                            />
+                            <label
+                              htmlFor="makeRecurring"
+                              className="text-xs font-medium leading-none flex items-center gap-1 cursor-pointer"
+                            >
+                              <Repeat className="w-3 h-3" />
+                              Make this a weekly recurring booking
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -587,6 +786,27 @@ export default function BookingPage() {
                   </p>
                 </div>
               )}
+
+              {/* Operating Hours - inside the sticky card */}
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Clock className="w-4 h-4 text-blue-600" />
+                    <div>
+                      <p className="font-medium text-gray-900">Operating Hours</p>
+                      <p className="text-gray-500">Weekdays: 3 PM - 12 AM</p>
+                      <p className="text-gray-500">Weekends: 9 AM - 12 AM</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <User className="w-4 h-4 text-blue-600" />
+                    <div>
+                      <p className="font-medium text-gray-900">Contact</p>
+                      <p className="text-gray-500">011-6868 8508</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -69,7 +69,7 @@ export default function LessonsPage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-orange-500 to-orange-700 text-white">
+      <section className="relative bg-gradient-to-br from-blue-600 to-blue-800 text-white">
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           <div className="max-w-2xl">
@@ -80,12 +80,12 @@ export default function LessonsPage() {
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               Badminton Lessons
             </h1>
-            <p className="text-lg md:text-xl text-orange-100 mb-8">
+            <p className="text-lg md:text-xl text-blue-100 mb-8">
               Learn from certified coaches and take your game to the next level.
               Suitable for all ages and skill levels.
             </p>
             <a href="https://wa.me/6001275758508" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
                 <Phone className="w-5 h-5 mr-2" />
                 Enquire Now
               </Button>
@@ -110,11 +110,11 @@ export default function LessonsPage() {
             {lessonTypes.map((lesson) => (
               <Card
                 key={lesson.name}
-                className={`relative border-2 ${lesson.popular ? 'border-orange-500' : 'border-gray-200'}`}
+                className={`relative border-2 ${lesson.popular ? 'border-blue-500' : 'border-gray-200'}`}
               >
                 {lesson.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-orange-500 text-white">
+                    <Badge className="bg-blue-500 text-white">
                       <Star className="w-3 h-3 mr-1" />
                       Popular
                     </Badge>
@@ -122,7 +122,7 @@ export default function LessonsPage() {
                 )}
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-3">
-                    <Users className="w-5 h-5 text-orange-500" />
+                    <Users className="w-5 h-5 text-blue-500" />
                     <h3 className="font-semibold text-lg">{lesson.name}</h3>
                   </div>
                   <p className="text-gray-600 text-sm mb-4">{lesson.description}</p>
@@ -177,7 +177,7 @@ export default function LessonsPage() {
 
           <div className="text-center mt-8">
             <p className="text-gray-600">
-              <Sparkles className="w-4 h-4 inline mr-1 text-orange-500" />
+              <Sparkles className="w-4 h-4 inline mr-1 text-blue-500" />
               Suitable for both <strong>kids</strong> and <strong>adults</strong>
             </p>
           </div>
@@ -197,14 +197,14 @@ export default function LessonsPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-lg shadow-md">
-                <BadgeCheck className="w-8 h-8 text-orange-500" />
+                <BadgeCheck className="w-8 h-8 text-blue-500" />
                 <div className="text-left">
                   <p className="font-semibold text-gray-900">BAM Certified</p>
                   <p className="text-sm text-gray-600">Badminton Association of Malaysia</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-lg shadow-md">
-                <GraduationCap className="w-8 h-8 text-orange-500" />
+                <GraduationCap className="w-8 h-8 text-blue-500" />
                 <div className="text-left">
                   <p className="font-semibold text-gray-900">Level 1 Certification</p>
                   <p className="text-sm text-gray-600">Professional Coaching Qualification</p>
@@ -227,8 +227,8 @@ export default function LessonsPage() {
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BadgeCheck className="w-6 h-6 text-orange-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BadgeCheck className="w-6 h-6 text-blue-600" />
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Court Booking</h3>
                 <p className="text-gray-600 text-sm">
@@ -239,8 +239,8 @@ export default function LessonsPage() {
 
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BadgeCheck className="w-6 h-6 text-orange-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BadgeCheck className="w-6 h-6 text-blue-600" />
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Training Shuttlecocks</h3>
                 <p className="text-gray-600 text-sm">
@@ -251,8 +251,8 @@ export default function LessonsPage() {
 
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BadgeCheck className="w-6 h-6 text-orange-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BadgeCheck className="w-6 h-6 text-blue-600" />
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Trial Available</h3>
                 <p className="text-gray-600 text-sm">
@@ -265,19 +265,19 @@ export default function LessonsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-orange-600 py-16">
+      <section className="bg-blue-600 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to Start Learning?
           </h2>
-          <p className="text-orange-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
             Contact us to book your lesson or enquire about our coaching programs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://wa.me/6001275758508" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50">
+            <a href="https://wa.me/60116868508" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
                 <Phone className="w-5 h-5 mr-2" />
-                WhatsApp: 012-757-58508
+                WhatsApp: 011-6868 8508
               </Button>
             </a>
             <Link href="/booking">

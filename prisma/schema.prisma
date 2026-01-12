@@ -5,30 +5,32 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
 }
 
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  passwordHash String    @map("password_hash")
-  name         String
-  phone        String    @unique
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
-  bookings     Booking[]
+  id                String             @id @default(cuid())
+  email             String             @unique
+  passwordHash      String             @map("password_hash")
+  name              String
+  phone             String             @unique
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  bookings          Booking[]
+  recurringBookings RecurringBooking[]
 
   @@map("users")
 }
 
 model Court {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  isActive    Boolean   @default(true) @map("is_active")
-  hourlyRate  Float     @map("hourly_rate")
-  bookings    Booking[]
+  id                Int                @id @default(autoincrement())
+  name              String
+  description       String?
+  isActive          Boolean            @default(true) @map("is_active")
+  hourlyRate        Float              @map("hourly_rate")
+  bookings          Booking[]
+  recurringBookings RecurringBooking[]
 
   @@map("courts")
 }
@@ -63,4 +65,35 @@ model TimeSlot {
   displayName String @map("display_name") // "9:00 AM", "10:00 AM", etc.
 
   @@map("time_slots")
+}
+
+model RecurringBooking {
+  id          String   @id @default(cuid())
+  courtId     Int      @map("court_id")
+  sport       String   @default("badminton") // badminton, pickleball
+  dayOfWeek   Int      @map("day_of_week") // 0=Sunday, 1=Monday, etc.
+  startTime   String   @map("start_time") // "09:00", "10:00", etc.
+  endTime     String   @map("end_time")
+  startDate   DateTime @map("start_date") // When recurring starts
+  endDate     DateTime? @map("end_date") // When recurring ends (null = indefinite)
+
+  // Label for admin bookings (e.g., "Social Games", "Training")
+  label       String?
+
+  // For customer recurring bookings
+  userId      String?  @map("user_id")
+  guestName   String?  @map("guest_name")
+  guestPhone  String?  @map("guest_phone")
+
+  // Who created this (admin email or null)
+  createdBy   String?  @map("created_by")
+  isActive    Boolean  @default(true) @map("is_active")
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  court Court  @relation(fields: [courtId], references: [id])
+  user  User?  @relation(fields: [userId], references: [id])
+
+  @@map("recurring_bookings")
 }

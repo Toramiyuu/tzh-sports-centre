@@ -55,7 +55,7 @@ export function Navbar() {
             {userIsAdmin && (
               <Link
                 href="/admin"
-                className="text-orange-600 hover:text-orange-700 flex items-center gap-2"
+                className="text-blue-600 hover:text-blue-700 flex items-center gap-2"
               >
                 <Shield className="w-4 h-4" />
                 Admin
@@ -125,7 +125,7 @@ export function Navbar() {
             {userIsAdmin && (
               <Link
                 href="/admin"
-                className="block px-3 py-2 rounded-md text-orange-600 hover:bg-orange-50"
+                className="block px-3 py-2 rounded-md text-blue-600 hover:bg-blue-50"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Admin Panel
