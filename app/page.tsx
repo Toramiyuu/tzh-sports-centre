@@ -136,7 +136,8 @@ export default function Home() {
                 <Phone className="h-6 w-6 text-blue-600" />
               </div>
               <h3 className="mb-2 font-semibold text-zinc-900">Contact</h3>
-              <p className="text-sm text-zinc-600">011-6868 8508</p>
+              <p className="text-sm text-zinc-600">Court Bookings: 011-6868 8508</p>
+              <p className="text-sm text-zinc-600">Lessons: 012-7575 8508</p>
             </div>
           </div>
         </div>

@@ -16,10 +16,10 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2">
+          <div className="flex items-center flex-shrink-0">
+            <Link href="/" className="flex items-center gap-2 outline-none focus:outline-none">
               <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">TZH</span>
               </div>
@@ -29,8 +29,8 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          {/* Desktop Navigation - Centered */}
+          <div className="hidden md:flex items-center justify-center flex-1 gap-8">
             <Link
               href="/booking"
               className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
@@ -73,7 +73,7 @@ export function Navbar() {
           </div>
 
           {/* Auth Section - Conditional Rendering */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3 flex-shrink-0">
             {status === 'loading' ? (
               <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
             ) : session?.user ? (

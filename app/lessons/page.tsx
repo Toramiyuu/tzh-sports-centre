@@ -84,7 +84,7 @@ export default function LessonsPage() {
               Learn from certified coaches and take your game to the next level.
               Suitable for all ages and skill levels.
             </p>
-            <a href="https://wa.me/6001275758508" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/601275758508" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
                 <Phone className="w-5 h-5 mr-2" />
                 Enquire Now
@@ -274,10 +274,10 @@ export default function LessonsPage() {
             Contact us to book your lesson or enquire about our coaching programs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://wa.me/60116868508" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/601275758508" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
                 <Phone className="w-5 h-5 mr-2" />
-                WhatsApp: 011-6868 8508
+                WhatsApp: 012-7575 8508
               </Button>
             </a>
             <Link href="/booking">
