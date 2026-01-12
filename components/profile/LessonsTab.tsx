@@ -1,0 +1,338 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { format } from 'date-fns'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import {
+  GraduationCap,
+  Clock,
+  CalendarDays,
+  Loader2,
+  History,
+  Users
+} from 'lucide-react'
+
+interface LessonSession {
+  id: string
+  lessonDate: string
+  startTime: string
+  endTime: string
+  lessonType: string
+  duration: number
+  price: number
+  status: string
+  court: { name: string }
+  notes: string | null
+}
+
+interface LessonRequest {
+  id: string
+  requestedDate: string
+  requestedTime: string
+  lessonType: string
+  requestedDuration: number
+  status: string
+  adminNotes: string | null
+  suggestedTime: string | null
+  createdAt: string
+}
+
+export function LessonsTab() {
+  const [activeView, setActiveView] = useState<'sessions' | 'requests'>('sessions')
+  const [sessions, setSessions] = useState<LessonSession[]>([])
+  const [requests, setRequests] = useState<LessonRequest[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchLessons()
+  }, [])
+
+  const fetchLessons = async () => {
+    try {
+      const [sessionsRes, requestsRes] = await Promise.all([
+        fetch('/api/profile/lessons'),
+        fetch('/api/profile/lesson-requests'),
+      ])
+
+      if (sessionsRes.ok) {
+        const data = await sessionsRes.json()
+        setSessions(data.sessions || [])
+      }
+
+      if (requestsRes.ok) {
+        const data = await requestsRes.json()
+        setRequests(data.requests || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch lessons:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'scheduled':
+        return <Badge className="bg-blue-100 text-blue-700">Scheduled</Badge>
+      case 'completed':
+        return <Badge className="bg-green-100 text-green-700">Completed</Badge>
+      case 'cancelled':
+        return <Badge className="bg-red-100 text-red-700">Cancelled</Badge>
+      case 'pending':
+        return <Badge className="bg-yellow-100 text-yellow-700">Pending</Badge>
+      case 'approved':
+        return <Badge className="bg-green-100 text-green-700">Approved</Badge>
+      case 'rejected':
+        return <Badge className="bg-red-100 text-red-700">Rejected</Badge>
+      case 'changed':
+        return <Badge className="bg-purple-100 text-purple-700">Time Changed</Badge>
+      default:
+        return <Badge variant="outline">{status}</Badge>
+    }
+  }
+
+  const getLessonTypeBadge = (lessonType: string) => {
+    return (
+      <Badge variant="outline" className="flex items-center gap-1">
+        <Users className="w-3 h-3" />
+        {lessonType}
+      </Badge>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    )
+  }
+
+  const now = new Date()
+  const upcomingSessions = sessions
+    .filter((s) => new Date(s.lessonDate) >= now && s.status !== 'cancelled')
+    .sort((a, b) => new Date(a.lessonDate).getTime() - new Date(b.lessonDate).getTime())
+
+  const pastSessions = sessions
+    .filter((s) => new Date(s.lessonDate) < now || s.status === 'cancelled')
+    .sort((a, b) => new Date(b.lessonDate).getTime() - new Date(a.lessonDate).getTime())
+
+  const pendingRequests = requests.filter((r) => r.status === 'pending' || r.status === 'changed')
+  const processedRequests = requests.filter((r) => r.status !== 'pending' && r.status !== 'changed')
+
+  return (
+    <div className="space-y-6">
+      {/* View Toggle */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setActiveView('sessions')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+            activeView === 'sessions'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <GraduationCap className="w-4 h-4" />
+          Training Sessions
+          {sessions.length > 0 && (
+            <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+              activeView === 'sessions' ? 'bg-white/20' : 'bg-gray-300'
+            }`}>
+              {sessions.length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setActiveView('requests')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+            activeView === 'requests'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <History className="w-4 h-4" />
+          Lesson Requests
+          {pendingRequests.length > 0 && (
+            <span className="text-xs px-1.5 py-0.5 rounded-full bg-yellow-500 text-white">
+              {pendingRequests.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Sessions View */}
+      {activeView === 'sessions' && (
+        <div className="space-y-6">
+          {/* Upcoming Sessions */}
+          {upcomingSessions.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <CalendarDays className="w-5 h-5" />
+                  Upcoming Sessions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {upcomingSessions.map((session) => (
+                  <div key={session.id} className="p-4 bg-blue-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        {getLessonTypeBadge(session.lessonType)}
+                        {getStatusBadge(session.status)}
+                      </div>
+                      <span className="font-semibold">RM{session.price.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <span className="flex items-center gap-1">
+                        <CalendarDays className="w-4 h-4" />
+                        {format(new Date(session.lessonDate), 'EEE, MMM d, yyyy')}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {session.startTime} - {session.endTime}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">{session.court.name}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Past Sessions */}
+          {pastSessions.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <History className="w-5 h-5" />
+                  Past Sessions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {pastSessions.map((session) => (
+                  <div key={session.id} className="p-4 bg-gray-50 rounded-lg opacity-75">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        {getLessonTypeBadge(session.lessonType)}
+                        {getStatusBadge(session.status)}
+                      </div>
+                      <span className="font-semibold">RM{session.price.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <span className="flex items-center gap-1">
+                        <CalendarDays className="w-4 h-4" />
+                        {format(new Date(session.lessonDate), 'EEE, MMM d, yyyy')}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {session.startTime} - {session.endTime}
+                      </span>
+                    </div>
+                    {session.notes && (
+                      <p className="text-sm text-gray-600 mt-2 italic">"{session.notes}"</p>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {sessions.length === 0 && (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <GraduationCap className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No training sessions</h3>
+                <p className="text-gray-600">You haven't had any training sessions yet.</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* Requests View */}
+      {activeView === 'requests' && (
+        <div className="space-y-6">
+          {/* Pending Requests */}
+          {pendingRequests.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Pending Requests</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {pendingRequests.map((request) => (
+                  <div key={request.id} className="p-4 bg-yellow-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        {getLessonTypeBadge(request.lessonType)}
+                        {getStatusBadge(request.status)}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <span className="flex items-center gap-1">
+                        <CalendarDays className="w-4 h-4" />
+                        {format(new Date(request.requestedDate), 'EEE, MMM d, yyyy')}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {request.requestedTime} ({request.requestedDuration}hrs)
+                      </span>
+                    </div>
+                    {request.status === 'changed' && request.suggestedTime && (
+                      <div className="mt-2 p-2 bg-purple-100 rounded text-sm">
+                        <p className="font-medium text-purple-800">Coach suggested: {request.suggestedTime}</p>
+                        {request.adminNotes && <p className="text-purple-600">{request.adminNotes}</p>}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Processed Requests */}
+          {processedRequests.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Request History</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {processedRequests.map((request) => (
+                  <div key={request.id} className="p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        {getLessonTypeBadge(request.lessonType)}
+                        {getStatusBadge(request.status)}
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {format(new Date(request.createdAt), 'MMM d, yyyy')}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <span>
+                        {format(new Date(request.requestedDate), 'MMM d')} at {request.requestedTime}
+                      </span>
+                    </div>
+                    {request.adminNotes && (
+                      <p className="text-sm text-gray-600 mt-2 italic">"{request.adminNotes}"</p>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {requests.length === 0 && (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <History className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No lesson requests</h3>
+                <p className="text-gray-600">You haven't made any lesson requests yet.</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
