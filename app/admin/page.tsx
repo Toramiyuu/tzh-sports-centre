@@ -3,7 +3,7 @@ import { isAdmin } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Shield, Calendar, Users, Settings } from 'lucide-react'
+import { Shield, Calendar, Users, GraduationCap } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function AdminPage() {
@@ -31,6 +31,20 @@ export default async function AdminPage() {
       icon: Users,
       href: '/admin/accounts',
       color: 'bg-green-100 text-green-600',
+    },
+    {
+      title: 'Manage Members',
+      description: 'Add or remove training students',
+      icon: Users,
+      href: '/admin/members',
+      color: 'bg-purple-100 text-purple-600',
+    },
+    {
+      title: 'Lesson Management',
+      description: 'Schedule lessons and view billing',
+      icon: GraduationCap,
+      href: '/admin/lessons',
+      color: 'bg-orange-100 text-orange-600',
     },
   ]
 

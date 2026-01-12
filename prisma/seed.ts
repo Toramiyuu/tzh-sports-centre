@@ -21,30 +21,41 @@ async function main() {
 
   console.log('Created 4 courts')
 
-  // Create time slots from 9 AM to 12 AM (midnight)
-  // Each slot is 1 hour: 9:00-10:00, 10:00-11:00, ..., 23:00-00:00
+  // Create time slots from 9 AM to 12 AM (midnight) in 30-minute increments
+  // Slots: 9:00, 9:30, 10:00, 10:30, ..., 23:00, 23:30
   const timeSlots = []
   for (let hour = 9; hour <= 23; hour++) {
-    const slotTime = `${hour.toString().padStart(2, '0')}:00`
-    const ampm = hour < 12 ? 'AM' : 'PM'
-    const displayHour = hour <= 12 ? hour : hour - 12
-    const displayName = `${displayHour}:00 ${ampm}`
+    for (const minutes of ['00', '30']) {
+      const slotTime = `${hour.toString().padStart(2, '0')}:${minutes}`
+      const ampm = hour < 12 ? 'AM' : 'PM'
+      const displayHour = hour <= 12 ? hour : hour - 12
+      let displayName = `${displayHour}:${minutes} ${ampm}`
 
-    timeSlots.push({
-      slotTime,
-      displayName: hour === 12 ? '12:00 PM' : displayName,
-    })
+      // Fix edge cases
+      if (hour === 12) {
+        displayName = `12:${minutes} PM`
+      }
+
+      timeSlots.push({
+        slotTime,
+        displayName,
+      })
+    }
   }
+
+  // Delete existing time slots and recreate
+  await prisma.timeSlot.deleteMany({})
 
   for (let i = 0; i < timeSlots.length; i++) {
-    await prisma.timeSlot.upsert({
-      where: { id: i + 1 },
-      update: {},
-      create: timeSlots[i],
+    await prisma.timeSlot.create({
+      data: {
+        id: i + 1,
+        ...timeSlots[i],
+      },
     })
   }
 
-  console.log(`Created ${timeSlots.length} time slots (9 AM - 12 AM)`)
+  console.log(`Created ${timeSlots.length} time slots (9 AM - 12 AM, 30-min increments)`)
 }
 
 main()

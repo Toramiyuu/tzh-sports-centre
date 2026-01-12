@@ -52,6 +52,15 @@ export function Navbar() {
               <Receipt className="w-4 h-4" />
               Find Booking
             </Link>
+            {session?.user && (
+              <Link
+                href="/member"
+                className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
+              >
+                <User className="w-4 h-4" />
+                My Training
+              </Link>
+            )}
             {userIsAdmin && (
               <Link
                 href="/admin"
@@ -122,6 +131,15 @@ export function Navbar() {
             >
               Find Booking
             </Link>
+            {session?.user && (
+              <Link
+                href="/member"
+                className="block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                My Training
+              </Link>
+            )}
             {userIsAdmin && (
               <Link
                 href="/admin"

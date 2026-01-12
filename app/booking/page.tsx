@@ -14,36 +14,46 @@ import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Repeat } 
 import { Checkbox } from '@/components/ui/checkbox'
 import { isAdmin } from '@/lib/admin'
 
-// Hourly rates
-const BADMINTON_RATE = 15
-const BADMINTON_PEAK_RATE = 18 // 6 PM onwards
+// Rates per 30-minute slot
+const BADMINTON_RATE_PER_SLOT = 7.5 // RM15/hour = RM7.50 per 30 min
+const BADMINTON_PEAK_RATE_PER_SLOT = 9 // RM18/hour = RM9 per 30 min
 const BADMINTON_PEAK_START = '18:00' // 6 PM
-const PICKLEBALL_RATE = 25
-const PICKLEBALL_MIN_HOURS = 2
+const PICKLEBALL_RATE_PER_SLOT = 12.5 // RM25/hour = RM12.50 per 30 min
 
-// Format time slot to show range (e.g., "9:00 AM" -> "9:00 - 10:00 AM")
+// Minimum slots required (each slot is 30 min)
+const BADMINTON_MIN_SLOTS = 2 // 1 hour minimum
+const PICKLEBALL_MIN_SLOTS = 4 // 2 hours minimum
+
+// Format time slot to show 30-min range (e.g., "9:00 AM" -> "9:00 - 9:30 AM")
 const formatTimeRange = (displayName: string): string => {
-  // Parse the time (e.g., "9:00 AM" or "12:00 PM")
+  // Parse the time (e.g., "9:00 AM" or "9:30 AM")
   const match = displayName.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
   if (!match) return displayName
 
   let hour = parseInt(match[1])
-  const minutes = match[2]
+  const minutes = parseInt(match[2])
   const period = match[3].toUpperCase()
 
-  // Calculate end hour
-  let endHour = hour + 1
+  // Calculate end time (30 minutes later)
+  let endMinutes = minutes + 30
+  let endHour = hour
   let endPeriod = period
 
-  if (hour === 11 && period === 'AM') {
-    endPeriod = 'PM'
-  } else if (hour === 11 && period === 'PM') {
-    endPeriod = 'AM' // midnight
-  } else if (hour === 12) {
-    endHour = 1
+  if (endMinutes >= 60) {
+    endMinutes = 0
+    endHour = hour + 1
+    if (hour === 11 && period === 'AM') {
+      endPeriod = 'PM'
+    } else if (hour === 11 && period === 'PM') {
+      endPeriod = 'AM' // midnight
+    } else if (hour === 12) {
+      endHour = 1
+    }
   }
 
-  return `${hour}:${minutes} - ${endHour}:${minutes} ${endPeriod}`
+  const startStr = `${hour}:${minutes.toString().padStart(2, '0')}`
+  const endStr = `${endHour}:${endMinutes.toString().padStart(2, '0')}`
+  return `${startStr} - ${endStr} ${endPeriod}`
 }
 
 interface Court {
@@ -73,7 +83,7 @@ interface SelectedSlot {
   courtName: string
   slotTime: string
   displayName: string
-  hourlyRate: number
+  slotRate: number // Rate per 30-min slot
 }
 
 type Sport = 'badminton' | 'pickleball'
@@ -133,16 +143,16 @@ function BookingPageContent() {
     fetchAvailability()
   }, [selectedDate])
 
-  // Get hourly rate based on sport and time slot
-  // Badminton: 15 RM normally, 18 RM from 6 PM onwards
-  // Pickleball: 25 RM always
-  const getHourlyRate = (slotTime?: string) => {
-    if (sport === 'pickleball') return PICKLEBALL_RATE
+  // Get rate per 30-minute slot based on sport and time
+  // Badminton: RM7.50/slot normally, RM9/slot from 6 PM onwards
+  // Pickleball: RM12.50/slot always
+  const getSlotRate = (slotTime?: string) => {
+    if (sport === 'pickleball') return PICKLEBALL_RATE_PER_SLOT
     // Badminton: check if peak hours (6 PM onwards)
     if (slotTime && slotTime >= BADMINTON_PEAK_START) {
-      return BADMINTON_PEAK_RATE
+      return BADMINTON_PEAK_RATE_PER_SLOT
     }
-    return BADMINTON_RATE
+    return BADMINTON_RATE_PER_SLOT
   }
 
   // Get the next consecutive slot for a court
@@ -167,18 +177,65 @@ function BookingPageContent() {
     return courtAvailability.slots[currentIndex - 1]
   }
 
-  // Check if a slot is part of a pickleball pair (the second hour of a 2-hour booking)
-  const isSecondHourOfPickleballPair = (courtId: number, slotTime: string): boolean => {
-    if (sport !== 'pickleball') return false
+  // Get minimum slots required for current sport
+  const getMinSlots = () => sport === 'pickleball' ? PICKLEBALL_MIN_SLOTS : BADMINTON_MIN_SLOTS
+
+  // Check if a slot is adjacent to any selected slot on the same court
+  const isAdjacentToSelection = (courtId: number, slotTime: string): boolean => {
+    const courtSlots = selectedSlots.filter(s => s.courtId === courtId)
+    if (courtSlots.length === 0) return false
 
     const courtAvailability = availability.find(ca => ca.court.id === courtId)
     if (!courtAvailability) return false
 
     const currentIndex = courtAvailability.slots.findIndex(s => s.slotTime === slotTime)
-    if (currentIndex <= 0) return false
+    if (currentIndex === -1) return false
 
-    const previousSlot = courtAvailability.slots[currentIndex - 1]
-    return isSlotSelected(courtId, previousSlot.slotTime)
+    // Check if previous or next slot is selected
+    const prevSlot = currentIndex > 0 ? courtAvailability.slots[currentIndex - 1] : null
+    const nextSlot = currentIndex < courtAvailability.slots.length - 1 ? courtAvailability.slots[currentIndex + 1] : null
+
+    const prevSelected = prevSlot ? isSlotSelected(courtId, prevSlot.slotTime) : false
+    const nextSelected = nextSlot ? isSlotSelected(courtId, nextSlot.slotTime) : false
+
+    return prevSelected || nextSelected
+  }
+
+  // Get consecutive available slots starting from a slot
+  const getConsecutiveAvailableSlots = (court: Court, startSlotTime: string, count: number): SlotAvailability[] => {
+    const courtAvailability = availability.find(ca => ca.court.id === court.id)
+    if (!courtAvailability) return []
+
+    const startIndex = courtAvailability.slots.findIndex(s => s.slotTime === startSlotTime)
+    if (startIndex === -1) return []
+
+    const slots: SlotAvailability[] = []
+    for (let i = 0; i < count && startIndex + i < courtAvailability.slots.length; i++) {
+      const slot = courtAvailability.slots[startIndex + i]
+      if (!slot.available) break
+      slots.push(slot)
+    }
+    return slots
+  }
+
+  // Check if removing a slot would break continuity
+  const wouldBreakContinuity = (courtId: number, slotTimeToRemove: string): boolean => {
+    const courtSlots = selectedSlots
+      .filter(s => s.courtId === courtId && s.slotTime !== slotTimeToRemove)
+      .sort((a, b) => a.slotTime.localeCompare(b.slotTime))
+
+    if (courtSlots.length <= 1) return false
+
+    const courtAvailability = availability.find(ca => ca.court.id === courtId)
+    if (!courtAvailability) return false
+
+    // Check if remaining slots are consecutive
+    for (let i = 0; i < courtSlots.length - 1; i++) {
+      const currentIndex = courtAvailability.slots.findIndex(s => s.slotTime === courtSlots[i].slotTime)
+      const nextIndex = courtAvailability.slots.findIndex(s => s.slotTime === courtSlots[i + 1].slotTime)
+      if (nextIndex !== currentIndex + 1) return true
+    }
+    return false
   }
 
   // Toggle slot selection
@@ -191,72 +248,53 @@ function BookingPageContent() {
       (s) => s.courtId === court.id && s.slotTime === slot.slotTime
     )
 
-    if (sport === 'pickleball') {
-      // For pickleball, handle 2-hour consecutive booking
-      if (existing) {
-        // Check if this is the first hour of a pair - remove both slots
-        const nextSlot = getNextSlot(court, slot.slotTime)
-        if (nextSlot && isSlotSelected(court.id, nextSlot.slotTime)) {
-          // This is the first hour, remove both
-          setSelectedSlots(selectedSlots.filter(
-            (s) => !(s.courtId === court.id && (s.slotTime === slot.slotTime || s.slotTime === nextSlot.slotTime))
-          ))
-        } else {
-          // This is the second hour, remove both (find the first hour)
-          const prevSlot = getPreviousSlot(court, slot.slotTime)
-          if (prevSlot && isSlotSelected(court.id, prevSlot.slotTime)) {
-            setSelectedSlots(selectedSlots.filter(
-              (s) => !(s.courtId === court.id && (s.slotTime === slot.slotTime || s.slotTime === prevSlot.slotTime))
-            ))
-          } else {
-            // Single slot somehow, just remove it
-            setSelectedSlots(selectedSlots.filter((s) => s !== existing))
-          }
-        }
-      } else {
-        // Adding new pickleball slots - need 2 consecutive hours
-        const nextSlot = getNextSlot(court, slot.slotTime)
+    const courtSlotsCount = selectedSlots.filter(s => s.courtId === court.id).length
+    const minSlots = getMinSlots()
 
-        if (!nextSlot) {
-          setError('Pickleball requires 2 consecutive hours. This is the last time slot.')
-          return
-        }
-
-        if (!nextSlot.available) {
-          setError('Pickleball requires 2 consecutive hours. The next hour is not available.')
-          return
-        }
-
-        // Check if next slot is already selected (part of another pair)
-        if (isSlotSelected(court.id, nextSlot.slotTime)) {
-          setError('The next hour is already part of another booking.')
-          return
-        }
-
-        // Add both slots
-        setSelectedSlots([
-          ...selectedSlots,
-          {
-            courtId: court.id,
-            courtName: court.name,
-            slotTime: slot.slotTime,
-            displayName: slot.displayName,
-            hourlyRate: getHourlyRate(slot.slotTime),
-          },
-          {
-            courtId: court.id,
-            courtName: court.name,
-            slotTime: nextSlot.slotTime,
-            displayName: nextSlot.displayName,
-            hourlyRate: getHourlyRate(nextSlot.slotTime),
-          },
-        ])
+    if (existing) {
+      // Removing a slot
+      // Check if this would go below minimum
+      if (courtSlotsCount <= minSlots) {
+        // Remove all slots for this court
+        setSelectedSlots(selectedSlots.filter(s => s.courtId !== court.id))
+        return
       }
+
+      // Check if removing would break continuity
+      if (wouldBreakContinuity(court.id, slot.slotTime)) {
+        setError('Cannot remove this slot as it would create a gap in your booking.')
+        return
+      }
+
+      setSelectedSlots(selectedSlots.filter((s) => s !== existing))
     } else {
-      // Badminton - single hour selection
-      if (existing) {
-        setSelectedSlots(selectedSlots.filter((s) => s !== existing))
+      // Adding a slot
+      if (courtSlotsCount === 0) {
+        // First selection - need to add minimum slots
+        const consecutiveSlots = getConsecutiveAvailableSlots(court, slot.slotTime, minSlots)
+
+        if (consecutiveSlots.length < minSlots) {
+          const minTime = sport === 'pickleball' ? '2 hours' : '1 hour'
+          setError(`${sport.charAt(0).toUpperCase() + sport.slice(1)} requires ${minTime} minimum. Not enough consecutive slots available.`)
+          return
+        }
+
+        const newSlots = consecutiveSlots.map(s => ({
+          courtId: court.id,
+          courtName: court.name,
+          slotTime: s.slotTime,
+          displayName: s.displayName,
+          slotRate: getSlotRate(s.slotTime),
+        }))
+
+        setSelectedSlots([...selectedSlots, ...newSlots])
       } else {
+        // Already have slots - only allow adjacent additions
+        if (!isAdjacentToSelection(court.id, slot.slotTime)) {
+          setError('You can only add slots that are adjacent to your existing booking.')
+          return
+        }
+
         setSelectedSlots([
           ...selectedSlots,
           {
@@ -264,7 +302,7 @@ function BookingPageContent() {
             courtName: court.name,
             slotTime: slot.slotTime,
             displayName: slot.displayName,
-            hourlyRate: getHourlyRate(slot.slotTime),
+            slotRate: getSlotRate(slot.slotTime),
           },
         ])
       }
@@ -278,13 +316,18 @@ function BookingPageContent() {
     )
   }
 
-  // Calculate total
-  const total = selectedSlots.reduce((sum, slot) => sum + slot.hourlyRate, 0)
+  // Calculate total (sum of all slot rates)
+  const total = selectedSlots.reduce((sum, slot) => sum + slot.slotRate, 0)
 
-  // Check if pickleball minimum hours requirement is met
-  const validatePickleballMinimum = () => {
-    if (sport === 'pickleball' && selectedSlots.length < PICKLEBALL_MIN_HOURS) {
-      setError(`Pickleball requires a minimum of ${PICKLEBALL_MIN_HOURS} hours booking`)
+  // Calculate total duration in hours
+  const totalHours = selectedSlots.length * 0.5
+
+  // Validate minimum booking requirement
+  const validateMinimum = () => {
+    const minSlots = getMinSlots()
+    if (selectedSlots.length < minSlots) {
+      const minTime = sport === 'pickleball' ? '2 hours' : '1 hour'
+      setError(`${sport.charAt(0).toUpperCase() + sport.slice(1)} requires a minimum of ${minTime} booking`)
       return false
     }
     return true
@@ -292,7 +335,7 @@ function BookingPageContent() {
 
   // Handle guest booking
   const handleGuestBooking = async () => {
-    if (!validatePickleballMinimum()) return
+    if (!validateMinimum()) return
 
     if (!guestName.trim()) {
       setError('Please enter your name')
@@ -316,7 +359,7 @@ function BookingPageContent() {
           slots: selectedSlots.map((s) => ({
             courtId: s.courtId,
             slotTime: s.slotTime,
-            hourlyRate: s.hourlyRate,
+            slotRate: s.slotRate,
           })),
           date: format(selectedDate, 'yyyy-MM-dd'),
           sport,
@@ -385,7 +428,7 @@ function BookingPageContent() {
 
   // Handle test booking (admin only)
   const handleTestBooking = async () => {
-    if (!validatePickleballMinimum()) return
+    if (!validateMinimum()) return
 
     if (!session) {
       router.push('/auth/login?callbackUrl=/booking')
@@ -404,7 +447,7 @@ function BookingPageContent() {
           slots: selectedSlots.map((s) => ({
             courtId: s.courtId,
             slotTime: s.slotTime,
-            hourlyRate: s.hourlyRate,
+            slotRate: s.slotRate,
           })),
           date: format(selectedDate, 'yyyy-MM-dd'),
           sport,
@@ -550,7 +593,7 @@ function BookingPageContent() {
                           {availability.map((ca) => {
                             const courtSlot = ca.slots[idx]
                             const selected = isSlotSelected(ca.court.id, courtSlot.slotTime)
-                            const slotRate = getHourlyRate(courtSlot.slotTime)
+                            const slotRate = getSlotRate(courtSlot.slotTime)
                             return (
                               <td key={ca.court.id} className="p-2 text-center border-b">
                                 <button
@@ -640,7 +683,7 @@ function BookingPageContent() {
                           <span className="text-sm">{formatTimeRange(slot.displayName)}</span>
                         </div>
                         <span className="text-sm font-medium">
-                          RM{slot.hourlyRate}
+                          RM{slot.slotRate.toFixed(2)}
                         </span>
                       </div>
                     ))}

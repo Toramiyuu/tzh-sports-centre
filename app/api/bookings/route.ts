@@ -129,9 +129,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create bookings for each slot
+    // Create bookings for each slot (each slot is 30 minutes)
     const createdBookings = await prisma.$transaction(
-      slots.map((slot: { courtId: number; slotTime: string; hourlyRate: number }) =>
+      slots.map((slot: { courtId: number; slotTime: string; slotRate: number }) =>
         prisma.booking.create({
           data: {
             userId,
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
             bookingDate,
             startTime: slot.slotTime,
             endTime: getEndTime(slot.slotTime),
-            totalAmount: slot.hourlyRate,
+            totalAmount: slot.slotRate,
             status: bookingStatus,
             guestName: bookingGuestName,
             guestPhone: bookingGuestPhone,
@@ -167,9 +167,14 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Helper to calculate end time (1 hour after start)
+// Helper to calculate end time (30 minutes after start)
 function getEndTime(startTime: string): string {
   const [hours, minutes] = startTime.split(':').map(Number)
-  const endHour = hours + 1
-  return `${endHour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+  let endMinutes = minutes + 30
+  let endHours = hours
+  if (endMinutes >= 60) {
+    endMinutes = 0
+    endHours = hours + 1
+  }
+  return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`
 }

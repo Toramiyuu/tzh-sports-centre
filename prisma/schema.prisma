@@ -20,6 +20,12 @@ model User {
   bookings          Booking[]
   recurringBookings RecurringBooking[]
 
+  // Member/Student fields
+  isMember          Boolean            @default(false) @map("is_member")
+  skillLevel        String?            @map("skill_level") // beginner, intermediate, advanced
+  lessonSessions    LessonSession[]    @relation("StudentLessons")
+  lessonRequests    LessonRequest[]
+
   @@map("users")
 }
 
@@ -31,6 +37,7 @@ model Court {
   hourlyRate        Float              @map("hourly_rate")
   bookings          Booking[]
   recurringBookings RecurringBooking[]
+  lessonSessions    LessonSession[]
 
   @@map("courts")
 }
@@ -96,4 +103,66 @@ model RecurringBooking {
   user  User?  @relation(fields: [userId], references: [id])
 
   @@map("recurring_bookings")
+}
+
+// Coach availability for lessons (when coach is free to teach)
+model CoachAvailability {
+  id          String    @id @default(cuid())
+  dayOfWeek   Int       @map("day_of_week") // 0=Sunday, 1=Monday, etc.
+  startTime   String    @map("start_time") // "09:00", "09:30", etc.
+  endTime     String    @map("end_time")
+  isRecurring Boolean   @default(true) @map("is_recurring")
+  specificDate DateTime? @map("specific_date") // For one-time availability
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("coach_availability")
+}
+
+// Booked lesson sessions
+model LessonSession {
+  id          String   @id @default(cuid())
+  courtId     Int      @map("court_id")
+  lessonDate  DateTime @map("lesson_date")
+  startTime   String   @map("start_time") // "09:00", "09:30", etc.
+  endTime     String   @map("end_time")
+
+  // Lesson type: "1-to-1", "1-to-2", "1-to-3", "1-to-4"
+  lessonType  String   @map("lesson_type")
+  duration    Float    // Duration in hours (1.5 or 2)
+  price       Float    // Total price for the session
+
+  // Students in this session (can be multiple for group lessons)
+  students    User[]   @relation("StudentLessons")
+
+  status      String   @default("scheduled") // scheduled, completed, cancelled
+  notes       String?  // Coach notes about the session
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  court       Court    @relation(fields: [courtId], references: [id])
+
+  @@map("lesson_sessions")
+}
+
+// Member requests for lessons (pending approval)
+model LessonRequest {
+  id              String   @id @default(cuid())
+  memberId        String   @map("member_id")
+  requestedDate   DateTime @map("requested_date")
+  requestedTime   String   @map("requested_time") // "09:00", "09:30", etc.
+  lessonType      String   @map("lesson_type") // "1-to-1", "1-to-2", etc.
+
+  status          String   @default("pending") // pending, approved, rejected, changed
+  adminNotes      String?  @map("admin_notes") // Notes from coach (e.g., suggest different time)
+  suggestedTime   String?  @map("suggested_time") // If coach suggests different time
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  member          User     @relation(fields: [memberId], references: [id])
+
+  @@map("lesson_requests")
 }
