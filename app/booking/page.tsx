@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { format, addDays, isBefore, startOfDay } from 'date-fns'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -78,12 +78,15 @@ interface SelectedSlot {
 
 type Sport = 'badminton' | 'pickleball'
 
-export default function BookingPage() {
+function BookingPageContent() {
   const { data: session } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const userIsAdmin = isAdmin(session?.user?.email)
 
-  const [sport, setSport] = useState<Sport>('badminton')
+  // Get sport from URL query param, default to badminton
+  const initialSport = searchParams.get('sport') === 'pickleball' ? 'pickleball' : 'badminton'
+  const [sport, setSport] = useState<Sport>(initialSport)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [availability, setAvailability] = useState<CourtAvailability[]>([])
   const [selectedSlots, setSelectedSlots] = useState<SelectedSlot[]>([])
@@ -812,5 +815,17 @@ export default function BookingPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function BookingPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      </div>
+    }>
+      <BookingPageContent />
+    </Suspense>
   )
 }

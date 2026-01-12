@@ -25,6 +25,13 @@ export default async function AdminPage() {
       href: '/admin/bookings',
       color: 'bg-blue-100 text-blue-600',
     },
+    {
+      title: 'Registered Accounts',
+      description: 'View all registered users',
+      icon: Users,
+      href: '/admin/accounts',
+      color: 'bg-green-100 text-green-600',
+    },
   ]
 
   return (

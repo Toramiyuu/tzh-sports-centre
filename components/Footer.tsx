@@ -47,9 +47,12 @@ export function Footer() {
                 <Phone className="w-5 h-5 flex-shrink-0" />
                 <span>011-6868 8508</span>
               </div>
-              <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 flex-shrink-0" />
-                <span>Daily: 8:00 AM - 10:00 PM</span>
+              <div className="flex items-start gap-3">
+                <Clock className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                <div className="text-sm">
+                  <div>Weekdays: 3 PM - 12 AM</div>
+                  <div>Weekends & Public Holidays: 9 AM - 12 AM</div>
+                </div>
               </div>
             </div>
           </div>

@@ -58,7 +58,7 @@ export default function Home() {
           <h2 className="mb-8 text-center text-2xl font-bold text-zinc-900">Available Sports</h2>
           <div className="grid gap-6 md:grid-cols-2">
             {/* Badminton */}
-            <div className="group relative overflow-hidden rounded-2xl">
+            <Link href="/booking?sport=badminton" className="group relative overflow-hidden rounded-2xl cursor-pointer">
               <div className="aspect-[16/9] bg-blue-100">
                 <Image
                   src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&q=80"
@@ -77,10 +77,10 @@ export default function Home() {
                   <span>RM15/hr</span>
                 </div>
               </div>
-            </div>
+            </Link>
 
             {/* Pickleball */}
-            <div className="group relative overflow-hidden rounded-2xl">
+            <Link href="/booking?sport=pickleball" className="group relative overflow-hidden rounded-2xl cursor-pointer">
               <div className="aspect-[16/9] bg-orange-100">
                 <Image
                   src="https://images.unsplash.com/photo-1612534847738-b3af9bc31f0c?w=800&q=80"
@@ -99,7 +99,7 @@ export default function Home() {
                   <span>RM25/hr (2hr min)</span>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -112,8 +112,9 @@ export default function Home() {
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                 <Clock className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="mb-2 font-semibold text-zinc-900">Open Daily</h3>
-              <p className="text-sm text-zinc-600">8:00 AM - 10:00 PM</p>
+              <h3 className="mb-2 font-semibold text-zinc-900">Operating Hours</h3>
+              <p className="text-sm text-zinc-600">Weekdays: 3 PM - 12 AM</p>
+              <p className="text-sm text-zinc-600">Weekends & PH: 9 AM - 12 AM</p>
             </div>
             <div className="rounded-xl bg-white p-6 shadow-sm">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">

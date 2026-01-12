@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { shouldUseWeekendHours, getHolidayName } from '@/lib/holidays'
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,17 +17,20 @@ export async function GET(request: NextRequest) {
 
     const queryDate = new Date(date)
     const dayOfWeek = queryDate.getDay() // 0=Sunday, 1=Monday, etc.
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6 // Sunday or Saturday
+
+    // Check if weekend OR public holiday (both use weekend hours: 9 AM - 12 AM)
+    const useWeekendHours = shouldUseWeekendHours(queryDate)
+    const holidayName = getHolidayName(queryDate)
 
     // Get all time slots
     const allTimeSlots = await prisma.timeSlot.findMany({
       orderBy: { id: 'asc' },
     })
 
-    // Filter time slots based on day of week:
-    // - Weekdays (Mon-Fri): 3 PM (15:00) to 12 AM
-    // - Weekends (Sat-Sun): 9 AM (09:00) to 12 AM
-    const startTimeFilter = isWeekend ? '09:00' : '15:00'
+    // Filter time slots based on day type:
+    // - Weekdays (Mon-Fri, non-holiday): 3 PM (15:00) to 12 AM
+    // - Weekends & Public Holidays: 9 AM (09:00) to 12 AM
+    const startTimeFilter = useWeekendHours ? '09:00' : '15:00'
     const timeSlots = allTimeSlots.filter(slot => slot.slotTime >= startTimeFilter)
 
     // Get existing bookings for the date
@@ -111,7 +115,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       date,
       dayOfWeek,
-      isWeekend,
+      isWeekend: useWeekendHours,
+      holidayName,
       timeSlots,
       courts,
       availability,
