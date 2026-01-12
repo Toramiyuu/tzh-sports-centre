@@ -10,15 +10,14 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Repeat } from 'lucide-react'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 
 // Rates per 30-minute slot
-const BADMINTON_RATE_PER_SLOT = 7.5 // RM15/hour = RM7.50 per 30 min
-const BADMINTON_PEAK_RATE_PER_SLOT = 9 // RM18/hour = RM9 per 30 min
+const BADMINTON_RATE_PER_SLOT = 7.5 // RM7.50 per 30 min (RM15/hour)
+const BADMINTON_PEAK_RATE_PER_SLOT = 9 // RM9 per 30 min (RM18/hour, 6 PM onwards)
 const BADMINTON_PEAK_START = '18:00' // 6 PM
-const PICKLEBALL_RATE_PER_SLOT = 12.5 // RM25/hour = RM12.50 per 30 min
+const PICKLEBALL_RATE_PER_SLOT = 12.5 // RM12.50 per 30 min (RM25/hour)
 
 // Minimum slots required (each slot is 30 min)
 const BADMINTON_MIN_SLOTS = 2 // 1 hour minimum
@@ -110,7 +109,6 @@ function BookingPageContent() {
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
   const [guestEmail, setGuestEmail] = useState('')
-  const [makeRecurring, setMakeRecurring] = useState(false)
 
   // Fix hydration mismatch by only rendering calendar after mount
   useEffect(() => {
@@ -144,8 +142,6 @@ function BookingPageContent() {
   }, [selectedDate])
 
   // Get rate per 30-minute slot based on sport and time
-  // Badminton: RM7.50/slot normally, RM9/slot from 6 PM onwards
-  // Pickleball: RM12.50/slot always
   const getSlotRate = (slotTime?: string) => {
     if (sport === 'pickleball') return PICKLEBALL_RATE_PER_SLOT
     // Badminton: check if peak hours (6 PM onwards)
@@ -377,46 +373,11 @@ function BookingPageContent() {
         return
       }
 
-      // If recurring is selected, also create recurring booking(s)
-      if (makeRecurring && selectedSlots.length > 0) {
-        const dayOfWeek = selectedDate.getDay()
-        // Group slots by court
-        const slotsByCourtMap = selectedSlots.reduce((acc, slot) => {
-          if (!acc[slot.courtId]) {
-            acc[slot.courtId] = []
-          }
-          acc[slot.courtId].push(slot)
-          return acc
-        }, {} as Record<number, typeof selectedSlots>)
-
-        // Create recurring booking for each court
-        for (const [courtId, slots] of Object.entries(slotsByCourtMap)) {
-          const sortedSlots = slots.sort((a, b) => a.slotTime.localeCompare(b.slotTime))
-          await fetch('/api/recurring-bookings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              courtId: parseInt(courtId),
-              sport,
-              dayOfWeek,
-              startTime: sortedSlots[0].slotTime,
-              startDate: selectedDate.toISOString(),
-              guestName: guestName.trim(),
-              guestPhone: guestPhone.trim(),
-              isAdminBooking: false,
-              consecutiveHours: sortedSlots.length,
-            }),
-          })
-        }
-      }
-
-      const recurringMsg = makeRecurring ? ' This will repeat weekly.' : ''
-      setSuccess(`Booking confirmed! ${data.count} slot(s) booked.${recurringMsg} Please pay at counter.`)
+      setSuccess(`Booking confirmed! ${data.count} slot(s) booked. Please pay at counter.`)
       setSelectedSlots([])
       setGuestName('')
       setGuestPhone('')
       setGuestEmail('')
-      setMakeRecurring(false)
       // Refresh availability
       await fetchAvailability()
     } catch (err) {
@@ -495,7 +456,7 @@ function BookingPageContent() {
               }`}
             >
               Badminton
-              <span className="ml-2 text-xs text-gray-400">RM15/hr (RM18 after 6PM)</span>
+              <span className="ml-2 text-xs text-gray-400">RM15/hr (RM18 after 6PM) • 1hr min</span>
             </button>
             <button
               onClick={() => setSport('pickleball')}
@@ -506,9 +467,42 @@ function BookingPageContent() {
               }`}
             >
               Pickleball
-              <span className="ml-2 text-xs text-gray-400">RM25/hr (2hr min)</span>
+              <span className="ml-2 text-xs text-gray-400">RM25/hr • 2hr min</span>
             </button>
           </nav>
+        </div>
+
+        {/* Sport Image Banner */}
+        <div className="mt-4 relative h-40 rounded-lg overflow-hidden">
+          {sport === 'badminton' ? (
+            <div className="relative w-full h-full">
+              <img
+                src="https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?w=1200&q=80"
+                alt="Badminton player in action"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/70 to-transparent flex items-center">
+                <div className="px-6 text-white">
+                  <h3 className="text-2xl font-bold">Badminton</h3>
+                  <p className="text-sm opacity-90">Book your court • 1 hour minimum</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="relative w-full h-full">
+              <img
+                src="https://images.unsplash.com/photo-1612534847738-b3af9bc31f0c?w=1200&q=80"
+                alt="Pickleball equipment"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-green-600/70 to-transparent flex items-center">
+                <div className="px-6 text-white">
+                  <h3 className="text-2xl font-bold">Pickleball</h3>
+                  <p className="text-sm opacity-90">Book your court • 2 hour minimum</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -615,7 +609,7 @@ function BookingPageContent() {
                                     ? 'Booked'
                                     : selected
                                     ? 'Selected'
-                                    : `RM${slotRate}`}
+                                    : 'Available'}
                                 </button>
                               </td>
                             )
@@ -733,20 +727,6 @@ function BookingPageContent() {
                               onChange={(e) => setGuestEmail(e.target.value)}
                               className="h-9"
                             />
-                          </div>
-                          <div className="flex items-center space-x-2 pt-2">
-                            <Checkbox
-                              id="makeRecurring"
-                              checked={makeRecurring}
-                              onCheckedChange={(checked) => setMakeRecurring(checked as boolean)}
-                            />
-                            <label
-                              htmlFor="makeRecurring"
-                              className="text-xs font-medium leading-none flex items-center gap-1 cursor-pointer"
-                            >
-                              <Repeat className="w-3 h-3" />
-                              Make this a weekly recurring booking
-                            </label>
                           </div>
                         </div>
                       </div>

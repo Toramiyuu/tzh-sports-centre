@@ -65,6 +65,20 @@ export async function GET(request: NextRequest) {
       },
     })
 
+    // Get lesson sessions for the date
+    const lessonSessions = await prisma.lessonSession.findMany({
+      where: {
+        lessonDate: queryDate,
+        status: 'scheduled',
+        ...(courtId ? { courtId: parseInt(courtId) } : {}),
+      },
+      select: {
+        courtId: true,
+        startTime: true,
+        endTime: true,
+      },
+    })
+
     // Create a set of booked slots per court
     const bookedSlots: Record<number, Set<string>> = {}
 
@@ -82,6 +96,23 @@ export async function GET(request: NextRequest) {
         bookedSlots[recurring.courtId] = new Set()
       }
       bookedSlots[recurring.courtId].add(recurring.startTime)
+    })
+
+    // Add lesson sessions (mark all 30-min slots within the lesson duration)
+    lessonSessions.forEach((lesson) => {
+      if (!bookedSlots[lesson.courtId]) {
+        bookedSlots[lesson.courtId] = new Set()
+      }
+      // Find all 30-min slots between startTime and endTime
+      const allSlots = allTimeSlots.map(s => s.slotTime)
+      const startIdx = allSlots.indexOf(lesson.startTime)
+      const endIdx = allSlots.indexOf(lesson.endTime)
+      if (startIdx !== -1) {
+        const endIndex = endIdx !== -1 ? endIdx : allSlots.length
+        for (let i = startIdx; i < endIndex; i++) {
+          bookedSlots[lesson.courtId].add(allSlots[i])
+        }
+      }
     })
 
     // Create a map of recurring booking labels for display

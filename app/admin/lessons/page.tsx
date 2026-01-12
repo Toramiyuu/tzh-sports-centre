@@ -37,18 +37,37 @@ import {
   Users,
   DollarSign,
   Check,
+  LayoutGrid,
+  List,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
 
 const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+// Lesson pricing: base price for minimum duration, RM50 per additional 30-min slot
 const LESSON_TYPES = [
-  { value: '1-to-1', label: '1-to-1 Private', price: 130, duration: 1.5, students: 1 },
-  { value: '1-to-2', label: '1-to-2', price: 160, duration: 1.5, students: 2 },
-  { value: '1-to-3', label: '1-to-3', price: 180, duration: 2, students: 3 },
-  { value: '1-to-4', label: '1-to-4', price: 200, duration: 2, students: 4 },
+  { value: '1-to-1', label: '1-to-1 Private', basePrice: 130, minSlots: 3, ratePerSlot: 50, students: 1 },
+  { value: '1-to-2', label: '1-to-2', basePrice: 160, minSlots: 3, ratePerSlot: 50, students: 2 },
+  { value: '1-to-3', label: '1-to-3', basePrice: 180, minSlots: 4, ratePerSlot: 50, students: 3 },
+  { value: '1-to-4', label: '1-to-4', basePrice: 200, minSlots: 4, ratePerSlot: 50, students: 4 },
 ]
+
+// Calculate price for a lesson based on type and duration in hours
+function calculateLessonPrice(lessonType: string, durationHours: number): number {
+  const type = LESSON_TYPES.find(t => t.value === lessonType)
+  if (!type) return 0
+
+  const slots = Math.round(durationHours * 2) // Convert hours to 30-min slots
+
+  if (slots <= type.minSlots) {
+    return type.basePrice
+  }
+
+  // Base price + additional slots at rate
+  const additionalSlots = slots - type.minSlots
+  return Math.round(type.basePrice + (additionalSlots * type.ratePerSlot))
+}
 
 // Generate time slots from 9 AM to 11 PM in 30-min increments
 const TIME_SLOTS = Array.from({ length: 29 }, (_, i) => {
@@ -59,6 +78,37 @@ const TIME_SLOTS = Array.from({ length: 29 }, (_, i) => {
   const displayHour = hour <= 12 ? hour : hour - 12
   return { slotTime, displayName: `${displayHour}:${minutes} ${ampm}` }
 })
+
+// Format time slot to show 30-min range (e.g., "9:00 AM" -> "9:00 - 9:30 AM")
+const formatTimeRange = (displayName: string): string => {
+  const match = displayName.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
+  if (!match) return displayName
+
+  let hour = parseInt(match[1])
+  const minutes = parseInt(match[2])
+  const period = match[3].toUpperCase()
+
+  // Calculate end time (30 minutes later)
+  let endMinutes = minutes + 30
+  let endHour = hour
+  let endPeriod = period
+
+  if (endMinutes >= 60) {
+    endMinutes = 0
+    endHour = hour + 1
+    if (hour === 11 && period === 'AM') {
+      endPeriod = 'PM'
+    } else if (hour === 11 && period === 'PM') {
+      endPeriod = 'AM'
+    } else if (hour === 12) {
+      endHour = 1
+    }
+  }
+
+  const startStr = `${hour}:${minutes.toString().padStart(2, '0')}`
+  const endStr = `${endHour}:${endMinutes.toString().padStart(2, '0')}`
+  return `${startStr} - ${endStr} ${endPeriod}`
+}
 
 interface CoachAvailability {
   id: string
@@ -100,6 +150,7 @@ interface LessonRequest {
   requestedDate: string
   requestedTime: string
   lessonType: string
+  requestedDuration: number
   status: string
   adminNotes: string | null
   suggestedTime: string | null
@@ -111,6 +162,15 @@ interface LessonRequest {
     phone: string
     skillLevel: string | null
   }
+}
+
+interface BookingSlot {
+  courtId: number
+  startTime: string
+  guestName?: string
+  userName?: string
+  isRecurring?: boolean
+  recurringLabel?: string
 }
 
 export default function AdminLessonsPage() {
@@ -127,14 +187,21 @@ export default function AdminLessonsPage() {
   const [courts, setCourts] = useState<Court[]>([])
   const [lessons, setLessons] = useState<LessonSession[]>([])
   const [lessonRequests, setLessonRequests] = useState<LessonRequest[]>([])
+  const [bookedSlots, setBookedSlots] = useState<BookingSlot[]>([])
 
   // Calendar & Filter states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [billingMonth, setBillingMonth] = useState(format(new Date(), 'yyyy-MM'))
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   // Dialog states
   const [availabilityDialogOpen, setAvailabilityDialogOpen] = useState(false)
   const [lessonDialogOpen, setLessonDialogOpen] = useState(false)
+  const [approveDialogOpen, setApproveDialogOpen] = useState(false)
+  const [selectedRequest, setSelectedRequest] = useState<LessonRequest | null>(null)
+  const [approveCourtId, setApproveCourtId] = useState<number | null>(null)
+  const [courtAvailability, setCourtAvailability] = useState<Record<number, boolean>>({})
+  const [loadingAvailability, setLoadingAvailability] = useState(false)
 
   // Form states for availability
   const [availDays, setAvailDays] = useState<number[]>([])
@@ -196,15 +263,24 @@ export default function AdminLessonsPage() {
     }
   }
 
-  const handleRequestAction = async (requestId: string, status: string, adminNotes?: string, suggestedTime?: string) => {
+  const handleRequestAction = async (requestId: string, status: string, adminNotes?: string, suggestedTime?: string, courtId?: number) => {
     setActionLoading(true)
     try {
-      await fetch('/api/admin/lesson-requests', {
+      const res = await fetch('/api/admin/lesson-requests', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ requestId, status, adminNotes, suggestedTime }),
+        body: JSON.stringify({ requestId, status, adminNotes, suggestedTime, courtId }),
       })
-      fetchRequests()
+      if (res.ok) {
+        fetchRequests()
+        // If approving, also refresh lessons for the schedule tab
+        if (status === 'approved') {
+          fetchLessonsForDate()
+        }
+      } else {
+        const data = await res.json()
+        alert(data.error || 'Failed to update request')
+      }
     } catch (error) {
       console.error('Error updating request:', error)
     } finally {
@@ -212,11 +288,142 @@ export default function AdminLessonsPage() {
     }
   }
 
+  const openApproveDialog = async (request: LessonRequest) => {
+    setSelectedRequest(request)
+    setApproveCourtId(null)
+    setApproveDialogOpen(true)
+    setLoadingAvailability(true)
+
+    // Fetch availability for the requested date and time
+    try {
+      const dateStr = format(new Date(request.requestedDate), 'yyyy-MM-dd')
+      const res = await fetch(`/api/availability?date=${dateStr}`)
+      const data = await res.json()
+
+      // Check which courts are available at the requested time
+      // Use the requestedDuration from the request
+      const duration = request.requestedDuration || 1.5
+      const slotsNeeded = duration * 2 // 30-min slots
+
+      const availability: Record<number, boolean> = {}
+
+      // Also check existing lessons for conflicts
+      const lessonsRes = await fetch(`/api/admin/lessons?date=${dateStr}`)
+      const lessonsData = await lessonsRes.json()
+      const existingLessons = lessonsData.lessons || []
+
+      // Calculate the end time for the requested lesson
+      const [startHours, startMinutes] = request.requestedTime.split(':').map(Number)
+      const durationMinutes = duration * 60
+      const endTotalMinutes = startHours * 60 + startMinutes + durationMinutes
+      const endHours = Math.floor(endTotalMinutes / 60)
+      const endMinutes = endTotalMinutes % 60
+      const requestedEndTime = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`
+
+      // Check each court
+      if (data.courts) {
+        data.courts.forEach((court: { id: number }) => {
+          // First, check if there's a booking conflict using availability data
+          let hasBookingConflict = false
+          const courtAvailData = data.availability?.find((ca: { court: { id: number } }) => ca.court.id === court.id)
+
+          if (courtAvailData) {
+            const startIdx = courtAvailData.slots.findIndex((s: { slotTime: string }) => s.slotTime === request.requestedTime)
+            if (startIdx !== -1) {
+              // Time slot exists in booking hours - check availability
+              for (let i = 0; i < slotsNeeded && startIdx + i < courtAvailData.slots.length; i++) {
+                if (!courtAvailData.slots[startIdx + i].available) {
+                  hasBookingConflict = true
+                  break
+                }
+              }
+            }
+            // If slot not found, it's outside booking hours (before 3 PM) - no booking conflict
+          }
+
+          // Second, check for lesson conflicts
+          let hasLessonConflict = false
+          existingLessons.forEach((lesson: { courtId: number; startTime: string; endTime: string; status: string }) => {
+            if (lesson.courtId === court.id && lesson.status === 'scheduled') {
+              // Check time overlap
+              const lessonStart = lesson.startTime
+              const lessonEnd = lesson.endTime
+              // Overlap if: requestedStart < lessonEnd AND requestedEnd > lessonStart
+              if (request.requestedTime < lessonEnd && requestedEndTime > lessonStart) {
+                hasLessonConflict = true
+              }
+            }
+          })
+
+          availability[court.id] = !hasBookingConflict && !hasLessonConflict
+        })
+      }
+
+      setCourtAvailability(availability)
+    } catch (error) {
+      console.error('Error fetching availability:', error)
+      // On error, default all courts to available
+      const defaultAvail: Record<number, boolean> = {}
+      courts.forEach(c => { defaultAvail[c.id] = true })
+      setCourtAvailability(defaultAvail)
+    } finally {
+      setLoadingAvailability(false)
+    }
+  }
+
+  const handleApproveWithCourt = async () => {
+    if (!selectedRequest || !approveCourtId) return
+    await handleRequestAction(selectedRequest.id, 'approved', undefined, undefined, approveCourtId)
+    setApproveDialogOpen(false)
+    setSelectedRequest(null)
+    setApproveCourtId(null)
+    setCourtAvailability({})
+  }
+
   const fetchLessonsForDate = async () => {
     try {
-      const res = await fetch(`/api/admin/lessons?date=${format(selectedDate, 'yyyy-MM-dd')}`)
-      const data = await res.json()
-      setLessons(data.lessons || [])
+      const dateStr = format(selectedDate, 'yyyy-MM-dd')
+      // Fetch both lessons and bookings in parallel
+      const [lessonsRes, bookingsRes] = await Promise.all([
+        fetch(`/api/admin/lessons?date=${dateStr}`),
+        fetch(`/api/admin/bookings?date=${dateStr}`),
+      ])
+
+      const lessonsData = await lessonsRes.json()
+      const bookingsData = await bookingsRes.json()
+
+      setLessons(lessonsData.lessons || [])
+
+      // Extract booked slots from bookings data
+      const slots: BookingSlot[] = []
+
+      // Regular bookings
+      if (bookingsData.bookings) {
+        bookingsData.bookings.forEach((booking: { courtId: number; startTime: string; guestName?: string; user?: { name: string } }) => {
+          slots.push({
+            courtId: booking.courtId,
+            startTime: booking.startTime,
+            guestName: booking.guestName,
+            userName: booking.user?.name,
+          })
+        })
+      }
+
+      // Recurring bookings
+      if (bookingsData.recurringBookings) {
+        bookingsData.recurringBookings.forEach((recurring: { courtId: number; startTime: string; label?: string; guestName?: string; user?: { name: string } }) => {
+          slots.push({
+            courtId: recurring.courtId,
+            startTime: recurring.startTime,
+            guestName: recurring.guestName,
+            userName: recurring.user?.name,
+            isRecurring: true,
+            recurringLabel: recurring.label,
+          })
+        })
+      }
+
+      setBookedSlots(slots)
     } catch (error) {
       console.error('Error fetching lessons:', error)
     }
@@ -230,6 +437,44 @@ export default function AdminLessonsPage() {
     } catch (error) {
       console.error('Error fetching billing data:', error)
     }
+  }
+
+  // Create a map of lessons by court and time slot for grid view
+  const createLessonMap = () => {
+    const map: Record<string, LessonSession> = {}
+    lessons.filter(l => l.status !== 'cancelled').forEach((lesson) => {
+      // For each lesson, mark all 30-min slots it occupies
+      const startIdx = TIME_SLOTS.findIndex(s => s.slotTime === lesson.startTime)
+      const endIdx = TIME_SLOTS.findIndex(s => s.slotTime === lesson.endTime)
+      if (startIdx !== -1) {
+        const endIndex = endIdx !== -1 ? endIdx : TIME_SLOTS.length
+        for (let i = startIdx; i < endIndex; i++) {
+          const key = `${lesson.courtId}-${TIME_SLOTS[i].slotTime}`
+          map[key] = lesson
+        }
+      }
+    })
+    return map
+  }
+
+  // Create a map of bookings by court and time slot for grid view
+  const createBookingMap = () => {
+    const map: Record<string, BookingSlot> = {}
+    bookedSlots.forEach((slot) => {
+      const key = `${slot.courtId}-${slot.startTime}`
+      map[key] = slot
+    })
+    return map
+  }
+
+  const lessonMap = createLessonMap()
+  const bookingMap = createBookingMap()
+
+  // Open add lesson dialog with pre-selected court and time
+  const openAddLessonDialog = (courtId: number, slotTime: string) => {
+    setLessonCourtId(courtId)
+    setLessonStartTime(slotTime)
+    setLessonDialogOpen(true)
   }
 
   useEffect(() => {
@@ -473,11 +718,16 @@ export default function AdminLessonsPage() {
         <>
           {/* Schedule Tab */}
           {activeTab === 'schedule' && (
-            <div className="grid lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-1">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Select Date</CardTitle>
+            <div className="space-y-6">
+              {/* Top Section: Date Selection and View Toggle */}
+              <div className="flex flex-col lg:flex-row gap-6">
+                {/* Date Selection Card */}
+                <Card className="lg:w-80">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <CalendarDays className="w-5 h-5" />
+                      Select Date
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <Calendar
@@ -486,108 +736,293 @@ export default function AdminLessonsPage() {
                       onSelect={(date) => date && setSelectedDate(date)}
                       className="rounded-md border"
                     />
-                    <Button
-                      className="w-full mt-4"
-                      onClick={() => setLessonDialogOpen(true)}
-                      disabled={members.length === 0}
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Lesson
-                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Info Card */}
+                <Card className="flex-1">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <GraduationCap className="w-5 h-5" />
+                        {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                        <Badge variant="outline" className="ml-2">
+                          {lessons.filter(l => l.status !== 'cancelled').length} lessons
+                        </Badge>
+                      </CardTitle>
+                      <div className="flex items-center gap-2">
+                        {/* View Mode Toggle */}
+                        <div className="flex items-center border rounded-lg p-1">
+                          <Button
+                            variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                            size="sm"
+                            onClick={() => setViewMode('grid')}
+                            className="h-8"
+                          >
+                            <LayoutGrid className="w-4 h-4 mr-1" />
+                            Grid
+                          </Button>
+                          <Button
+                            variant={viewMode === 'list' ? 'default' : 'ghost'}
+                            size="sm"
+                            onClick={() => setViewMode('list')}
+                            className="h-8"
+                          >
+                            <List className="w-4 h-4 mr-1" />
+                            List
+                          </Button>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            setLessonCourtId(null)
+                            setLessonStartTime('')
+                            setLessonDialogOpen(true)
+                          }}
+                          disabled={members.length === 0}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Lesson
+                        </Button>
+                      </div>
+                    </div>
                     {members.length === 0 && (
-                      <p className="text-xs text-gray-500 mt-2 text-center">
+                      <p className="text-xs text-amber-600 mt-2">
                         Add members first to schedule lessons
                       </p>
                     )}
-                  </CardContent>
+                  </CardHeader>
                 </Card>
               </div>
 
-              <div className="lg:col-span-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <GraduationCap className="w-5 h-5" />
-                      Lessons for {format(selectedDate, 'EEEE, MMMM d, yyyy')}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {lessons.filter(l => l.status !== 'cancelled').length === 0 ? (
-                      <div className="text-center py-12 text-gray-500">
-                        No lessons scheduled for this date
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {lessons
-                          .filter(l => l.status !== 'cancelled')
-                          .sort((a, b) => a.startTime.localeCompare(b.startTime))
-                          .map((lesson) => {
-                            const typeInfo = getLessonTypeInfo(lesson.lessonType)
-                            return (
-                              <div
-                                key={lesson.id}
-                                className={`p-4 rounded-lg border ${
-                                  lesson.status === 'completed'
-                                    ? 'bg-green-50 border-green-200'
-                                    : 'bg-blue-50 border-blue-200'
-                                }`}
+              {/* Grid/List View */}
+              <Card>
+                <CardContent className="pt-6">
+                  {viewMode === 'grid' ? (
+                    /* Grid View */
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr className="bg-gray-100">
+                            <th className="p-2 text-left text-sm font-medium text-gray-700 border-b">
+                              Time
+                            </th>
+                            {courts.map((court) => (
+                              <th
+                                key={court.id}
+                                className="p-2 text-center text-sm font-medium text-gray-700 border-b min-w-[150px]"
                               >
-                                <div className="flex items-start justify-between">
-                                  <div>
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className="font-medium">{typeInfo?.label}</span>
-                                      <Badge variant="outline">{lesson.court.name}</Badge>
-                                      {lesson.status === 'completed' && (
-                                        <Badge className="bg-green-600">Completed</Badge>
-                                      )}
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                      <Clock className="w-3 h-3 inline mr-1" />
-                                      {lesson.startTime} - {lesson.endTime} ({lesson.duration}hr)
-                                    </div>
-                                    <div className="text-sm text-gray-600 mt-1">
-                                      <Users className="w-3 h-3 inline mr-1" />
-                                      {lesson.students.map(s => s.name).join(', ')}
-                                    </div>
-                                    <div className="text-sm font-medium mt-1">
-                                      RM{lesson.price} ({lesson.students.length > 1
-                                        ? `RM${(lesson.price / lesson.students.length).toFixed(0)} each`
-                                        : 'total'})
-                                    </div>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    {lesson.status === 'scheduled' && (
-                                      <>
+                                {court.name}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {TIME_SLOTS.map((slot, idx) => {
+                            // Check if this slot has any lesson starting here (to show the full lesson card)
+                            const lessonStartsHere = lessons.filter(
+                              l => l.status !== 'cancelled' && l.startTime === slot.slotTime
+                            )
+
+                            return (
+                              <tr key={slot.slotTime} className={idx % 2 === 0 ? 'bg-gray-50' : ''}>
+                                <td className="p-2 text-sm font-medium text-gray-700 border-b whitespace-nowrap">
+                                  {formatTimeRange(slot.displayName)}
+                                </td>
+                                {courts.map((court) => {
+                                  const key = `${court.id}-${slot.slotTime}`
+                                  const lesson = lessonMap[key]
+                                  const isLessonStart = lesson && lesson.startTime === slot.slotTime
+
+                                  if (lesson) {
+                                    // Only render the lesson card on the first slot
+                                    if (isLessonStart) {
+                                      const typeInfo = getLessonTypeInfo(lesson.lessonType)
+                                      const slotsCount = Math.round(lesson.duration * 2)
+                                      return (
+                                        <td
+                                          key={court.id}
+                                          className="p-1 border-b"
+                                          rowSpan={slotsCount}
+                                        >
+                                          <div
+                                            className={`p-2 rounded text-xs h-full ${
+                                              lesson.status === 'completed'
+                                                ? 'bg-green-100 border border-green-200'
+                                                : 'bg-purple-100 border border-purple-200'
+                                            }`}
+                                          >
+                                            <div className="flex items-center gap-1 font-medium flex-wrap">
+                                              <GraduationCap className="w-3 h-3 text-purple-600" />
+                                              <span className="text-purple-700">{typeInfo?.label}</span>
+                                              {lesson.status === 'completed' && (
+                                                <Badge className="text-[10px] px-1 py-0 bg-green-200 text-green-700 border-0">
+                                                  Done
+                                                </Badge>
+                                              )}
+                                            </div>
+                                            <div className="text-gray-600 mt-1">
+                                              <Users className="w-3 h-3 inline mr-1" />
+                                              {lesson.students.map(s => s.name).join(', ')}
+                                            </div>
+                                            <div className="text-gray-600 mt-1">
+                                              <Clock className="w-3 h-3 inline mr-1" />
+                                              {lesson.duration}hr • RM{lesson.price}
+                                            </div>
+                                            {lesson.status === 'scheduled' && (
+                                              <div className="flex gap-1 mt-2">
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-6 text-green-600 hover:text-green-700 hover:bg-green-50 flex-1"
+                                                  onClick={() => handleMarkCompleted(lesson.id)}
+                                                  disabled={actionLoading}
+                                                >
+                                                  <Check className="w-3 h-3 mr-1" />
+                                                  Done
+                                                </Button>
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-6 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                  onClick={() => handleCancelLesson(lesson.id)}
+                                                  disabled={actionLoading}
+                                                >
+                                                  <Trash2 className="w-3 h-3" />
+                                                </Button>
+                                              </div>
+                                            )}
+                                          </div>
+                                        </td>
+                                      )
+                                    }
+                                    // Skip cells that are part of a multi-slot lesson
+                                    return null
+                                  } else {
+                                    // Check if slot has a booking
+                                    const bookingKey = `${court.id}-${slot.slotTime}`
+                                    const booking = bookingMap[bookingKey]
+
+                                    if (booking) {
+                                      // Show booked slot
+                                      return (
+                                        <td key={court.id} className="p-1 border-b">
+                                          <div className="w-full h-10 flex items-center justify-center bg-gray-100 border border-gray-200 rounded text-xs text-gray-500">
+                                            {booking.isRecurring ? (
+                                              <span title={booking.recurringLabel || 'Recurring booking'}>
+                                                {booking.recurringLabel || 'Recurring'}
+                                              </span>
+                                            ) : (
+                                              <span title={booking.guestName || booking.userName || 'Booked'}>
+                                                Booked
+                                              </span>
+                                            )}
+                                          </div>
+                                        </td>
+                                      )
+                                    }
+
+                                    // Empty slot - show add button
+                                    return (
+                                      <td key={court.id} className="p-1 border-b">
                                         <Button
                                           variant="outline"
                                           size="sm"
-                                          className="text-green-600"
-                                          onClick={() => handleMarkCompleted(lesson.id)}
-                                          disabled={actionLoading}
+                                          className="w-full h-10 border-dashed text-gray-400 hover:text-gray-600"
+                                          onClick={() => openAddLessonDialog(court.id, slot.slotTime)}
+                                          disabled={members.length === 0}
                                         >
-                                          <Check className="w-4 h-4" />
+                                          <Plus className="w-4 h-4" />
                                         </Button>
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          className="text-red-600"
-                                          onClick={() => handleCancelLesson(lesson.id)}
-                                          disabled={actionLoading}
-                                        >
-                                          <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                      </>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
+                                      </td>
+                                    )
+                                  }
+                                })}
+                              </tr>
                             )
                           })}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    /* List View */
+                    <>
+                      {lessons.filter(l => l.status !== 'cancelled').length === 0 ? (
+                        <div className="text-center py-12 text-gray-500">
+                          No lessons scheduled for this date
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          {lessons
+                            .filter(l => l.status !== 'cancelled')
+                            .sort((a, b) => a.startTime.localeCompare(b.startTime))
+                            .map((lesson) => {
+                              const typeInfo = getLessonTypeInfo(lesson.lessonType)
+                              return (
+                                <div
+                                  key={lesson.id}
+                                  className={`p-4 rounded-lg border ${
+                                    lesson.status === 'completed'
+                                      ? 'bg-green-50 border-green-200'
+                                      : 'bg-purple-50 border-purple-200'
+                                  }`}
+                                >
+                                  <div className="flex items-start justify-between">
+                                    <div>
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-medium">{typeInfo?.label}</span>
+                                        <Badge variant="outline">{lesson.court.name}</Badge>
+                                        {lesson.status === 'completed' && (
+                                          <Badge className="bg-green-600">Completed</Badge>
+                                        )}
+                                      </div>
+                                      <div className="text-sm text-gray-600">
+                                        <Clock className="w-3 h-3 inline mr-1" />
+                                        {lesson.startTime} - {lesson.endTime} ({lesson.duration}hr)
+                                      </div>
+                                      <div className="text-sm text-gray-600 mt-1">
+                                        <Users className="w-3 h-3 inline mr-1" />
+                                        {lesson.students.map(s => s.name).join(', ')}
+                                      </div>
+                                      <div className="text-sm font-medium mt-1">
+                                        RM{lesson.price} ({lesson.students.length > 1
+                                          ? `RM${(lesson.price / lesson.students.length).toFixed(0)} each`
+                                          : 'total'})
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      {lesson.status === 'scheduled' && (
+                                        <>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-green-600"
+                                            onClick={() => handleMarkCompleted(lesson.id)}
+                                            disabled={actionLoading}
+                                          >
+                                            <Check className="w-4 h-4" />
+                                          </Button>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-red-600"
+                                            onClick={() => handleCancelLesson(lesson.id)}
+                                            disabled={actionLoading}
+                                          >
+                                            <Trash2 className="w-4 h-4" />
+                                          </Button>
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+              </Card>
             </div>
           )}
 
@@ -755,7 +1190,7 @@ export default function AdminLessonsPage() {
                                       <strong>Requested:</strong> {format(new Date(request.requestedDate), 'EEEE, MMMM d, yyyy')} at {request.requestedTime}
                                     </div>
                                     <div className="text-sm text-gray-600">
-                                      <strong>Type:</strong> {typeInfo?.label} ({typeInfo?.duration}hr) - RM{typeInfo?.price}
+                                      <strong>Type:</strong> {typeInfo?.label} ({request.requestedDuration}hr) - <strong className="text-green-600">RM{calculateLessonPrice(request.lessonType, request.requestedDuration)}</strong>
                                     </div>
                                     <div className="text-xs text-gray-400 mt-1">
                                       Requested on {format(new Date(request.createdAt), 'MMM d, yyyy h:mm a')}
@@ -765,7 +1200,7 @@ export default function AdminLessonsPage() {
                                     <Button
                                       size="sm"
                                       className="bg-green-600 hover:bg-green-700"
-                                      onClick={() => handleRequestAction(request.id, 'approved')}
+                                      onClick={() => openApproveDialog(request)}
                                       disabled={actionLoading}
                                     >
                                       <Check className="w-4 h-4 mr-1" />
@@ -834,7 +1269,7 @@ export default function AdminLessonsPage() {
                                       </Badge>
                                     </div>
                                     <div className="text-sm text-gray-600">
-                                      {format(new Date(request.requestedDate), 'MMM d, yyyy')} at {request.requestedTime} - {typeInfo?.label}
+                                      {format(new Date(request.requestedDate), 'MMM d, yyyy')} at {request.requestedTime} - {typeInfo?.label} ({request.requestedDuration}hr) - RM{calculateLessonPrice(request.lessonType, request.requestedDuration)}
                                     </div>
                                     {request.adminNotes && (
                                       <div className="text-sm text-gray-500 mt-1">
@@ -960,7 +1395,7 @@ export default function AdminLessonsPage() {
                 <SelectContent>
                   {LESSON_TYPES.map((type) => (
                     <SelectItem key={type.value} value={type.value}>
-                      {type.label} - RM{type.price} ({type.duration}hr)
+                      {type.label} - from RM{type.basePrice} (min {type.minSlots * 0.5}hr)
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1060,6 +1495,111 @@ export default function AdminLessonsPage() {
               }
             >
               {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Schedule Lesson'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Approve Request Dialog - Select Court */}
+      <Dialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Approve Lesson Request</DialogTitle>
+            <DialogDescription>
+              Select an available court for this lesson
+            </DialogDescription>
+          </DialogHeader>
+          {selectedRequest && (
+            <div className="py-4 space-y-4">
+              {/* Request Info */}
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-lg">{selectedRequest.member.name}</p>
+                    <p className="text-sm text-gray-600">
+                      {selectedRequest.lessonType.replace('-', ' ')} lesson ({selectedRequest.requestedDuration}hr)
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">{format(new Date(selectedRequest.requestedDate), 'EEE, MMM d')}</p>
+                    <p className="text-lg font-bold text-blue-600">{selectedRequest.requestedTime}</p>
+                    <p className="text-sm font-medium text-green-600">RM{calculateLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Court Selection Grid */}
+              <div>
+                <Label className="mb-3 block">Select Court</Label>
+                {loadingAvailability ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {courts.map((court) => {
+                      const isAvailable = courtAvailability[court.id] !== false
+                      const isSelected = approveCourtId === court.id
+                      return (
+                        <button
+                          key={court.id}
+                          onClick={() => isAvailable && setApproveCourtId(court.id)}
+                          disabled={!isAvailable}
+                          className={`p-4 rounded-lg border-2 transition-all ${
+                            !isAvailable
+                              ? 'bg-gray-100 border-gray-200 cursor-not-allowed opacity-60'
+                              : isSelected
+                              ? 'bg-green-100 border-green-500 ring-2 ring-green-500'
+                              : 'bg-white border-gray-200 hover:border-green-400 hover:bg-green-50'
+                          }`}
+                        >
+                          <p className={`font-semibold ${isSelected ? 'text-green-700' : 'text-gray-900'}`}>
+                            {court.name}
+                          </p>
+                          <p className={`text-sm mt-1 ${
+                            !isAvailable
+                              ? 'text-red-500'
+                              : isSelected
+                              ? 'text-green-600'
+                              : 'text-gray-500'
+                          }`}>
+                            {!isAvailable ? 'Booked' : isSelected ? 'Selected' : 'Available'}
+                          </p>
+                          {isSelected && (
+                            <div className="mt-2">
+                              <Check className="w-5 h-5 text-green-600 mx-auto" />
+                            </div>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Time slot info */}
+              {approveCourtId && (
+                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                  <p className="text-sm text-green-800">
+                    <strong>{courts.find(c => c.id === approveCourtId)?.name}</strong> will be booked for{' '}
+                    <strong>{selectedRequest.member.name}</strong> on{' '}
+                    <strong>{format(new Date(selectedRequest.requestedDate), 'MMM d')}</strong> at{' '}
+                    <strong>{selectedRequest.requestedTime}</strong> ({selectedRequest.requestedDuration}hr) - <strong>RM{calculateLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</strong>
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setApproveDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleApproveWithCourt}
+              disabled={actionLoading || !approveCourtId}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Approve & Schedule'}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -142,6 +142,10 @@ export default function ReceiptPage() {
             </Button>
           </form>
 
+          <p className="mt-3 text-sm text-gray-500">
+            Accepted formats: <span className="font-mono text-gray-600">012-345-6789</span>, <span className="font-mono text-gray-600">0123456789</span>, <span className="font-mono text-gray-600">+60123456789</span>, or just the last 7 digits
+          </p>
+
           {error && (
             <div className="mt-4 bg-red-50 text-red-600 p-3 rounded-md text-sm">
               {error}

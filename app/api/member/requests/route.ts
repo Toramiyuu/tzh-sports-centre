@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { requestedDate, requestedTime, lessonType, notes } = body
+    const { requestedDate, requestedTime, lessonType, requestedDuration, notes } = body
 
     if (!requestedDate || !requestedTime || !lessonType) {
       return NextResponse.json(
@@ -67,6 +67,10 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Default duration based on lesson type if not provided
+    const defaultDuration = (lessonType === '1-to-3' || lessonType === '1-to-4') ? 2 : 1.5
+    const duration = requestedDuration || defaultDuration
 
     // Check if there's already a pending request for this time
     const existingRequest = await prisma.lessonRequest.findFirst({
@@ -92,6 +96,7 @@ export async function POST(request: NextRequest) {
         requestedDate: new Date(requestedDate),
         requestedTime,
         lessonType,
+        requestedDuration: duration,
         adminNotes: notes || null,
         status: 'pending',
       },

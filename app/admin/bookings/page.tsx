@@ -41,27 +41,35 @@ import {
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 
-// Format time slot to show range
+// Format time slot to show 30-min range (e.g., "9:00 AM" -> "9:00 - 9:30 AM")
 const formatTimeRange = (displayName: string): string => {
   const match = displayName.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
   if (!match) return displayName
 
   let hour = parseInt(match[1])
-  const minutes = match[2]
+  const minutes = parseInt(match[2])
   const period = match[3].toUpperCase()
 
-  let endHour = hour + 1
+  // Calculate end time (30 minutes later)
+  let endMinutes = minutes + 30
+  let endHour = hour
   let endPeriod = period
 
-  if (hour === 11 && period === 'AM') {
-    endPeriod = 'PM'
-  } else if (hour === 11 && period === 'PM') {
-    endPeriod = 'AM'
-  } else if (hour === 12) {
-    endHour = 1
+  if (endMinutes >= 60) {
+    endMinutes = 0
+    endHour = hour + 1
+    if (hour === 11 && period === 'AM') {
+      endPeriod = 'PM'
+    } else if (hour === 11 && period === 'PM') {
+      endPeriod = 'AM'
+    } else if (hour === 12) {
+      endHour = 1
+    }
   }
 
-  return `${hour}:${minutes} - ${endHour}:${minutes} ${endPeriod}`
+  const startStr = `${hour}:${minutes.toString().padStart(2, '0')}`
+  const endStr = `${endHour}:${endMinutes.toString().padStart(2, '0')}`
+  return `${startStr} - ${endStr} ${endPeriod}`
 }
 
 interface Court {

@@ -149,11 +149,12 @@ model LessonSession {
 
 // Member requests for lessons (pending approval)
 model LessonRequest {
-  id              String   @id @default(cuid())
-  memberId        String   @map("member_id")
-  requestedDate   DateTime @map("requested_date")
-  requestedTime   String   @map("requested_time") // "09:00", "09:30", etc.
-  lessonType      String   @map("lesson_type") // "1-to-1", "1-to-2", etc.
+  id                String   @id @default(cuid())
+  memberId          String   @map("member_id")
+  requestedDate     DateTime @map("requested_date")
+  requestedTime     String   @map("requested_time") // "09:00", "09:30", etc.
+  lessonType        String   @map("lesson_type") // "1-to-1", "1-to-2", etc.
+  requestedDuration Float    @default(1.5) @map("requested_duration") // Duration in hours (1.5, 2, 2.5, etc.)
 
   status          String   @default("pending") // pending, approved, rejected, changed
   adminNotes      String?  @map("admin_notes") // Notes from coach (e.g., suggest different time)

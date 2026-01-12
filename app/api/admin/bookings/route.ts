@@ -192,11 +192,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 })
     }
 
+    const bookingDate = new Date(date)
+    const dayOfWeek = bookingDate.getDay()
+
     // Check if slot is already booked
     const existing = await prisma.booking.findFirst({
       where: {
         courtId,
-        bookingDate: new Date(date),
+        bookingDate,
         startTime,
         status: { in: ['pending', 'confirmed'] },
       },
@@ -204,6 +207,40 @@ export async function POST(request: NextRequest) {
 
     if (existing) {
       return NextResponse.json({ error: 'This slot is already booked' }, { status: 400 })
+    }
+
+    // Check for recurring booking conflicts
+    const recurringConflict = await prisma.recurringBooking.findFirst({
+      where: {
+        courtId,
+        dayOfWeek,
+        startTime,
+        isActive: true,
+        startDate: { lte: bookingDate },
+        OR: [
+          { endDate: null },
+          { endDate: { gte: bookingDate } },
+        ],
+      },
+    })
+
+    if (recurringConflict) {
+      return NextResponse.json({ error: 'This slot conflicts with a recurring booking' }, { status: 400 })
+    }
+
+    // Check for lesson session conflicts
+    const lessonConflict = await prisma.lessonSession.findFirst({
+      where: {
+        courtId,
+        lessonDate: bookingDate,
+        status: 'scheduled',
+        startTime: { lte: startTime },
+        endTime: { gt: startTime },
+      },
+    })
+
+    if (lessonConflict) {
+      return NextResponse.json({ error: 'This slot conflicts with a scheduled lesson' }, { status: 400 })
     }
 
     // Get court for pricing

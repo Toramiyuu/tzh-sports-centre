@@ -108,8 +108,9 @@ export async function POST(request: NextRequest) {
     const endHours = hours + Math.floor(endMinutes / 60)
     const endTime = `${endHours.toString().padStart(2, '0')}:${(endMinutes % 60).toString().padStart(2, '0')}`
 
-    // Check for conflicts - both regular bookings and other lessons
+    // Check for conflicts - regular bookings, recurring bookings, and other lessons
     const lessonDateObj = new Date(lessonDate)
+    const dayOfWeek = lessonDateObj.getDay()
 
     // Check regular bookings conflict
     const conflictingBookings = await prisma.booking.findFirst({
@@ -129,6 +130,36 @@ export async function POST(request: NextRequest) {
     if (conflictingBookings) {
       return NextResponse.json(
         { error: 'This time slot conflicts with an existing booking' },
+        { status: 409 }
+      )
+    }
+
+    // Check recurring bookings conflict
+    const timeSlots = await prisma.timeSlot.findMany({ orderBy: { id: 'asc' } })
+    const allSlotTimes = timeSlots.map(s => s.slotTime)
+    const startIdx = allSlotTimes.indexOf(startTime)
+    const endIdx = allSlotTimes.indexOf(endTime)
+    const lessonSlots = startIdx !== -1 && endIdx !== -1
+      ? allSlotTimes.slice(startIdx, endIdx)
+      : [startTime]
+
+    const conflictingRecurring = await prisma.recurringBooking.findFirst({
+      where: {
+        courtId,
+        dayOfWeek,
+        startTime: { in: lessonSlots },
+        isActive: true,
+        startDate: { lte: lessonDateObj },
+        OR: [
+          { endDate: null },
+          { endDate: { gte: lessonDateObj } },
+        ],
+      },
+    })
+
+    if (conflictingRecurring) {
+      return NextResponse.json(
+        { error: 'This time slot conflicts with a recurring booking' },
         { status: 409 }
       )
     }

@@ -109,6 +109,7 @@ export async function POST(request: NextRequest) {
     }
 
     const bookingDate = new Date(date)
+    const dayOfWeek = bookingDate.getDay()
 
     // Check for conflicts - any existing booking for these court/time combinations
     const existingBookings = await prisma.booking.findMany({
@@ -125,6 +126,76 @@ export async function POST(request: NextRequest) {
     if (existingBookings.length > 0) {
       return NextResponse.json(
         { error: 'One or more slots are no longer available' },
+        { status: 409 }
+      )
+    }
+
+    // Check for recurring booking conflicts
+    const recurringConflicts = await prisma.recurringBooking.findMany({
+      where: {
+        dayOfWeek,
+        isActive: true,
+        startDate: { lte: bookingDate },
+        OR: [
+          { endDate: null },
+          { endDate: { gte: bookingDate } },
+        ],
+      },
+    })
+
+    const recurringSlotSet = new Set(
+      recurringConflicts.map(r => `${r.courtId}-${r.startTime}`)
+    )
+
+    const hasRecurringConflict = slots.some(
+      (slot: { courtId: number; slotTime: string }) =>
+        recurringSlotSet.has(`${slot.courtId}-${slot.slotTime}`)
+    )
+
+    if (hasRecurringConflict) {
+      return NextResponse.json(
+        { error: 'One or more slots conflict with a recurring booking' },
+        { status: 409 }
+      )
+    }
+
+    // Check for lesson session conflicts
+    const lessonSessions = await prisma.lessonSession.findMany({
+      where: {
+        lessonDate: bookingDate,
+        status: 'scheduled',
+      },
+      select: {
+        courtId: true,
+        startTime: true,
+        endTime: true,
+      },
+    })
+
+    // Build a set of all slots occupied by lessons
+    const lessonSlotSet = new Set<string>()
+    const timeSlots = await prisma.timeSlot.findMany({ orderBy: { id: 'asc' } })
+    const allSlotTimes = timeSlots.map(s => s.slotTime)
+
+    lessonSessions.forEach((lesson) => {
+      const startIdx = allSlotTimes.indexOf(lesson.startTime)
+      const endIdx = allSlotTimes.indexOf(lesson.endTime)
+      if (startIdx !== -1) {
+        const endIndex = endIdx !== -1 ? endIdx : allSlotTimes.length
+        for (let i = startIdx; i < endIndex; i++) {
+          lessonSlotSet.add(`${lesson.courtId}-${allSlotTimes[i]}`)
+        }
+      }
+    })
+
+    const hasLessonConflict = slots.some(
+      (slot: { courtId: number; slotTime: string }) =>
+        lessonSlotSet.has(`${slot.courtId}-${slot.slotTime}`)
+    )
+
+    if (hasLessonConflict) {
+      return NextResponse.json(
+        { error: 'One or more slots conflict with a scheduled lesson' },
         { status: 409 }
       )
     }
