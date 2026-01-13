@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
+import { toast } from 'sonner'
+import { celebrateBooking } from '@/lib/confetti'
 
 // Rates per 30-minute slot
 const BADMINTON_RATE_PER_SLOT = 7.5 // RM7.50 per 30 min (RM15/hour)
@@ -101,8 +103,6 @@ function BookingPageContent() {
   const [selectedSlots, setSelectedSlots] = useState<SelectedSlot[]>([])
   const [loading, setLoading] = useState(false)
   const [booking, setBooking] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [mounted, setMounted] = useState(false)
 
   // Guest booking form state
@@ -118,8 +118,6 @@ function BookingPageContent() {
   // Clear selected slots when sport changes
   useEffect(() => {
     setSelectedSlots([])
-    setError('')
-    setSuccess('')
   }, [sport])
 
   // Fetch availability when date changes
@@ -237,8 +235,6 @@ function BookingPageContent() {
   // Toggle slot selection
   const toggleSlot = (court: Court, slot: SlotAvailability) => {
     if (!slot.available) return
-    setError('')
-    setSuccess('')
 
     const existing = selectedSlots.find(
       (s) => s.courtId === court.id && s.slotTime === slot.slotTime
@@ -258,7 +254,7 @@ function BookingPageContent() {
 
       // Check if removing would break continuity
       if (wouldBreakContinuity(court.id, slot.slotTime)) {
-        setError('Cannot remove this slot as it would create a gap in your booking.')
+        toast.error('Cannot remove this slot as it would create a gap in your booking.')
         return
       }
 
@@ -271,7 +267,7 @@ function BookingPageContent() {
 
         if (consecutiveSlots.length < minSlots) {
           const minTime = sport === 'pickleball' ? '2 hours' : '1 hour'
-          setError(`${sport.charAt(0).toUpperCase() + sport.slice(1)} requires ${minTime} minimum. Not enough consecutive slots available.`)
+          toast.error(`${sport.charAt(0).toUpperCase() + sport.slice(1)} requires ${minTime} minimum. Not enough consecutive slots available.`)
           return
         }
 
@@ -287,7 +283,7 @@ function BookingPageContent() {
       } else {
         // Already have slots - only allow adjacent additions
         if (!isAdjacentToSelection(court.id, slot.slotTime)) {
-          setError('You can only add slots that are adjacent to your existing booking.')
+          toast.error('You can only add slots that are adjacent to your existing booking.')
           return
         }
 
@@ -323,7 +319,7 @@ function BookingPageContent() {
     const minSlots = getMinSlots()
     if (selectedSlots.length < minSlots) {
       const minTime = sport === 'pickleball' ? '2 hours' : '1 hour'
-      setError(`${sport.charAt(0).toUpperCase() + sport.slice(1)} requires a minimum of ${minTime} booking`)
+      toast.error(`${sport.charAt(0).toUpperCase() + sport.slice(1)} requires a minimum of ${minTime} booking`)
       return false
     }
     return true
@@ -334,17 +330,15 @@ function BookingPageContent() {
     if (!validateMinimum()) return
 
     if (!guestName.trim()) {
-      setError('Please enter your name')
+      toast.error('Please enter your name')
       return
     }
     if (!guestPhone.trim()) {
-      setError('Please enter your phone number')
+      toast.error('Please enter your phone number')
       return
     }
 
     setBooking(true)
-    setError('')
-    setSuccess('')
 
     try {
       // Create the regular booking
@@ -369,11 +363,15 @@ function BookingPageContent() {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || 'Failed to create booking')
+        toast.error(data.error || 'Failed to create booking')
         return
       }
 
-      setSuccess(`Booking confirmed! ${data.count} slot(s) booked. Please pay at counter.`)
+      // Success! Show confetti and toast
+      celebrateBooking()
+      toast.success(`Booking confirmed! ${data.count} slot(s) booked. Please pay at counter.`, {
+        duration: 6000,
+      })
       setSelectedSlots([])
       setGuestName('')
       setGuestPhone('')
@@ -381,7 +379,7 @@ function BookingPageContent() {
       // Refresh availability
       await fetchAvailability()
     } catch (err) {
-      setError('An unexpected error occurred')
+      toast.error('An unexpected error occurred')
     } finally {
       setBooking(false)
     }
@@ -397,8 +395,6 @@ function BookingPageContent() {
     }
 
     setBooking(true)
-    setError('')
-    setSuccess('')
 
     try {
       const res = await fetch('/api/bookings', {
@@ -419,16 +415,20 @@ function BookingPageContent() {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || 'Failed to create booking')
+        toast.error(data.error || 'Failed to create booking')
         return
       }
 
-      setSuccess(`Booking created! ${data.count} slot(s) booked.`)
+      // Success! Show confetti and toast
+      celebrateBooking()
+      toast.success(`Booking created! ${data.count} slot(s) booked.`, {
+        duration: 5000,
+      })
       setSelectedSlots([])
       // Refresh availability
       await fetchAvailability()
     } catch (err) {
-      setError('An unexpected error occurred')
+      toast.error('An unexpected error occurred')
     } finally {
       setBooking(false)
     }
@@ -640,17 +640,6 @@ function BookingPageContent() {
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {error && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
-                      {error}
-                    </div>
-                  )}
-                  {success && (
-                    <div className="bg-green-50 text-green-600 p-3 rounded-md text-sm">
-                      {success}
-                    </div>
-                  )}
-
                   <div>
                     <p className="text-sm text-gray-600 mb-1">
                       <strong>Sport:</strong>{' '}

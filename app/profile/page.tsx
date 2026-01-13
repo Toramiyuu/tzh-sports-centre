@@ -18,6 +18,7 @@ import { PersonalInfoTab } from '@/components/profile/PersonalInfoTab'
 import { BookingsTab } from '@/components/profile/BookingsTab'
 import { LessonsTab } from '@/components/profile/LessonsTab'
 import { SettingsTab } from '@/components/profile/SettingsTab'
+import { SkeletonProfile } from '@/components/ui/skeleton'
 
 type TabType = 'personal' | 'bookings' | 'lessons' | 'settings'
 
@@ -73,8 +74,8 @@ export default function ProfilePage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <SkeletonProfile />
       </div>
     )
   }

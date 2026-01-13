@@ -4,6 +4,7 @@ import './globals.css'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { SessionProvider } from '@/components/SessionProvider'
+import { Toaster } from 'sonner'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,6 +32,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <SessionProvider>
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            toastOptions={{
+              duration: 4000,
+              className: 'font-sans',
+            }}
+          />
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />

@@ -58,7 +58,7 @@ export default function Home() {
           <h2 className="mb-8 text-center text-2xl font-bold text-zinc-900">Available Sports</h2>
           <div className="grid gap-6 md:grid-cols-2">
             {/* Badminton */}
-            <Link href="/booking?sport=badminton" className="group relative overflow-hidden rounded-2xl cursor-pointer">
+            <Link href="/booking?sport=badminton" className="group relative overflow-hidden rounded-2xl cursor-pointer card-hover">
               <div className="aspect-[16/9] bg-blue-100">
                 <Image
                   src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&q=80"
@@ -80,7 +80,7 @@ export default function Home() {
             </Link>
 
             {/* Pickleball */}
-            <Link href="/booking?sport=pickleball" className="group relative overflow-hidden rounded-2xl cursor-pointer">
+            <Link href="/booking?sport=pickleball" className="group relative overflow-hidden rounded-2xl cursor-pointer card-hover">
               <div className="aspect-[16/9] bg-orange-100">
                 <Image
                   src="https://images.unsplash.com/photo-1612534847738-b3af9bc31f0c?w=800&q=80"

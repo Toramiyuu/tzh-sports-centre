@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2, Save, X, Pencil, Mail, Phone, User, AlertTriangle } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface UserProfile {
   id: string
@@ -25,8 +26,6 @@ interface PersonalInfoTabProps {
 export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
 
   const [formData, setFormData] = useState({
     name: profile.name,
@@ -37,8 +36,6 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
 
   const handleSave = async () => {
     setSaving(true)
-    setError('')
-    setSuccess('')
 
     try {
       const res = await fetch('/api/profile', {
@@ -50,20 +47,20 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || 'Failed to update profile')
+        toast.error(data.error || 'Failed to update profile')
         return
       }
 
       if (data.emailVerificationSent) {
-        setSuccess('Profile updated. Please check your new email for a verification link.')
+        toast.success('Profile updated. Please check your new email for a verification link.', { duration: 6000 })
       } else {
-        setSuccess('Profile updated successfully!')
+        toast.success('Profile updated successfully!')
       }
 
       setEditing(false)
       onUpdate()
     } catch (err) {
-      setError('An unexpected error occurred')
+      toast.error('An unexpected error occurred')
     } finally {
       setSaving(false)
     }
@@ -77,7 +74,6 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
       emergencyContact: profile.emergencyContact || '',
     })
     setEditing(false)
-    setError('')
   }
 
   return (
@@ -95,19 +91,6 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
         )}
       </CardHeader>
       <CardContent className="space-y-6">
-        {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4" />
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="bg-green-50 text-green-600 p-3 rounded-md text-sm">
-            {success}
-          </div>
-        )}
-
         <div className="grid gap-6 md:grid-cols-2">
           {/* Name */}
           <div className="space-y-2">
