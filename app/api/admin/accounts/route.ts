@@ -111,6 +111,13 @@ export async function POST(request: NextRequest) {
     // Generate a placeholder email if not provided (required by schema)
     const userEmail = email || `${cleanPhone}@temp.tzh.local`
 
+    // Get the maximum UID and generate a new one
+    const maxUidResult = await prisma.user.findFirst({
+      select: { uid: true },
+      orderBy: { uid: 'desc' },
+    })
+    const newUid = maxUidResult ? maxUidResult.uid + BigInt(1) : BigInt(100000001)
+
     // Create the user
     const newUser = await prisma.user.create({
       data: {
@@ -118,6 +125,7 @@ export async function POST(request: NextRequest) {
         phone: cleanPhone,
         email: userEmail,
         passwordHash,
+        uid: newUid,
       },
       select: {
         id: true,
