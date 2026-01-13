@@ -7,13 +7,13 @@ export async function GET() {
   try {
     const session = await auth()
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user and check if they're a member
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
       select: { id: true, isMember: true },
     })
 
@@ -44,13 +44,13 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user and check if they're a member
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
       select: { id: true, isMember: true },
     })
 
@@ -117,12 +117,12 @@ export async function PATCH(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
       select: { id: true, isMember: true },
     })
 
@@ -204,12 +204,12 @@ export async function DELETE(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
       select: { id: true, isMember: true },
     })
 

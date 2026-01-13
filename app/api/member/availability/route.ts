@@ -7,13 +7,13 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user and check if they're a member
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
       select: { id: true, isMember: true },
     })
 
