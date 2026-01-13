@@ -30,6 +30,10 @@ import {
   Check,
   UserPlus,
   Copy,
+  Trash2,
+  Shield,
+  ShieldOff,
+  ShieldCheck,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
@@ -41,6 +45,8 @@ interface User {
   name: string
   email: string
   phone: string
+  isAdmin: boolean
+  isSuperAdmin: boolean
   createdAt: string
   _count: {
     bookings: number
@@ -70,6 +76,13 @@ export default function AdminAccountsPage() {
   const [creating, setCreating] = useState(false)
   const [createError, setCreateError] = useState('')
   const [createdUser, setCreatedUser] = useState<{ name: string; phone: string; password: string } | null>(null)
+
+  // Delete account state
+  const [deletingUser, setDeletingUser] = useState<User | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  // Admin toggle state
+  const [togglingAdmin, setTogglingAdmin] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -207,6 +220,60 @@ export default function AdminAccountsPage() {
   const copyCredentials = () => {
     if (createdUser) {
       navigator.clipboard.writeText(`Phone: ${createdUser.phone}\nPassword: ${createdUser.password}`)
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    if (!deletingUser) return
+
+    setDeleting(true)
+
+    try {
+      const res = await fetch('/api/admin/accounts', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: deletingUser.id }),
+      })
+
+      if (res.ok) {
+        setDeletingUser(null)
+        fetchUsers()
+      } else {
+        const data = await res.json()
+        alert(data.error || t('failedToDelete'))
+      }
+    } catch (error) {
+      console.error('Error deleting account:', error)
+      alert(t('failedToDelete'))
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  const handleToggleAdmin = async (user: User) => {
+    setTogglingAdmin(user.id)
+
+    try {
+      const res = await fetch('/api/admin/accounts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          isAdmin: !user.isAdmin,
+        }),
+      })
+
+      if (res.ok) {
+        fetchUsers()
+      } else {
+        const data = await res.json()
+        alert(data.error || t('failedToUpdateAdmin'))
+      }
+    } catch (error) {
+      console.error('Error toggling admin:', error)
+      alert(t('failedToUpdateAdmin'))
+    } finally {
+      setTogglingAdmin(null)
     }
   }
 
@@ -353,8 +420,15 @@ export default function AdminAccountsPage() {
                           #{user.uid}
                           <Pencil className="w-3 h-3" />
                         </button>
-                        {isAdmin(user.email) && (
+                        {user.isSuperAdmin && (
+                          <Badge className="bg-purple-100 text-purple-700 border-0">
+                            <ShieldCheck className="w-3 h-3 mr-1" />
+                            {t('superAdmin')}
+                          </Badge>
+                        )}
+                        {user.isAdmin && !user.isSuperAdmin && (
                           <Badge className="bg-green-100 text-green-700 border-0">
+                            <Shield className="w-3 h-3 mr-1" />
                             {t('admin')}
                           </Badge>
                         )}
@@ -374,11 +448,49 @@ export default function AdminAccountsPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="flex gap-2">
+                    <div className="text-right space-y-2">
+                      <div className="flex gap-2 justify-end">
                         <Badge variant="outline" className="bg-blue-50 text-blue-700">
                           {user._count.bookings} {t('bookings')}
                         </Badge>
+                      </div>
+                      <div className="flex gap-2 justify-end">
+                        {/* Admin toggle button - not shown for superadmins */}
+                        {!user.isSuperAdmin && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleToggleAdmin(user)}
+                            disabled={togglingAdmin === user.id}
+                            className={user.isAdmin ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
+                          >
+                            {togglingAdmin === user.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : user.isAdmin ? (
+                              <>
+                                <ShieldOff className="w-4 h-4 mr-1" />
+                                {t('removeAdmin')}
+                              </>
+                            ) : (
+                              <>
+                                <Shield className="w-4 h-4 mr-1" />
+                                {t('makeAdmin')}
+                              </>
+                            )}
+                          </Button>
+                        )}
+                        {/* Delete button - not shown for superadmins or self */}
+                        {!user.isSuperAdmin && session?.user?.email !== user.email && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDeletingUser(user)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            {t('deleteAccount')}
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -542,6 +654,50 @@ export default function AdminAccountsPage() {
               </DialogFooter>
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Account Confirmation Dialog */}
+      <Dialog open={!!deletingUser} onOpenChange={(open) => !open && setDeletingUser(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <Trash2 className="w-5 h-5" />
+              {t('deleteAccount')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('deleteConfirm')}
+            </DialogDescription>
+          </DialogHeader>
+          {deletingUser && (
+            <div className="py-4">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="font-medium text-gray-900">{deletingUser.name}</p>
+                <p className="text-sm text-gray-500">{deletingUser.email}</p>
+                <p className="text-sm text-gray-500">{deletingUser.phone}</p>
+                <p className="text-xs text-gray-400 mt-2">
+                  {deletingUser._count.bookings} {t('bookings')}
+                </p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingUser(null)}>
+              {tAdmin('cancel')}
+            </Button>
+            <Button
+              onClick={handleDeleteAccount}
+              disabled={deleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deleting ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Trash2 className="w-4 h-4 mr-2" />
+              )}
+              {t('deleteAccount')}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

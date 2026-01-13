@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
-import { isAdmin } from '@/lib/admin'
+import { isAdmin, isSuperAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 
@@ -21,6 +21,7 @@ export async function GET() {
         name: true,
         email: true,
         phone: true,
+        isAdmin: true,
         createdAt: true,
         _count: {
           select: {
@@ -32,10 +33,12 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     })
 
-    // Serialize BigInt uid to string
+    // Serialize BigInt uid to string and add superAdmin flag
     const serializedUsers = users.map(u => ({
       ...u,
       uid: u.uid.toString(),
+      isAdmin: u.isAdmin || isSuperAdmin(u.email),
+      isSuperAdmin: isSuperAdmin(u.email),
     }))
 
     return NextResponse.json({ users: serializedUsers })
@@ -149,6 +152,223 @@ export async function POST(request: NextRequest) {
     console.error('Error creating account:', error)
     return NextResponse.json(
       { error: 'Failed to create account' },
+      { status: 500 }
+    )
+  }
+}
+
+// PATCH - Update user UID
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || !isAdmin(session.user.email)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { userId, newUid } = body
+
+    if (!userId || !newUid) {
+      return NextResponse.json(
+        { error: 'User ID and new UID are required' },
+        { status: 400 }
+      )
+    }
+
+    // Check if UID is already in use
+    const existingUser = await prisma.user.findUnique({
+      where: { uid: BigInt(newUid) },
+    })
+
+    if (existingUser && existingUser.id !== userId) {
+      return NextResponse.json(
+        { error: 'UID is already in use by another user' },
+        { status: 400 }
+      )
+    }
+
+    // Update the user's UID
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { uid: BigInt(newUid) },
+      select: {
+        id: true,
+        uid: true,
+        name: true,
+        email: true,
+      },
+    })
+
+    return NextResponse.json({
+      success: true,
+      user: {
+        ...updatedUser,
+        uid: updatedUser.uid.toString(),
+      },
+    })
+  } catch (error) {
+    console.error('Error updating UID:', error)
+    return NextResponse.json(
+      { error: 'Failed to update UID' },
+      { status: 500 }
+    )
+  }
+}
+
+// PUT - Toggle admin status
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || !isAdmin(session.user.email)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { userId, isAdmin: makeAdmin } = body
+
+    if (!userId || typeof makeAdmin !== 'boolean') {
+      return NextResponse.json(
+        { error: 'User ID and admin status are required' },
+        { status: 400 }
+      )
+    }
+
+    // Get the user to check if they're a superadmin
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      )
+    }
+
+    // Prevent removing admin from superadmins
+    if (!makeAdmin && isSuperAdmin(user.email)) {
+      return NextResponse.json(
+        { error: 'Cannot remove admin status from superadmins' },
+        { status: 400 }
+      )
+    }
+
+    // Update the user's admin status
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { isAdmin: makeAdmin },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        isAdmin: true,
+      },
+    })
+
+    return NextResponse.json({
+      success: true,
+      user: {
+        ...updatedUser,
+        isAdmin: updatedUser.isAdmin || isSuperAdmin(updatedUser.email),
+        isSuperAdmin: isSuperAdmin(updatedUser.email),
+      },
+    })
+  } catch (error) {
+    console.error('Error toggling admin status:', error)
+    return NextResponse.json(
+      { error: 'Failed to update admin status' },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE - Delete user account
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || !isAdmin(session.user.email)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { userId } = body
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'User ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Get the user to check if they're a superadmin
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true, name: true },
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      )
+    }
+
+    // Prevent deleting superadmins
+    if (isSuperAdmin(user.email)) {
+      return NextResponse.json(
+        { error: 'Cannot delete superadmin accounts' },
+        { status: 400 }
+      )
+    }
+
+    // Prevent self-deletion
+    if (session.user.email === user.email) {
+      return NextResponse.json(
+        { error: 'Cannot delete your own account' },
+        { status: 400 }
+      )
+    }
+
+    // Delete related records first (to avoid foreign key constraints)
+    await prisma.lessonRequest.deleteMany({
+      where: { memberId: userId },
+    })
+
+    await prisma.booking.deleteMany({
+      where: { userId },
+    })
+
+    await prisma.recurringBooking.deleteMany({
+      where: { userId },
+    })
+
+    // Remove user from lesson sessions (many-to-many)
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        lessonSessions: {
+          set: [],
+        },
+      },
+    })
+
+    // Delete the user
+    await prisma.user.delete({
+      where: { id: userId },
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: `User ${user.name} has been deleted`,
+    })
+  } catch (error) {
+    console.error('Error deleting account:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete account' },
       { status: 500 }
     )
   }

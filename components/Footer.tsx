@@ -48,7 +48,7 @@ export function Footer() {
                 <Phone className="w-5 h-5 flex-shrink-0" />
                 <div className="text-sm">
                   <div>{t('courtBookings')}: 011-6868 8508</div>
-                  <div>{t('lessonsEnquiry')}: 012-7575 8508</div>
+                  <div>{t('lessonsEnquiry')}: 011-7575 8508</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">

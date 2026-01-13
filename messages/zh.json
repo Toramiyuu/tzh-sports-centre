@@ -63,7 +63,7 @@
       "contact": {
         "title": "联系方式",
         "bookings": "球场预订: 011-6868 8508",
-        "lessons": "课程咨询: 012-7575 8508"
+        "lessons": "课程咨询: 011-7575 8508"
       }
     },
     "cta": {
@@ -431,7 +431,18 @@
       "createError": "创建账户失败",
       "phoneRequired": "请输入姓名和电话号码",
       "phoneExists": "电话号码已注册",
-      "emailExists": "电子邮件已注册"
+      "emailExists": "电子邮件已注册",
+      "deleteAccount": "删除账户",
+      "deleteConfirm": "确定要删除此账户吗？这将同时删除所有预订和数据。此操作无法撤销。",
+      "deleteSuccess": "账户删除成功",
+      "failedToDelete": "删除账户失败",
+      "makeAdmin": "设为管理员",
+      "removeAdmin": "移除管理员",
+      "adminUpdated": "管理员状态已更新",
+      "failedToUpdateAdmin": "更新管理员状态失败",
+      "superAdmin": "超级管理员",
+      "cannotDeleteSuperAdmin": "无法删除超级管理员账户",
+      "cannotRemoveSuperAdmin": "无法移除超级管理员的管理员状态"
     },
     "membersList": {
       "title": "培训会员",

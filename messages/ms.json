@@ -53,7 +53,7 @@
       "hours": {
         "title": "Waktu Operasi",
         "weekdays": "Hari Bekerja: 3 PTG - 12 MLM",
-        "weekends": "Hujung Minggu & Cuti: 9 PG - 12 MLM"
+        "weekends": "Hujung Minggu & Cuti Umum: 9 PG - 12 MLM"
       },
       "location": {
         "title": "Lokasi",
@@ -63,7 +63,7 @@
       "contact": {
         "title": "Hubungi",
         "bookings": "Tempahan: 011-6868 8508",
-        "lessons": "Kelas: 012-7575 8508"
+        "lessons": "Kelas: 011-7575 8508"
       }
     },
     "cta": {
@@ -488,7 +488,18 @@
       "optional": "pilihan",
       "defaultPasswordNote": "Kata laluan lalai ialah 'temp1234'. Pelanggan harus menukarnya selepas log masuk pertama.",
       "create": "Cipta Akaun",
-      "failedToCreate": "Gagal mencipta akaun"
+      "failedToCreate": "Gagal mencipta akaun",
+      "deleteAccount": "Padam Akaun",
+      "deleteConfirm": "Adakah anda pasti ingin memadam akaun ini? Ini juga akan memadam semua tempahan dan data mereka. Tindakan ini tidak boleh dibatalkan.",
+      "deleteSuccess": "Akaun berjaya dipadam",
+      "failedToDelete": "Gagal memadam akaun",
+      "makeAdmin": "Jadikan Admin",
+      "removeAdmin": "Buang Admin",
+      "adminUpdated": "Status admin dikemaskini",
+      "failedToUpdateAdmin": "Gagal mengemaskini status admin",
+      "superAdmin": "Super Admin",
+      "cannotDeleteSuperAdmin": "Tidak boleh memadam akaun superadmin",
+      "cannotRemoveSuperAdmin": "Tidak boleh membuang status admin daripada superadmin"
     },
     "membersList": {
       "title": "Ahli Latihan",

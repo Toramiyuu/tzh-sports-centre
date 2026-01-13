@@ -71,7 +71,7 @@ export default function LessonsPage() {
             <p className="text-lg md:text-xl text-blue-100 mb-8">
               {t('subtitle')}
             </p>
-            <a href="https://wa.me/601275758508" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
                 <Phone className="w-5 h-5 mr-2" />
                 WhatsApp
@@ -210,10 +210,10 @@ export default function LessonsPage() {
             {t('request.title')}
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <a href="https://wa.me/601275758508" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
                 <Phone className="w-5 h-5 mr-2" />
-                WhatsApp: 012-7575 8508
+                WhatsApp: 011-7575 8508
               </Button>
             </a>
             <Link href="/booking">

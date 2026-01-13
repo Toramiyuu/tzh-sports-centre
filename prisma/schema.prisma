@@ -22,6 +22,9 @@ model User {
   bookings          Booking[]
   recurringBookings RecurringBooking[]
 
+  // Admin flag (in addition to hardcoded list)
+  isAdmin           Boolean            @default(false) @map("is_admin")
+
   // Member/Student fields
   isMember          Boolean            @default(false) @map("is_member")
   skillLevel        String?            @map("skill_level") // beginner, intermediate, advanced
