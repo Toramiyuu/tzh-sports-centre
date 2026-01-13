@@ -28,6 +28,8 @@ import {
   RefreshCw,
   Pencil,
   Check,
+  UserPlus,
+  Copy,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
@@ -59,6 +61,15 @@ export default function AdminAccountsPage() {
   const [newUid, setNewUid] = useState('')
   const [updating, setUpdating] = useState(false)
   const [uidError, setUidError] = useState('')
+
+  // Create account state
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [newPhone, setNewPhone] = useState('')
+  const [newEmail, setNewEmail] = useState('')
+  const [creating, setCreating] = useState(false)
+  const [createError, setCreateError] = useState('')
+  const [createdUser, setCreatedUser] = useState<{ name: string; phone: string; password: string } | null>(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -144,6 +155,61 @@ export default function AdminAccountsPage() {
     }
   }
 
+  const handleCreateAccount = async () => {
+    if (!newName || !newPhone) return
+
+    setCreating(true)
+    setCreateError('')
+
+    try {
+      const res = await fetch('/api/admin/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newName,
+          phone: newPhone,
+          email: newEmail || undefined,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        setCreatedUser({
+          name: newName,
+          phone: newPhone,
+          password: data.defaultPassword,
+        })
+        setNewName('')
+        setNewPhone('')
+        setNewEmail('')
+        fetchUsers()
+      } else {
+        setCreateError(data.error || t('failedToCreate'))
+      }
+    } catch (error) {
+      console.error('Error creating account:', error)
+      setCreateError(t('failedToCreate'))
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const closeCreateDialog = () => {
+    setCreateDialogOpen(false)
+    setCreatedUser(null)
+    setNewName('')
+    setNewPhone('')
+    setNewEmail('')
+    setCreateError('')
+  }
+
+  const copyCredentials = () => {
+    if (createdUser) {
+      navigator.clipboard.writeText(`Phone: ${createdUser.phone}\nPassword: ${createdUser.password}`)
+    }
+  }
+
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -168,10 +234,16 @@ export default function AdminAccountsPage() {
             <p className="text-gray-600">{t('description')}</p>
           </div>
         </div>
-        <Button onClick={fetchUsers} variant="outline" size="sm">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          {tAdmin('refresh')}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setCreateDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700">
+            <UserPlus className="w-4 h-4 mr-2" />
+            {t('createAccount')}
+          </Button>
+          <Button onClick={fetchUsers} variant="outline" size="sm">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            {tAdmin('refresh')}
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -371,6 +443,105 @@ export default function AdminAccountsPage() {
               {t('saveUid')}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Account Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={(open) => !open && closeCreateDialog()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-blue-600" />
+              {t('createAccount')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('createAccountDescription')}
+            </DialogDescription>
+          </DialogHeader>
+
+          {createdUser ? (
+            // Success state - show credentials
+            <div className="space-y-4 py-4">
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="font-medium text-green-800 mb-2">{t('accountCreated')}</p>
+                <div className="space-y-2 text-sm">
+                  <p><span className="text-gray-600">{t('name')}:</span> <span className="font-medium">{createdUser.name}</span></p>
+                  <p><span className="text-gray-600">{t('phone')}:</span> <span className="font-mono font-medium">{createdUser.phone}</span></p>
+                  <p><span className="text-gray-600">{t('defaultPassword')}:</span> <span className="font-mono font-medium text-blue-600">{createdUser.password}</span></p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500">{t('shareCredentials')}</p>
+              <DialogFooter>
+                <Button variant="outline" onClick={copyCredentials}>
+                  <Copy className="w-4 h-4 mr-2" />
+                  {t('copyCredentials')}
+                </Button>
+                <Button onClick={closeCreateDialog} className="bg-blue-600 hover:bg-blue-700">
+                  {t('done')}
+                </Button>
+              </DialogFooter>
+            </div>
+          ) : (
+            // Form state
+            <>
+              <div className="space-y-4 py-4">
+                {createError && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+                    {createError}
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label htmlFor="newName">{t('name')} *</Label>
+                  <Input
+                    id="newName"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder={t('namePlaceholder')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newPhone">{t('phone')} *</Label>
+                  <Input
+                    id="newPhone"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    placeholder="012-345 6789"
+                  />
+                  <p className="text-xs text-gray-500">{t('phoneFormat')}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newEmail">{t('email')} ({t('optional')})</Label>
+                  <Input
+                    id="newEmail"
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="user@example.com"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 bg-blue-50 p-2 rounded">
+                  {t('defaultPasswordNote')}
+                </p>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={closeCreateDialog}>
+                  {tAdmin('cancel')}
+                </Button>
+                <Button
+                  onClick={handleCreateAccount}
+                  disabled={creating || !newName || !newPhone}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {creating ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  ) : (
+                    <UserPlus className="w-4 h-4 mr-2" />
+                  )}
+                  {t('create')}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

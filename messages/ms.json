@@ -184,11 +184,13 @@
       "title": "Selamat Kembali",
       "subtitle": "Log masuk ke akaun anda",
       "email": "Emel",
+      "emailOrPhone": "Emel atau Nombor Telefon",
+      "emailOrPhonePlaceholder": "anda@contoh.com atau 012-345 6789",
       "password": "Kata Laluan",
       "forgotPassword": "Lupa kata laluan?",
       "noAccount": "Tiada akaun?",
       "signUp": "Daftar",
-      "error": "Emel atau kata laluan tidak sah"
+      "error": "Emel/telefon atau kata laluan tidak sah"
     },
     "register": {
       "title": "Cipta Akaun",
@@ -473,7 +475,20 @@
       "uidHelp": "Masukkan pengecam nombor unik (cth., 100000001)",
       "saveUid": "Simpan UID",
       "uidMustBeNumber": "UID mesti nombor",
-      "failedToUpdateUid": "Gagal mengemaskini UID"
+      "failedToUpdateUid": "Gagal mengemaskini UID",
+      "createAccount": "Cipta Akaun",
+      "createAccountDescription": "Cipta akaun sementara untuk pelanggan walk-in. Mereka boleh log masuk dengan nombor telefon.",
+      "accountCreated": "Akaun berjaya dicipta!",
+      "defaultPassword": "Kata Laluan Lalai",
+      "shareCredentials": "Kongsi maklumat ini dengan pelanggan supaya mereka boleh log masuk.",
+      "copyCredentials": "Salin Maklumat",
+      "done": "Selesai",
+      "namePlaceholder": "Masukkan nama pelanggan",
+      "phoneFormat": "Format Malaysia: 01x-xxx xxxx",
+      "optional": "pilihan",
+      "defaultPasswordNote": "Kata laluan lalai ialah 'temp1234'. Pelanggan harus menukarnya selepas log masuk pertama.",
+      "create": "Cipta Akaun",
+      "failedToCreate": "Gagal mencipta akaun"
     },
     "membersList": {
       "title": "Ahli Latihan",

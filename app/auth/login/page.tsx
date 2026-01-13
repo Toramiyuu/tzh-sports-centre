@@ -18,7 +18,7 @@ function LoginForm() {
   const t = useTranslations('auth.login')
   const tCommon = useTranslations('common')
 
-  const [email, setEmail] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -30,7 +30,7 @@ function LoginForm() {
 
     try {
       const result = await signIn('credentials', {
-        email,
+        identifier,
         password,
         redirect: false,
       })
@@ -64,13 +64,13 @@ function LoginForm() {
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="email">{t('email')}</Label>
+            <Label htmlFor="identifier">{t('emailOrPhone')}</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="identifier"
+              type="text"
+              placeholder={t('emailOrPhonePlaceholder')}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               required
               disabled={loading}
             />

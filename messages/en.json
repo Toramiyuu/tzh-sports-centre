@@ -184,11 +184,13 @@
       "title": "Welcome Back",
       "subtitle": "Sign in to your account",
       "email": "Email",
+      "emailOrPhone": "Email or Phone Number",
+      "emailOrPhonePlaceholder": "you@example.com or 012-345 6789",
       "password": "Password",
       "forgotPassword": "Forgot password?",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up",
-      "error": "Invalid email or password"
+      "error": "Invalid email/phone or password"
     },
     "register": {
       "title": "Create Account",
@@ -473,7 +475,20 @@
       "uidHelp": "Enter a unique numeric identifier (e.g., 100000001)",
       "saveUid": "Save UID",
       "uidMustBeNumber": "UID must be a number",
-      "failedToUpdateUid": "Failed to update UID"
+      "failedToUpdateUid": "Failed to update UID",
+      "createAccount": "Create Account",
+      "createAccountDescription": "Create a temporary account for a walk-in customer. They can log in with their phone number.",
+      "accountCreated": "Account created successfully!",
+      "defaultPassword": "Default Password",
+      "shareCredentials": "Share these credentials with the customer so they can log in.",
+      "copyCredentials": "Copy Credentials",
+      "done": "Done",
+      "namePlaceholder": "Enter customer name",
+      "phoneFormat": "Malaysian format: 01x-xxx xxxx",
+      "optional": "optional",
+      "defaultPasswordNote": "Default password is 'temp1234'. Customer should change it after first login.",
+      "create": "Create Account",
+      "failedToCreate": "Failed to create account"
     },
     "membersList": {
       "title": "Training Members",
