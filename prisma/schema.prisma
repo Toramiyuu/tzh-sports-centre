@@ -11,6 +11,7 @@ datasource db {
 
 model User {
   id                String             @id @default(cuid())
+  uid               BigInt             @unique @default(autoincrement())
   email             String             @unique
   passwordHash      String             @map("password_hash")
   name              String
@@ -25,6 +26,13 @@ model User {
   skillLevel        String?            @map("skill_level") // beginner, intermediate, advanced
   lessonSessions    LessonSession[]    @relation("StudentLessons")
   lessonRequests    LessonRequest[]
+
+  // Credit and notification preferences
+  creditBalance          Float    @default(0) @map("credit_balance")
+  notifyBookingConfirm   Boolean  @default(true) @map("notify_booking_confirm")
+  notifyBookingReminder  Boolean  @default(true) @map("notify_booking_reminder")
+  notifyCancellation     Boolean  @default(true) @map("notify_cancellation")
+  notifyLessonUpdates    Boolean  @default(true) @map("notify_lesson_updates")
 
   @@map("users")
 }

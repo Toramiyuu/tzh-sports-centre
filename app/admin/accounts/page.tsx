@@ -23,6 +23,7 @@ import Link from 'next/link'
 
 interface User {
   id: string
+  uid: string
   name: string
   email: string
   phone: string
@@ -72,6 +73,7 @@ export default function AdminAccountsPage() {
   const filteredUsers = users.filter((user) => {
     const query = searchQuery.toLowerCase()
     return (
+      user.uid.includes(query) ||
       user.name.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query) ||
       user.phone.toLowerCase().includes(query)
@@ -204,6 +206,9 @@ export default function AdminAccountsPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="font-mono text-xs">
+                          #{user.uid}
+                        </Badge>
                         <span className="font-medium text-gray-900">{user.name}</span>
                         {isAdmin(user.email) && (
                           <Badge className="bg-green-100 text-green-700 border-0">

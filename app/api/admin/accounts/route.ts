@@ -14,6 +14,7 @@ export async function GET() {
     const users = await prisma.user.findMany({
       select: {
         id: true,
+        uid: true,
         name: true,
         email: true,
         phone: true,
@@ -28,7 +29,13 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json({ users })
+    // Serialize BigInt uid to string
+    const serializedUsers = users.map(u => ({
+      ...u,
+      uid: u.uid.toString(),
+    }))
+
+    return NextResponse.json({ users: serializedUsers })
   } catch (error) {
     console.error('Error fetching accounts:', error)
     return NextResponse.json(

@@ -15,6 +15,7 @@ export async function GET() {
     const users = await prisma.user.findMany({
       select: {
         id: true,
+        uid: true,
         name: true,
         email: true,
         phone: true,
@@ -33,11 +34,17 @@ export async function GET() {
       ],
     })
 
-    // Get members with their lesson session counts
-    const members = users.filter(u => u.isMember)
-    const nonMembers = users.filter(u => !u.isMember)
+    // Serialize BigInt uid to string
+    const serializedUsers = users.map(u => ({
+      ...u,
+      uid: u.uid.toString(),
+    }))
 
-    return NextResponse.json({ members, nonMembers, all: users })
+    // Get members with their lesson session counts
+    const members = serializedUsers.filter(u => u.isMember)
+    const nonMembers = serializedUsers.filter(u => !u.isMember)
+
+    return NextResponse.json({ members, nonMembers, all: serializedUsers })
   } catch (error) {
     console.error('Error fetching members:', error)
     return NextResponse.json(
@@ -82,6 +89,7 @@ export async function PATCH(request: NextRequest) {
       data: updateData,
       select: {
         id: true,
+        uid: true,
         name: true,
         email: true,
         phone: true,
@@ -90,7 +98,7 @@ export async function PATCH(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({ user: updatedUser })
+    return NextResponse.json({ user: { ...updatedUser, uid: updatedUser.uid.toString() } })
   } catch (error) {
     console.error('Error updating member:', error)
     return NextResponse.json(

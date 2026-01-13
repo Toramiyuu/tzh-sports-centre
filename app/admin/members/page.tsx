@@ -32,6 +32,7 @@ import Link from 'next/link'
 
 interface User {
   id: string
+  uid: string
   name: string
   email: string
   phone: string
@@ -131,6 +132,7 @@ export default function AdminMembersPage() {
   const filteredUsers = displayUsers.filter((user) => {
     const query = searchQuery.toLowerCase()
     return (
+      user.uid.includes(query) ||
       user.name.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query) ||
       user.phone.toLowerCase().includes(query)
@@ -297,6 +299,9 @@ export default function AdminMembersPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
+                        <Badge variant="outline" className="font-mono text-xs">
+                          #{user.uid}
+                        </Badge>
                         <span className="font-medium text-gray-900">{user.name}</span>
                         {user.isMember && (
                           <Badge className="bg-blue-600 text-white border-0">
