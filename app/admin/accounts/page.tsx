@@ -91,6 +91,7 @@ export default function AdminAccountsPage() {
   const filteredUsers = users.filter((user) => {
     const query = searchQuery.toLowerCase()
     return (
+      user.uid.includes(query) ||
       user.name.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query) ||
       user.phone.toLowerCase().includes(query) ||
@@ -269,6 +270,9 @@ export default function AdminAccountsPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="font-mono text-xs">
+                          #{user.uid}
+                        </Badge>
                         <span className="font-medium text-gray-900">{user.name}</span>
                         <button
                           onClick={() => openEditUid(user)}

@@ -34,10 +34,10 @@ export async function GET() {
       ],
     })
 
-    // Convert BigInt uid to string for JSON serialization
-    const serializedUsers = users.map(user => ({
-      ...user,
-      uid: user.uid.toString(),
+    // Serialize BigInt uid to string
+    const serializedUsers = users.map(u => ({
+      ...u,
+      uid: u.uid.toString(),
     }))
 
     // Get members with their lesson session counts
@@ -89,6 +89,7 @@ export async function PATCH(request: NextRequest) {
       data: updateData,
       select: {
         id: true,
+        uid: true,
         name: true,
         email: true,
         phone: true,
@@ -97,7 +98,7 @@ export async function PATCH(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({ user: updatedUser })
+    return NextResponse.json({ user: { ...updatedUser, uid: updatedUser.uid.toString() } })
   } catch (error) {
     console.error('Error updating member:', error)
     return NextResponse.json(
