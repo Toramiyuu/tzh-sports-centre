@@ -190,6 +190,7 @@
       "forgotPassword": "忘记密码？",
       "noAccount": "还没有账户？",
       "signUp": "注册",
+      "signIn": "登录",
       "error": "邮箱/电话或密码错误"
     },
     "register": {

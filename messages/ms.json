@@ -190,6 +190,7 @@
       "forgotPassword": "Lupa kata laluan?",
       "noAccount": "Tiada akaun?",
       "signUp": "Daftar",
+      "signIn": "Log masuk",
       "error": "Emel/telefon atau kata laluan tidak sah"
     },
     "register": {

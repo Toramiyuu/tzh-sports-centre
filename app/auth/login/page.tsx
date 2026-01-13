@@ -96,7 +96,7 @@ function LoginForm() {
                 {tCommon('loading')}
               </>
             ) : (
-              t('signUp')
+              t('signIn')
             )}
           </Button>
           <p className="text-sm text-gray-600 text-center">

@@ -190,6 +190,7 @@
       "forgotPassword": "Forgot password?",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up",
+      "signIn": "Sign in",
       "error": "Invalid email/phone or password"
     },
     "register": {
