@@ -23,6 +23,42 @@ export async function GET() {
         phone: true,
         isAdmin: true,
         createdAt: true,
+        bookings: {
+          select: {
+            id: true,
+            bookingDate: true,
+            startTime: true,
+            endTime: true,
+            totalAmount: true,
+            sport: true,
+            status: true,
+            court: {
+              select: {
+                name: true,
+              },
+            },
+          },
+          orderBy: { bookingDate: 'desc' },
+          take: 10, // Last 10 bookings for history
+        },
+        recurringBookings: {
+          select: {
+            id: true,
+            dayOfWeek: true,
+            startTime: true,
+            endTime: true,
+            sport: true,
+            label: true,
+            startDate: true,
+            endDate: true,
+            isActive: true,
+            court: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             bookings: true,
@@ -33,13 +69,45 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     })
 
-    // Serialize BigInt uid to string and add superAdmin flag
-    const serializedUsers = users.map(u => ({
-      ...u,
-      uid: u.uid.toString(),
-      isAdmin: u.isAdmin || isSuperAdmin(u.email),
-      isSuperAdmin: isSuperAdmin(u.email),
-    }))
+    // Calculate total spent and combined booking count for each user
+    const serializedUsers = users.map(u => {
+      // Calculate total spent from bookings
+      const totalSpent = u.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0)
+
+      // Count recurring booking instances (approximate based on weeks since start)
+      const recurringInstances = u.recurringBookings.reduce((count, rb) => {
+        if (!rb.isActive) return count
+        const startDate = new Date(rb.startDate)
+        const endDate = rb.endDate ? new Date(rb.endDate) : new Date()
+        const weeks = Math.ceil((endDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000))
+        return count + Math.max(weeks, 1)
+      }, 0)
+
+      return {
+        id: u.id,
+        uid: u.uid.toString(),
+        name: u.name,
+        email: u.email,
+        phone: u.phone,
+        isAdmin: u.isAdmin || isSuperAdmin(u.email),
+        isSuperAdmin: isSuperAdmin(u.email),
+        createdAt: u.createdAt,
+        totalSpent,
+        totalBookings: u._count.bookings + recurringInstances,
+        regularBookings: u._count.bookings,
+        recurringBookingsCount: u._count.recurringBookings,
+        recurringInstances,
+        recentBookings: u.bookings.map(b => ({
+          ...b,
+          courtName: b.court.name,
+        })),
+        recurringBookings: u.recurringBookings.map(rb => ({
+          ...rb,
+          courtName: rb.court.name,
+        })),
+        _count: u._count,
+      }
+    })
 
     return NextResponse.json({ users: serializedUsers })
   } catch (error) {

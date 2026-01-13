@@ -451,7 +451,17 @@
       "confirmBulkDeleteTitle": "删除多个账户",
       "confirmBulkDeleteDescription": "您确定要删除 {count} 个账户吗？这也将删除他们的所有预订和数据。",
       "bulkDeleteWarning": "此操作无法撤销。所有选中的账户及其数据将被永久删除。",
-      "deleteAll": "全部删除"
+      "deleteAll": "全部删除",
+      "totalSpent": "总消费",
+      "regularBookings": "普通",
+      "recurringBookings": "定期",
+      "recentBookings": "最近预订",
+      "activeRecurring": "活跃定期预订",
+      "date": "日期",
+      "time": "时间",
+      "court": "场地",
+      "sport": "运动",
+      "amount": "金额"
     },
     "membersList": {
       "title": "培训会员",

@@ -508,7 +508,17 @@
       "confirmBulkDeleteTitle": "Padam Berbilang Akaun",
       "confirmBulkDeleteDescription": "Adakah anda pasti mahu memadam {count} akaun? Ini juga akan memadam semua tempahan dan data mereka.",
       "bulkDeleteWarning": "Tindakan ini tidak boleh dibatalkan. Semua akaun yang dipilih dan data mereka akan dipadam secara kekal.",
-      "deleteAll": "Padam Semua"
+      "deleteAll": "Padam Semua",
+      "totalSpent": "Jumlah Dibelanjakan",
+      "regularBookings": "Biasa",
+      "recurringBookings": "Berulang",
+      "recentBookings": "Tempahan Terkini",
+      "activeRecurring": "Tempahan Berulang Aktif",
+      "date": "Tarikh",
+      "time": "Masa",
+      "court": "Gelanggang",
+      "sport": "Sukan",
+      "amount": "Jumlah"
     },
     "membersList": {
       "title": "Ahli Latihan",

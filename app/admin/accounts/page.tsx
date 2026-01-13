@@ -35,10 +35,37 @@ import {
   ShieldOff,
   ShieldCheck,
   X,
+  ChevronDown,
+  ChevronUp,
+  DollarSign,
+  Clock,
+  Repeat,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+
+interface Booking {
+  id: string
+  bookingDate: string
+  startTime: string
+  endTime: string
+  totalAmount: number
+  sport: string
+  status: string
+  courtName: string
+}
+
+interface RecurringBooking {
+  id: string
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  sport: string
+  label: string | null
+  courtName: string
+  isActive: boolean
+}
 
 interface User {
   id: string
@@ -49,6 +76,13 @@ interface User {
   isAdmin: boolean
   isSuperAdmin: boolean
   createdAt: string
+  totalSpent: number
+  totalBookings: number
+  regularBookings: number
+  recurringBookingsCount: number
+  recurringInstances: number
+  recentBookings: Booking[]
+  recurringBookings: RecurringBooking[]
   _count: {
     bookings: number
     recurringBookings: number
@@ -90,6 +124,9 @@ export default function AdminAccountsPage() {
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set())
   const [bulkDeleteConfirmOpen, setBulkDeleteConfirmOpen] = useState(false)
   const [bulkDeleting, setBulkDeleting] = useState(false)
+
+  // Expanded user state
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -492,16 +529,19 @@ export default function AdminAccountsPage() {
               {filteredUsers.map((user) => {
                 const isSelected = selectedUserIds.has(user.id)
                 const canSelect = canSelectUser(user)
+                const isExpanded = expandedUserId === user.id
+                const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
                 return (
                   <div
                     key={user.id}
-                    className={`p-4 rounded-lg border transition-colors relative ${
+                    className={`rounded-lg border transition-all relative ${
                       isSelected
                         ? 'ring-2 ring-red-500 bg-red-50'
+                        : isExpanded
+                        ? 'bg-white ring-2 ring-blue-500'
                         : 'bg-gray-50 hover:bg-gray-100'
-                    } ${selectionMode && canSelect ? 'cursor-pointer' : ''}`}
-                    onClick={selectionMode && canSelect ? () => toggleUserSelection(user.id) : undefined}
+                    }`}
                   >
                     {/* Selection checkbox indicator */}
                     {selectionMode && canSelect && (
@@ -516,107 +556,279 @@ export default function AdminAccountsPage() {
                         <ShieldCheck className="w-3 h-3 text-gray-500" />
                       </div>
                     )}
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="font-mono text-xs">
-                            #{user.uid}
-                          </Badge>
-                          <span className="font-medium text-gray-900">{user.name}</span>
-                          {!selectionMode && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                openEditUid(user)
-                              }}
-                              className="text-xs font-mono text-gray-400 hover:text-blue-600 hover:bg-blue-50 px-1.5 py-0.5 rounded transition-colors flex items-center gap-1"
-                            >
+
+                    {/* Main card header - clickable */}
+                    <div
+                      className={`p-4 ${!selectionMode ? 'cursor-pointer' : ''} ${selectionMode && canSelect ? 'cursor-pointer' : ''}`}
+                      onClick={() => {
+                        if (selectionMode && canSelect) {
+                          toggleUserSelection(user.id)
+                        } else if (!selectionMode) {
+                          setExpandedUserId(isExpanded ? null : user.id)
+                        }
+                      }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="font-mono text-xs">
                               #{user.uid}
-                              <Pencil className="w-3 h-3" />
-                            </button>
-                          )}
-                          {user.isSuperAdmin && (
-                            <Badge className="bg-purple-100 text-purple-700 border-0">
-                              <ShieldCheck className="w-3 h-3 mr-1" />
-                              {t('superAdmin')}
                             </Badge>
-                          )}
-                          {user.isAdmin && !user.isSuperAdmin && (
-                            <Badge className="bg-green-100 text-green-700 border-0">
-                              <Shield className="w-3 h-3 mr-1" />
-                              {t('admin')}
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="mt-2 space-y-1">
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Mail className="w-4 h-4" />
-                            {user.email}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Phone className="w-4 h-4" />
-                            {user.phone}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Calendar className="w-4 h-4" />
-                            {t('registered')} {format(new Date(user.createdAt), 'MMM d, yyyy')}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right space-y-2">
-                        <div className="flex gap-2 justify-end">
-                          <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                            {user._count.bookings} {t('bookings')}
-                          </Badge>
-                        </div>
-                        {!selectionMode && (
-                          <div className="flex gap-2 justify-end">
-                            {/* Admin toggle button - not shown for superadmins */}
-                            {!user.isSuperAdmin && (
-                              <Button
-                                variant="outline"
-                                size="sm"
+                            <span className="font-medium text-gray-900">{user.name}</span>
+                            {!selectionMode && (
+                              <button
                                 onClick={(e) => {
                                   e.stopPropagation()
-                                  handleToggleAdmin(user)
+                                  openEditUid(user)
                                 }}
-                                disabled={togglingAdmin === user.id}
-                                className={user.isAdmin ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
+                                className="text-xs font-mono text-gray-400 hover:text-blue-600 hover:bg-blue-50 px-1.5 py-0.5 rounded transition-colors flex items-center gap-1"
                               >
-                                {togglingAdmin === user.id ? (
-                                  <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : user.isAdmin ? (
-                                  <>
-                                    <ShieldOff className="w-4 h-4 mr-1" />
-                                    {t('removeAdmin')}
-                                  </>
-                                ) : (
-                                  <>
-                                    <Shield className="w-4 h-4 mr-1" />
-                                    {t('makeAdmin')}
-                                  </>
-                                )}
-                              </Button>
+                                #{user.uid}
+                                <Pencil className="w-3 h-3" />
+                              </button>
                             )}
-                            {/* Delete button - not shown for superadmins or self */}
-                            {!user.isSuperAdmin && session?.user?.email !== user.email && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setDeletingUser(user)
-                                }}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                              >
-                                <Trash2 className="w-4 h-4 mr-1" />
-                                {t('deleteAccount')}
-                              </Button>
+                            {user.isSuperAdmin && (
+                              <Badge className="bg-purple-100 text-purple-700 border-0">
+                                <ShieldCheck className="w-3 h-3 mr-1" />
+                                {t('superAdmin')}
+                              </Badge>
+                            )}
+                            {user.isAdmin && !user.isSuperAdmin && (
+                              <Badge className="bg-green-100 text-green-700 border-0">
+                                <Shield className="w-3 h-3 mr-1" />
+                                {t('admin')}
+                              </Badge>
                             )}
                           </div>
-                        )}
+                          <div className="mt-2 space-y-1">
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <Mail className="w-4 h-4" />
+                              {user.email}
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <Phone className="w-4 h-4" />
+                              {user.phone}
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <Calendar className="w-4 h-4" />
+                              {t('registered')} {format(new Date(user.createdAt), 'MMM d, yyyy')}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right space-y-2">
+                          <div className="flex gap-2 justify-end items-center">
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                              {user.totalBookings} {t('bookings')}
+                            </Badge>
+                            <Badge variant="outline" className="bg-green-50 text-green-700">
+                              RM {user.totalSpent.toFixed(2)}
+                            </Badge>
+                            {!selectionMode && (
+                              isExpanded ? (
+                                <ChevronUp className="w-5 h-5 text-gray-400" />
+                              ) : (
+                                <ChevronDown className="w-5 h-5 text-gray-400" />
+                              )
+                            )}
+                          </div>
+                          {!selectionMode && !isExpanded && (
+                            <div className="flex gap-2 justify-end">
+                              {!user.isSuperAdmin && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleToggleAdmin(user)
+                                  }}
+                                  disabled={togglingAdmin === user.id}
+                                  className={user.isAdmin ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
+                                >
+                                  {togglingAdmin === user.id ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                  ) : user.isAdmin ? (
+                                    <>
+                                      <ShieldOff className="w-4 h-4 mr-1" />
+                                      {t('removeAdmin')}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Shield className="w-4 h-4 mr-1" />
+                                      {t('makeAdmin')}
+                                    </>
+                                  )}
+                                </Button>
+                              )}
+                              {!user.isSuperAdmin && session?.user?.email !== user.email && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setDeletingUser(user)
+                                  }}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-1" />
+                                  {t('deleteAccount')}
+                                </Button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
+
+                    {/* Expanded details */}
+                    {isExpanded && !selectionMode && (
+                      <div className="border-t px-4 pb-4 space-y-4">
+                        {/* Stats summary */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
+                          <div className="bg-blue-50 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-blue-600 mb-1">
+                              <Calendar className="w-4 h-4" />
+                              <span className="text-xs font-medium">{t('totalBookings')}</span>
+                            </div>
+                            <p className="text-xl font-bold text-blue-700">{user.totalBookings}</p>
+                          </div>
+                          <div className="bg-green-50 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-green-600 mb-1">
+                              <DollarSign className="w-4 h-4" />
+                              <span className="text-xs font-medium">{t('totalSpent')}</span>
+                            </div>
+                            <p className="text-xl font-bold text-green-700">RM {user.totalSpent.toFixed(2)}</p>
+                          </div>
+                          <div className="bg-purple-50 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-purple-600 mb-1">
+                              <Clock className="w-4 h-4" />
+                              <span className="text-xs font-medium">{t('regularBookings')}</span>
+                            </div>
+                            <p className="text-xl font-bold text-purple-700">{user.regularBookings}</p>
+                          </div>
+                          <div className="bg-orange-50 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-orange-600 mb-1">
+                              <Repeat className="w-4 h-4" />
+                              <span className="text-xs font-medium">{t('recurringBookings')}</span>
+                            </div>
+                            <p className="text-xl font-bold text-orange-700">{user.recurringBookingsCount}</p>
+                          </div>
+                        </div>
+
+                        {/* Recent bookings */}
+                        {user.recentBookings && user.recentBookings.length > 0 && (
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">{t('recentBookings')}</h4>
+                            <div className="bg-gray-50 rounded-lg overflow-hidden">
+                              <table className="w-full text-sm">
+                                <thead className="bg-gray-100">
+                                  <tr>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('date')}</th>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('time')}</th>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('court')}</th>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('sport')}</th>
+                                    <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">{t('amount')}</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                  {user.recentBookings.map((booking) => (
+                                    <tr key={booking.id} className="hover:bg-gray-100">
+                                      <td className="px-3 py-2 text-gray-900">
+                                        {format(new Date(booking.bookingDate), 'MMM d, yyyy')}
+                                      </td>
+                                      <td className="px-3 py-2 text-gray-600">
+                                        {booking.startTime} - {booking.endTime}
+                                      </td>
+                                      <td className="px-3 py-2 text-gray-600">{booking.courtName}</td>
+                                      <td className="px-3 py-2">
+                                        <Badge variant="outline" className="text-xs capitalize">
+                                          {booking.sport}
+                                        </Badge>
+                                      </td>
+                                      <td className="px-3 py-2 text-right font-medium text-gray-900">
+                                        RM {booking.totalAmount.toFixed(2)}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Recurring bookings */}
+                        {user.recurringBookings && user.recurringBookings.length > 0 && (
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">{t('activeRecurring')}</h4>
+                            <div className="grid gap-2">
+                              {user.recurringBookings.filter(rb => rb.isActive).map((rb) => (
+                                <div key={rb.id} className="bg-orange-50 border border-orange-200 rounded-lg p-3 flex items-center justify-between">
+                                  <div>
+                                    <span className="font-medium text-gray-900">
+                                      {dayNames[rb.dayOfWeek]}s
+                                    </span>
+                                    <span className="text-gray-600 ml-2">
+                                      {rb.startTime} - {rb.endTime}
+                                    </span>
+                                    {rb.label && (
+                                      <Badge variant="outline" className="ml-2 text-xs">
+                                        {rb.label}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <div className="text-sm text-gray-500">
+                                    {rb.courtName} • {rb.sport}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Action buttons in expanded view */}
+                        <div className="flex gap-2 justify-end pt-2 border-t">
+                          {!user.isSuperAdmin && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleToggleAdmin(user)
+                              }}
+                              disabled={togglingAdmin === user.id}
+                              className={user.isAdmin ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
+                            >
+                              {togglingAdmin === user.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : user.isAdmin ? (
+                                <>
+                                  <ShieldOff className="w-4 h-4 mr-1" />
+                                  {t('removeAdmin')}
+                                </>
+                              ) : (
+                                <>
+                                  <Shield className="w-4 h-4 mr-1" />
+                                  {t('makeAdmin')}
+                                </>
+                              )}
+                            </Button>
+                          )}
+                          {!user.isSuperAdmin && session?.user?.email !== user.email && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setDeletingUser(user)
+                              }}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              {t('deleteAccount')}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )
               })}
