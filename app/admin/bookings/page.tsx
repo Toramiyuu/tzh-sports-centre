@@ -615,6 +615,31 @@ export default function AdminBookingsPage() {
     return b.sport === sportFilter
   })
 
+  // Count recurring bookings that fall on the selected day
+  const recurringBookingsForDay = recurringBookings.filter((rb) => {
+    // Check if the day of week matches
+    if (rb.dayOfWeek !== selectedDate.getDay()) return false
+
+    // Check if the booking is active
+    if (!rb.isActive) return false
+
+    // Check if selected date is within the date range
+    const rbStartDate = startOfDay(new Date(rb.startDate))
+    const rbEndDate = rb.endDate ? startOfDay(new Date(rb.endDate)) : null
+    const selectedDateStart = startOfDay(selectedDate)
+
+    if (selectedDateStart < rbStartDate) return false
+    if (rbEndDate && selectedDateStart > rbEndDate) return false
+
+    // Apply sport filter
+    if (sportFilter !== 'all' && rb.sport !== sportFilter) return false
+
+    return true
+  })
+
+  // Total bookings for the day (regular + recurring)
+  const totalBookingsForDay = filteredBookings.length + recurringBookingsForDay.length
+
   if (status === 'loading' || !mounted) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -771,7 +796,7 @@ export default function AdminBookingsPage() {
                 <Clock className="w-5 h-5" />
                 {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                 <Badge variant="outline" className="ml-2">
-                  {filteredBookings.length} {filteredBookings.length !== 1 ? t('bookings') : t('booking')}
+                  {totalBookingsForDay} {totalBookingsForDay !== 1 ? t('bookings') : t('booking')}
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -926,12 +951,72 @@ export default function AdminBookingsPage() {
               ) : (
                 /* List View */
                 <div className="space-y-3">
-                  {filteredBookings.length === 0 ? (
+                  {totalBookingsForDay === 0 ? (
                     <div className="text-center py-12 text-gray-500">
                       {t('noBookings')}
                     </div>
                   ) : (
-                    filteredBookings.map((booking) => (
+                    <>
+                    {/* Show recurring bookings for the day first */}
+                    {recurringBookingsForDay.map((rb) => (
+                      <div
+                        key={`recurring-${rb.id}`}
+                        className="p-4 rounded-lg border bg-purple-50 border-purple-200"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <Repeat className="w-4 h-4 text-purple-600" />
+                              <span className="font-medium text-purple-900">
+                                {rb.label || (rb.user?.name || rb.guestName || 'Unknown')}
+                              </span>
+                              <Badge className="bg-purple-100 text-purple-700 border-0">
+                                {t('recurring')}
+                              </Badge>
+                              <Badge
+                                variant="outline"
+                                className={
+                                  rb.sport === 'badminton'
+                                    ? 'bg-blue-100 text-blue-700'
+                                    : 'bg-green-100 text-green-700'
+                                }
+                              >
+                                {rb.sport}
+                              </Badge>
+                            </div>
+                            <div className="text-sm text-gray-600 mt-1">
+                              <span className="flex items-center gap-1">
+                                <User className="w-3 h-3" />
+                                {rb.user?.name || rb.guestName || 'N/A'}
+                              </span>
+                            </div>
+                            <div className="text-sm text-gray-600 mt-1">
+                              <span className="flex items-center gap-1">
+                                <Phone className="w-3 h-3" />
+                                {rb.user?.phone || rb.guestPhone || 'N/A'}
+                              </span>
+                            </div>
+                            <div className="text-sm text-gray-600 mt-1">
+                              <span className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {rb.court.name} | {rb.startTime} - {rb.endTime}
+                              </span>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-purple-600 hover:text-purple-700 hover:bg-purple-100"
+                            onClick={() => openEditDialog(rb)}
+                          >
+                            <Pencil className="w-4 h-4 mr-1" />
+                            {t('edit')}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {/* Then show regular bookings */}
+                    {filteredBookings.map((booking) => (
                       <div
                         key={booking.id}
                         className={`p-4 rounded-lg border ${
@@ -999,7 +1084,8 @@ export default function AdminBookingsPage() {
                           </Button>
                         </div>
                       </div>
-                    ))
+                    ))}
+                    </>
                   )}
                 </div>
               )}
