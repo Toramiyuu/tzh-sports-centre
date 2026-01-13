@@ -2,10 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Calendar, Clock, MapPin, Phone, ChevronRight, Users } from "lucide-react";
+import { Clock, MapPin, Phone, ChevronRight, Users } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export default function Home() {
+  const t = useTranslations('home');
+
   return (
     <div className="flex min-h-screen flex-col bg-white font-sans">
       {/* Hero Section */}
@@ -14,25 +17,24 @@ export default function Home() {
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div>
               <p className="mb-3 text-sm font-medium uppercase tracking-wider text-blue-200">
-                Court Booking
+                {t('hero.subtitle')}
               </p>
               <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
-                TZH Sports Centre
+                {t('hero.title')}
               </h1>
               <p className="mb-8 text-lg text-blue-100">
-                Badminton and pickleball courts available for booking.
-                No account required.
+                {t('hero.description')}
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Link href="/booking">
                   <Button size="lg" className="h-12 bg-white px-6 text-blue-700 hover:bg-blue-50">
-                    Book a Court
+                    {t('hero.bookCourt')}
                     <ChevronRight className="ml-1 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/lessons">
                   <Button size="lg" className="h-12 border border-white/30 bg-transparent px-6 text-white hover:bg-white/10">
-                    View Lessons
+                    {t('hero.viewLessons')}
                   </Button>
                 </Link>
               </div>
@@ -55,7 +57,7 @@ export default function Home() {
       {/* Sports Section */}
       <section className="px-4 py-16">
         <div className="mx-auto max-w-6xl">
-          <h2 className="mb-8 text-center text-2xl font-bold text-zinc-900">Available Sports</h2>
+          <h2 className="mb-8 text-center text-2xl font-bold text-zinc-900">{t('sports.title')}</h2>
           <div className="grid gap-6 md:grid-cols-2">
             {/* Badminton */}
             <Link href="/booking?sport=badminton" className="group relative overflow-hidden rounded-2xl cursor-pointer card-hover">
@@ -69,12 +71,12 @@ export default function Home() {
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <h3 className="mb-1 text-2xl font-bold">Badminton</h3>
+                <h3 className="mb-1 text-2xl font-bold">{t('sports.badminton')}</h3>
                 <div className="flex items-center gap-4 text-sm text-white/80">
                   <span className="flex items-center gap-1">
-                    <Users className="h-4 w-4" /> 4 courts
+                    <Users className="h-4 w-4" /> {t('sports.courts', { count: 4 })}
                   </span>
-                  <span>RM15/hr</span>
+                  <span>{t('sports.perHour', { price: 15 })}</span>
                 </div>
               </div>
             </Link>
@@ -91,12 +93,12 @@ export default function Home() {
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <h3 className="mb-1 text-2xl font-bold">Pickleball</h3>
+                <h3 className="mb-1 text-2xl font-bold">{t('sports.pickleball')}</h3>
                 <div className="flex items-center gap-4 text-sm text-white/80">
                   <span className="flex items-center gap-1">
-                    <Users className="h-4 w-4" /> 4 courts
+                    <Users className="h-4 w-4" /> {t('sports.courts', { count: 4 })}
                   </span>
-                  <span>RM25/hr (2hr min)</span>
+                  <span>{t('sports.perHour', { price: 25 })} {t('sports.minHours', { hours: 2 })}</span>
                 </div>
               </div>
             </Link>
@@ -112,32 +114,32 @@ export default function Home() {
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                 <Clock className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="mb-2 font-semibold text-zinc-900">Operating Hours</h3>
-              <p className="text-sm text-zinc-600">Weekdays: 3 PM - 12 AM</p>
-              <p className="text-sm text-zinc-600">Weekends & PH: 9 AM - 12 AM</p>
+              <h3 className="mb-2 font-semibold text-zinc-900">{t('info.hours.title')}</h3>
+              <p className="text-sm text-zinc-600">{t('info.hours.weekdays')}</p>
+              <p className="text-sm text-zinc-600">{t('info.hours.weekends')}</p>
             </div>
             <div className="rounded-xl bg-white p-6 shadow-sm">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                 <MapPin className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="mb-2 font-semibold text-zinc-900">Location</h3>
-              <p className="text-sm text-zinc-600">Jalan Sekolah La Salle, Ayer Itam</p>
+              <h3 className="mb-2 font-semibold text-zinc-900">{t('info.location.title')}</h3>
+              <p className="text-sm text-zinc-600">{t('info.location.address')}</p>
               <a
                 href="https://maps.app.goo.gl/6id7KLMbwohP7o9J6"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-1 inline-block text-sm text-blue-600 hover:underline"
               >
-                Get Directions
+                {t('info.location.directions')}
               </a>
             </div>
             <div className="rounded-xl bg-white p-6 shadow-sm">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                 <Phone className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="mb-2 font-semibold text-zinc-900">Contact</h3>
-              <p className="text-sm text-zinc-600">Court Bookings: 011-6868 8508</p>
-              <p className="text-sm text-zinc-600">Lessons: 012-7575 8508</p>
+              <h3 className="mb-2 font-semibold text-zinc-900">{t('info.contact.title')}</h3>
+              <p className="text-sm text-zinc-600">{t('info.contact.bookings')}</p>
+              <p className="text-sm text-zinc-600">{t('info.contact.lessons')}</p>
             </div>
           </div>
         </div>
@@ -149,14 +151,14 @@ export default function Home() {
           <div className="overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white md:p-12">
             <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
               <div className="flex-1">
-                <h2 className="mb-2 text-2xl font-bold">Want to improve your game?</h2>
+                <h2 className="mb-2 text-2xl font-bold">{t('cta.title')}</h2>
                 <p className="text-blue-100">
-                  Professional coaching available. BAM Certified coach with Level 1 Certification.
+                  {t('cta.description')}
                 </p>
               </div>
               <Link href="/lessons">
                 <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50">
-                  View Lessons
+                  {t('cta.button')}
                   <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
               </Link>
@@ -165,12 +167,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="mt-auto border-t border-zinc-200 px-4 py-8">
-        <div className="mx-auto max-w-5xl text-center text-sm text-zinc-500">
-          <p>&copy; 2025 TZH Sports Centre</p>
-        </div>
-      </footer>
     </div>
   );
 }

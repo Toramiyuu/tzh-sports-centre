@@ -9,11 +9,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
+  const t = useTranslations('auth.login')
+  const tCommon = useTranslations('common')
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -33,13 +36,13 @@ function LoginForm() {
       })
 
       if (result?.error) {
-        setError('Invalid email or password')
+        setError(t('error'))
       } else {
         router.push(callbackUrl)
         router.refresh()
       }
     } catch {
-      setError('An unexpected error occurred')
+      setError(tCommon('error'))
     } finally {
       setLoading(false)
     }
@@ -48,9 +51,9 @@ function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome Back</CardTitle>
+        <CardTitle className="text-2xl">{t('title')}</CardTitle>
         <CardDescription>
-          Sign in to your account to book courts
+          {t('subtitle')}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -61,7 +64,7 @@ function LoginForm() {
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               type="email"
@@ -73,11 +76,11 @@ function LoginForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('password')}</Label>
             <Input
               id="password"
               type="password"
-              placeholder="Enter your password"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -90,16 +93,16 @@ function LoginForm() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
+                {tCommon('loading')}
               </>
             ) : (
-              'Sign In'
+              t('signUp')
             )}
           </Button>
           <p className="text-sm text-gray-600 text-center">
-            Don&apos;t have an account?{' '}
+            {t('noAccount')}{' '}
             <Link href="/auth/register" className="text-blue-600 hover:underline">
-              Sign up
+              {t('signUp')}
             </Link>
           </p>
         </CardFooter>
@@ -109,13 +112,16 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
+  const t = useTranslations('auth.login')
+  const tCommon = useTranslations('common')
+
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4">
       <Suspense fallback={
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome Back</CardTitle>
-            <CardDescription>Loading...</CardDescription>
+            <CardTitle className="text-2xl">{t('title')}</CardTitle>
+            <CardDescription>{tCommon('loading')}</CardDescription>
           </CardHeader>
         </Card>
       }>

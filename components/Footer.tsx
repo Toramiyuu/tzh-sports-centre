@@ -3,9 +3,11 @@
 import Link from 'next/link'
 import { MapPin, Phone, Clock } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 
 export function Footer() {
   const { data: session } = useSession()
+  const t = useTranslations('footer')
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -20,14 +22,13 @@ export function Footer() {
               <span className="text-xl font-bold">TZH Sports Centre</span>
             </div>
             <p className="text-gray-400 text-sm">
-              Badminton and pickleball courts available for booking.
-              4 professional courts open daily.
+              {t('description')}
             </p>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Contact</h3>
+            <h3 className="font-semibold text-lg mb-4">{t('contact')}</h3>
             <div className="space-y-3 text-gray-400 text-sm">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0" />
@@ -39,22 +40,22 @@ export function Footer() {
                     rel="noopener noreferrer"
                     className="block text-blue-400 hover:text-blue-300 mt-1"
                   >
-                    Get Directions
+                    {t('getDirections')}
                   </a>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 flex-shrink-0" />
                 <div className="text-sm">
-                  <div>Court Bookings: 011-6868 8508</div>
-                  <div>Lessons Enquiry: 012-7575 8508</div>
+                  <div>{t('courtBookings')}: 011-6868 8508</div>
+                  <div>{t('lessonsEnquiry')}: 012-7575 8508</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Clock className="w-5 h-5 flex-shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <div>Weekdays: 3 PM - 12 AM</div>
-                  <div>Weekends & Public Holidays: 9 AM - 12 AM</div>
+                  <div>{t('weekdays')}</div>
+                  <div>{t('weekends')}</div>
                 </div>
               </div>
             </div>
@@ -62,19 +63,19 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Quick Links</h3>
+            <h3 className="font-semibold text-lg mb-4">{t('quickLinks')}</h3>
             <div className="space-y-2 text-sm">
               <Link
                 href="/booking"
                 className="block text-gray-400 hover:text-white transition-colors"
               >
-                Book a Court
+                {t('bookCourt')}
               </Link>
               <Link
                 href="/dashboard"
                 className="block text-gray-400 hover:text-white transition-colors"
               >
-                My Bookings
+                {t('myBookings')}
               </Link>
               {!session && (
                 <>
@@ -82,13 +83,13 @@ export function Footer() {
                     href="/auth/login"
                     className="block text-gray-400 hover:text-white transition-colors"
                   >
-                    Log In
+                    {t('login')}
                   </Link>
                   <Link
                     href="/auth/register"
                     className="block text-gray-400 hover:text-white transition-colors"
                   >
-                    Sign Up
+                    {t('signUp')}
                   </Link>
                 </>
               )}
@@ -97,7 +98,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} TZH Sports Centre. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {t('copyright')}</p>
         </div>
       </div>
     </footer>

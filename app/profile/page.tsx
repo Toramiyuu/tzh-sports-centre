@@ -19,6 +19,7 @@ import { BookingsTab } from '@/components/profile/BookingsTab'
 import { LessonsTab } from '@/components/profile/LessonsTab'
 import { SettingsTab } from '@/components/profile/SettingsTab'
 import { SkeletonProfile } from '@/components/ui/skeleton'
+import { useTranslations } from 'next-intl'
 
 type TabType = 'personal' | 'bookings' | 'lessons' | 'settings'
 
@@ -40,6 +41,7 @@ interface UserProfile {
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const t = useTranslations('profile')
   const [activeTab, setActiveTab] = useState<TabType>('personal')
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
@@ -86,10 +88,10 @@ export default function ProfilePage() {
 
   // Build tabs dynamically - only show Lessons tab for members
   const tabs = [
-    { id: 'personal' as TabType, label: 'Personal Info', icon: User },
-    { id: 'bookings' as TabType, label: 'Bookings', icon: CalendarDays },
-    ...(profile?.isMember ? [{ id: 'lessons' as TabType, label: 'Lessons', icon: GraduationCap }] : []),
-    { id: 'settings' as TabType, label: 'Settings', icon: Settings },
+    { id: 'personal' as TabType, label: t('tabs.personal'), icon: User },
+    { id: 'bookings' as TabType, label: t('tabs.bookings'), icon: CalendarDays },
+    ...(profile?.isMember ? [{ id: 'lessons' as TabType, label: t('tabs.lessons'), icon: GraduationCap }] : []),
+    { id: 'settings' as TabType, label: t('tabs.settings'), icon: Settings },
   ]
 
   return (
@@ -110,7 +112,7 @@ export default function ProfilePage() {
         {profile && profile.creditBalance > 0 && (
           <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg">
             <CreditCard className="w-4 h-4" />
-            <span className="font-medium">Credit Balance: RM{profile.creditBalance.toFixed(2)}</span>
+            <span className="font-medium">{t('credits.balance')}: RM{profile.creditBalance.toFixed(2)}</span>
           </div>
         )}
       </div>
@@ -142,7 +144,7 @@ export default function ProfilePage() {
           profile ? (
             <PersonalInfoTab profile={profile} onUpdate={fetchProfile} />
           ) : (
-            <div className="text-center py-8 text-gray-500">Loading profile...</div>
+            <div className="text-center py-8 text-gray-500">{t('loadingProfile')}</div>
           )
         )}
         {activeTab === 'bookings' && (
@@ -155,7 +157,7 @@ export default function ProfilePage() {
           profile ? (
             <SettingsTab profile={profile} onUpdate={fetchProfile} />
           ) : (
-            <div className="text-center py-8 text-gray-500">Loading settings...</div>
+            <div className="text-center py-8 text-gray-500">{t('loadingSettings')}</div>
           )
         )}
       </div>

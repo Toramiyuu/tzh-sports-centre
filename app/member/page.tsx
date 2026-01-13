@@ -36,6 +36,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { format, addDays, isBefore, startOfDay } from 'date-fns'
+import { useTranslations } from 'next-intl'
 
 interface Lesson {
   id: string
@@ -146,6 +147,9 @@ function formatTime(time: string) {
 export default function MemberDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const t = useTranslations('member')
+  const tDays = useTranslations('days')
+  const tCommon = useTranslations('common')
 
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [requests, setRequests] = useState<LessonRequest[]>([])
@@ -295,7 +299,7 @@ export default function MemberDashboard() {
   }
 
   const cancelRequest = async (requestId: string) => {
-    if (!confirm('Are you sure you want to cancel this request?')) return
+    if (!confirm(t('cancelConfirm'))) return
 
     try {
       const res = await fetch('/api/member/requests', {
@@ -335,12 +339,12 @@ export default function MemberDashboard() {
   }
 
   const counterProposeTime = async (requestId: string) => {
-    const newTime = prompt('Enter your preferred time (e.g., 10:00 or 14:30):')
+    const newTime = prompt(t('enterTime'))
     if (!newTime) return
 
     // Basic validation
     if (!/^\d{1,2}:\d{2}$/.test(newTime)) {
-      alert('Please enter time in format HH:MM (e.g., 10:00 or 14:30)')
+      alert(t('invalidTimeFormat'))
       return
     }
 
@@ -365,31 +369,31 @@ export default function MemberDashboard() {
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
+  const getStatusBadge = (reqStatus: string) => {
+    switch (reqStatus) {
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-700 border-0"><AlertCircle className="w-3 h-3 mr-1" />Pending</Badge>
+        return <Badge className="bg-yellow-100 text-yellow-700 border-0"><AlertCircle className="w-3 h-3 mr-1" />{t('status.pending')}</Badge>
       case 'approved':
-        return <Badge className="bg-green-100 text-green-700 border-0"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>
+        return <Badge className="bg-green-100 text-green-700 border-0"><CheckCircle className="w-3 h-3 mr-1" />{t('status.approved')}</Badge>
       case 'rejected':
-        return <Badge className="bg-red-100 text-red-700 border-0"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>
+        return <Badge className="bg-red-100 text-red-700 border-0"><XCircle className="w-3 h-3 mr-1" />{t('status.rejected')}</Badge>
       case 'changed':
-        return <Badge className="bg-blue-100 text-blue-700 border-0"><ArrowRight className="w-3 h-3 mr-1" />Time Changed</Badge>
+        return <Badge className="bg-blue-100 text-blue-700 border-0"><ArrowRight className="w-3 h-3 mr-1" />{t('status.timeChanged')}</Badge>
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{reqStatus}</Badge>
     }
   }
 
-  const getLessonStatusBadge = (status: string) => {
-    switch (status) {
+  const getLessonStatusBadge = (lessonStatus: string) => {
+    switch (lessonStatus) {
       case 'scheduled':
-        return <Badge className="bg-blue-100 text-blue-700 border-0">Scheduled</Badge>
+        return <Badge className="bg-blue-100 text-blue-700 border-0">{t('status.scheduled')}</Badge>
       case 'completed':
-        return <Badge className="bg-green-100 text-green-700 border-0">Completed</Badge>
+        return <Badge className="bg-green-100 text-green-700 border-0">{t('status.completed')}</Badge>
       case 'cancelled':
-        return <Badge className="bg-red-100 text-red-700 border-0">Cancelled</Badge>
+        return <Badge className="bg-red-100 text-red-700 border-0">{t('status.cancelled')}</Badge>
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{lessonStatus}</Badge>
     }
   }
 
@@ -419,12 +423,12 @@ export default function MemberDashboard() {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <GraduationCap className="w-8 h-8 text-gray-400" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Members Only</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('membersOnly.title')}</h2>
             <p className="text-gray-600 mb-4">
-              This area is for training members only. If you&apos;re interested in joining our training program, please contact us.
+              {t('membersOnly.description')}
             </p>
             <Button onClick={() => router.push('/')} variant="outline">
-              Back to Home
+              {t('membersOnly.backToHome')}
             </Button>
           </CardContent>
         </Card>
@@ -441,13 +445,13 @@ export default function MemberDashboard() {
             <GraduationCap className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Member Dashboard</h1>
-            <p className="text-gray-600">Welcome back, {session?.user?.name}</p>
+            <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+            <p className="text-gray-600">{t('welcome', { name: session?.user?.name || '' })}</p>
           </div>
         </div>
         <Button onClick={() => setShowRequestDialog(true)}>
           <Plus className="w-4 h-4 mr-2" />
-          Request Lesson
+          {t('requestLesson')}
         </Button>
       </div>
 
@@ -461,7 +465,7 @@ export default function MemberDashboard() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">{upcomingLessons.length}</p>
-                <p className="text-sm text-gray-500">Upcoming Lessons</p>
+                <p className="text-sm text-gray-500">{t('stats.upcomingLessons')}</p>
               </div>
             </div>
           </CardContent>
@@ -474,7 +478,7 @@ export default function MemberDashboard() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">{pendingRequests.length}</p>
-                <p className="text-sm text-gray-500">Pending Requests</p>
+                <p className="text-sm text-gray-500">{t('stats.pendingRequests')}</p>
               </div>
             </div>
           </CardContent>
@@ -487,7 +491,7 @@ export default function MemberDashboard() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">{pastLessons.filter(l => l.status === 'completed').length}</p>
-                <p className="text-sm text-gray-500">Completed Lessons</p>
+                <p className="text-sm text-gray-500">{t('stats.completedLessons')}</p>
               </div>
             </div>
           </CardContent>
@@ -500,7 +504,7 @@ export default function MemberDashboard() {
           <CardHeader className="bg-blue-50">
             <CardTitle className="flex items-center gap-2 text-lg">
               <ArrowRight className="w-5 h-5 text-blue-600" />
-              Coach Suggested New Time
+              {t('coachSuggested.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
@@ -516,7 +520,7 @@ export default function MemberDashboard() {
                         {format(new Date(request.requestedDate), 'EEEE, MMMM d, yyyy')}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {request.lessonType.replace('-', ' ')} lesson ({request.requestedDuration}hr)
+                        {request.lessonType.replace('-', ' ')} {t('lesson')} ({request.requestedDuration}hr)
                       </p>
                     </div>
                     <p className="text-lg font-bold text-blue-600">
@@ -526,18 +530,18 @@ export default function MemberDashboard() {
 
                   <div className="grid grid-cols-2 gap-4 mb-3">
                     <div className="p-2 bg-white rounded border">
-                      <p className="text-xs text-gray-500">Your requested time</p>
+                      <p className="text-xs text-gray-500">{t('coachSuggested.yourTime')}</p>
                       <p className="font-medium text-gray-400 line-through">{formatTime(request.requestedTime)}</p>
                     </div>
                     <div className="p-2 bg-green-50 rounded border border-green-200">
-                      <p className="text-xs text-green-600">Coach suggests</p>
+                      <p className="text-xs text-green-600">{t('coachSuggested.coachSuggests')}</p>
                       <p className="font-medium text-green-700">{request.suggestedTime ? formatTime(request.suggestedTime) : 'N/A'}</p>
                     </div>
                   </div>
 
                   {request.adminNotes && (
                     <p className="text-sm text-gray-600 mb-3 italic">
-                      Coach&apos;s note: {request.adminNotes}
+                      {t('coachSuggested.coachNote')}: {request.adminNotes}
                     </p>
                   )}
 
@@ -549,7 +553,7 @@ export default function MemberDashboard() {
                       disabled={submitting}
                     >
                       <CheckCircle className="w-4 h-4 mr-1" />
-                      Accept Time
+                      {t('coachSuggested.acceptTime')}
                     </Button>
                     <Button
                       variant="outline"
@@ -558,7 +562,7 @@ export default function MemberDashboard() {
                       disabled={submitting}
                     >
                       <Clock className="w-4 h-4 mr-1" />
-                      Suggest Different Time
+                      {t('coachSuggested.suggestDifferent')}
                     </Button>
                   </div>
                 </div>
@@ -574,7 +578,7 @@ export default function MemberDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <AlertCircle className="w-5 h-5 text-yellow-600" />
-              Pending Requests
+              {t('pendingRequests')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -589,7 +593,7 @@ export default function MemberDashboard() {
                       {format(new Date(request.requestedDate), 'EEEE, MMMM d, yyyy')}
                     </p>
                     <p className="text-sm text-gray-600">
-                      {formatTime(request.requestedTime)} - {request.lessonType.replace('-', ' ')} lesson ({request.requestedDuration}hr)
+                      {formatTime(request.requestedTime)} - {request.lessonType.replace('-', ' ')} {t('lesson')} ({request.requestedDuration}hr)
                     </p>
                   </div>
                   <div className="text-right">
@@ -603,7 +607,7 @@ export default function MemberDashboard() {
                       onClick={() => cancelRequest(request.id)}
                     >
                       <X className="w-4 h-4 mr-1" />
-                      Cancel
+                      {t('cancel')}
                     </Button>
                   </div>
                 </div>
@@ -618,13 +622,13 @@ export default function MemberDashboard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <Calendar className="w-5 h-5 text-blue-600" />
-            Upcoming Lessons
+            {t('upcomingLessons')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {upcomingLessons.length === 0 ? (
             <p className="text-center py-8 text-gray-500">
-              No upcoming lessons scheduled.
+              {t('noUpcomingLessons')}
             </p>
           ) : (
             <div className="space-y-3">
@@ -642,11 +646,11 @@ export default function MemberDashboard() {
                         {formatTime(lesson.startTime)} - {formatTime(lesson.endTime)} ({lesson.duration}h)
                       </p>
                       <p className="text-sm text-gray-600">
-                        {lesson.court.name} - {lesson.lessonType.replace('-', ' ')} lesson
+                        {lesson.court.name} - {lesson.lessonType.replace('-', ' ')} {t('lesson')}
                       </p>
                       {lesson.students.length > 1 && (
                         <p className="text-sm text-gray-500 mt-1">
-                          With: {lesson.students.filter(s => s.name !== session?.user?.name).map(s => s.name).join(', ')}
+                          {t('with')}: {lesson.students.filter(s => s.name !== session?.user?.name).map(s => s.name).join(', ')}
                         </p>
                       )}
                     </div>
@@ -656,7 +660,7 @@ export default function MemberDashboard() {
                     </div>
                   </div>
                   {lesson.notes && (
-                    <p className="text-sm text-gray-600 mt-2 italic">Note: {lesson.notes}</p>
+                    <p className="text-sm text-gray-600 mt-2 italic">{t('note')}: {lesson.notes}</p>
                   )}
                 </div>
               ))}
@@ -668,13 +672,13 @@ export default function MemberDashboard() {
       {/* Request History */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Request History</CardTitle>
-          <CardDescription>Your past lesson requests</CardDescription>
+          <CardTitle className="text-lg">{t('requestHistory')}</CardTitle>
+          <CardDescription>{t('requestHistoryDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           {requests.filter(r => r.status !== 'pending').length === 0 ? (
             <p className="text-center py-8 text-gray-500">
-              No request history yet.
+              {t('noRequestHistory')}
             </p>
           ) : (
             <div className="space-y-3">
@@ -689,13 +693,13 @@ export default function MemberDashboard() {
                         {format(new Date(request.requestedDate), 'MMMM d, yyyy')}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {formatTime(request.requestedTime)} - {request.lessonType.replace('-', ' ')} lesson
+                        {formatTime(request.requestedTime)} - {request.lessonType.replace('-', ' ')} {t('lesson')}
                       </p>
                       {request.adminNotes && (
-                        <p className="text-sm text-gray-500 mt-1">Coach: {request.adminNotes}</p>
+                        <p className="text-sm text-gray-500 mt-1">{t('coach')}: {request.adminNotes}</p>
                       )}
                       {request.suggestedTime && (
-                        <p className="text-sm text-blue-600 mt-1">Suggested: {formatTime(request.suggestedTime)}</p>
+                        <p className="text-sm text-blue-600 mt-1">{t('suggested')}: {formatTime(request.suggestedTime)}</p>
                       )}
                     </div>
                     {getStatusBadge(request.status)}
@@ -711,15 +715,15 @@ export default function MemberDashboard() {
       <Dialog open={showRequestDialog} onOpenChange={setShowRequestDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Request a Lesson</DialogTitle>
+            <DialogTitle>{t('dialog.title')}</DialogTitle>
             <DialogDescription>
-              Choose your preferred date and time. The coach will review and confirm.
+              {t('dialog.description')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Date</Label>
+              <Label>{t('dialog.date')}</Label>
               <Input
                 type="date"
                 value={requestDate}
@@ -736,19 +740,19 @@ export default function MemberDashboard() {
                   </div>
                 ) : availability.length === 0 ? (
                   <p className="text-sm text-yellow-600 py-2">
-                    No availability set for {DAY_NAMES[new Date(requestDate).getDay()]}. You can still request this time.
+                    {t('dialog.noAvailability', { day: DAY_NAMES[new Date(requestDate).getDay()] })}
                   </p>
                 ) : (
                   <p className="text-sm text-green-600 py-2">
-                    Coach is available on {DAY_NAMES[new Date(requestDate).getDay()]}.
+                    {t('dialog.coachAvailable', { day: DAY_NAMES[new Date(requestDate).getDay()] })}
                   </p>
                 )}
 
                 <div className="space-y-2">
-                  <Label>Preferred Time</Label>
+                  <Label>{t('dialog.preferredTime')}</Label>
                   <Select value={requestTime} onValueChange={setRequestTime}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select time" />
+                      <SelectValue placeholder={t('dialog.selectTime')} />
                     </SelectTrigger>
                     <SelectContent>
                       {getTrainingSlots().map((slot) => (
@@ -761,15 +765,15 @@ export default function MemberDashboard() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Lesson Type</Label>
+                  <Label>{t('dialog.lessonType')}</Label>
                   <Select value={requestType} onValueChange={handleTypeChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select lesson type" />
+                      <SelectValue placeholder={t('dialog.selectLessonType')} />
                     </SelectTrigger>
                     <SelectContent>
                       {LESSON_TYPES.map((type) => (
                         <SelectItem key={type.value} value={type.value}>
-                          {type.label} (min {type.minSlots * 0.5}hr)
+                          {type.label} ({t('dialog.minHours', { hours: type.minSlots * 0.5 })})
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -778,13 +782,13 @@ export default function MemberDashboard() {
 
                 {requestType && (
                   <div className="space-y-2">
-                    <Label>Duration</Label>
+                    <Label>{t('dialog.duration')}</Label>
                     <Select
                       value={requestDuration.toString()}
                       onValueChange={(v) => setRequestDuration(parseInt(v))}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select duration" />
+                        <SelectValue placeholder={t('dialog.selectDuration')} />
                       </SelectTrigger>
                       <SelectContent>
                         {getDurationOptions(requestType).map((opt) => (
@@ -803,7 +807,7 @@ export default function MemberDashboard() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">
-                          {LESSON_TYPES.find(t => t.value === requestType)?.label} - {requestDuration * 0.5} hours
+                          {LESSON_TYPES.find(t => t.value === requestType)?.label} - {requestDuration * 0.5 === 1 ? t('dialog.hour', { count: 1 }) : t('dialog.hours', { count: requestDuration * 0.5 })}
                         </p>
                       </div>
                       <p className="text-lg font-bold text-blue-600">
@@ -818,14 +822,14 @@ export default function MemberDashboard() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowRequestDialog(false)}>
-              Cancel
+              {t('dialog.cancel')}
             </Button>
             <Button
               onClick={submitRequest}
               disabled={!requestDate || !requestTime || !requestType || submitting}
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Submit Request
+              {t('dialog.submit')}
             </Button>
           </DialogFooter>
         </DialogContent>

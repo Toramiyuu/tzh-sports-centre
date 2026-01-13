@@ -9,9 +9,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const t = useTranslations('auth.register')
+  const tCommon = useTranslations('common')
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -26,7 +29,7 @@ export default function RegisterPage() {
     setError('')
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('passwordMismatch'))
       return
     }
 
@@ -64,7 +67,7 @@ export default function RegisterPage() {
         router.refresh()
       }
     } catch {
-      setError('An unexpected error occurred')
+      setError(tCommon('error'))
     } finally {
       setLoading(false)
     }
@@ -74,9 +77,9 @@ export default function RegisterPage() {
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Create Account</CardTitle>
+          <CardTitle className="text-2xl">{t('title')}</CardTitle>
           <CardDescription>
-            Sign up to start booking badminton courts
+            {t('subtitle')}
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -87,7 +90,7 @@ export default function RegisterPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name">{t('name')}</Label>
               <Input
                 id="name"
                 type="text"
@@ -99,7 +102,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -111,7 +114,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">{t('phone')}</Label>
               <Input
                 id="phone"
                 type="tel"
@@ -123,11 +126,11 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="At least 8 characters"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -135,11 +138,11 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Confirm your password"
+                placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -152,16 +155,16 @@ export default function RegisterPage() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating account...
+                  {tCommon('loading')}
                 </>
               ) : (
-                'Create Account'
+                t('title')
               )}
             </Button>
             <p className="text-sm text-gray-600 text-center">
-              Already have an account?{' '}
+              {t('hasAccount')}{' '}
               <Link href="/auth/login" className="text-blue-600 hover:underline">
-                Sign in
+                {t('signIn')}
               </Link>
             </p>
           </CardFooter>

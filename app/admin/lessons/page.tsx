@@ -42,8 +42,9 @@ import {
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
-const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const DAYS_OF_WEEK_KEYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
 // Lesson pricing: base price for minimum duration, RM50 per additional 30-min slot
 const LESSON_TYPES = [
@@ -176,6 +177,12 @@ interface BookingSlot {
 export default function AdminLessonsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const t = useTranslations('admin.lessonManagement')
+  const tAdmin = useTranslations('admin')
+  const tDays = useTranslations('days')
+
+  // Create translated DAYS_OF_WEEK array
+  const DAYS_OF_WEEK = DAYS_OF_WEEK_KEYS.map(key => tDays(key))
 
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
@@ -658,17 +665,17 @@ export default function AdminLessonsPage() {
           <Link href="/admin">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              {tAdmin('back')}
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Lesson Management</h1>
-            <p className="text-gray-600">Schedule lessons and manage billing</p>
+            <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+            <p className="text-gray-600">{t('description')}</p>
           </div>
         </div>
         <Button onClick={fetchData} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
+          {tAdmin('refresh')}
         </Button>
       </div>
 
@@ -679,21 +686,21 @@ export default function AdminLessonsPage() {
           onClick={() => setActiveTab('schedule')}
         >
           <CalendarDays className="w-4 h-4 mr-2" />
-          Schedule
+          {t('tabs.schedule')}
         </Button>
         <Button
           variant={activeTab === 'availability' ? 'default' : 'outline'}
           onClick={() => setActiveTab('availability')}
         >
           <Clock className="w-4 h-4 mr-2" />
-          Availability
+          {t('tabs.availability')}
         </Button>
         <Button
           variant={activeTab === 'billing' ? 'default' : 'outline'}
           onClick={() => setActiveTab('billing')}
         >
           <DollarSign className="w-4 h-4 mr-2" />
-          Monthly Billing
+          {t('tabs.billing')}
         </Button>
         <Button
           variant={activeTab === 'requests' ? 'default' : 'outline'}
@@ -701,7 +708,7 @@ export default function AdminLessonsPage() {
           className="relative"
         >
           <Users className="w-4 h-4 mr-2" />
-          Requests
+          {t('tabs.requests')}
           {lessonRequests.filter(r => r.status === 'pending').length > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
               {lessonRequests.filter(r => r.status === 'pending').length}
@@ -726,7 +733,7 @@ export default function AdminLessonsPage() {
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center gap-2">
                       <CalendarDays className="w-5 h-5" />
-                      Select Date
+                      {t('scheduled.selectDate')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -747,7 +754,7 @@ export default function AdminLessonsPage() {
                         <GraduationCap className="w-5 h-5" />
                         {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                         <Badge variant="outline" className="ml-2">
-                          {lessons.filter(l => l.status !== 'cancelled').length} lessons
+                          {lessons.filter(l => l.status !== 'cancelled').length} {t('scheduled.lessons')}
                         </Badge>
                       </CardTitle>
                       <div className="flex items-center gap-2">
@@ -781,13 +788,13 @@ export default function AdminLessonsPage() {
                           disabled={members.length === 0}
                         >
                           <Plus className="w-4 h-4 mr-2" />
-                          Add Lesson
+                          {t('scheduled.addLesson')}
                         </Button>
                       </div>
                     </div>
                     {members.length === 0 && (
                       <p className="text-xs text-amber-600 mt-2">
-                        Add members first to schedule lessons
+                        {t('scheduled.addMembersFirst')}
                       </p>
                     )}
                   </CardHeader>

@@ -29,6 +29,7 @@ import {
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 interface User {
   id: string
@@ -43,15 +44,17 @@ interface User {
   }
 }
 
-const SKILL_LEVELS = [
-  { value: 'beginner', label: 'Beginner', color: 'bg-green-100 text-green-700' },
-  { value: 'intermediate', label: 'Intermediate', color: 'bg-blue-100 text-blue-700' },
-  { value: 'advanced', label: 'Advanced', color: 'bg-purple-100 text-purple-700' },
-]
-
 export default function AdminMembersPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const t = useTranslations('admin.membersList')
+  const tAdmin = useTranslations('admin')
+
+  const SKILL_LEVELS = [
+    { value: 'beginner', label: t('beginner'), color: 'bg-green-100 text-green-700' },
+    { value: 'intermediate', label: t('intermediate'), color: 'bg-blue-100 text-blue-700' },
+    { value: 'advanced', label: t('advanced'), color: 'bg-purple-100 text-purple-700' },
+  ]
 
   const [members, setMembers] = useState<User[]>([])
   const [nonMembers, setNonMembers] = useState<User[]>([])
@@ -163,17 +166,17 @@ export default function AdminMembersPage() {
           <Link href="/admin">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              {tAdmin('back')}
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Manage Members</h1>
-            <p className="text-gray-600">Add or remove students from your training program</p>
+            <h1 className="text-2xl font-bold text-gray-900">{tAdmin('members.title')}</h1>
+            <p className="text-gray-600">{t('description')}</p>
           </div>
         </div>
         <Button onClick={fetchUsers} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
+          {tAdmin('refresh')}
         </Button>
       </div>
 
@@ -187,7 +190,7 @@ export default function AdminMembersPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">{members.length}</p>
-                <p className="text-sm text-gray-500">Active Members</p>
+                <p className="text-sm text-gray-500">{t('activeMembers')}</p>
               </div>
             </div>
           </CardContent>
@@ -202,7 +205,7 @@ export default function AdminMembersPage() {
                 <p className="text-2xl font-bold text-gray-900">
                   {members.reduce((sum, m) => sum + m._count.lessonSessions, 0)}
                 </p>
-                <p className="text-sm text-gray-500">Total Lessons</p>
+                <p className="text-sm text-gray-500">{t('totalLessons')}</p>
               </div>
             </div>
           </CardContent>
@@ -215,7 +218,7 @@ export default function AdminMembersPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">{allUsers.length}</p>
-                <p className="text-sm text-gray-500">Total Registered Users</p>
+                <p className="text-sm text-gray-500">{t('totalRegisteredUsers')}</p>
               </div>
             </div>
           </CardContent>
@@ -229,14 +232,14 @@ export default function AdminMembersPage() {
           onClick={() => setActiveTab('members')}
         >
           <GraduationCap className="w-4 h-4 mr-2" />
-          Members ({members.length})
+          {t('membersTab')} ({members.length})
         </Button>
         <Button
           variant={activeTab === 'all' ? 'default' : 'outline'}
           onClick={() => setActiveTab('all')}
         >
           <Users className="w-4 h-4 mr-2" />
-          All Users ({allUsers.length})
+          {t('allUsersTab')} ({allUsers.length})
         </Button>
       </div>
 
@@ -246,7 +249,7 @@ export default function AdminMembersPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              placeholder="Search by name, email, or phone..."
+              placeholder={t('search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -264,7 +267,7 @@ export default function AdminMembersPage() {
             ) : (
               <Users className="w-5 h-5" />
             )}
-            {activeTab === 'members' ? 'Members' : 'All Users'}
+            {activeTab === 'members' ? t('membersTab') : t('allUsersTab')}
             <Badge variant="secondary" className="ml-2">
               {filteredUsers.length}
             </Badge>
@@ -278,10 +281,10 @@ export default function AdminMembersPage() {
           ) : filteredUsers.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
               {searchQuery
-                ? 'No users match your search'
+                ? t('noUsersMatch')
                 : activeTab === 'members'
-                ? 'No members yet. Add members from the "All Users" tab.'
-                : 'No registered users yet'}
+                ? t('noMembersYet')
+                : t('noUsersYet')}
             </div>
           ) : (
             <div className="space-y-3">
@@ -300,7 +303,7 @@ export default function AdminMembersPage() {
                         <span className="font-medium text-gray-900">{user.name}</span>
                         {user.isMember && (
                           <Badge className="bg-blue-600 text-white border-0">
-                            Member
+                            {t('membersTab')}
                           </Badge>
                         )}
                         {user.isMember && getSkillBadge(user.skillLevel)}
@@ -317,7 +320,7 @@ export default function AdminMembersPage() {
                         {user.isMember && (
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <GraduationCap className="w-4 h-4 flex-shrink-0" />
-                            {user._count.lessonSessions} lesson{user._count.lessonSessions !== 1 ? 's' : ''} completed
+                            {user._count.lessonSessions} {t('lessonsCompleted')}
                           </div>
                         )}
                       </div>
@@ -331,7 +334,7 @@ export default function AdminMembersPage() {
                           disabled={updating === user.id}
                         >
                           <SelectTrigger className="w-[140px] bg-white">
-                            <SelectValue placeholder="Skill level" />
+                            <SelectValue placeholder={t('skillLevel')} />
                           </SelectTrigger>
                           <SelectContent>
                             {SKILL_LEVELS.map((level) => (
@@ -358,12 +361,12 @@ export default function AdminMembersPage() {
                         ) : user.isMember ? (
                           <>
                             <UserMinus className="w-4 h-4 mr-1" />
-                            Remove
+                            {t('remove')}
                           </>
                         ) : (
                           <>
                             <UserPlus className="w-4 h-4 mr-1" />
-                            Add Member
+                            {t('addMember')}
                           </>
                         )}
                       </Button>

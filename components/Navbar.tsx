@@ -7,11 +7,14 @@ import { CalendarDays, User, Menu, X, Shield, Receipt, GraduationCap } from 'luc
 import { useState } from 'react'
 import { UserMenu } from '@/components/UserMenu'
 import { isAdmin } from '@/lib/admin'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { useTranslations } from 'next-intl'
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { data: session, status } = useSession()
   const userIsAdmin = isAdmin(session?.user?.email)
+  const t = useTranslations('nav')
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
@@ -36,21 +39,14 @@ export function Navbar() {
               className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
             >
               <CalendarDays className="w-4 h-4" />
-              Book Court
+              {t('booking')}
             </Link>
             <Link
               href="/lessons"
               className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
             >
               <GraduationCap className="w-4 h-4" />
-              Lessons
-            </Link>
-            <Link
-              href="/receipt"
-              className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
-            >
-              <Receipt className="w-4 h-4" />
-              Find Booking
+              {t('lessons')}
             </Link>
             {session?.user && (
               <Link
@@ -58,7 +54,7 @@ export function Navbar() {
                 className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
               >
                 <User className="w-4 h-4" />
-                My Training
+                {t('member')}
               </Link>
             )}
             {userIsAdmin && (
@@ -67,13 +63,14 @@ export function Navbar() {
                 className="text-blue-600 hover:text-blue-700 flex items-center gap-2"
               >
                 <Shield className="w-4 h-4" />
-                Admin
+                {t('admin')}
               </Link>
             )}
           </div>
 
           {/* Auth Section - Conditional Rendering */}
           <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+            <LanguageSwitcher />
             {status === 'loading' ? (
               <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
             ) : session?.user ? (
@@ -81,10 +78,10 @@ export function Navbar() {
             ) : (
               <>
                 <Link href="/auth/login">
-                  <Button variant="ghost">Log In</Button>
+                  <Button variant="ghost">{t('login')}</Button>
                 </Link>
                 <Link href="/auth/register">
-                  <Button>Sign Up</Button>
+                  <Button>{t('signup')}</Button>
                 </Link>
               </>
             )}
@@ -115,21 +112,14 @@ export function Navbar() {
               className="block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Book Court
+              {t('booking')}
             </Link>
             <Link
               href="/lessons"
               className="block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Lessons
-            </Link>
-            <Link
-              href="/receipt"
-              className="block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Find Booking
+              {t('lessons')}
             </Link>
             {session?.user && (
               <Link
@@ -137,7 +127,7 @@ export function Navbar() {
                 className="block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                My Training
+                {t('member')}
               </Link>
             )}
             {userIsAdmin && (
@@ -146,14 +136,18 @@ export function Navbar() {
                 className="block px-3 py-2 rounded-md text-blue-600 hover:bg-blue-50"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Admin Panel
+                {t('admin')}
               </Link>
             )}
+            <hr className="my-2" />
+            <div className="px-3 py-2">
+              <LanguageSwitcher />
+            </div>
             <hr className="my-2" />
             {session?.user ? (
               <>
                 <div className="px-3 py-2 text-sm text-gray-600">
-                  Signed in as <span className="font-medium">{session.user.name}</span>
+                  {session.user.name}
                 </div>
                 <button
                   onClick={() => {
@@ -162,7 +156,7 @@ export function Navbar() {
                   }}
                   className="block w-full text-left px-3 py-2 rounded-md text-red-600 hover:bg-red-50"
                 >
-                  Sign Out
+                  {t('logout')}
                 </button>
               </>
             ) : (
@@ -172,14 +166,14 @@ export function Navbar() {
                   className="block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Log In
+                  {t('login')}
                 </Link>
                 <Link
                   href="/auth/register"
                   className="block px-3 py-2 rounded-md bg-blue-600 text-white text-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Sign Up
+                  {t('signup')}
                 </Link>
               </>
             )}

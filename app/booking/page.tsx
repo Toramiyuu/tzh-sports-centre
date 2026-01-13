@@ -14,6 +14,7 @@ import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User } from 'lu
 import { isAdmin } from '@/lib/admin'
 import { toast } from 'sonner'
 import { celebrateBooking } from '@/lib/confetti'
+import { useTranslations } from 'next-intl'
 
 // Rates per 30-minute slot
 const BADMINTON_RATE_PER_SLOT = 7.5 // RM7.50 per 30 min (RM15/hour)
@@ -94,6 +95,9 @@ function BookingPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const userIsAdmin = isAdmin(session?.user?.email)
+  const t = useTranslations('booking')
+  const tCommon = useTranslations('common')
+  const tHome = useTranslations('home')
 
   // Get sport from URL query param, default to badminton
   const initialSport = searchParams.get('sport') === 'pickleball' ? 'pickleball' : 'badminton'
@@ -437,9 +441,9 @@ function BookingPageContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Book a Court</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
         <p className="text-gray-600">
-          Select your sport, preferred date, time slots, and courts
+          {t('selectSport')}, {t('selectDate')}, {t('selectTime')}
         </p>
       </div>
 
@@ -455,8 +459,8 @@ function BookingPageContent() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Badminton
-              <span className="ml-2 text-xs text-gray-400">RM15/hr (RM18 after 6PM) • 1hr min</span>
+              {tHome('sports.badminton')}
+              <span className="ml-2 text-xs text-gray-400">RM15/hr (RM18 {t('peakHours')}) • 1hr min</span>
             </button>
             <button
               onClick={() => setSport('pickleball')}
@@ -466,7 +470,7 @@ function BookingPageContent() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Pickleball
+              {tHome('sports.pickleball')}
               <span className="ml-2 text-xs text-gray-400">RM25/hr • 2hr min</span>
             </button>
           </nav>
@@ -483,8 +487,8 @@ function BookingPageContent() {
               />
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600/70 to-transparent flex items-center">
                 <div className="px-6 text-white">
-                  <h3 className="text-2xl font-bold">Badminton</h3>
-                  <p className="text-sm opacity-90">Book your court • 1 hour minimum</p>
+                  <h3 className="text-2xl font-bold">{tHome('sports.badminton')}</h3>
+                  <p className="text-sm opacity-90">{t('title')} • 1hr min</p>
                 </div>
               </div>
             </div>
@@ -497,8 +501,8 @@ function BookingPageContent() {
               />
               <div className="absolute inset-0 bg-gradient-to-r from-green-600/70 to-transparent flex items-center">
                 <div className="px-6 text-white">
-                  <h3 className="text-2xl font-bold">Pickleball</h3>
-                  <p className="text-sm opacity-90">Book your court • 2 hour minimum</p>
+                  <h3 className="text-2xl font-bold">{tHome('sports.pickleball')}</h3>
+                  <p className="text-sm opacity-90">{t('title')} • 2hr min</p>
                 </div>
               </div>
             </div>
@@ -514,7 +518,7 @@ function BookingPageContent() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CalendarDays className="w-5 h-5" />
-                Select Date
+                {t('selectDate')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -542,23 +546,23 @@ function BookingPageContent() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="w-5 h-5" />
-                Select Time Slots - {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                {t('selectTime')} - {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                 <Badge
                   variant="outline"
                   className={sport === 'badminton' ? 'ml-2 bg-blue-50' : 'ml-2 bg-green-50'}
                 >
-                  {sport === 'badminton' ? 'Badminton' : 'Pickleball'}
+                  {sport === 'badminton' ? tHome('sports.badminton') : tHome('sports.pickleball')}
                 </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               {loading ? (
                 <div className="text-center py-8 text-gray-500">
-                  Loading availability...
+                  {tCommon('loading')}
                 </div>
               ) : availability.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No courts available
+                  {t('noSlots')}
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -606,10 +610,10 @@ function BookingPageContent() {
                                   }`}
                                 >
                                   {!courtSlot.available
-                                    ? 'Booked'
+                                    ? t('booked')
                                     : selected
-                                    ? 'Selected'
-                                    : 'Available'}
+                                    ? t('selected')
+                                    : t('available')}
                                 </button>
                               </td>
                             )
@@ -630,30 +634,30 @@ function BookingPageContent() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="w-5 h-5" />
-                Booking Summary
+                {t('confirmBooking')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               {selectedSlots.length === 0 ? (
                 <p className="text-gray-500 text-sm">
-                  Select time slots from the grid to start your booking
+                  {t('selectAtLeast')}
                 </p>
               ) : (
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm text-gray-600 mb-1">
-                      <strong>Sport:</strong>{' '}
+                      <strong>{t('selectSport')}:</strong>{' '}
                       <span className={sport === 'badminton' ? 'text-blue-600' : 'text-green-600'}>
-                        {sport === 'badminton' ? 'Badminton' : 'Pickleball'}
+                        {sport === 'badminton' ? tHome('sports.badminton') : tHome('sports.pickleball')}
                       </span>
                     </p>
                     <p className="text-sm text-gray-600">
-                      <strong>Date:</strong> {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                      <strong>{t('selectDate')}:</strong> {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700">Selected Slots:</p>
+                    <p className="text-sm font-medium text-gray-700">{t('selectedSlots')}:</p>
                     {selectedSlots.map((slot, idx) => (
                       <div
                         key={idx}
@@ -674,7 +678,7 @@ function BookingPageContent() {
 
                   <div className="border-t pt-4">
                     <div className="flex justify-between items-center mb-4">
-                      <span className="font-medium">Total:</span>
+                      <span className="font-medium">{t('totalAmount')}:</span>
                       <span className="text-xl font-bold">RM{total.toFixed(2)}</span>
                     </div>
 
@@ -683,21 +687,21 @@ function BookingPageContent() {
                       <div className="space-y-3 mb-4 p-3 bg-gray-50 rounded-lg">
                         <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
                           <User className="w-4 h-4" />
-                          Book as Guest
+                          {t('guest.title')}
                         </div>
                         <div className="space-y-2">
                           <div>
-                            <Label htmlFor="guestName" className="text-xs">Name *</Label>
+                            <Label htmlFor="guestName" className="text-xs">{t('guest.name')} *</Label>
                             <Input
                               id="guestName"
-                              placeholder="Your name"
+                              placeholder={t('guest.name')}
                               value={guestName}
                               onChange={(e) => setGuestName(e.target.value)}
                               className="h-9"
                             />
                           </div>
                           <div>
-                            <Label htmlFor="guestPhone" className="text-xs">Phone *</Label>
+                            <Label htmlFor="guestPhone" className="text-xs">{t('guest.phone')} *</Label>
                             <Input
                               id="guestPhone"
                               placeholder="012-345-6789"
@@ -707,7 +711,7 @@ function BookingPageContent() {
                             />
                           </div>
                           <div>
-                            <Label htmlFor="guestEmail" className="text-xs">Email (optional)</Label>
+                            <Label htmlFor="guestEmail" className="text-xs">{t('guest.email')}</Label>
                             <Input
                               id="guestEmail"
                               type="email"
@@ -732,10 +736,10 @@ function BookingPageContent() {
                         {booking ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Booking...
+                            {tCommon('loading')}
                           </>
                         ) : (
-                          'Book Now (Pay at Counter)'
+                          `${t('bookNow')} (${t('guest.payAtCounter')})`
                         )}
                       </Button>
                     )}
@@ -744,7 +748,7 @@ function BookingPageContent() {
                     {session && !userIsAdmin && (
                       <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                         <p className="text-sm text-gray-600">
-                          Booking as: <strong>{session.user?.name}</strong>
+                          {session.user?.name}
                         </p>
                       </div>
                     )}
@@ -760,10 +764,10 @@ function BookingPageContent() {
                         {booking ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Booking...
+                            {tCommon('loading')}
                           </>
                         ) : (
-                          'Book Now'
+                          t('bookNow')
                         )}
                       </Button>
                     )}
@@ -780,7 +784,7 @@ function BookingPageContent() {
                         {booking ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating...
+                            {tCommon('loading')}
                           </>
                         ) : (
                           <>
@@ -793,11 +797,7 @@ function BookingPageContent() {
                   </div>
 
                   <p className="text-xs text-gray-500 text-center">
-                    {!session
-                      ? 'No account needed. Pay at the counter when you arrive.'
-                      : userIsAdmin
-                      ? 'Use "Test Book" to create bookings without payment'
-                      : 'Your booking will be confirmed immediately'}
+                    {t('guest.payAtCounter')}
                   </p>
                 </div>
               )}
@@ -808,15 +808,15 @@ function BookingPageContent() {
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4 text-blue-600" />
                     <div>
-                      <p className="font-medium text-gray-900">Operating Hours</p>
-                      <p className="text-gray-500">Weekdays: 3 PM - 12 AM</p>
-                      <p className="text-gray-500">Weekends: 9 AM - 12 AM</p>
+                      <p className="font-medium text-gray-900">{tHome('info.hours.title')}</p>
+                      <p className="text-gray-500">{tHome('info.hours.weekdays')}</p>
+                      <p className="text-gray-500">{tHome('info.hours.weekends')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <User className="w-4 h-4 text-blue-600" />
                     <div>
-                      <p className="font-medium text-gray-900">Contact</p>
+                      <p className="font-medium text-gray-900">{tHome('info.contact.title')}</p>
                       <p className="text-gray-500">011-6868 8508</p>
                     </div>
                   </div>

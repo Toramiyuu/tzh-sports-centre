@@ -5,9 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Shield, Calendar, Users, GraduationCap } from 'lucide-react'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 
 export default async function AdminPage() {
   const session = await auth()
+  const t = await getTranslations('admin')
 
   if (!session?.user) {
     redirect('/auth/login?callbackUrl=/admin')
@@ -19,29 +21,29 @@ export default async function AdminPage() {
 
   const adminFeatures = [
     {
-      title: 'Manage Bookings',
-      description: 'View, add, and cancel court bookings',
+      titleKey: 'manageBookings.title',
+      descriptionKey: 'manageBookings.description',
       icon: Calendar,
       href: '/admin/bookings',
       color: 'bg-blue-100 text-blue-600',
     },
     {
-      title: 'Registered Accounts',
-      description: 'View all registered users',
+      titleKey: 'accounts.title',
+      descriptionKey: 'accounts.description',
       icon: Users,
       href: '/admin/accounts',
       color: 'bg-green-100 text-green-600',
     },
     {
-      title: 'Manage Members',
-      description: 'Add or remove training students',
+      titleKey: 'members.title',
+      descriptionKey: 'members.description',
       icon: Users,
       href: '/admin/members',
       color: 'bg-purple-100 text-purple-600',
     },
     {
-      title: 'Lesson Management',
-      description: 'Schedule lessons and view billing',
+      titleKey: 'lessons.title',
+      descriptionKey: 'lessons.description',
       icon: GraduationCap,
       href: '/admin/lessons',
       color: 'bg-orange-100 text-orange-600',
@@ -56,8 +58,8 @@ export default async function AdminPage() {
             <Shield className="w-5 h-5 text-green-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Admin Panel</h1>
-            <p className="text-gray-600">Welcome, {session.user.name}</p>
+            <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+            <p className="text-gray-600">{t('welcome', { name: session.user.name || '' })}</p>
           </div>
         </div>
       </div>
@@ -72,8 +74,8 @@ export default async function AdminPage() {
                     <feature.icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
-                    <CardDescription>{feature.description}</CardDescription>
+                    <CardTitle className="text-lg">{t(feature.titleKey)}</CardTitle>
+                    <CardDescription>{t(feature.descriptionKey)}</CardDescription>
                   </div>
                 </div>
               </CardHeader>

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 interface User {
   id: string
@@ -36,6 +37,8 @@ interface User {
 export default function AdminAccountsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const t = useTranslations('admin.accountsList')
+  const tAdmin = useTranslations('admin')
 
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -94,17 +97,17 @@ export default function AdminAccountsPage() {
           <Link href="/admin">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              {tAdmin('back')}
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Registered Accounts</h1>
-            <p className="text-gray-600">View all registered users</p>
+            <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+            <p className="text-gray-600">{t('description')}</p>
           </div>
         </div>
         <Button onClick={fetchUsers} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
+          {tAdmin('refresh')}
         </Button>
       </div>
 
@@ -118,7 +121,7 @@ export default function AdminAccountsPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">{users.length}</p>
-                <p className="text-sm text-gray-500">Total Users</p>
+                <p className="text-sm text-gray-500">{t('totalUsers')}</p>
               </div>
             </div>
           </CardContent>
@@ -133,7 +136,7 @@ export default function AdminAccountsPage() {
                 <p className="text-2xl font-bold text-gray-900">
                   {users.reduce((sum, u) => sum + u._count.bookings, 0)}
                 </p>
-                <p className="text-sm text-gray-500">Total Bookings</p>
+                <p className="text-sm text-gray-500">{t('totalBookings')}</p>
               </div>
             </div>
           </CardContent>
@@ -152,7 +155,7 @@ export default function AdminAccountsPage() {
                       new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
                   ).length}
                 </p>
-                <p className="text-sm text-gray-500">New This Week</p>
+                <p className="text-sm text-gray-500">{t('newThisWeek')}</p>
               </div>
             </div>
           </CardContent>
@@ -165,7 +168,7 @@ export default function AdminAccountsPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              placeholder="Search by name, email, or phone..."
+              placeholder={t('search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -179,7 +182,7 @@ export default function AdminAccountsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="w-5 h-5" />
-            Users
+            {t('users')}
             <Badge variant="secondary" className="ml-2">
               {filteredUsers.length}
             </Badge>
@@ -192,7 +195,7 @@ export default function AdminAccountsPage() {
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
-              {searchQuery ? 'No users match your search' : 'No registered users yet'}
+              {searchQuery ? t('noUsersMatch') : t('noUsersYet')}
             </div>
           ) : (
             <div className="space-y-3">
@@ -207,7 +210,7 @@ export default function AdminAccountsPage() {
                         <span className="font-medium text-gray-900">{user.name}</span>
                         {isAdmin(user.email) && (
                           <Badge className="bg-green-100 text-green-700 border-0">
-                            Admin
+                            {t('admin')}
                           </Badge>
                         )}
                       </div>
@@ -222,14 +225,14 @@ export default function AdminAccountsPage() {
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <Calendar className="w-4 h-4" />
-                          Registered {format(new Date(user.createdAt), 'MMM d, yyyy')}
+                          {t('registered')} {format(new Date(user.createdAt), 'MMM d, yyyy')}
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="flex gap-2">
                         <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                          {user._count.bookings} booking{user._count.bookings !== 1 ? 's' : ''}
+                          {user._count.bookings} {t('bookings')}
                         </Badge>
                       </div>
                     </div>

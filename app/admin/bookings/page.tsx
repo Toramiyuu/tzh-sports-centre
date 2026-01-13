@@ -40,6 +40,7 @@ import {
   Check,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
+import { useTranslations } from 'next-intl'
 
 // Format time slot to show 30-min range (e.g., "9:00 AM" -> "9:00 - 9:30 AM")
 const formatTimeRange = (displayName: string): string => {
@@ -134,11 +135,14 @@ interface RecurringBooking {
   court: Court
 }
 
-const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
 export default function AdminBookingsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const t = useTranslations('admin.bookings')
+  const tAdmin = useTranslations('admin')
+  const tDays = useTranslations('days')
+
+  const DAYS_OF_WEEK = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [courts, setCourts] = useState<Court[]>([])
@@ -406,8 +410,8 @@ export default function AdminBookingsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Manage Bookings</h1>
-          <p className="text-gray-600">View and manage all court bookings</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+          <p className="text-gray-600">{t('description')}</p>
         </div>
         <div className="flex gap-3 items-center">
           <Button
@@ -415,14 +419,14 @@ export default function AdminBookingsPage() {
             className="bg-blue-600 hover:bg-blue-700 h-10 px-4 text-sm"
           >
             <Repeat className="w-4 h-4 mr-2" />
-            Recurring Bookings
+            {t('recurringBookings')}
             {recurringBookings.length > 0 && (
               <Badge className="ml-2 bg-blue-100 text-blue-700 border-0">{recurringBookings.length}</Badge>
             )}
           </Button>
           <Button onClick={fetchBookings} variant="outline" size="sm">
             <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
+            {tAdmin('refresh')}
           </Button>
         </div>
       </div>
@@ -434,7 +438,7 @@ export default function AdminBookingsPage() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <CalendarDays className="w-5 h-5" />
-                Select Date
+                {t('selectDate')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -458,7 +462,7 @@ export default function AdminBookingsPage() {
                   className="flex-1"
                 >
                   <Grid3X3 className="w-4 h-4 mr-1" />
-                  Grid
+                  {t('grid')}
                 </Button>
                 <Button
                   variant={viewMode === 'list' ? 'default' : 'outline'}
@@ -467,13 +471,13 @@ export default function AdminBookingsPage() {
                   className="flex-1"
                 >
                   <List className="w-4 h-4 mr-1" />
-                  List
+                  {t('list')}
                 </Button>
               </div>
 
               {/* Sport Filter */}
               <div className="mt-4">
-                <Label className="text-xs text-gray-500">Filter by Sport</Label>
+                <Label className="text-xs text-gray-500">{t('filterBySport')}</Label>
                 <div className="flex gap-1 mt-1">
                   {(['all', 'badminton', 'pickleball'] as Sport[]).map((s) => (
                     <Button
@@ -483,7 +487,7 @@ export default function AdminBookingsPage() {
                       onClick={() => setSportFilter(s)}
                       className="flex-1 text-xs px-2"
                     >
-                      {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+                      {s === 'all' ? t('all') : s === 'badminton' ? t('badminton') : t('pickleball')}
                     </Button>
                   ))}
                 </div>
@@ -495,15 +499,15 @@ export default function AdminBookingsPage() {
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4 text-blue-600" />
                     <div>
-                      <p className="font-medium text-gray-900">Operating Hours</p>
-                      <p className="text-gray-500">Weekdays: 3 PM - 12 AM</p>
-                      <p className="text-gray-500">Weekends: 9 AM - 12 AM</p>
+                      <p className="font-medium text-gray-900">{t('operatingHours')}</p>
+                      <p className="text-gray-500">{t('weekdays')}</p>
+                      <p className="text-gray-500">{t('weekends')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Phone className="w-4 h-4 text-blue-600" />
                     <div>
-                      <p className="font-medium text-gray-900">Contact</p>
+                      <p className="font-medium text-gray-900">{t('contact')}</p>
                       <p className="text-gray-500">011-6868 8508</p>
                     </div>
                   </div>
@@ -522,7 +526,7 @@ export default function AdminBookingsPage() {
                 <Clock className="w-5 h-5" />
                 {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                 <Badge variant="outline" className="ml-2">
-                  {filteredBookings.length} booking{filteredBookings.length !== 1 ? 's' : ''}
+                  {filteredBookings.length} {filteredBookings.length !== 1 ? t('bookings') : t('booking')}
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -538,7 +542,7 @@ export default function AdminBookingsPage() {
                     <thead>
                       <tr className="bg-gray-100">
                         <th className="p-2 text-left text-sm font-medium text-gray-700 border-b">
-                          Time
+                          {t('time')}
                         </th>
                         {courts.map((court) => (
                           <th
@@ -585,12 +589,12 @@ export default function AdminBookingsPage() {
                                       </span>
                                       {booking.isRecurring && (
                                         <Badge className="text-[10px] px-1 py-0 bg-purple-200 text-purple-700 border-0">
-                                          Recurring
+                                          {t('recurring')}
                                         </Badge>
                                       )}
                                       {booking.isGuest && !booking.isRecurring && (
                                         <Badge variant="outline" className="text-[10px] px-1 py-0">
-                                          Guest
+                                          {t('guest')}
                                         </Badge>
                                       )}
                                     </div>
@@ -608,7 +612,7 @@ export default function AdminBookingsPage() {
                                         onClick={() => openCancelDialog(booking)}
                                       >
                                         <Trash2 className="w-3 h-3 mr-1" />
-                                        Cancel
+                                        {t('cancel')}
                                       </Button>
                                     )}
                                   </div>
@@ -631,7 +635,7 @@ export default function AdminBookingsPage() {
                               return (
                                 <td key={court.id} className="p-2 border-b">
                                   <div className="h-16 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400">
-                                    Filtered
+                                    {t('filtered')}
                                   </div>
                                 </td>
                               )
@@ -647,7 +651,7 @@ export default function AdminBookingsPage() {
                 <div className="space-y-3">
                   {filteredBookings.length === 0 ? (
                     <div className="text-center py-12 text-gray-500">
-                      No bookings for this date
+                      {t('noBookings')}
                     </div>
                   ) : (
                     filteredBookings.map((booking) => (
@@ -677,7 +681,7 @@ export default function AdminBookingsPage() {
                               </Badge>
                               {!booking.user && (
                                 <Badge variant="outline" className="text-xs">
-                                  Guest
+                                  {t('guest')}
                                 </Badge>
                               )}
                             </div>
@@ -714,7 +718,7 @@ export default function AdminBookingsPage() {
                             }
                           >
                             <Trash2 className="w-4 h-4 mr-1" />
-                            Cancel
+                            {t('cancel')}
                           </Button>
                         </div>
                       </div>
@@ -731,28 +735,28 @@ export default function AdminBookingsPage() {
       <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel Booking{relatedBookings.length > 1 ? 's' : ''}</DialogTitle>
+            <DialogTitle>{relatedBookings.length > 1 ? t('cancelBookings') : t('cancelBooking')}</DialogTitle>
             <DialogDescription>
               {relatedBookings.length > 1
-                ? `This will cancel all ${relatedBookings.length} consecutive pickleball bookings for this customer.`
-                : 'Are you sure you want to cancel this booking?'}
+                ? t('consecutivePickleball', { count: relatedBookings.length })
+                : t('confirmCancel')}
             </DialogDescription>
           </DialogHeader>
           {selectedBooking && (
             <div className="py-4">
               <p>
-                <strong>Name:</strong> {selectedBooking.name}
+                <strong>{t('name')}:</strong> {selectedBooking.name}
               </p>
               <p>
-                <strong>Phone:</strong> {selectedBooking.phone}
+                <strong>{t('phone')}:</strong> {selectedBooking.phone}
               </p>
               <p>
-                <strong>Sport:</strong> {selectedBooking.sport}
+                <strong>{t('sport')}:</strong> {selectedBooking.sport}
               </p>
               {relatedBookings.length > 1 && (
                 <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                   <p className="text-sm font-medium text-blue-800 mb-2">
-                    Slots to be cancelled:
+                    {t('slotsToBeCancelled')}
                   </p>
                   <ul className="text-sm text-blue-700 space-y-1">
                     {relatedBookings.map((b) => (
@@ -767,7 +771,7 @@ export default function AdminBookingsPage() {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setCancelDialogOpen(false)}>
-              Keep Booking{relatedBookings.length > 1 ? 's' : ''}
+              {relatedBookings.length > 1 ? t('keepBookings') : t('keepBooking')}
             </Button>
             <Button
               variant="destructive"
@@ -779,7 +783,7 @@ export default function AdminBookingsPage() {
               ) : (
                 <Trash2 className="w-4 h-4 mr-2" />
               )}
-              Cancel {relatedBookings.length > 1 ? `${relatedBookings.length} Bookings` : 'Booking'}
+              {relatedBookings.length > 1 ? t('cancelBookings') : t('cancelBooking')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -789,22 +793,22 @@ export default function AdminBookingsPage() {
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Booking</DialogTitle>
+            <DialogTitle>{t('addBookingTitle')}</DialogTitle>
             <DialogDescription>
-              Manually add a booking for this time slot.
+              {t('addBookingDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <Label>Name *</Label>
+              <Label>{t('name')} *</Label>
               <Input
                 value={newBookingName}
                 onChange={(e) => setNewBookingName(e.target.value)}
-                placeholder="Customer name"
+                placeholder={t('customerName')}
               />
             </div>
             <div>
-              <Label>Phone *</Label>
+              <Label>{t('phone')} *</Label>
               <Input
                 value={newBookingPhone}
                 onChange={(e) => setNewBookingPhone(e.target.value)}
@@ -812,28 +816,28 @@ export default function AdminBookingsPage() {
               />
             </div>
             <div>
-              <Label>Sport</Label>
+              <Label>{t('sport')}</Label>
               <div className="flex gap-2 mt-1">
                 <Button
                   variant={newBookingSport === 'badminton' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setNewBookingSport('badminton')}
                 >
-                  Badminton (RM15)
+                  {t('badmintonPrice')}
                 </Button>
                 <Button
                   variant={newBookingSport === 'pickleball' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setNewBookingSport('pickleball')}
                 >
-                  Pickleball (RM25)
+                  {t('pickleballPrice')}
                 </Button>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setAddDialogOpen(false)}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleAddBooking}
@@ -844,7 +848,7 @@ export default function AdminBookingsPage() {
               ) : (
                 <Plus className="w-4 h-4 mr-2" />
               )}
-              Add Booking
+              {t('addBooking')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -858,10 +862,10 @@ export default function AdminBookingsPage() {
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Repeat className="w-5 h-5 text-blue-600" />
               </div>
-              Recurring Bookings
+              {t('recurringTitle')}
             </DialogTitle>
             <DialogDescription className="text-gray-500">
-              Set up weekly recurring bookings for training sessions and social games
+              {t('recurringDescription')}
             </DialogDescription>
           </DialogHeader>
 
@@ -870,9 +874,9 @@ export default function AdminBookingsPage() {
             {recurringBookings.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-semibold text-gray-900">Active Bookings</h4>
+                  <h4 className="text-sm font-semibold text-gray-900">{t('activeBookings')}</h4>
                   <Badge variant="secondary" className="text-xs">
-                    {recurringBookings.length} active
+                    {recurringBookings.length} {t('active')}
                   </Badge>
                 </div>
                 <div className="space-y-2 max-h-32 overflow-y-auto pr-2">
@@ -918,23 +922,23 @@ export default function AdminBookingsPage() {
             <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
               <h4 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <Plus className="w-4 h-4 text-blue-600" />
-                Add New Recurring Booking
+                {t('addNewRecurring')}
               </h4>
 
               <div className="space-y-5">
                 {/* Label and Sport Row */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">Booking Name</Label>
+                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('bookingName')}</Label>
                     <Input
                       value={recurringLabel}
                       onChange={(e) => setRecurringLabel(e.target.value)}
-                      placeholder="e.g., Social Games, Training"
+                      placeholder={t('bookingNamePlaceholder')}
                       className="bg-white"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">Sport Type</Label>
+                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('sportType')}</Label>
                     <div className="flex gap-2">
                       <Button
                         type="button"
@@ -943,7 +947,7 @@ export default function AdminBookingsPage() {
                         className={`flex-1 ${recurringSport === 'badminton' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-white'}`}
                         onClick={() => setRecurringSport('badminton')}
                       >
-                        Badminton
+                        {t('badminton')}
                       </Button>
                       <Button
                         type="button"
@@ -964,7 +968,7 @@ export default function AdminBookingsPage() {
                           }
                         }}
                       >
-                        Pickleball
+                        {t('pickleball')}
                       </Button>
                     </div>
                   </div>
@@ -973,7 +977,7 @@ export default function AdminBookingsPage() {
                 {/* Days Selection */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <Label className="text-xs font-medium text-gray-700">Days of Week</Label>
+                    <Label className="text-xs font-medium text-gray-700">{t('daysOfWeek')}</Label>
                     <div className="flex gap-1">
                       <Button
                         type="button"
@@ -982,7 +986,7 @@ export default function AdminBookingsPage() {
                         className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         onClick={() => setRecurringDays([1, 2, 3, 4, 5])}
                       >
-                        Weekdays
+                        {t('weekdaysBtn')}
                       </Button>
                       <Button
                         type="button"
@@ -991,7 +995,7 @@ export default function AdminBookingsPage() {
                         className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         onClick={() => setRecurringDays([0, 6])}
                       >
-                        Weekends
+                        {t('weekendsBtn')}
                       </Button>
                       <Button
                         type="button"
@@ -1000,7 +1004,7 @@ export default function AdminBookingsPage() {
                         className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         onClick={() => setRecurringDays([0, 1, 2, 3, 4, 5, 6])}
                       >
-                        All
+                        {t('allBtn')}
                       </Button>
                       {recurringDays.length > 0 && (
                         <Button
@@ -1010,7 +1014,7 @@ export default function AdminBookingsPage() {
                           className="h-6 px-2 text-xs text-gray-400 hover:text-gray-600"
                           onClick={() => setRecurringDays([])}
                         >
-                          Clear
+                          {t('clear')}
                         </Button>
                       )}
                     </div>
@@ -1042,7 +1046,7 @@ export default function AdminBookingsPage() {
                 {/* Courts Selection */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <Label className="text-xs font-medium text-gray-700">Courts</Label>
+                    <Label className="text-xs font-medium text-gray-700">{t('courts')}</Label>
                     <div className="flex gap-1">
                       <Button
                         type="button"
@@ -1051,7 +1055,7 @@ export default function AdminBookingsPage() {
                         className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         onClick={() => setRecurringCourtIds(courts.map(c => c.id))}
                       >
-                        Select All
+                        {t('selectAll')}
                       </Button>
                       {recurringCourtIds.length > 0 && (
                         <Button
@@ -1061,7 +1065,7 @@ export default function AdminBookingsPage() {
                           className="h-6 px-2 text-xs text-gray-400 hover:text-gray-600"
                           onClick={() => setRecurringCourtIds([])}
                         >
-                          Clear
+                          {t('clear')}
                         </Button>
                       )}
                     </div>
@@ -1093,7 +1097,7 @@ export default function AdminBookingsPage() {
                 {/* Time Selection Row */}
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">Start Time</Label>
+                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('startTime')}</Label>
                     <Select value={recurringStartTime} onValueChange={(val) => {
                       setRecurringStartTime(val)
                       if (recurringEndTime && recurringEndTime <= val) {
@@ -1101,7 +1105,7 @@ export default function AdminBookingsPage() {
                       }
                     }}>
                       <SelectTrigger className="bg-white">
-                        <SelectValue placeholder="Select start" />
+                        <SelectValue placeholder={t('selectStart')} />
                       </SelectTrigger>
                       <SelectContent>
                         {timeSlots.map((slot) => (
@@ -1115,11 +1119,11 @@ export default function AdminBookingsPage() {
 
                   <div>
                     <Label className="text-xs font-medium text-gray-700 mb-1.5 block">
-                      End Time {recurringSport === 'pickleball' && <span className="text-green-600 font-normal">(2hr min)</span>}
+                      {t('endTime')} {recurringSport === 'pickleball' && <span className="text-green-600 font-normal">({t('minHours')})</span>}
                     </Label>
                     <Select value={recurringEndTime} onValueChange={setRecurringEndTime} disabled={!recurringStartTime}>
                       <SelectTrigger className="bg-white">
-                        <SelectValue placeholder="Select end" />
+                        <SelectValue placeholder={t('selectEnd')} />
                       </SelectTrigger>
                       <SelectContent>
                         {timeSlots
@@ -1142,7 +1146,7 @@ export default function AdminBookingsPage() {
                           // Midnight is after the last slot, so check if we have enough hours
                           // timeSlots.length gives us the count, and midnight would be 1 hour after the last slot
                           if (startIndex >= 0 && (timeSlots.length + 1) - startIndex > minHours) {
-                            return <SelectItem value="24:00">12:00 AM (Midnight)</SelectItem>
+                            return <SelectItem value="24:00">{t('midnight')}</SelectItem>
                           }
                           return null
                         })()}
@@ -1151,7 +1155,7 @@ export default function AdminBookingsPage() {
                   </div>
 
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">End Date <span className="text-gray-400 font-normal">(optional)</span></Label>
+                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('endDate')} <span className="text-gray-400 font-normal">({t('optional')})</span></Label>
                     <Input
                       type="date"
                       value={recurringEndDate}
@@ -1170,15 +1174,17 @@ export default function AdminBookingsPage() {
                       </div>
                       <div>
                         <p className="font-medium text-blue-900 text-sm">
-                          Ready to create {recurringDays.length * recurringCourtIds.length} recurring slot{recurringDays.length * recurringCourtIds.length > 1 ? 's' : ''}
+                          {recurringDays.length * recurringCourtIds.length > 1
+                            ? t('readyToCreatePlural', { count: recurringDays.length * recurringCourtIds.length })
+                            : t('readyToCreate', { count: recurringDays.length * recurringCourtIds.length })}
                         </p>
                         <p className="text-blue-700 text-xs mt-1">
                           {recurringDays.sort((a, b) => a - b).map(d => DAYS_OF_WEEK[d].slice(0, 3)).join(', ')}
                           {' '}&bull;{' '}
-                          {recurringCourtIds.length} court{recurringCourtIds.length > 1 ? 's' : ''}
+                          {recurringCourtIds.length} {t('courts').toLowerCase()}
                           {' '}&bull;{' '}
                           {timeSlots.find(s => s.slotTime === recurringStartTime)?.displayName} - {
-                            recurringEndTime === '24:00' ? '12:00 AM (Midnight)' : timeSlots.find(s => s.slotTime === recurringEndTime)?.displayName
+                            recurringEndTime === '24:00' ? t('midnight') : timeSlots.find(s => s.slotTime === recurringEndTime)?.displayName
                           }
                         </p>
                       </div>
@@ -1191,7 +1197,7 @@ export default function AdminBookingsPage() {
 
           <DialogFooter className="border-t pt-4">
             <Button variant="outline" onClick={() => setRecurringDialogOpen(false)}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleAddRecurring}
@@ -1210,7 +1216,7 @@ export default function AdminBookingsPage() {
               ) : (
                 <Plus className="w-4 h-4 mr-2" />
               )}
-              Create Recurring Booking
+              {t('createRecurring')}
             </Button>
           </DialogFooter>
         </DialogContent>

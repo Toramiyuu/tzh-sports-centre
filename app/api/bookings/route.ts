@@ -217,6 +217,9 @@ export async function POST(request: NextRequest) {
             guestPhone: bookingGuestPhone,
             guestEmail: bookingGuestEmail,
           },
+          include: {
+            court: true,
+          },
         })
       )
     )
