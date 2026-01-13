@@ -25,6 +25,7 @@ type TabType = 'personal' | 'bookings' | 'lessons' | 'settings'
 
 interface UserProfile {
   id: string
+  uid: string
   name: string
   email: string
   phone: string
@@ -161,6 +162,13 @@ export default function ProfilePage() {
           )
         )}
       </div>
+
+      {/* UID Display - Bottom Right */}
+      {profile?.uid && (
+        <div className="fixed bottom-4 right-4 bg-gray-800 text-gray-400 px-3 py-1.5 rounded-lg text-sm font-mono border border-gray-700">
+          UID: {profile.uid}
+        </div>
+      )}
     </div>
   )
 }

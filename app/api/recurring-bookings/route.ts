@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
         court: true,
         user: {
           select: {
+            id: true,
+            uid: true,
             name: true,
             email: true,
             phone: true,
@@ -30,7 +32,16 @@ export async function GET(request: NextRequest) {
       ],
     })
 
-    return NextResponse.json({ recurringBookings })
+    // Convert BigInt uid to string
+    const serialized = recurringBookings.map(rb => ({
+      ...rb,
+      user: rb.user ? {
+        ...rb.user,
+        uid: rb.user.uid.toString(),
+      } : null,
+    }))
+
+    return NextResponse.json({ recurringBookings: serialized })
   } catch (error) {
     console.error('Error fetching recurring bookings:', error)
     return NextResponse.json(
@@ -65,6 +76,8 @@ export async function POST(request: NextRequest) {
       isAdminBooking,
       // For pickleball - number of consecutive hours (legacy)
       consecutiveHours,
+      // For admin creating bookings for other users
+      userId,
     } = body
 
     // Handle both new array format and legacy single value format
@@ -171,9 +184,12 @@ export async function POST(request: NextRequest) {
             startDate: startDate ? new Date(startDate) : new Date(),
             endDate: endDate ? new Date(endDate) : null,
             label: isAdminBooking ? label : null,
-            userId: session?.user?.id || null,
-            guestName: !isAdminBooking ? guestName : null,
-            guestPhone: !isAdminBooking ? guestPhone : null,
+            // For admin bookings: use provided userId if available, otherwise null (don't default to admin's ID)
+            // For customer bookings: use their session ID
+            userId: isAdminBooking ? (userId || null) : (session?.user?.id || null),
+            // Guest info: save for both admin and customer bookings when provided
+            guestName: guestName || null,
+            guestPhone: guestPhone || null,
             createdBy: isAdminBooking ? session?.user?.email : null,
             isActive: true,
           })
@@ -240,6 +256,136 @@ export async function DELETE(request: NextRequest) {
     console.error('Error deactivating recurring booking:', error)
     return NextResponse.json(
       { error: 'Failed to deactivate recurring booking' },
+      { status: 500 }
+    )
+  }
+}
+
+// PATCH - Update a recurring booking
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || !isAdmin(session.user.email)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const {
+      id,
+      label,
+      dayOfWeek,
+      startTime,
+      endTime,
+      endDate,
+      courtId,
+      userId,
+      guestName,
+      guestPhone,
+    } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Recurring booking ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Check if booking exists
+    const existing = await prisma.recurringBooking.findUnique({
+      where: { id },
+    })
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Recurring booking not found' },
+        { status: 404 }
+      )
+    }
+
+    // Build update data
+    const updateData: {
+      label?: string | null
+      dayOfWeek?: number
+      startTime?: string
+      endTime?: string
+      endDate?: Date | null
+      courtId?: number
+      userId?: string | null
+      guestName?: string | null
+      guestPhone?: string | null
+    } = {}
+
+    if (label !== undefined) updateData.label = label
+    if (dayOfWeek !== undefined) updateData.dayOfWeek = dayOfWeek
+    if (startTime !== undefined) updateData.startTime = startTime
+    if (endTime !== undefined) updateData.endTime = endTime
+    if (endDate !== undefined) updateData.endDate = endDate ? new Date(endDate) : null
+    if (courtId !== undefined) updateData.courtId = courtId
+    if (userId !== undefined) updateData.userId = userId
+    if (guestName !== undefined) updateData.guestName = guestName
+    if (guestPhone !== undefined) updateData.guestPhone = guestPhone
+
+    // Check for conflicts if changing day, time, or court
+    if (dayOfWeek !== undefined || startTime !== undefined || courtId !== undefined) {
+      const checkDayOfWeek = dayOfWeek ?? existing.dayOfWeek
+      const checkStartTime = startTime ?? existing.startTime
+      const checkCourtId = courtId ?? existing.courtId
+
+      const conflict = await prisma.recurringBooking.findFirst({
+        where: {
+          id: { not: id },
+          courtId: checkCourtId,
+          dayOfWeek: checkDayOfWeek,
+          startTime: checkStartTime,
+          isActive: true,
+          OR: [
+            { endDate: null },
+            { endDate: { gte: new Date() } },
+          ],
+        },
+      })
+
+      if (conflict) {
+        const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][checkDayOfWeek]
+        return NextResponse.json(
+          { error: `Conflict exists for Court ${checkCourtId}, ${dayName}, ${checkStartTime}` },
+          { status: 400 }
+        )
+      }
+    }
+
+    const updatedBooking = await prisma.recurringBooking.update({
+      where: { id },
+      data: updateData,
+      include: {
+        court: true,
+        user: {
+          select: {
+            id: true,
+            uid: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+      },
+    })
+
+    // Serialize BigInt
+    const serialized = {
+      ...updatedBooking,
+      user: updatedBooking.user ? {
+        ...updatedBooking.user,
+        uid: updatedBooking.user.uid.toString(),
+      } : null,
+    }
+
+    return NextResponse.json({ success: true, recurringBooking: serialized })
+  } catch (error) {
+    console.error('Error updating recurring booking:', error)
+    return NextResponse.json(
+      { error: 'Failed to update recurring booking' },
       { status: 500 }
     )
   }

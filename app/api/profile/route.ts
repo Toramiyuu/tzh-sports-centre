@@ -14,6 +14,7 @@ export async function GET() {
       where: { email: session.user.email },
       select: {
         id: true,
+        uid: true,
         name: true,
         email: true,
         phone: true,
@@ -32,7 +33,11 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    return NextResponse.json(user)
+    // Convert BigInt uid to string for JSON serialization
+    return NextResponse.json({
+      ...user,
+      uid: user.uid.toString(),
+    })
   } catch (error) {
     console.error('Profile fetch error:', error)
     return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 })

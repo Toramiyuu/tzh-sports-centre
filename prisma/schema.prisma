@@ -11,6 +11,7 @@ datasource db {
 
 model User {
   id                String             @id @default(cuid())
+  uid               BigInt             @unique @default(autoincrement())
   email             String             @unique
   passwordHash      String             @map("password_hash")
   name              String

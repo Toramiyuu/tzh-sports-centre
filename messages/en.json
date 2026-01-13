@@ -420,7 +420,31 @@
       "readyToCreate": "Ready to create {count} recurring slot",
       "readyToCreatePlural": "Ready to create {count} recurring slots",
       "createRecurring": "Create Recurring Booking",
-      "midnight": "12:00 AM (Midnight)"
+      "midnight": "12:00 AM (Midnight)",
+      "linkToUser": "Link to User Account",
+      "enterUid": "Enter UID to search",
+      "editRecurring": "Edit Recurring Booking",
+      "editRecurringDescription": "Modify the recurring booking settings. Changes apply to future occurrences only.",
+      "dayOfWeek": "Day of Week",
+      "court": "Court",
+      "saveChanges": "Save Changes",
+      "orEnterGuest": "Or enter guest details (for non-registered users)",
+      "guestName": "Guest Name",
+      "guestPhone": "Guest Phone",
+      "guestNamePlaceholder": "Enter guest name",
+      "guestPhonePlaceholder": "Enter phone number",
+      "invalidPhone": "Please enter a valid Malaysian phone number",
+      "phoneFormat": "Format: 01xxxxxxxx (10-11 digits)",
+      "edit": "Edit",
+      "selectMode": "Select Mode",
+      "exitSelectMode": "Exit Select Mode",
+      "selected": "selected",
+      "deleteSelected": "Delete Selected",
+      "confirmDeleteTitle": "Confirm Deletion",
+      "confirmDeleteDescription": "Are you sure you want to delete {count} booking(s)? This action cannot be undone.",
+      "recurringBookings": "recurring booking(s)",
+      "regularBookings": "regular booking(s)",
+      "deleteAll": "Delete All"
     },
     "accountsList": {
       "title": "Registered Accounts",
@@ -441,7 +465,15 @@
       "search": "Search by name, email or phone...",
       "noUsersMatch": "No users match your search",
       "noUsersYet": "No registered users yet",
-      "registered": "Registered"
+      "registered": "Registered",
+      "bookings": "bookings",
+      "editUid": "Edit UID",
+      "editUidDescription": "Change this user's unique identifier. UIDs must be unique across all users.",
+      "newUid": "New UID",
+      "uidHelp": "Enter a unique numeric identifier (e.g., 100000001)",
+      "saveUid": "Save UID",
+      "uidMustBeNumber": "UID must be a number",
+      "failedToUpdateUid": "Failed to update UID"
     },
     "membersList": {
       "title": "Training Members",
@@ -587,6 +619,7 @@
       "confirmCancel": "Are you sure you want to cancel this lesson?"
     },
     "back": "Back",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "cancel": "Cancel"
   }
 }

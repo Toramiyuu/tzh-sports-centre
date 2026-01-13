@@ -38,6 +38,9 @@ import {
   RefreshCw,
   Repeat,
   Check,
+  Pencil,
+  Search,
+  X,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import { useTranslations } from 'next-intl'
@@ -131,6 +134,8 @@ interface RecurringBooking {
   label: string | null
   guestName: string | null
   guestPhone: string | null
+  userId: string | null
+  user: { id: string; uid: string; name: string; phone: string } | null
   isActive: boolean
   court: Court
 }
@@ -177,6 +182,103 @@ export default function AdminBookingsPage() {
   const [recurringSport, setRecurringSport] = useState<'badminton' | 'pickleball'>('badminton')
   const [recurringLabel, setRecurringLabel] = useState('')
   const [recurringEndDate, setRecurringEndDate] = useState('')
+  const [recurringUserUid, setRecurringUserUid] = useState('')
+  const [recurringUser, setRecurringUser] = useState<{ id: string; uid: string; name: string; phone: string } | null>(null)
+  const [userSearchLoading, setUserSearchLoading] = useState(false)
+  // For non-registered users
+  const [recurringGuestName, setRecurringGuestName] = useState('')
+  const [recurringGuestPhone, setRecurringGuestPhone] = useState('')
+  const [guestPhoneError, setGuestPhoneError] = useState('')
+
+  // Multi-select for bulk delete
+  const [selectedRecurringIds, setSelectedRecurringIds] = useState<Set<string>>(new Set())
+  const [selectedBookingIds, setSelectedBookingIds] = useState<Set<string>>(new Set())
+  const [selectionMode, setSelectionMode] = useState(false)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+
+  // Toggle selection for recurring booking
+  const toggleRecurringSelection = (id: string) => {
+    setSelectedRecurringIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(id)) {
+        newSet.delete(id)
+      } else {
+        newSet.add(id)
+      }
+      return newSet
+    })
+  }
+
+  // Toggle selection for regular booking
+  const toggleBookingSelection = (id: string) => {
+    setSelectedBookingIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(id)) {
+        newSet.delete(id)
+      } else {
+        newSet.add(id)
+      }
+      return newSet
+    })
+  }
+
+  // Clear all selections
+  const clearSelections = () => {
+    setSelectedRecurringIds(new Set())
+    setSelectedBookingIds(new Set())
+    setSelectionMode(false)
+  }
+
+  // Handle bulk delete
+  const handleBulkDelete = async () => {
+    setActionLoading(true)
+    try {
+      // Delete selected recurring bookings
+      if (selectedRecurringIds.size > 0) {
+        await fetch('/api/recurring-bookings', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids: Array.from(selectedRecurringIds) }),
+        })
+      }
+
+      // Delete selected regular bookings
+      if (selectedBookingIds.size > 0) {
+        await fetch('/api/admin/bookings', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bookingIds: Array.from(selectedBookingIds) }),
+        })
+      }
+
+      // Refresh and clear
+      fetchBookings()
+      fetchRecurringBookings()
+      clearSelections()
+      setDeleteConfirmOpen(false)
+    } catch (error) {
+      console.error('Error deleting bookings:', error)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Phone validation for Malaysian numbers
+  const validatePhone = (phone: string): boolean => {
+    if (!phone) return true // Empty is valid (optional field)
+    // Remove all non-digit characters
+    const cleaned = phone.replace(/\D/g, '')
+    // Malaysian mobile: 01xxxxxxxx (10-11 digits starting with 01)
+    // Also allow numbers starting with 60 (country code) or +60
+    // Minimum 10 digits, maximum 12 digits
+    if (cleaned.length < 10 || cleaned.length > 12) return false
+    // Must start with 01 or 60
+    return cleaned.startsWith('01') || cleaned.startsWith('60')
+  }
+
+  // Edit recurring booking
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [editingRecurring, setEditingRecurring] = useState<RecurringBooking | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -227,6 +329,13 @@ export default function AdminBookingsPage() {
       return
     }
 
+    // Validate guest phone if provided
+    if (recurringGuestPhone && !validatePhone(recurringGuestPhone)) {
+      setGuestPhoneError(t('invalidPhone'))
+      return
+    }
+    setGuestPhoneError('')
+
     setActionLoading(true)
     try {
       const res = await fetch('/api/recurring-bookings', {
@@ -242,18 +351,16 @@ export default function AdminBookingsPage() {
           endDate: recurringEndDate || null,
           label: recurringLabel,
           isAdminBooking: true,
+          userId: recurringUser?.id || null,
+          // For non-registered users
+          guestName: recurringGuestName || null,
+          guestPhone: recurringGuestPhone || null,
         }),
       })
 
       if (res.ok) {
         setRecurringDialogOpen(false)
-        setRecurringCourtIds([])
-        setRecurringDays([])
-        setRecurringStartTime('')
-        setRecurringEndTime('')
-        setRecurringSport('badminton')
-        setRecurringLabel('')
-        setRecurringEndDate('')
+        resetRecurringForm()
         fetchRecurringBookings()
         fetchBookings()
       }
@@ -282,6 +389,116 @@ export default function AdminBookingsPage() {
     } finally {
       setActionLoading(false)
     }
+  }
+
+  // Search user by UID
+  const searchUserByUid = async () => {
+    if (!recurringUserUid) return
+    setUserSearchLoading(true)
+    try {
+      const res = await fetch(`/api/admin/accounts?uid=${recurringUserUid}`)
+      const data = await res.json()
+      if (res.ok && data.user) {
+        setRecurringUser(data.user)
+      } else {
+        setRecurringUser(null)
+        alert('User not found')
+      }
+    } catch (error) {
+      console.error('Error searching user:', error)
+      setRecurringUser(null)
+    } finally {
+      setUserSearchLoading(false)
+    }
+  }
+
+  // Open edit dialog
+  const openEditDialog = (rb: RecurringBooking) => {
+    // Close the recurring bookings dialog first
+    setRecurringDialogOpen(false)
+
+    setEditingRecurring(rb)
+    setRecurringCourtIds([rb.courtId])
+    setRecurringDays([rb.dayOfWeek])
+    setRecurringStartTime(rb.startTime)
+    setRecurringEndTime(rb.endTime)
+    setRecurringSport(rb.sport as 'badminton' | 'pickleball')
+    setRecurringLabel(rb.label || '')
+    setRecurringEndDate(rb.endDate ? rb.endDate.split('T')[0] : '')
+    setRecurringUser(rb.user)
+    setRecurringUserUid(rb.user?.uid || '')
+    setRecurringGuestName(rb.guestName || '')
+    setRecurringGuestPhone(rb.guestPhone || '')
+    setEditDialogOpen(true)
+  }
+
+  // Open edit dialog by recurring booking ID (for grid cells)
+  const openEditDialogById = (recurringId: string) => {
+    const rb = recurringBookings.find(r => r.id === recurringId)
+    if (rb) {
+      openEditDialog(rb)
+    }
+  }
+
+  // Update recurring booking
+  const handleUpdateRecurring = async () => {
+    if (!editingRecurring) return
+
+    // Validate guest phone if provided
+    if (recurringGuestPhone && !validatePhone(recurringGuestPhone)) {
+      setGuestPhoneError(t('invalidPhone'))
+      return
+    }
+    setGuestPhoneError('')
+
+    setActionLoading(true)
+    try {
+      const res = await fetch('/api/recurring-bookings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingRecurring.id,
+          courtId: recurringCourtIds[0],
+          sport: recurringSport,
+          dayOfWeek: recurringDays[0],
+          startTime: recurringStartTime,
+          endTime: recurringEndTime,
+          endDate: recurringEndDate || null,
+          label: recurringLabel,
+          userId: recurringUser?.id || null,
+          guestName: recurringGuestName || null,
+          guestPhone: recurringGuestPhone || null,
+        }),
+      })
+
+      if (res.ok) {
+        setEditDialogOpen(false)
+        setEditingRecurring(null)
+        resetRecurringForm()
+        fetchRecurringBookings()
+        fetchBookings()
+      }
+    } catch (error) {
+      console.error('Error updating recurring booking:', error)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Reset recurring form
+  const resetRecurringForm = () => {
+    setRecurringCourtIds([])
+    setRecurringDays([])
+    setRecurringStartTime('')
+    setRecurringEndTime('')
+    setRecurringSport('badminton')
+    setRecurringLabel('')
+    setRecurringEndDate('')
+    setRecurringUserUid('')
+    setRecurringUser(null)
+    setRecurringGuestName('')
+    setRecurringGuestPhone('')
+    setGuestPhoneError('')
   }
 
   useEffect(() => {
@@ -493,6 +710,34 @@ export default function AdminBookingsPage() {
                 </div>
               </div>
 
+              {/* Selection Mode Toggle */}
+              <div className="mt-4">
+                <Button
+                  variant={selectionMode ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    if (selectionMode) {
+                      clearSelections()
+                    } else {
+                      setSelectionMode(true)
+                    }
+                  }}
+                  className={`w-full ${selectionMode ? 'bg-red-600 hover:bg-red-700' : ''}`}
+                >
+                  {selectionMode ? (
+                    <>
+                      <X className="w-4 h-4 mr-1" />
+                      {t('exitSelectMode')}
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4 mr-1" />
+                      {t('selectMode')}
+                    </>
+                  )}
+                </Button>
+              </div>
+
               {/* Operating Hours */}
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <div className="space-y-3">
@@ -567,17 +812,38 @@ export default function AdminBookingsPage() {
                               sportFilter === 'all' || booking?.sport === sportFilter
 
                             if (booking && matchesFilter) {
+                              const isSelected = booking.isRecurring
+                                ? selectedRecurringIds.has(booking.id)
+                                : selectedBookingIds.has(booking.id)
+
                               return (
                                 <td key={court.id} className="p-2 border-b">
                                   <div
-                                    className={`p-2 rounded text-xs ${
-                                      booking.isRecurring
+                                    className={`p-2 rounded text-xs relative ${
+                                      isSelected
+                                        ? 'ring-2 ring-red-500 bg-red-50'
+                                        : booking.isRecurring
                                         ? 'bg-purple-100 border border-purple-200'
                                         : booking.sport === 'badminton'
                                         ? 'bg-blue-100 border border-blue-200'
                                         : 'bg-green-100 border border-green-200'
-                                    }`}
+                                    } ${selectionMode ? 'cursor-pointer hover:opacity-80' : ''}`}
+                                    onClick={selectionMode ? () => {
+                                      if (booking.isRecurring) {
+                                        toggleRecurringSelection(booking.id)
+                                      } else {
+                                        toggleBookingSelection(booking.id)
+                                      }
+                                    } : undefined}
                                   >
+                                    {/* Selection checkbox indicator */}
+                                    {selectionMode && (
+                                      <div className={`absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center ${
+                                        isSelected ? 'bg-red-500' : 'bg-gray-300'
+                                      }`}>
+                                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                                      </div>
+                                    )}
                                     <div className="flex items-center gap-1 font-medium flex-wrap">
                                       {booking.isRecurring ? (
                                         <Repeat className="w-3 h-3 text-purple-600" />
@@ -604,7 +870,18 @@ export default function AdminBookingsPage() {
                                         {booking.phone}
                                       </div>
                                     )}
-                                    {!booking.isRecurring && (
+                                    {!selectionMode && booking.isRecurring && (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="w-full mt-1 h-6 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                        onClick={() => openEditDialogById(booking.id)}
+                                      >
+                                        <Pencil className="w-3 h-3 mr-1" />
+                                        {t('edit')}
+                                      </Button>
+                                    )}
+                                    {!selectionMode && !booking.isRecurring && (
                                       <Button
                                         variant="ghost"
                                         size="sm"
@@ -883,35 +1160,76 @@ export default function AdminBookingsPage() {
                   {recurringBookings.map((rb) => (
                     <div
                       key={rb.id}
-                      className={`flex items-center justify-between p-3 rounded-lg border transition-all hover:shadow-sm ${
+                      className={`flex items-center justify-between p-3 rounded-lg border transition-all hover:shadow-sm cursor-pointer ${
                         rb.sport === 'badminton'
                           ? 'bg-blue-50/50 border-blue-200 hover:bg-blue-50'
                           : 'bg-green-50/50 border-green-200 hover:bg-green-50'
                       }`}
+                      onClick={() => openEditDialog(rb)}
                     >
                       <div className="flex items-center gap-3">
                         <div className={`w-1 h-8 rounded-full ${
                           rb.sport === 'badminton' ? 'bg-blue-500' : 'bg-green-500'
                         }`} />
                         <div>
-                          <div className="font-medium text-gray-900">{rb.label || rb.sport}</div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-900">{rb.label || rb.sport}</span>
+                            {rb.user && (
+                              <Badge className="bg-purple-100 text-purple-700 border-0 text-xs">
+                                #{rb.user.uid}
+                              </Badge>
+                            )}
+                            {!rb.user && rb.guestName && (
+                              <Badge className="bg-orange-100 text-orange-700 border-0 text-xs">
+                                {t('guest')}
+                              </Badge>
+                            )}
+                          </div>
                           <div className="text-xs text-gray-500 flex items-center gap-2 mt-0.5">
                             <span>{DAYS_OF_WEEK[rb.dayOfWeek]}</span>
                             <span className="text-gray-300">|</span>
                             <span>{rb.court.name}</span>
                             <span className="text-gray-300">|</span>
                             <span>{rb.startTime} - {rb.endTime}</span>
+                            {rb.user && (
+                              <>
+                                <span className="text-gray-300">|</span>
+                                <span className="text-purple-600">{rb.user.name}</span>
+                              </>
+                            )}
+                            {!rb.user && rb.guestName && (
+                              <>
+                                <span className="text-gray-300">|</span>
+                                <span className="text-orange-600">{rb.guestName}</span>
+                                {rb.guestPhone && (
+                                  <>
+                                    <span className="text-gray-300">|</span>
+                                    <span className="text-orange-500">{rb.guestPhone}</span>
+                                  </>
+                                )}
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-gray-400 hover:text-red-600 hover:bg-red-50"
-                        onClick={() => handleDeleteRecurring(rb.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+                          onClick={() => openEditDialog(rb)}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-gray-400 hover:text-red-600 hover:bg-red-50"
+                          onClick={() => handleDeleteRecurring(rb.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1165,6 +1483,99 @@ export default function AdminBookingsPage() {
                   </div>
                 </div>
 
+                {/* Link to User by UID (optional) */}
+                <div>
+                  <Label className="text-xs font-medium text-gray-700 mb-1.5 block">
+                    {t('linkToUser')} <span className="text-gray-400 font-normal">({t('optional')})</span>
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={recurringUserUid}
+                      onChange={(e) => setRecurringUserUid(e.target.value)}
+                      placeholder={t('enterUid')}
+                      className="bg-white flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={searchUserByUid}
+                      disabled={userSearchLoading || !recurringUserUid}
+                      className="px-4"
+                    >
+                      {userSearchLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Search className="w-4 h-4" />
+                      )}
+                    </Button>
+                    {recurringUser && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setRecurringUser(null)
+                          setRecurringUserUid('')
+                        }}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                  {recurringUser && (
+                    <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center gap-2 text-sm">
+                        <User className="w-4 h-4 text-green-600" />
+                        <span className="font-medium text-green-800">{recurringUser.name}</span>
+                        <Badge className="bg-green-100 text-green-700 border-0 text-xs">
+                          #{recurringUser.uid}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                        <Phone className="w-3 h-3" />
+                        {recurringUser.phone}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Guest Info (for non-registered users) */}
+                {!recurringUser && (
+                  <div className="border-t border-gray-200 pt-4">
+                    <Label className="text-xs font-medium text-gray-700 mb-3 block">
+                      {t('orEnterGuest')}
+                    </Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestName')}</Label>
+                        <Input
+                          value={recurringGuestName}
+                          onChange={(e) => setRecurringGuestName(e.target.value)}
+                          placeholder={t('guestNamePlaceholder')}
+                          className="bg-white"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestPhone')}</Label>
+                        <Input
+                          value={recurringGuestPhone}
+                          onChange={(e) => {
+                            setRecurringGuestPhone(e.target.value)
+                            if (guestPhoneError) setGuestPhoneError('')
+                          }}
+                          placeholder={t('guestPhonePlaceholder')}
+                          className={`bg-white ${guestPhoneError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                        />
+                        {guestPhoneError && (
+                          <p className="text-xs text-red-500 mt-1">{guestPhoneError}</p>
+                        )}
+                        <p className="text-xs text-gray-400 mt-1">{t('phoneFormat')}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Summary */}
                 {recurringDays.length > 0 && recurringCourtIds.length > 0 && recurringStartTime && recurringEndTime && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
@@ -1217,6 +1628,370 @@ export default function AdminBookingsPage() {
                 <Plus className="w-4 h-4 mr-2" />
               )}
               {t('createRecurring')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Recurring Booking Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={(open) => {
+        if (!open) {
+          setEditDialogOpen(false)
+          setEditingRecurring(null)
+          resetRecurringForm()
+        }
+      }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pb-4 border-b">
+            <DialogTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <Pencil className="w-5 h-5 text-orange-600" />
+              </div>
+              {t('editRecurring')}
+            </DialogTitle>
+            <DialogDescription className="text-gray-500">
+              {t('editRecurringDescription')}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4 space-y-5">
+            {/* Label and Sport Row */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('bookingName')}</Label>
+                <Input
+                  value={recurringLabel}
+                  onChange={(e) => setRecurringLabel(e.target.value)}
+                  placeholder={t('bookingNamePlaceholder')}
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('sportType')}</Label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={recurringSport === 'badminton' ? 'default' : 'outline'}
+                    size="sm"
+                    className={`flex-1 ${recurringSport === 'badminton' ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+                    onClick={() => setRecurringSport('badminton')}
+                  >
+                    {t('badminton')}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={recurringSport === 'pickleball' ? 'default' : 'outline'}
+                    size="sm"
+                    className={`flex-1 ${recurringSport === 'pickleball' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                    onClick={() => setRecurringSport('pickleball')}
+                  >
+                    {t('pickleball')}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Day Selection (single day for edit) */}
+            <div>
+              <Label className="text-xs font-medium text-gray-700 mb-2 block">{t('dayOfWeek')}</Label>
+              <div className="grid grid-cols-7 gap-2">
+                {DAYS_OF_WEEK.map((day, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setRecurringDays([idx])}
+                    className={`py-2.5 px-1 rounded-lg text-xs font-medium transition-all ${
+                      recurringDays.includes(idx)
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'bg-gray-100 border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                    }`}
+                  >
+                    {day.slice(0, 3)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Court Selection (single court for edit) */}
+            <div>
+              <Label className="text-xs font-medium text-gray-700 mb-2 block">{t('court')}</Label>
+              <div className="grid grid-cols-4 gap-2">
+                {courts.map((court) => (
+                  <button
+                    key={court.id}
+                    type="button"
+                    onClick={() => setRecurringCourtIds([court.id])}
+                    className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
+                      recurringCourtIds.includes(court.id)
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'bg-gray-100 border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                    }`}
+                  >
+                    {court.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Time Selection */}
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('startTime')}</Label>
+                <Select value={recurringStartTime} onValueChange={(val) => {
+                  setRecurringStartTime(val)
+                  if (recurringEndTime && recurringEndTime <= val) {
+                    setRecurringEndTime('')
+                  }
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('selectStart')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {timeSlots.map((slot) => (
+                      <SelectItem key={slot.id} value={slot.slotTime}>
+                        {slot.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('endTime')}</Label>
+                <Select value={recurringEndTime} onValueChange={setRecurringEndTime} disabled={!recurringStartTime}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('selectEnd')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {timeSlots
+                      .filter((slot) => {
+                        const minHours = recurringSport === 'pickleball' ? 2 : 1
+                        const startIndex = timeSlots.findIndex(s => s.slotTime === recurringStartTime)
+                        const currentIndex = timeSlots.findIndex(s => s.slotTime === slot.slotTime)
+                        return currentIndex >= startIndex + minHours
+                      })
+                      .map((slot) => (
+                        <SelectItem key={slot.id} value={slot.slotTime}>
+                          {slot.displayName}
+                        </SelectItem>
+                      ))}
+                    {(() => {
+                      const startIndex = timeSlots.findIndex(s => s.slotTime === recurringStartTime)
+                      const minHours = recurringSport === 'pickleball' ? 2 : 1
+                      if (startIndex >= 0 && (timeSlots.length + 1) - startIndex > minHours) {
+                        return <SelectItem value="24:00">{t('midnight')}</SelectItem>
+                      }
+                      return null
+                    })()}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('endDate')} <span className="text-gray-400 font-normal">({t('optional')})</span></Label>
+                <Input
+                  type="date"
+                  value={recurringEndDate}
+                  onChange={(e) => setRecurringEndDate(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Link to User by UID */}
+            <div>
+              <Label className="text-xs font-medium text-gray-700 mb-1.5 block">
+                {t('linkToUser')} <span className="text-gray-400 font-normal">({t('optional')})</span>
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  value={recurringUserUid}
+                  onChange={(e) => setRecurringUserUid(e.target.value)}
+                  placeholder={t('enterUid')}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={searchUserByUid}
+                  disabled={userSearchLoading || !recurringUserUid}
+                  className="px-4"
+                >
+                  {userSearchLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Search className="w-4 h-4" />
+                  )}
+                </Button>
+                {recurringUser && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setRecurringUser(null)
+                      setRecurringUserUid('')
+                    }}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+              {recurringUser && (
+                <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm">
+                    <User className="w-4 h-4 text-green-600" />
+                    <span className="font-medium text-green-800">{recurringUser.name}</span>
+                    <Badge className="bg-green-100 text-green-700 border-0 text-xs">
+                      #{recurringUser.uid}
+                    </Badge>
+                  </div>
+                  <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                    <Phone className="w-3 h-3" />
+                    {recurringUser.phone}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Guest Info (for non-registered users) */}
+            {!recurringUser && (
+              <div className="border-t border-gray-200 pt-4">
+                <Label className="text-xs font-medium text-gray-700 mb-3 block">
+                  {t('orEnterGuest')}
+                </Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestName')}</Label>
+                    <Input
+                      value={recurringGuestName}
+                      onChange={(e) => setRecurringGuestName(e.target.value)}
+                      placeholder={t('guestNamePlaceholder')}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestPhone')}</Label>
+                    <Input
+                      value={recurringGuestPhone}
+                      onChange={(e) => {
+                        setRecurringGuestPhone(e.target.value)
+                        if (guestPhoneError) setGuestPhoneError('')
+                      }}
+                      placeholder={t('guestPhonePlaceholder')}
+                      className={guestPhoneError ? 'border-red-500 focus:ring-red-500' : ''}
+                    />
+                    {guestPhoneError && (
+                      <p className="text-xs text-red-500 mt-1">{guestPhoneError}</p>
+                    )}
+                    <p className="text-xs text-gray-400 mt-1">{t('phoneFormat')}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="border-t pt-4">
+            <Button variant="outline" onClick={() => {
+              setEditDialogOpen(false)
+              setEditingRecurring(null)
+              resetRecurringForm()
+            }}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={handleUpdateRecurring}
+              className="bg-orange-600 hover:bg-orange-700 shadow-sm"
+              disabled={
+                actionLoading ||
+                recurringCourtIds.length === 0 ||
+                recurringDays.length === 0 ||
+                !recurringStartTime ||
+                !recurringEndTime ||
+                !recurringLabel
+              }
+            >
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Check className="w-4 h-4 mr-2" />
+              )}
+              {t('saveChanges')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Floating Action Bar for Selection Mode */}
+      {selectionMode && (selectedRecurringIds.size > 0 || selectedBookingIds.size > 0) && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-4 z-50">
+          <span className="text-sm">
+            {selectedRecurringIds.size + selectedBookingIds.size} {t('selected')}
+            {selectedRecurringIds.size > 0 && (
+              <span className="text-purple-300 ml-1">({selectedRecurringIds.size} {t('recurring')})</span>
+            )}
+          </span>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => setDeleteConfirmOpen(true)}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            <Trash2 className="w-4 h-4 mr-1" />
+            {t('deleteSelected')}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearSelections}
+            className="text-gray-300 hover:text-white hover:bg-gray-800"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <Trash2 className="w-5 h-5" />
+              {t('confirmDeleteTitle')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('confirmDeleteDescription', {
+                count: selectedRecurringIds.size + selectedBookingIds.size
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            {selectedRecurringIds.size > 0 && (
+              <div className="flex items-center gap-2 text-sm text-purple-700 bg-purple-50 p-2 rounded mb-2">
+                <Repeat className="w-4 h-4" />
+                {selectedRecurringIds.size} {t('recurringBookings')}
+              </div>
+            )}
+            {selectedBookingIds.size > 0 && (
+              <div className="flex items-center gap-2 text-sm text-blue-700 bg-blue-50 p-2 rounded">
+                <CalendarDays className="w-4 h-4" />
+                {selectedBookingIds.size} {t('regularBookings')}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)}>
+              {tAdmin('cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkDelete}
+              disabled={actionLoading}
+            >
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Trash2 className="w-4 h-4 mr-2" />
+              )}
+              {t('deleteAll')}
             </Button>
           </DialogFooter>
         </DialogContent>

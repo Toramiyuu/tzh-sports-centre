@@ -33,6 +33,7 @@ import { useTranslations } from 'next-intl'
 
 interface User {
   id: string
+  uid: string
   name: string
   email: string
   phone: string
@@ -136,7 +137,8 @@ export default function AdminMembersPage() {
     return (
       user.name.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query) ||
-      user.phone.toLowerCase().includes(query)
+      user.phone.toLowerCase().includes(query) ||
+      user.uid.includes(query)
     )
   })
 
@@ -301,6 +303,7 @@ export default function AdminMembersPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium text-gray-900">{user.name}</span>
+                        <span className="text-xs font-mono text-gray-400">#{user.uid}</span>
                         {user.isMember && (
                           <Badge className="bg-blue-600 text-white border-0">
                             {t('membersTab')}

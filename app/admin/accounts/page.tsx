@@ -8,6 +8,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import {
   Users,
   Loader2,
@@ -17,6 +26,8 @@ import {
   Calendar,
   ArrowLeft,
   RefreshCw,
+  Pencil,
+  Check,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
@@ -24,6 +35,7 @@ import { useTranslations } from 'next-intl'
 
 interface User {
   id: string
+  uid: string
   name: string
   email: string
   phone: string
@@ -43,6 +55,10 @@ export default function AdminAccountsPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [newUid, setNewUid] = useState('')
+  const [updating, setUpdating] = useState(false)
+  const [uidError, setUidError] = useState('')
 
   useEffect(() => {
     if (status === 'loading') return
@@ -77,9 +93,55 @@ export default function AdminAccountsPage() {
     return (
       user.name.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query) ||
-      user.phone.toLowerCase().includes(query)
+      user.phone.toLowerCase().includes(query) ||
+      user.uid.includes(query)
     )
   })
+
+  const openEditUid = (user: User) => {
+    setEditingUser(user)
+    setNewUid(user.uid)
+    setUidError('')
+  }
+
+  const handleUpdateUid = async () => {
+    if (!editingUser || !newUid) return
+
+    // Validate UID format
+    if (!/^\d+$/.test(newUid)) {
+      setUidError(t('uidMustBeNumber'))
+      return
+    }
+
+    setUpdating(true)
+    setUidError('')
+
+    try {
+      const res = await fetch('/api/admin/accounts', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: editingUser.id,
+          newUid: newUid,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        setEditingUser(null)
+        setNewUid('')
+        fetchUsers()
+      } else {
+        setUidError(data.error || t('failedToUpdateUid'))
+      }
+    } catch (error) {
+      console.error('Error updating UID:', error)
+      setUidError(t('failedToUpdateUid'))
+    } finally {
+      setUpdating(false)
+    }
+  }
 
   if (status === 'loading') {
     return (
@@ -208,6 +270,13 @@ export default function AdminAccountsPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-gray-900">{user.name}</span>
+                        <button
+                          onClick={() => openEditUid(user)}
+                          className="text-xs font-mono text-gray-400 hover:text-blue-600 hover:bg-blue-50 px-1.5 py-0.5 rounded transition-colors flex items-center gap-1"
+                        >
+                          #{user.uid}
+                          <Pencil className="w-3 h-3" />
+                        </button>
                         {isAdmin(user.email) && (
                           <Badge className="bg-green-100 text-green-700 border-0">
                             {t('admin')}
@@ -243,6 +312,63 @@ export default function AdminAccountsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Edit UID Dialog */}
+      <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Pencil className="w-5 h-5 text-blue-600" />
+              {t('editUid')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('editUidDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          {editingUser && (
+            <div className="space-y-4 py-4">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium text-gray-900">{editingUser.name}</p>
+                <p className="text-sm text-gray-500">{editingUser.email}</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="newUid">{t('newUid')}</Label>
+                <Input
+                  id="newUid"
+                  value={newUid}
+                  onChange={(e) => {
+                    setNewUid(e.target.value)
+                    setUidError('')
+                  }}
+                  placeholder="100000001"
+                  className="font-mono"
+                />
+                {uidError && (
+                  <p className="text-sm text-red-600">{uidError}</p>
+                )}
+                <p className="text-xs text-gray-500">{t('uidHelp')}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingUser(null)}>
+              {tAdmin('cancel')}
+            </Button>
+            <Button
+              onClick={handleUpdateUid}
+              disabled={updating || !newUid || newUid === editingUser?.uid}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {updating ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Check className="w-4 h-4 mr-2" />
+              )}
+              {t('saveUid')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

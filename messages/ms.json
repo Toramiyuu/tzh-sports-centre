@@ -420,7 +420,31 @@
       "readyToCreate": "Bersedia untuk mencipta {count} slot berulang",
       "readyToCreatePlural": "Bersedia untuk mencipta {count} slot berulang",
       "createRecurring": "Cipta Tempahan Berulang",
-      "midnight": "12:00 PG (Tengah Malam)"
+      "midnight": "12:00 PG (Tengah Malam)",
+      "linkToUser": "Pautkan ke Akaun Pengguna",
+      "enterUid": "Masukkan UID untuk carian",
+      "editRecurring": "Edit Tempahan Berulang",
+      "editRecurringDescription": "Ubah tetapan tempahan berulang. Perubahan hanya berlaku untuk kejadian akan datang.",
+      "dayOfWeek": "Hari dalam Minggu",
+      "court": "Gelanggang",
+      "saveChanges": "Simpan Perubahan",
+      "orEnterGuest": "Atau masukkan butiran tetamu (untuk pengguna tidak berdaftar)",
+      "guestName": "Nama Tetamu",
+      "guestPhone": "Telefon Tetamu",
+      "guestNamePlaceholder": "Masukkan nama tetamu",
+      "guestPhonePlaceholder": "Masukkan nombor telefon",
+      "invalidPhone": "Sila masukkan nombor telefon Malaysia yang sah",
+      "phoneFormat": "Format: 01xxxxxxxx (10-11 digit)",
+      "edit": "Edit",
+      "selectMode": "Mod Pilih",
+      "exitSelectMode": "Keluar Mod Pilih",
+      "selected": "dipilih",
+      "deleteSelected": "Padam Pilihan",
+      "confirmDeleteTitle": "Sahkan Pemadaman",
+      "confirmDeleteDescription": "Adakah anda pasti mahu memadam {count} tempahan? Tindakan ini tidak boleh dibatalkan.",
+      "recurringBookings": "tempahan berulang",
+      "regularBookings": "tempahan biasa",
+      "deleteAll": "Padam Semua"
     },
     "accountsList": {
       "title": "Akaun Berdaftar",
@@ -442,7 +466,14 @@
       "noUsersMatch": "Tiada pengguna sepadan dengan carian anda",
       "noUsersYet": "Tiada pengguna berdaftar lagi",
       "registered": "Didaftar",
-      "bookings": "tempahan"
+      "bookings": "tempahan",
+      "editUid": "Edit UID",
+      "editUidDescription": "Tukar pengecam unik pengguna ini. UID mesti unik untuk semua pengguna.",
+      "newUid": "UID Baru",
+      "uidHelp": "Masukkan pengecam nombor unik (cth., 100000001)",
+      "saveUid": "Simpan UID",
+      "uidMustBeNumber": "UID mesti nombor",
+      "failedToUpdateUid": "Gagal mengemaskini UID"
     },
     "membersList": {
       "title": "Ahli Latihan",
@@ -587,6 +618,7 @@
       "confirmCancel": "Adakah anda pasti ingin membatalkan kelas ini?"
     },
     "back": "Kembali",
-    "refresh": "Muat Semula"
+    "refresh": "Muat Semula",
+    "cancel": "Batal"
   }
 }

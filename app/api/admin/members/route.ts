@@ -15,6 +15,7 @@ export async function GET() {
     const users = await prisma.user.findMany({
       select: {
         id: true,
+        uid: true,
         name: true,
         email: true,
         phone: true,
@@ -33,11 +34,17 @@ export async function GET() {
       ],
     })
 
-    // Get members with their lesson session counts
-    const members = users.filter(u => u.isMember)
-    const nonMembers = users.filter(u => !u.isMember)
+    // Convert BigInt uid to string for JSON serialization
+    const serializedUsers = users.map(user => ({
+      ...user,
+      uid: user.uid.toString(),
+    }))
 
-    return NextResponse.json({ members, nonMembers, all: users })
+    // Get members with their lesson session counts
+    const members = serializedUsers.filter(u => u.isMember)
+    const nonMembers = serializedUsers.filter(u => !u.isMember)
+
+    return NextResponse.json({ members, nonMembers, all: serializedUsers })
   } catch (error) {
     console.error('Error fetching members:', error)
     return NextResponse.json(

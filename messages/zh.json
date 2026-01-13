@@ -260,6 +260,7 @@
     "welcome": "欢迎，{name}",
     "back": "返回",
     "refresh": "刷新",
+    "cancel": "取消",
     "manageBookings": {
       "title": "管理预订",
       "description": "查看、添加和取消球场预订"
@@ -362,7 +363,31 @@
       "selectStart": "选择开始时间",
       "selectEnd": "选择结束时间",
       "readyToCreatePlural": "准备创建 {count} 个固定时段",
-      "midnight": "午夜12:00"
+      "midnight": "午夜12:00",
+      "linkToUser": "关联用户账户",
+      "enterUid": "输入UID搜索",
+      "editRecurring": "编辑固定预订",
+      "editRecurringDescription": "修改固定预订设置。更改仅适用于未来的预订。",
+      "dayOfWeek": "星期几",
+      "court": "球场",
+      "saveChanges": "保存更改",
+      "orEnterGuest": "或输入访客信息（非注册用户）",
+      "guestName": "访客姓名",
+      "guestPhone": "访客电话",
+      "guestNamePlaceholder": "输入访客姓名",
+      "guestPhonePlaceholder": "输入电话号码",
+      "invalidPhone": "请输入有效的马来西亚电话号码",
+      "phoneFormat": "格式：01xxxxxxxx（10-11位数字）",
+      "edit": "编辑",
+      "selectMode": "选择模式",
+      "exitSelectMode": "退出选择模式",
+      "selected": "已选择",
+      "deleteSelected": "删除所选",
+      "confirmDeleteTitle": "确认删除",
+      "confirmDeleteDescription": "确定要删除 {count} 个预订吗？此操作无法撤销。",
+      "recurringBookings": "固定预订",
+      "regularBookings": "普通预订",
+      "deleteAll": "全部删除"
     },
     "accountsList": {
       "title": "注册账户",
@@ -384,7 +409,14 @@
       "noUsersMatch": "没有匹配的用户",
       "noUsersYet": "暂无注册用户",
       "registered": "注册于",
-      "bookings": "预订"
+      "bookings": "预订",
+      "editUid": "编辑UID",
+      "editUidDescription": "更改此用户的唯一标识符。UID必须在所有用户中唯一。",
+      "newUid": "新UID",
+      "uidHelp": "输入唯一的数字标识符（例如：100000001）",
+      "saveUid": "保存UID",
+      "uidMustBeNumber": "UID必须是数字",
+      "failedToUpdateUid": "更新UID失败"
     },
     "membersList": {
       "title": "培训会员",
