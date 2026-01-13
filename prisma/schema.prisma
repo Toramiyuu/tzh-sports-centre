@@ -16,6 +16,7 @@ model User {
   passwordHash      String             @map("password_hash")
   name              String
   phone             String             @unique
+  emergencyContact  String?            @map("emergency_contact")
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
   bookings          Booking[]
@@ -27,12 +28,20 @@ model User {
   lessonSessions    LessonSession[]    @relation("StudentLessons")
   lessonRequests    LessonRequest[]
 
-  // Credit and notification preferences
-  creditBalance          Float    @default(0) @map("credit_balance")
-  notifyBookingConfirm   Boolean  @default(true) @map("notify_booking_confirm")
-  notifyBookingReminder  Boolean  @default(true) @map("notify_booking_reminder")
-  notifyCancellation     Boolean  @default(true) @map("notify_cancellation")
-  notifyLessonUpdates    Boolean  @default(true) @map("notify_lesson_updates")
+  // Profile & Account settings
+  creditBalance         Float     @default(0) @map("credit_balance")
+  notifyBookingConfirm  Boolean   @default(true) @map("notify_booking_confirm")
+  notifyBookingReminder Boolean   @default(true) @map("notify_booking_reminder")
+  notifyCancellation    Boolean   @default(true) @map("notify_cancellation")
+  notifyLessonUpdates   Boolean   @default(true) @map("notify_lesson_updates")
+
+  // Email change verification
+  pendingEmail      String?   @map("pending_email")
+  emailVerifyToken  String?   @map("email_verify_token")
+  emailVerifyExpiry DateTime? @map("email_verify_expiry")
+
+  // Account deletion
+  deletedAt         DateTime? @map("deleted_at")
 
   @@map("users")
 }
@@ -65,6 +74,9 @@ model Booking {
   guestName       String?  @map("guest_name")
   guestPhone      String?  @map("guest_phone")
   guestEmail      String?  @map("guest_email")
+  // Cancellation fields
+  cancelledAt     DateTime? @map("cancelled_at")
+  creditRefunded  Float?    @map("credit_refunded")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
