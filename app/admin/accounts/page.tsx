@@ -461,7 +461,7 @@ export default function AdminAccountsPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.reduce((sum, u) => sum + u._count.bookings, 0)}
+                  {users.reduce((sum, u) => sum + u.totalBookings, 0)}
                 </p>
                 <p className="text-sm text-gray-500">{t('totalBookings')}</p>
               </div>
@@ -1012,7 +1012,7 @@ export default function AdminAccountsPage() {
                 <p className="text-sm text-gray-500">{deletingUser.email}</p>
                 <p className="text-sm text-gray-500">{deletingUser.phone}</p>
                 <p className="text-xs text-gray-400 mt-2">
-                  {deletingUser._count.bookings} {t('bookings')}
+                  {deletingUser.totalBookings} {t('bookings')}
                 </p>
               </div>
             </div>
@@ -1084,7 +1084,7 @@ export default function AdminAccountsPage() {
                     <p className="text-xs text-gray-500">{user.phone}</p>
                   </div>
                   <Badge variant="outline" className="text-xs">
-                    {user._count.bookings} {t('bookings')}
+                    {user.totalBookings} {t('bookings')}
                   </Badge>
                 </div>
               ))}

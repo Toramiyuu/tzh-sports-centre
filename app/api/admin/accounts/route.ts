@@ -55,6 +55,7 @@ export async function GET() {
             court: {
               select: {
                 name: true,
+                hourlyRate: true,
               },
             },
           },
@@ -69,19 +70,41 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     })
 
+    // Helper function to calculate hours between two time strings
+    const calculateHours = (startTime: string, endTime: string): number => {
+      const parseTime = (time: string) => {
+        const [hours, minutes] = time.split(':').map(Number)
+        return hours + minutes / 60
+      }
+      return parseTime(endTime) - parseTime(startTime)
+    }
+
     // Calculate total spent and combined booking count for each user
     const serializedUsers = users.map(u => {
-      // Calculate total spent from bookings
-      const totalSpent = u.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0)
+      // Calculate total spent from regular bookings
+      const regularSpent = u.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0)
 
-      // Count recurring booking instances (approximate based on weeks since start)
-      const recurringInstances = u.recurringBookings.reduce((count, rb) => {
-        if (!rb.isActive) return count
+      // Calculate recurring booking instances and cost
+      let recurringInstances = 0
+      let recurringSpent = 0
+
+      for (const rb of u.recurringBookings) {
+        if (!rb.isActive) continue
+
         const startDate = new Date(rb.startDate)
         const endDate = rb.endDate ? new Date(rb.endDate) : new Date()
         const weeks = Math.ceil((endDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000))
-        return count + Math.max(weeks, 1)
-      }, 0)
+        const sessionCount = Math.max(weeks, 1)
+
+        recurringInstances += sessionCount
+
+        // Calculate cost: hours per session × hourly rate × number of sessions
+        const hoursPerSession = calculateHours(rb.startTime, rb.endTime)
+        const sessionCost = hoursPerSession * rb.court.hourlyRate
+        recurringSpent += sessionCost * sessionCount
+      }
+
+      const totalSpent = regularSpent + recurringSpent
 
       return {
         id: u.id,
@@ -93,6 +116,8 @@ export async function GET() {
         isSuperAdmin: isSuperAdmin(u.email),
         createdAt: u.createdAt,
         totalSpent,
+        regularSpent,
+        recurringSpent,
         totalBookings: u._count.bookings + recurringInstances,
         regularBookings: u._count.bookings,
         recurringBookingsCount: u._count.recurringBookings,
