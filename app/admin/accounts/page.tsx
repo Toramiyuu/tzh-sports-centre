@@ -34,6 +34,7 @@ import {
   Shield,
   ShieldOff,
   ShieldCheck,
+  X,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
@@ -83,6 +84,12 @@ export default function AdminAccountsPage() {
 
   // Admin toggle state
   const [togglingAdmin, setTogglingAdmin] = useState<string | null>(null)
+
+  // Multi-select state
+  const [selectionMode, setSelectionMode] = useState(false)
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set())
+  const [bulkDeleteConfirmOpen, setBulkDeleteConfirmOpen] = useState(false)
+  const [bulkDeleting, setBulkDeleting] = useState(false)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -277,6 +284,63 @@ export default function AdminAccountsPage() {
     }
   }
 
+  // Toggle selection for a user
+  const toggleUserSelection = (userId: string) => {
+    setSelectedUserIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(userId)) {
+        newSet.delete(userId)
+      } else {
+        newSet.add(userId)
+      }
+      return newSet
+    })
+  }
+
+  // Clear all selections
+  const clearSelections = () => {
+    setSelectedUserIds(new Set())
+    setSelectionMode(false)
+  }
+
+  // Check if user can be selected (not superadmin, not self)
+  const canSelectUser = (user: User) => {
+    return !user.isSuperAdmin && session?.user?.email !== user.email
+  }
+
+  // Handle bulk delete
+  const handleBulkDelete = async () => {
+    setBulkDeleting(true)
+    try {
+      const res = await fetch('/api/admin/accounts', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userIds: Array.from(selectedUserIds) }),
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        setBulkDeleteConfirmOpen(false)
+        clearSelections()
+        fetchUsers()
+        if (data.skipped && data.skipped.length > 0) {
+          alert(`${data.deleted} user(s) deleted. Skipped: ${data.skipped.join(', ')}`)
+        }
+      } else {
+        alert(data.error || t('failedToDelete'))
+      }
+    } catch (error) {
+      console.error('Error bulk deleting accounts:', error)
+      alert(t('failedToDelete'))
+    } finally {
+      setBulkDeleting(false)
+    }
+  }
+
+  // Get selected users for display
+  const selectedUsers = users.filter(u => selectedUserIds.has(u.id))
+
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -302,6 +366,30 @@ export default function AdminAccountsPage() {
           </div>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant={selectionMode ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              if (selectionMode) {
+                clearSelections()
+              } else {
+                setSelectionMode(true)
+              }
+            }}
+            className={selectionMode ? 'bg-red-600 hover:bg-red-700' : ''}
+          >
+            {selectionMode ? (
+              <>
+                <X className="w-4 h-4 mr-2" />
+                {t('exitSelectMode')}
+              </>
+            ) : (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                {t('selectMode')}
+              </>
+            )}
+          </Button>
           <Button onClick={() => setCreateDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700">
             <UserPlus className="w-4 h-4 mr-2" />
             {t('createAccount')}
@@ -401,101 +489,137 @@ export default function AdminAccountsPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {filteredUsers.map((user) => (
-                <div
-                  key={user.id}
-                  className="p-4 rounded-lg border bg-gray-50 hover:bg-gray-100 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="font-mono text-xs">
-                          #{user.uid}
-                        </Badge>
-                        <span className="font-medium text-gray-900">{user.name}</span>
-                        <button
-                          onClick={() => openEditUid(user)}
-                          className="text-xs font-mono text-gray-400 hover:text-blue-600 hover:bg-blue-50 px-1.5 py-0.5 rounded transition-colors flex items-center gap-1"
-                        >
-                          #{user.uid}
-                          <Pencil className="w-3 h-3" />
-                        </button>
-                        {user.isSuperAdmin && (
-                          <Badge className="bg-purple-100 text-purple-700 border-0">
-                            <ShieldCheck className="w-3 h-3 mr-1" />
-                            {t('superAdmin')}
+              {filteredUsers.map((user) => {
+                const isSelected = selectedUserIds.has(user.id)
+                const canSelect = canSelectUser(user)
+
+                return (
+                  <div
+                    key={user.id}
+                    className={`p-4 rounded-lg border transition-colors relative ${
+                      isSelected
+                        ? 'ring-2 ring-red-500 bg-red-50'
+                        : 'bg-gray-50 hover:bg-gray-100'
+                    } ${selectionMode && canSelect ? 'cursor-pointer' : ''}`}
+                    onClick={selectionMode && canSelect ? () => toggleUserSelection(user.id) : undefined}
+                  >
+                    {/* Selection checkbox indicator */}
+                    {selectionMode && canSelect && (
+                      <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 ${
+                        isSelected ? 'bg-red-500' : 'bg-gray-300'
+                      }`}>
+                        {isSelected && <Check className="w-4 h-4 text-white" />}
+                      </div>
+                    )}
+                    {selectionMode && !canSelect && (
+                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-gray-200">
+                        <ShieldCheck className="w-3 h-3 text-gray-500" />
+                      </div>
+                    )}
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="font-mono text-xs">
+                            #{user.uid}
                           </Badge>
-                        )}
-                        {user.isAdmin && !user.isSuperAdmin && (
-                          <Badge className="bg-green-100 text-green-700 border-0">
-                            <Shield className="w-3 h-3 mr-1" />
-                            {t('admin')}
+                          <span className="font-medium text-gray-900">{user.name}</span>
+                          {!selectionMode && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                openEditUid(user)
+                              }}
+                              className="text-xs font-mono text-gray-400 hover:text-blue-600 hover:bg-blue-50 px-1.5 py-0.5 rounded transition-colors flex items-center gap-1"
+                            >
+                              #{user.uid}
+                              <Pencil className="w-3 h-3" />
+                            </button>
+                          )}
+                          {user.isSuperAdmin && (
+                            <Badge className="bg-purple-100 text-purple-700 border-0">
+                              <ShieldCheck className="w-3 h-3 mr-1" />
+                              {t('superAdmin')}
+                            </Badge>
+                          )}
+                          {user.isAdmin && !user.isSuperAdmin && (
+                            <Badge className="bg-green-100 text-green-700 border-0">
+                              <Shield className="w-3 h-3 mr-1" />
+                              {t('admin')}
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="mt-2 space-y-1">
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Mail className="w-4 h-4" />
+                            {user.email}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Phone className="w-4 h-4" />
+                            {user.phone}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Calendar className="w-4 h-4" />
+                            {t('registered')} {format(new Date(user.createdAt), 'MMM d, yyyy')}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right space-y-2">
+                        <div className="flex gap-2 justify-end">
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                            {user._count.bookings} {t('bookings')}
                           </Badge>
-                        )}
-                      </div>
-                      <div className="mt-2 space-y-1">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Mail className="w-4 h-4" />
-                          {user.email}
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Phone className="w-4 h-4" />
-                          {user.phone}
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Calendar className="w-4 h-4" />
-                          {t('registered')} {format(new Date(user.createdAt), 'MMM d, yyyy')}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right space-y-2">
-                      <div className="flex gap-2 justify-end">
-                        <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                          {user._count.bookings} {t('bookings')}
-                        </Badge>
-                      </div>
-                      <div className="flex gap-2 justify-end">
-                        {/* Admin toggle button - not shown for superadmins */}
-                        {!user.isSuperAdmin && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleToggleAdmin(user)}
-                            disabled={togglingAdmin === user.id}
-                            className={user.isAdmin ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
-                          >
-                            {togglingAdmin === user.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : user.isAdmin ? (
-                              <>
-                                <ShieldOff className="w-4 h-4 mr-1" />
-                                {t('removeAdmin')}
-                              </>
-                            ) : (
-                              <>
-                                <Shield className="w-4 h-4 mr-1" />
-                                {t('makeAdmin')}
-                              </>
+                        {!selectionMode && (
+                          <div className="flex gap-2 justify-end">
+                            {/* Admin toggle button - not shown for superadmins */}
+                            {!user.isSuperAdmin && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleToggleAdmin(user)
+                                }}
+                                disabled={togglingAdmin === user.id}
+                                className={user.isAdmin ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
+                              >
+                                {togglingAdmin === user.id ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : user.isAdmin ? (
+                                  <>
+                                    <ShieldOff className="w-4 h-4 mr-1" />
+                                    {t('removeAdmin')}
+                                  </>
+                                ) : (
+                                  <>
+                                    <Shield className="w-4 h-4 mr-1" />
+                                    {t('makeAdmin')}
+                                  </>
+                                )}
+                              </Button>
                             )}
-                          </Button>
-                        )}
-                        {/* Delete button - not shown for superadmins or self */}
-                        {!user.isSuperAdmin && session?.user?.email !== user.email && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setDeletingUser(user)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-4 h-4 mr-1" />
-                            {t('deleteAccount')}
-                          </Button>
+                            {/* Delete button - not shown for superadmins or self */}
+                            {!user.isSuperAdmin && session?.user?.email !== user.email && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setDeletingUser(user)
+                                }}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="w-4 h-4 mr-1" />
+                                {t('deleteAccount')}
+                              </Button>
+                            )}
+                          </div>
                         )}
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </CardContent>
@@ -696,6 +820,82 @@ export default function AdminAccountsPage() {
                 <Trash2 className="w-4 h-4 mr-2" />
               )}
               {t('deleteAccount')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Floating Action Bar for Selection Mode */}
+      {selectionMode && selectedUserIds.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-4 z-50">
+          <span className="text-sm">
+            {selectedUserIds.size} {t('selected')}
+          </span>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => setBulkDeleteConfirmOpen(true)}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            <Trash2 className="w-4 h-4 mr-1" />
+            {t('deleteSelected')}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearSelections}
+            className="text-gray-300 hover:text-white hover:bg-gray-800"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <Dialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <Trash2 className="w-5 h-5" />
+              {t('confirmBulkDeleteTitle')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('confirmBulkDeleteDescription', { count: selectedUserIds.size })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg max-h-48 overflow-y-auto">
+              {selectedUsers.map((user) => (
+                <div key={user.id} className="flex items-center justify-between py-1 border-b border-red-100 last:border-0">
+                  <div>
+                    <p className="font-medium text-gray-900 text-sm">{user.name}</p>
+                    <p className="text-xs text-gray-500">{user.phone}</p>
+                  </div>
+                  <Badge variant="outline" className="text-xs">
+                    {user._count.bookings} {t('bookings')}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-red-600 mt-2">
+              {t('bulkDeleteWarning')}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBulkDeleteConfirmOpen(false)}>
+              {tAdmin('cancel')}
+            </Button>
+            <Button
+              onClick={handleBulkDelete}
+              disabled={bulkDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {bulkDeleting ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Trash2 className="w-4 h-4 mr-2" />
+              )}
+              {t('deleteAll')}
             </Button>
           </DialogFooter>
         </DialogContent>

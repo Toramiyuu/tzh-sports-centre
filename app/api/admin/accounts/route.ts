@@ -285,7 +285,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Delete user account
+// DELETE - Delete user account(s) - supports single or bulk deletion
 export async function DELETE(request: NextRequest) {
   try {
     const session = await auth()
@@ -295,80 +295,92 @@ export async function DELETE(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { userId } = body
+    const { userId, userIds } = body
 
-    if (!userId) {
+    // Support both single deletion (userId) and bulk deletion (userIds)
+    const idsToDelete: string[] = userIds || (userId ? [userId] : [])
+
+    if (idsToDelete.length === 0) {
       return NextResponse.json(
-        { error: 'User ID is required' },
+        { error: 'User ID(s) required' },
         { status: 400 }
       )
     }
 
-    // Get the user to check if they're a superadmin
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { email: true, name: true },
+    // Get all users to check permissions
+    const users = await prisma.user.findMany({
+      where: { id: { in: idsToDelete } },
+      select: { id: true, email: true, name: true },
     })
 
-    if (!user) {
+    if (users.length === 0) {
       return NextResponse.json(
-        { error: 'User not found' },
+        { error: 'No users found' },
         { status: 404 }
       )
     }
 
-    // Prevent deleting superadmins
-    if (isSuperAdmin(user.email)) {
-      return NextResponse.json(
-        { error: 'Cannot delete superadmin accounts' },
-        { status: 400 }
-      )
+    // Check for superadmins and self-deletion
+    const skipped: string[] = []
+    const toDelete: string[] = []
+
+    for (const user of users) {
+      if (isSuperAdmin(user.email)) {
+        skipped.push(`${user.name} (superadmin)`)
+      } else if (session.user.email === user.email) {
+        skipped.push(`${user.name} (self)`)
+      } else {
+        toDelete.push(user.id)
+      }
     }
 
-    // Prevent self-deletion
-    if (session.user.email === user.email) {
+    if (toDelete.length === 0) {
       return NextResponse.json(
-        { error: 'Cannot delete your own account' },
+        { error: 'No users can be deleted', skipped },
         { status: 400 }
       )
     }
 
     // Delete related records first (to avoid foreign key constraints)
     await prisma.lessonRequest.deleteMany({
-      where: { memberId: userId },
+      where: { memberId: { in: toDelete } },
     })
 
     await prisma.booking.deleteMany({
-      where: { userId },
+      where: { userId: { in: toDelete } },
     })
 
     await prisma.recurringBooking.deleteMany({
-      where: { userId },
+      where: { userId: { in: toDelete } },
     })
 
-    // Remove user from lesson sessions (many-to-many)
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        lessonSessions: {
-          set: [],
+    // Remove users from lesson sessions (many-to-many)
+    for (const id of toDelete) {
+      await prisma.user.update({
+        where: { id },
+        data: {
+          lessonSessions: {
+            set: [],
+          },
         },
-      },
-    })
+      })
+    }
 
-    // Delete the user
-    await prisma.user.delete({
-      where: { id: userId },
+    // Delete the users
+    await prisma.user.deleteMany({
+      where: { id: { in: toDelete } },
     })
 
     return NextResponse.json({
       success: true,
-      message: `User ${user.name} has been deleted`,
+      deleted: toDelete.length,
+      skipped: skipped.length > 0 ? skipped : undefined,
+      message: `${toDelete.length} user(s) deleted`,
     })
   } catch (error) {
-    console.error('Error deleting account:', error)
+    console.error('Error deleting account(s):', error)
     return NextResponse.json(
-      { error: 'Failed to delete account' },
+      { error: 'Failed to delete account(s)' },
       { status: 500 }
     )
   }

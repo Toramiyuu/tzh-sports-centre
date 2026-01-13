@@ -499,7 +499,15 @@
       "failedToUpdateAdmin": "Gagal mengemaskini status admin",
       "superAdmin": "Super Admin",
       "cannotDeleteSuperAdmin": "Tidak boleh memadam akaun superadmin",
-      "cannotRemoveSuperAdmin": "Tidak boleh membuang status admin daripada superadmin"
+      "cannotRemoveSuperAdmin": "Tidak boleh membuang status admin daripada superadmin",
+      "selectMode": "Mod Pilih",
+      "exitSelectMode": "Keluar Mod Pilih",
+      "selected": "dipilih",
+      "deleteSelected": "Padam Dipilih",
+      "confirmBulkDeleteTitle": "Padam Berbilang Akaun",
+      "confirmBulkDeleteDescription": "Adakah anda pasti mahu memadam {count} akaun? Ini juga akan memadam semua tempahan dan data mereka.",
+      "bulkDeleteWarning": "Tindakan ini tidak boleh dibatalkan. Semua akaun yang dipilih dan data mereka akan dipadam secara kekal.",
+      "deleteAll": "Padam Semua"
     },
     "membersList": {
       "title": "Ahli Latihan",

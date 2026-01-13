@@ -499,7 +499,15 @@
       "failedToUpdateAdmin": "Failed to update admin status",
       "superAdmin": "Super Admin",
       "cannotDeleteSuperAdmin": "Cannot delete superadmin accounts",
-      "cannotRemoveSuperAdmin": "Cannot remove admin status from superadmins"
+      "cannotRemoveSuperAdmin": "Cannot remove admin status from superadmins",
+      "selectMode": "Select Mode",
+      "exitSelectMode": "Exit Select Mode",
+      "selected": "selected",
+      "deleteSelected": "Delete Selected",
+      "confirmBulkDeleteTitle": "Delete Multiple Accounts",
+      "confirmBulkDeleteDescription": "Are you sure you want to delete {count} accounts? This will also delete all their bookings and data.",
+      "bulkDeleteWarning": "This action cannot be undone. All selected accounts and their data will be permanently deleted.",
+      "deleteAll": "Delete All"
     },
     "membersList": {
       "title": "Training Members",

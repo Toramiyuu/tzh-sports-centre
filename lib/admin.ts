@@ -2,6 +2,7 @@
 export const ADMIN_EMAILS = [
   'harveydavis2610@gmail.com',
   'zihann00@gmail.com',
+  'lynn-nice-day@hotmail.com',
 ]
 
 // Check if user is admin - either via hardcoded list or database flag
