@@ -2,7 +2,7 @@
 // This file reads the locale from cookies for server components
 import { getRequestConfig } from 'next-intl/server'
 import { cookies } from 'next/headers'
-import { locales, defaultLocale, Locale } from './i18n'
+import { locales, defaultLocale, Locale } from '@/lib/i18n'
 
 export default getRequestConfig(async () => {
   // Read locale from cookie (set by client-side I18nProvider)
