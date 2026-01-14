@@ -6,6 +6,24 @@ import Stripe from 'stripe'
 // Disable body parsing, need raw body for webhook verification
 export const dynamic = 'force-dynamic'
 
+interface SlotData {
+  courtId: number
+  slotTime: string
+  slotRate: number
+}
+
+// Helper to calculate end time (30 minutes after start)
+function getEndTime(startTime: string): string {
+  const [hours, minutes] = startTime.split(':').map(Number)
+  let endMinutes = minutes + 30
+  let endHours = hours
+  if (endMinutes >= 60) {
+    endMinutes = 0
+    endHours = hours + 1
+  }
+  return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text()
@@ -36,60 +54,96 @@ export async function POST(request: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
 
-        // Get booking IDs from metadata
-        const bookingIds = JSON.parse(session.metadata?.bookingIds || '[]')
-
-        if (bookingIds.length > 0) {
-          // Update bookings to paid
-          await prisma.booking.updateMany({
-            where: { id: { in: bookingIds } },
-            data: {
-              paymentStatus: 'paid',
-              paymentIntentId: session.payment_intent as string,
-              paymentMethod: session.payment_method_types?.[0] || 'card',
-              paidAt: new Date(),
-              status: 'confirmed',
-            },
-          })
-
-          console.log(`Payment completed for bookings: ${bookingIds.join(', ')}`)
+        // Only process if payment is complete
+        if (session.payment_status !== 'paid') {
+          console.log('Checkout completed but payment not yet confirmed')
+          break
         }
+
+        // Get booking details from metadata
+        const slots: SlotData[] = JSON.parse(session.metadata?.slots || '[]')
+        const date = session.metadata?.date
+        const sport = session.metadata?.sport
+        const customerName = session.metadata?.customerName || ''
+        const customerPhone = session.metadata?.customerPhone || ''
+        const customerEmail = session.metadata?.customerEmail || ''
+        const userId = session.metadata?.userId || null
+
+        if (slots.length === 0 || !date || !sport) {
+          console.log('Invalid session metadata, skipping booking creation')
+          break
+        }
+
+        const bookingDate = new Date(date)
+
+        // Check if bookings already exist for this session (idempotency)
+        const existingBookings = await prisma.booking.findMany({
+          where: { stripeSessionId: session.id },
+        })
+
+        if (existingBookings.length > 0) {
+          console.log(`Bookings already exist for session ${session.id}`)
+          break
+        }
+
+        // Check for slot conflicts
+        const conflictCheck = await prisma.booking.findMany({
+          where: {
+            bookingDate,
+            status: { in: ['pending', 'confirmed'] },
+            OR: slots.map((slot) => ({
+              courtId: slot.courtId,
+              startTime: slot.slotTime,
+            })),
+          },
+        })
+
+        if (conflictCheck.length > 0) {
+          console.error('Slot conflict after payment! Session:', session.id, 'Will need manual refund.')
+          break
+        }
+
+        // Create bookings
+        const createdBookings = await prisma.$transaction(
+          slots.map((slot) =>
+            prisma.booking.create({
+              data: {
+                userId: userId || null,
+                courtId: slot.courtId,
+                sport,
+                bookingDate,
+                startTime: slot.slotTime,
+                endTime: getEndTime(slot.slotTime),
+                totalAmount: slot.slotRate,
+                status: 'confirmed',
+                paymentStatus: 'paid',
+                paymentMethod: session.payment_method_types?.[0] || 'card',
+                paymentIntentId: session.payment_intent as string,
+                stripeSessionId: session.id,
+                paidAt: new Date(),
+                guestName: userId ? null : customerName,
+                guestPhone: userId ? null : customerPhone,
+                guestEmail: userId ? null : customerEmail,
+              },
+            })
+          )
+        )
+
+        console.log(`Created ${createdBookings.length} bookings for session ${session.id}`)
         break
       }
 
       case 'checkout.session.expired': {
         const session = event.data.object as Stripe.Checkout.Session
-        const bookingIds = JSON.parse(session.metadata?.bookingIds || '[]')
-
-        if (bookingIds.length > 0) {
-          // Mark bookings as failed/expired
-          await prisma.booking.updateMany({
-            where: { id: { in: bookingIds } },
-            data: {
-              paymentStatus: 'failed',
-              status: 'cancelled',
-            },
-          })
-
-          console.log(`Payment expired for bookings: ${bookingIds.join(', ')}`)
-        }
+        console.log(`Checkout session expired: ${session.id}`)
+        // No bookings to cancel since we don't create them until payment
         break
       }
 
       case 'payment_intent.payment_failed': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent
-        const bookingIds = JSON.parse(paymentIntent.metadata?.bookingIds || '[]')
-
-        if (bookingIds.length > 0) {
-          await prisma.booking.updateMany({
-            where: { id: { in: bookingIds } },
-            data: {
-              paymentStatus: 'failed',
-            },
-          })
-
-          console.log(`Payment failed for bookings: ${bookingIds.join(', ')}`)
-        }
+        console.log(`Payment failed for intent: ${paymentIntent.id}`)
+        // No bookings to update since we don't create them until payment
         break
       }
 

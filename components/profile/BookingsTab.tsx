@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { format, differenceInHours, parseISO } from 'date-fns'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -88,7 +88,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
       setSuccess(`Booking cancelled. RM${data.creditAdded.toFixed(2)} added to your credit balance.`)
       fetchBookings()
       onCreditUpdate()
-    } catch (err) {
+    } catch (_err) {
       setError('An unexpected error occurred')
     } finally {
       setCancellingId(null)
@@ -190,13 +190,13 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
               <>
                 <CalendarDays className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No upcoming bookings</h3>
-                <p className="text-gray-600">You don't have any upcoming court bookings.</p>
+                <p className="text-gray-600">You don&apos;t have any upcoming court bookings.</p>
               </>
             ) : (
               <>
                 <History className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No past bookings</h3>
-                <p className="text-gray-600">You don't have any past court bookings.</p>
+                <p className="text-gray-600">You don&apos;t have any past court bookings.</p>
               </>
             )}
           </CardContent>

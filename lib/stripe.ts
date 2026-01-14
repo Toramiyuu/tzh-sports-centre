@@ -13,6 +13,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export const PAYMENT_METHOD_TYPES: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] = [
   'card',
   'grabpay',
+  'fpx', // FPX online banking (Malaysian banks including TNG-linked accounts)
 ]
 
 // Format amount for Stripe (convert to cents/sen)

@@ -28,7 +28,7 @@ function CancelContent() {
 
           {/* Message */}
           <p className="text-gray-600 mb-8">
-            Your payment was cancelled. Don't worry - no charges were made.
+            Your payment was cancelled. Don&apos;t worry - no charges were made.
             Your selected time slots may still be available.
           </p>
 

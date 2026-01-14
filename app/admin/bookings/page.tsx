@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { format, addDays, isBefore, startOfDay } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PhoneInput } from '@/components/ui/phone-input'
 import {
   Dialog,
   DialogContent,
@@ -52,7 +53,7 @@ const formatTimeRange = (displayName: string): string => {
   const match = displayName.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
   if (!match) return displayName
 
-  let hour = parseInt(match[1])
+  const hour = parseInt(match[1])
   const minutes = parseInt(match[2])
   const period = match[3].toUpperCase()
 
@@ -200,6 +201,20 @@ export default function AdminBookingsPage() {
   const [selectionMode, setSelectionMode] = useState(false)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
 
+  // Payment confirmation
+  const [paymentConfirmOpen, setPaymentConfirmOpen] = useState(false)
+  const [bookingToConfirmPayment, setBookingToConfirmPayment] = useState<BookingInfo | null>(null)
+
+  // Bulk edit for recurring bookings
+  const [bulkEditOpen, setBulkEditOpen] = useState(false)
+  const [bulkEditEndDate, setBulkEditEndDate] = useState('')
+  const [bulkEditHourlyRate, setBulkEditHourlyRate] = useState('')
+  const [bulkEditLabel, setBulkEditLabel] = useState('')
+  const [bulkEditUserUid, setBulkEditUserUid] = useState('')
+  const [bulkEditUser, setBulkEditUser] = useState<{ id: string; uid: string; name: string; phone: string } | null>(null)
+  const [bulkEditGuestName, setBulkEditGuestName] = useState('')
+  const [bulkEditGuestPhone, setBulkEditGuestPhone] = useState('')
+
   // Toggle selection for recurring booking
   const toggleRecurringSelection = (id: string) => {
     setSelectedRecurringIds(prev => {
@@ -265,6 +280,141 @@ export default function AdminBookingsPage() {
     } finally {
       setActionLoading(false)
     }
+  }
+
+  // Handle payment confirmation (single booking)
+  const handleConfirmPayment = async () => {
+    if (!bookingToConfirmPayment) return
+
+    setActionLoading(true)
+    try {
+      const res = await fetch('/api/admin/bookings/confirm-payment', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingIds: [bookingToConfirmPayment.id] }),
+      })
+
+      if (res.ok) {
+        setPaymentConfirmOpen(false)
+        setBookingToConfirmPayment(null)
+        fetchBookings()
+      }
+    } catch (error) {
+      console.error('Error confirming payment:', error)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Handle bulk payment confirmation
+  const handleBulkConfirmPayment = async () => {
+    if (selectedBookingIds.size === 0) return
+
+    setActionLoading(true)
+    try {
+      const res = await fetch('/api/admin/bookings/confirm-payment', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingIds: Array.from(selectedBookingIds) }),
+      })
+
+      if (res.ok) {
+        fetchBookings()
+        clearSelections()
+      }
+    } catch (error) {
+      console.error('Error confirming payments:', error)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Get count of selected bookings with pending payment
+  const selectedPendingPaymentCount = Array.from(selectedBookingIds).filter(id => {
+    const booking = bookings.find(b => b.id === id)
+    return booking?.paymentStatus === 'pending'
+  }).length
+
+  // Search user by UID for bulk edit
+  const searchUserForBulkEdit = async () => {
+    if (!bulkEditUserUid) return
+    setUserSearchLoading(true)
+    try {
+      const res = await fetch(`/api/admin/accounts?uid=${bulkEditUserUid}`)
+      const data = await res.json()
+      if (res.ok && data.user) {
+        setBulkEditUser(data.user)
+      } else {
+        setBulkEditUser(null)
+        alert('User not found')
+      }
+    } catch (error) {
+      console.error('Error searching user:', error)
+      setBulkEditUser(null)
+    } finally {
+      setUserSearchLoading(false)
+    }
+  }
+
+  // Handle bulk edit for recurring bookings
+  const handleBulkEditRecurring = async () => {
+    if (selectedRecurringIds.size === 0) return
+
+    setActionLoading(true)
+    try {
+      // Build update data - only include fields that are set
+      const updateData: Record<string, unknown> = {}
+
+      if (bulkEditEndDate) {
+        updateData.endDate = bulkEditEndDate
+      }
+      if (bulkEditHourlyRate) {
+        updateData.hourlyRate = parseFloat(bulkEditHourlyRate)
+      }
+      if (bulkEditLabel) {
+        updateData.label = bulkEditLabel
+      }
+      if (bulkEditUser) {
+        updateData.userId = bulkEditUser.id
+        updateData.guestName = null
+        updateData.guestPhone = null
+      } else if (bulkEditGuestName || bulkEditGuestPhone) {
+        updateData.userId = null
+        if (bulkEditGuestName) updateData.guestName = bulkEditGuestName
+        if (bulkEditGuestPhone) updateData.guestPhone = bulkEditGuestPhone
+      }
+
+      // Update each selected recurring booking
+      const updatePromises = Array.from(selectedRecurringIds).map(id =>
+        fetch('/api/recurring-bookings', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, ...updateData }),
+        })
+      )
+
+      await Promise.all(updatePromises)
+
+      setBulkEditOpen(false)
+      resetBulkEditForm()
+      clearSelections()
+      fetchRecurringBookings()
+    } catch (error) {
+      console.error('Error bulk editing recurring bookings:', error)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Reset bulk edit form
+  const resetBulkEditForm = () => {
+    setBulkEditEndDate('')
+    setBulkEditHourlyRate('')
+    setBulkEditLabel('')
+    setBulkEditUserUid('')
+    setBulkEditUser(null)
+    setBulkEditGuestName('')
+    setBulkEditGuestPhone('')
   }
 
   // Phone validation for Malaysian numbers
@@ -900,17 +1050,34 @@ export default function AdminBookingsPage() {
                                       </div>
                                     )}
                                     {!booking.isRecurring && booking.paymentStatus && (
-                                      <div className="mt-1">
+                                      <div className="mt-1 flex items-center gap-1 flex-wrap">
                                         {booking.paymentStatus === 'paid' ? (
                                           <Badge className="text-[10px] px-1 py-0 bg-green-100 text-green-700 border-0">
                                             <CreditCard className="w-2.5 h-2.5 mr-0.5" />
                                             Paid
                                           </Badge>
                                         ) : (
-                                          <Badge className="text-[10px] px-1 py-0 bg-yellow-100 text-yellow-700 border-0">
-                                            <Banknote className="w-2.5 h-2.5 mr-0.5" />
-                                            Pending
-                                          </Badge>
+                                          <>
+                                            <Badge className="text-[10px] px-1 py-0 bg-yellow-100 text-yellow-700 border-0">
+                                              <Banknote className="w-2.5 h-2.5 mr-0.5" />
+                                              Pending
+                                            </Badge>
+                                            {!selectionMode && (
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-5 px-1.5 text-[10px] text-green-600 hover:text-green-700 hover:bg-green-50"
+                                                onClick={(e) => {
+                                                  e.stopPropagation()
+                                                  setBookingToConfirmPayment(booking)
+                                                  setPaymentConfirmOpen(true)
+                                                }}
+                                              >
+                                                <Check className="w-2.5 h-2.5 mr-0.5" />
+                                                Confirm
+                                              </Button>
+                                            )}
+                                          </>
                                         )}
                                       </div>
                                     )}
@@ -1088,10 +1255,33 @@ export default function AdminBookingsPage() {
                                   Paid
                                 </Badge>
                               ) : (
-                                <Badge className="bg-yellow-100 text-yellow-700 border-0 text-xs">
-                                  <Banknote className="w-3 h-3 mr-1" />
-                                  Pending
-                                </Badge>
+                                <>
+                                  <Badge className="bg-yellow-100 text-yellow-700 border-0 text-xs">
+                                    <Banknote className="w-3 h-3 mr-1" />
+                                    Pending
+                                  </Badge>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 px-2 text-xs text-green-600 hover:text-green-700 hover:bg-green-50"
+                                    onClick={() => {
+                                      setBookingToConfirmPayment({
+                                        id: booking.id,
+                                        name: booking.guestName || booking.user?.name || 'Unknown',
+                                        phone: booking.guestPhone || booking.user?.phone || '',
+                                        email: booking.guestEmail || booking.user?.email || null,
+                                        sport: booking.sport,
+                                        status: booking.status,
+                                        paymentStatus: booking.paymentStatus,
+                                        isGuest: !booking.user,
+                                      })
+                                      setPaymentConfirmOpen(true)
+                                    }}
+                                  >
+                                    <Check className="w-3 h-3 mr-1" />
+                                    Confirm Payment
+                                  </Button>
+                                </>
                               )}
                             </div>
                           </div>
@@ -1204,10 +1394,9 @@ export default function AdminBookingsPage() {
             </div>
             <div>
               <Label>{t('phone')} *</Label>
-              <Input
+              <PhoneInput
                 value={newBookingPhone}
-                onChange={(e) => setNewBookingPhone(e.target.value)}
-                placeholder="012-345-6789"
+                onChange={setNewBookingPhone}
               />
             </div>
             <div>
@@ -1676,19 +1865,17 @@ export default function AdminBookingsPage() {
                       </div>
                       <div>
                         <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestPhone')}</Label>
-                        <Input
+                        <PhoneInput
                           value={recurringGuestPhone}
-                          onChange={(e) => {
-                            setRecurringGuestPhone(e.target.value)
+                          onChange={(value) => {
+                            setRecurringGuestPhone(value)
                             if (guestPhoneError) setGuestPhoneError('')
                           }}
-                          placeholder={t('guestPhonePlaceholder')}
-                          className={`bg-white ${guestPhoneError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                          className={guestPhoneError ? 'border-red-500 focus-within:ring-red-500' : ''}
                         />
                         {guestPhoneError && (
                           <p className="text-xs text-red-500 mt-1">{guestPhoneError}</p>
                         )}
-                        <p className="text-xs text-gray-400 mt-1">{t('phoneFormat')}</p>
                       </div>
                     </div>
                   </div>
@@ -1988,19 +2175,17 @@ export default function AdminBookingsPage() {
                   </div>
                   <div>
                     <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestPhone')}</Label>
-                    <Input
+                    <PhoneInput
                       value={recurringGuestPhone}
-                      onChange={(e) => {
-                        setRecurringGuestPhone(e.target.value)
+                      onChange={(value) => {
+                        setRecurringGuestPhone(value)
                         if (guestPhoneError) setGuestPhoneError('')
                       }}
-                      placeholder={t('guestPhonePlaceholder')}
-                      className={guestPhoneError ? 'border-red-500 focus:ring-red-500' : ''}
+                      className={guestPhoneError ? 'border-red-500 focus-within:ring-red-500' : ''}
                     />
                     {guestPhoneError && (
                       <p className="text-xs text-red-500 mt-1">{guestPhoneError}</p>
                     )}
-                    <p className="text-xs text-gray-400 mt-1">{t('phoneFormat')}</p>
                   </div>
                 </div>
               </div>
@@ -2046,7 +2231,36 @@ export default function AdminBookingsPage() {
             {selectedRecurringIds.size > 0 && (
               <span className="text-purple-300 ml-1">({selectedRecurringIds.size} {t('recurring')})</span>
             )}
+            {selectedPendingPaymentCount > 0 && (
+              <span className="text-yellow-300 ml-1">({selectedPendingPaymentCount} pending)</span>
+            )}
           </span>
+          {selectedRecurringIds.size > 0 && (
+            <Button
+              size="sm"
+              onClick={() => setBulkEditOpen(true)}
+              disabled={actionLoading}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              <Pencil className="w-4 h-4 mr-1" />
+              Bulk Edit
+            </Button>
+          )}
+          {selectedPendingPaymentCount > 0 && (
+            <Button
+              size="sm"
+              onClick={handleBulkConfirmPayment}
+              disabled={actionLoading}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+              ) : (
+                <Check className="w-4 h-4 mr-1" />
+              )}
+              Confirm Payment{selectedPendingPaymentCount > 1 ? 's' : ''}
+            </Button>
+          )}
           <Button
             variant="destructive"
             size="sm"
@@ -2110,6 +2324,204 @@ export default function AdminBookingsPage() {
                 <Trash2 className="w-4 h-4 mr-2" />
               )}
               {t('deleteAll')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Confirmation Dialog */}
+      <Dialog open={paymentConfirmOpen} onOpenChange={setPaymentConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-green-600">
+              <CreditCard className="w-5 h-5" />
+              Confirm Payment
+            </DialogTitle>
+            <DialogDescription>
+              Mark this booking&apos;s payment as received and confirmed.
+            </DialogDescription>
+          </DialogHeader>
+          {bookingToConfirmPayment && (
+            <div className="py-4 space-y-2">
+              <p>
+                <strong>{t('name')}:</strong> {bookingToConfirmPayment.name}
+              </p>
+              <p>
+                <strong>{t('phone')}:</strong> {bookingToConfirmPayment.phone || 'N/A'}
+              </p>
+              <p>
+                <strong>{t('sport')}:</strong> {bookingToConfirmPayment.sport}
+              </p>
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-800">
+                  This will mark the payment as <strong>Paid</strong> and confirm the booking.
+                </p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setPaymentConfirmOpen(false)
+              setBookingToConfirmPayment(null)
+            }}>
+              {tAdmin('cancel')}
+            </Button>
+            <Button
+              onClick={handleConfirmPayment}
+              disabled={actionLoading}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Check className="w-4 h-4 mr-2" />
+              )}
+              Confirm Payment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Edit Dialog for Recurring Bookings */}
+      <Dialog open={bulkEditOpen} onOpenChange={(open) => {
+        setBulkEditOpen(open)
+        if (!open) resetBulkEditForm()
+      }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-orange-600">
+              <Pencil className="w-5 h-5" />
+              Bulk Edit Recurring Bookings
+            </DialogTitle>
+            <DialogDescription>
+              Edit {selectedRecurringIds.size} selected recurring booking{selectedRecurringIds.size > 1 ? 's' : ''}. Only fill in fields you want to change.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* End Date */}
+            <div>
+              <Label>{t('endDate')} ({t('optional')})</Label>
+              <Input
+                type="date"
+                value={bulkEditEndDate}
+                onChange={(e) => setBulkEditEndDate(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+
+            {/* Hourly Rate */}
+            <div>
+              <Label>Hourly Rate (RM)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="Leave empty to keep current"
+                value={bulkEditHourlyRate}
+                onChange={(e) => setBulkEditHourlyRate(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+
+            {/* Label */}
+            <div>
+              <Label>{t('bookingName')}</Label>
+              <Input
+                placeholder="Leave empty to keep current"
+                value={bulkEditLabel}
+                onChange={(e) => setBulkEditLabel(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+
+            {/* Assign to User */}
+            <div>
+              <Label>{t('assignToAccount')}</Label>
+              <div className="flex gap-2 mt-1">
+                <Input
+                  value={bulkEditUserUid}
+                  onChange={(e) => setBulkEditUserUid(e.target.value)}
+                  placeholder={t('enterUid')}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={searchUserForBulkEdit}
+                  disabled={userSearchLoading || !bulkEditUserUid}
+                >
+                  {userSearchLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                </Button>
+              </div>
+              {bulkEditUser && (
+                <div className="mt-2 p-2 bg-blue-50 rounded-lg flex items-center justify-between">
+                  <div className="text-sm">
+                    <p className="font-medium">{bulkEditUser.name}</p>
+                    <p className="text-gray-500">{bulkEditUser.phone}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setBulkEditUser(null)
+                      setBulkEditUserUid('')
+                    }}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* OR Guest Info */}
+            {!bulkEditUser && (
+              <>
+                <div className="flex items-center gap-2 text-gray-400 text-sm">
+                  <div className="flex-1 h-px bg-gray-200" />
+                  {t('or')}
+                  <div className="flex-1 h-px bg-gray-200" />
+                </div>
+
+                <div>
+                  <Label>{t('guestName')}</Label>
+                  <Input
+                    placeholder="Leave empty to keep current"
+                    value={bulkEditGuestName}
+                    onChange={(e) => setBulkEditGuestName(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label>{t('guestPhone')}</Label>
+                  <PhoneInput
+                    value={bulkEditGuestPhone}
+                    onChange={setBulkEditGuestPhone}
+                    className="mt-1"
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setBulkEditOpen(false)
+              resetBulkEditForm()
+            }}>
+              {tAdmin('cancel')}
+            </Button>
+            <Button
+              onClick={handleBulkEditRecurring}
+              disabled={actionLoading}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Check className="w-4 h-4 mr-2" />
+              )}
+              Update {selectedRecurringIds.size} Booking{selectedRecurringIds.size > 1 ? 's' : ''}
             </Button>
           </DialogFooter>
         </DialogContent>

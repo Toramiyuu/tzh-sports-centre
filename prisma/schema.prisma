@@ -122,6 +122,9 @@ model RecurringBooking {
   guestName   String?  @map("guest_name")
   guestPhone  String?  @map("guest_phone")
 
+  // Pricing for monthly invoices
+  hourlyRate  Float?   @map("hourly_rate") // Rate per hour (if different from court default)
+
   // Who created this (admin email or null)
   createdBy   String?  @map("created_by")
   isActive    Boolean  @default(true) @map("is_active")
@@ -129,10 +132,33 @@ model RecurringBooking {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  court Court  @relation(fields: [courtId], references: [id])
-  user  User?  @relation(fields: [userId], references: [id])
+  court    Court  @relation(fields: [courtId], references: [id])
+  user     User?  @relation(fields: [userId], references: [id])
+  payments RecurringBookingPayment[]
 
   @@map("recurring_bookings")
+}
+
+// Monthly payment tracking for recurring bookings
+model RecurringBookingPayment {
+  id                  String    @id @default(cuid())
+  recurringBookingId  String    @map("recurring_booking_id")
+  month               Int       // 1-12
+  year                Int
+  amount              Float     // Total amount for the month
+  sessionsCount       Int       @map("sessions_count") // Number of sessions in this month
+  status              String    @default("pending") // pending, paid
+  paidAt              DateTime? @map("paid_at")
+  paymentMethod       String?   @map("payment_method") // cash, tng, bank_transfer, stripe
+  notes               String?
+
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  recurringBooking    RecurringBooking @relation(fields: [recurringBookingId], references: [id], onDelete: Cascade)
+
+  @@unique([recurringBookingId, month, year])
+  @@map("recurring_booking_payments")
 }
 
 // Coach availability for lessons (when coach is free to teach)

@@ -3,14 +3,21 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { format, addDays, isBefore, startOfDay } from 'date-fns'
+import { format, startOfDay, isBefore, addDays } from 'date-fns'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Banknote } from 'lucide-react'
+import { PhoneInput } from '@/components/ui/phone-input'
+import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Smartphone, MessageCircle } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { isAdmin } from '@/lib/admin'
 import { toast } from 'sonner'
 import { celebrateBooking } from '@/lib/confetti'
@@ -32,7 +39,7 @@ const formatTimeRange = (displayName: string): string => {
   const match = displayName.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
   if (!match) return displayName
 
-  let hour = parseInt(match[1])
+  const hour = parseInt(match[1])
   const minutes = parseInt(match[2])
   const period = match[3].toUpperCase()
 
@@ -114,6 +121,16 @@ function BookingPageContent() {
   const [guestPhone, setGuestPhone] = useState('')
   const [guestEmail, setGuestEmail] = useState('')
 
+  // TNG payment modal state
+  const [showTngModal, setShowTngModal] = useState(false)
+  const [tngBookingCreated, setTngBookingCreated] = useState(false)
+  const [, setTngBookingIds] = useState<string[]>([])
+
+  // DuitNow payment modal state
+  const [showDuitNowModal, setShowDuitNowModal] = useState(false)
+  const [duitNowBookingCreated, setDuitNowBookingCreated] = useState(false)
+  const [, setDuitNowBookingIds] = useState<string[]>([])
+
   // Fix hydration mismatch by only rendering calendar after mount
   useEffect(() => {
     setMounted(true)
@@ -151,28 +168,6 @@ function BookingPageContent() {
       return BADMINTON_PEAK_RATE_PER_SLOT
     }
     return BADMINTON_RATE_PER_SLOT
-  }
-
-  // Get the next consecutive slot for a court
-  const getNextSlot = (court: Court, currentSlotTime: string): SlotAvailability | null => {
-    const courtAvailability = availability.find(ca => ca.court.id === court.id)
-    if (!courtAvailability) return null
-
-    const currentIndex = courtAvailability.slots.findIndex(s => s.slotTime === currentSlotTime)
-    if (currentIndex === -1 || currentIndex >= courtAvailability.slots.length - 1) return null
-
-    return courtAvailability.slots[currentIndex + 1]
-  }
-
-  // Get the previous slot for a court
-  const getPreviousSlot = (court: Court, currentSlotTime: string): SlotAvailability | null => {
-    const courtAvailability = availability.find(ca => ca.court.id === court.id)
-    if (!courtAvailability) return null
-
-    const currentIndex = courtAvailability.slots.findIndex(s => s.slotTime === currentSlotTime)
-    if (currentIndex <= 0) return null
-
-    return courtAvailability.slots[currentIndex - 1]
   }
 
   // Get minimum slots required for current sport
@@ -315,9 +310,6 @@ function BookingPageContent() {
   // Calculate total (sum of all slot rates)
   const total = selectedSlots.reduce((sum, slot) => sum + slot.slotRate, 0)
 
-  // Calculate total duration in hours
-  const totalHours = selectedSlots.length * 0.5
-
   // Validate minimum booking requirement
   const validateMinimum = () => {
     const minSlots = getMinSlots()
@@ -327,143 +319,6 @@ function BookingPageContent() {
       return false
     }
     return true
-  }
-
-  // Handle booking with online payment
-  const handleOnlinePayment = async () => {
-    if (!validateMinimum()) return
-
-    // For guests, require name and phone
-    if (!session) {
-      if (!guestName.trim()) {
-        toast.error('Please enter your name')
-        return
-      }
-      if (!guestPhone.trim()) {
-        toast.error('Please enter your phone number')
-        return
-      }
-    }
-
-    setBooking(true)
-
-    try {
-      // Step 1: Create the booking(s) with pending payment status
-      const res = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slots: selectedSlots.map((s) => ({
-            courtId: s.courtId,
-            slotTime: s.slotTime,
-            slotRate: s.slotRate,
-          })),
-          date: format(selectedDate, 'yyyy-MM-dd'),
-          sport,
-          isGuestBooking: !session,
-          guestName: session ? session.user?.name : guestName.trim(),
-          guestPhone: guestPhone.trim() || undefined,
-          guestEmail: session ? session.user?.email : (guestEmail.trim() || undefined),
-        }),
-      })
-
-      const bookingData = await res.json()
-
-      if (!res.ok) {
-        toast.error(bookingData.error || 'Failed to create booking')
-        return
-      }
-
-      // Step 2: Create Stripe checkout session
-      const checkoutRes = await fetch('/api/payments/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingIds: bookingData.bookingIds,
-          customerEmail: session?.user?.email || guestEmail.trim() || undefined,
-          customerName: session?.user?.name || guestName.trim(),
-          customerPhone: guestPhone.trim(),
-        }),
-      })
-
-      const checkoutData = await checkoutRes.json()
-
-      if (!checkoutRes.ok) {
-        toast.error(checkoutData.error || 'Failed to create payment session')
-        return
-      }
-
-      // Step 3: Redirect to Stripe checkout
-      if (checkoutData.url) {
-        window.location.href = checkoutData.url
-      } else {
-        toast.error('Failed to get payment URL')
-      }
-    } catch (err) {
-      toast.error('An unexpected error occurred')
-      setBooking(false)
-    }
-  }
-
-  // Handle guest booking (pay at counter - no online payment)
-  const handleGuestBooking = async () => {
-    if (!validateMinimum()) return
-
-    if (!guestName.trim()) {
-      toast.error('Please enter your name')
-      return
-    }
-    if (!guestPhone.trim()) {
-      toast.error('Please enter your phone number')
-      return
-    }
-
-    setBooking(true)
-
-    try {
-      // Create the regular booking
-      const res = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slots: selectedSlots.map((s) => ({
-            courtId: s.courtId,
-            slotTime: s.slotTime,
-            slotRate: s.slotRate,
-          })),
-          date: format(selectedDate, 'yyyy-MM-dd'),
-          sport,
-          isGuestBooking: true,
-          guestName: guestName.trim(),
-          guestPhone: guestPhone.trim(),
-          guestEmail: guestEmail.trim() || undefined,
-          payAtCounter: true,
-        }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        toast.error(data.error || 'Failed to create booking')
-        return
-      }
-
-      // Success! Show confetti and toast
-      celebrateBooking()
-      toast.success(`Booking confirmed! ${data.count} slot(s) booked. Please pay at counter.`, {
-        duration: 6000,
-      })
-      setSelectedSlots([])
-      setGuestName('')
-      setGuestPhone('')
-      setGuestEmail('')
-      // Refresh availability
-      await fetchAvailability()
-    } catch (err) {
-      toast.error('An unexpected error occurred')
-    } finally {
-      setBooking(false)
-    }
   }
 
   // Handle test booking (admin only)
@@ -508,11 +363,159 @@ function BookingPageContent() {
       setSelectedSlots([])
       // Refresh availability
       await fetchAvailability()
-    } catch (err) {
+    } catch (_err) {
       toast.error('An unexpected error occurred')
     } finally {
       setBooking(false)
     }
+  }
+
+  // Handle TNG payment - show QR code modal
+  const handleTngPayment = async () => {
+    if (!validateMinimum()) return
+
+    // For guests, require name and phone
+    if (!session) {
+      if (!guestName.trim()) {
+        toast.error('Please enter your name')
+        return
+      }
+      if (!guestPhone.trim()) {
+        toast.error('Please enter your phone number')
+        return
+      }
+    }
+
+    // Show the TNG modal
+    setShowTngModal(true)
+    setTngBookingCreated(false)
+  }
+
+  // Create TNG booking after user confirms they've paid
+  const handleTngBookingConfirm = async () => {
+    setBooking(true)
+
+    try {
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slots: selectedSlots.map((s) => ({
+            courtId: s.courtId,
+            slotTime: s.slotTime,
+            slotRate: s.slotRate,
+          })),
+          date: format(selectedDate, 'yyyy-MM-dd'),
+          sport,
+          isGuestBooking: !session,
+          guestName: guestName.trim() || session?.user?.name,
+          guestPhone: guestPhone.trim(),
+          guestEmail: guestEmail.trim() || session?.user?.email,
+          paymentMethod: 'tng', // Mark as TNG payment
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to create booking')
+        return
+      }
+
+      // Success!
+      setTngBookingCreated(true)
+      setTngBookingIds(data.bookingIds || [])
+      celebrateBooking()
+
+      // Refresh availability
+      await fetchAvailability()
+      setSelectedSlots([])
+    } catch (_err) {
+      toast.error('An unexpected error occurred')
+    } finally {
+      setBooking(false)
+    }
+  }
+
+  // Close TNG modal and reset state
+  const closeTngModal = () => {
+    setShowTngModal(false)
+    setTngBookingCreated(false)
+    setTngBookingIds([])
+  }
+
+  // Handle DuitNow payment - show QR code modal
+  const handleDuitNowPayment = async () => {
+    if (!validateMinimum()) return
+
+    // For guests, require name and phone
+    if (!session) {
+      if (!guestName.trim()) {
+        toast.error('Please enter your name')
+        return
+      }
+      if (!guestPhone.trim()) {
+        toast.error('Please enter your phone number')
+        return
+      }
+    }
+
+    // Show the DuitNow modal
+    setShowDuitNowModal(true)
+    setDuitNowBookingCreated(false)
+  }
+
+  // Create DuitNow booking after user confirms they've paid
+  const handleDuitNowBookingConfirm = async () => {
+    setBooking(true)
+
+    try {
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slots: selectedSlots.map((s) => ({
+            courtId: s.courtId,
+            slotTime: s.slotTime,
+            slotRate: s.slotRate,
+          })),
+          date: format(selectedDate, 'yyyy-MM-dd'),
+          sport,
+          isGuestBooking: !session,
+          guestName: guestName.trim() || session?.user?.name,
+          guestPhone: guestPhone.trim(),
+          guestEmail: guestEmail.trim() || session?.user?.email,
+          paymentMethod: 'duitnow', // Mark as DuitNow payment
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to create booking')
+        return
+      }
+
+      // Success!
+      setDuitNowBookingCreated(true)
+      setDuitNowBookingIds(data.bookingIds || [])
+      celebrateBooking()
+
+      // Refresh availability
+      await fetchAvailability()
+      setSelectedSlots([])
+    } catch (_err) {
+      toast.error('An unexpected error occurred')
+    } finally {
+      setBooking(false)
+    }
+  }
+
+  // Close DuitNow modal and reset state
+  const closeDuitNowModal = () => {
+    setShowDuitNowModal(false)
+    setDuitNowBookingCreated(false)
+    setDuitNowBookingIds([])
   }
 
   return (
@@ -668,7 +671,6 @@ function BookingPageContent() {
                           {availability.map((ca) => {
                             const courtSlot = ca.slots[idx]
                             const selected = isSlotSelected(ca.court.id, courtSlot.slotTime)
-                            const slotRate = getSlotRate(courtSlot.slotTime)
                             return (
                               <td key={ca.court.id} className="p-2 text-center border-b">
                                 <button
@@ -779,11 +781,10 @@ function BookingPageContent() {
                           </div>
                           <div>
                             <Label htmlFor="guestPhone" className="text-xs">{t('guest.phone')} *</Label>
-                            <Input
+                            <PhoneInput
                               id="guestPhone"
-                              placeholder="012-345-6789"
                               value={guestPhone}
-                              onChange={(e) => setGuestPhone(e.target.value)}
+                              onChange={setGuestPhone}
                               className="h-9"
                             />
                           </div>
@@ -802,50 +803,49 @@ function BookingPageContent() {
                       </div>
                     )}
 
-                    {/* Pay Online button - Primary option */}
-                    {!userIsAdmin && (
-                      <Button
-                        className={`w-full mb-2 ${sport === 'pickleball' ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                        size="lg"
-                        onClick={handleOnlinePayment}
-                        disabled={booking}
-                      >
-                        {booking ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {tCommon('loading')}
-                          </>
-                        ) : (
-                          <>
-                            <CreditCard className="mr-2 h-4 w-4" />
-                            {t('bookNow')} - Pay Online
-                          </>
-                        )}
-                      </Button>
-                    )}
+                    {/* Touch 'n Go payment button */}
+                    <Button
+                      className={`w-full mb-2 ${sport === 'pickleball' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                      size="lg"
+                      onClick={handleTngPayment}
+                      disabled={booking}
+                    >
+                      <Smartphone className="mr-2 h-4 w-4" />
+                      {t('bookNow')} - Touch &apos;n Go
+                    </Button>
 
-                    {/* Pay at Counter button - Secondary option for guests */}
-                    {!session && !userIsAdmin && (
-                      <Button
-                        variant="outline"
-                        className="w-full mb-2"
-                        size="lg"
-                        onClick={handleGuestBooking}
-                        disabled={booking}
-                      >
-                        {booking ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {tCommon('loading')}
-                          </>
-                        ) : (
-                          <>
-                            <Banknote className="mr-2 h-4 w-4" />
-                            {t('guest.payAtCounter')}
-                          </>
-                        )}
-                      </Button>
-                    )}
+                    {/* DuitNow payment button */}
+                    <Button
+                      variant="outline"
+                      className="w-full mb-2 border-pink-500 text-pink-600 hover:bg-pink-50"
+                      size="lg"
+                      onClick={handleDuitNowPayment}
+                      disabled={booking}
+                    >
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      {t('bookNow')} - DuitNow
+                    </Button>
+
+                    {/* Stripe Pay Online button - Hidden for now, keeping code for future use
+                    <Button
+                      className={`w-full mb-2 ${sport === 'pickleball' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                      size="lg"
+                      onClick={handleOnlinePayment}
+                      disabled={booking}
+                    >
+                      {booking ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {tCommon('loading')}
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          {t('bookNow')} - Pay Online
+                        </>
+                      )}
+                    </Button>
+                    */}
 
                     {/* Admin test booking button */}
                     {userIsAdmin && (
@@ -870,10 +870,6 @@ function BookingPageContent() {
                       </Button>
                     )}
                   </div>
-
-                  <p className="text-xs text-gray-500 text-center">
-                    {t('guest.payAtCounter')}
-                  </p>
                 </div>
               )}
 
@@ -901,6 +897,261 @@ function BookingPageContent() {
           </Card>
         </div>
       </div>
+
+      {/* Touch 'n Go Payment Modal */}
+      <Dialog open={showTngModal} onOpenChange={setShowTngModal}>
+        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Smartphone className="w-5 h-5 text-blue-600" />
+              Pay with Touch &apos;n Go
+            </DialogTitle>
+          </DialogHeader>
+
+          {!tngBookingCreated ? (
+            <div className="flex flex-col sm:flex-row gap-6">
+              {/* Left: QR Code */}
+              <div className="flex-shrink-0 flex justify-center">
+                <div className="p-4 bg-white rounded-lg border">
+                  <img
+                    src="/images/tng-qr.png"
+                    alt="Touch 'n Go QR Code"
+                    className="w-80 h-80 object-contain"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.style.display = 'none'
+                      target.parentElement!.innerHTML = `
+                        <div class="w-80 h-80 flex items-center justify-center bg-gray-100 rounded-lg text-center p-4">
+                          <p class="text-sm text-gray-500">QR Code placeholder<br/><br/>Add your TNG QR image to:<br/><code class="text-xs">/public/images/tng-qr.png</code></p>
+                        </div>
+                      `
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Right: Instructions & Button */}
+              <div className="flex-1 space-y-4">
+                {/* Amount */}
+                <div>
+                  <p className="text-sm text-gray-600">Amount to pay:</p>
+                  <p className="text-3xl font-bold text-blue-600">RM{total.toFixed(2)}</p>
+                </div>
+
+                {/* Instructions */}
+                <div className="bg-blue-50 rounded-lg p-4 space-y-2">
+                  <h4 className="font-medium text-blue-900">How to pay:</h4>
+                  <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                    <li>Open your Touch &apos;n Go eWallet app</li>
+                    <li>Tap &quot;Scan&quot; and scan the QR code</li>
+                    <li>Enter the amount: <strong>RM{total.toFixed(2)}</strong></li>
+                    <li>Complete the payment</li>
+                  </ol>
+                </div>
+
+                {/* WhatsApp contact */}
+                <div className="bg-green-50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 text-green-800">
+                    <MessageCircle className="w-5 h-5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium">Send payment screenshot to:</p>
+                      <a
+                        href="https://wa.me/60116868508"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-600 hover:underline font-bold"
+                      >
+                        011-6868 8508 (WhatsApp)
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Confirm Button */}
+                <Button
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  size="lg"
+                  onClick={handleTngBookingConfirm}
+                  disabled={booking}
+                >
+                  {booking ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating Booking...
+                    </>
+                  ) : (
+                    <>
+                      I&apos;ve Paid - Confirm My Booking
+                    </>
+                  )}
+                </Button>
+
+                <p className="text-xs text-center text-gray-500">
+                  Your booking will be pending until payment is verified by our staff.
+                </p>
+              </div>
+            </div>
+          ) : (
+            // Success state
+            <div className="space-y-4 text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">Booking Created!</h3>
+              <p className="text-gray-600">
+                Your booking has been created and is pending payment verification.
+              </p>
+              <div className="bg-yellow-50 rounded-lg p-4 text-left">
+                <p className="text-sm text-yellow-800">
+                  <strong>Important:</strong> Please send your payment screenshot to{' '}
+                  <a
+                    href="https://wa.me/60116868508"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline font-bold"
+                  >
+                    011-6868 8508
+                  </a>{' '}
+                  via WhatsApp for confirmation.
+                </p>
+              </div>
+              <Button className="w-full" onClick={closeTngModal}>
+                Done
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* DuitNow Payment Modal */}
+      <Dialog open={showDuitNowModal} onOpenChange={setShowDuitNowModal}>
+        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-pink-600" />
+              Pay with DuitNow
+            </DialogTitle>
+          </DialogHeader>
+
+          {!duitNowBookingCreated ? (
+            <div className="flex flex-col sm:flex-row gap-6">
+              {/* Left: QR Code */}
+              <div className="flex-shrink-0 flex justify-center">
+                <div className="p-4 bg-white rounded-lg border">
+                  <img
+                    src="/images/duitnow-qr.png"
+                    alt="DuitNow QR Code"
+                    className="w-80 h-80 object-contain"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.style.display = 'none'
+                      target.parentElement!.innerHTML = `
+                        <div class="w-80 h-80 flex items-center justify-center bg-gray-100 rounded-lg text-center p-4">
+                          <p class="text-sm text-gray-500">QR Code placeholder<br/><br/>Add your DuitNow QR image to:<br/><code class="text-xs">/public/images/duitnow-qr.png</code></p>
+                        </div>
+                      `
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Right: Instructions & Button */}
+              <div className="flex-1 space-y-4">
+                {/* Amount */}
+                <div>
+                  <p className="text-sm text-gray-600">Amount to pay:</p>
+                  <p className="text-3xl font-bold text-pink-600">RM{total.toFixed(2)}</p>
+                </div>
+
+                {/* Instructions */}
+                <div className="bg-pink-50 rounded-lg p-4 space-y-2">
+                  <h4 className="font-medium text-pink-900">How to pay:</h4>
+                  <ol className="text-sm text-pink-800 space-y-1 list-decimal list-inside">
+                    <li>Open your banking app (Maybank, CIMB, etc.)</li>
+                    <li>Tap &quot;Scan &amp; Pay&quot; or &quot;DuitNow QR&quot;</li>
+                    <li>Scan the QR code</li>
+                    <li>Enter the amount: <strong>RM{total.toFixed(2)}</strong></li>
+                    <li>Complete the payment</li>
+                  </ol>
+                </div>
+
+                {/* WhatsApp contact */}
+                <div className="bg-green-50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 text-green-800">
+                    <MessageCircle className="w-5 h-5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium">Send payment screenshot to:</p>
+                      <a
+                        href="https://wa.me/60116868508"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-600 hover:underline font-bold"
+                      >
+                        011-6868 8508 (WhatsApp)
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Confirm Button */}
+                <Button
+                  className="w-full bg-pink-600 hover:bg-pink-700"
+                  size="lg"
+                  onClick={handleDuitNowBookingConfirm}
+                  disabled={booking}
+                >
+                  {booking ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating Booking...
+                    </>
+                  ) : (
+                    <>
+                      I&apos;ve Paid - Confirm My Booking
+                    </>
+                  )}
+                </Button>
+
+                <p className="text-xs text-center text-gray-500">
+                  Your booking will be pending until payment is verified by our staff.
+                </p>
+              </div>
+            </div>
+          ) : (
+            // Success state
+            <div className="space-y-4 text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">Booking Created!</h3>
+              <p className="text-gray-600">
+                Your booking has been created and is pending payment verification.
+              </p>
+              <div className="bg-yellow-50 rounded-lg p-4 text-left">
+                <p className="text-sm text-yellow-800">
+                  <strong>Important:</strong> Please send your payment screenshot to{' '}
+                  <a
+                    href="https://wa.me/60116868508"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline font-bold"
+                  >
+                    011-6868 8508
+                  </a>{' '}
+                  via WhatsApp for confirmation.
+                </p>
+              </div>
+              <Button className="w-full" onClick={closeDuitNowModal}>
+                Done
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

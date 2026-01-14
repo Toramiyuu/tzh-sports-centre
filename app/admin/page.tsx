@@ -1,9 +1,8 @@
 import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Shield, Calendar, Users, GraduationCap } from 'lucide-react'
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Shield, Calendar, Users, GraduationCap, Receipt } from 'lucide-react'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
@@ -47,6 +46,13 @@ export default async function AdminPage() {
       icon: GraduationCap,
       href: '/admin/lessons',
       color: 'bg-orange-100 text-orange-600',
+    },
+    {
+      titleKey: 'recurringPayments.title',
+      descriptionKey: 'recurringPayments.description',
+      icon: Receipt,
+      href: '/admin/recurring-payments',
+      color: 'bg-yellow-100 text-yellow-600',
     },
   ]
 

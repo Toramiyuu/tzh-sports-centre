@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { format, startOfMonth, endOfMonth } from 'date-fns'
+import { format } from 'date-fns'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -85,7 +85,7 @@ const formatTimeRange = (displayName: string): string => {
   const match = displayName.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
   if (!match) return displayName
 
-  let hour = parseInt(match[1])
+  const hour = parseInt(match[1])
   const minutes = parseInt(match[2])
   const period = match[3].toUpperCase()
 

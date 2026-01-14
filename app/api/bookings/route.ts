@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth()
     const body = await request.json()
-    const { slots, date, sport, isTestBooking, isGuestBooking, guestName, guestPhone, guestEmail, payAtCounter } = body
+    const { slots, date, sport, isTestBooking, isGuestBooking, guestName, guestPhone, guestEmail, payAtCounter, paymentMethod } = body
 
     // Validate common required fields
     if (!slots || !Array.isArray(slots) || slots.length === 0) {
@@ -68,22 +68,27 @@ export async function POST(request: NextRequest) {
     let bookingStatus = 'pending'
     let paymentStatus = 'pending'
 
-    if (isGuestBooking) {
-      // Guest booking - no login required
-      if (!guestName) {
+    if (isGuestBooking || paymentMethod === 'tng') {
+      // Guest booking or TNG payment - no login required for guests
+      if (!guestName && !session?.user?.name) {
         return NextResponse.json(
-          { error: 'Name is required for guest bookings' },
+          { error: 'Name is required for bookings' },
           { status: 400 }
         )
       }
-      bookingGuestName = guestName
-      bookingGuestPhone = guestPhone || null
-      bookingGuestEmail = guestEmail || null
+      bookingGuestName = guestName?.trim() || session?.user?.name || null
+      bookingGuestPhone = guestPhone?.trim() || null
+      bookingGuestEmail = guestEmail?.trim() || session?.user?.email || null
 
-      // If paying at counter, confirm the booking immediately
-      if (payAtCounter) {
+      // Set userId if logged in
+      if (session?.user?.id) {
+        userId = session.user.id
+      }
+
+      // If paying at counter or TNG, confirm the booking but mark payment as pending
+      if (payAtCounter || paymentMethod === 'tng') {
         bookingStatus = 'confirmed'
-        paymentStatus = 'pending' // Will pay at counter
+        paymentStatus = 'pending' // Will pay at counter or via TNG (manual verification)
       }
       // Otherwise, booking stays pending until online payment completes
     } else if (isTestBooking) {
@@ -94,7 +99,7 @@ export async function POST(request: NextRequest) {
           { status: 401 }
         )
       }
-      if (!isAdmin(session.user.email)) {
+      if (!session.user.email || !isAdmin(session.user.email)) {
         return NextResponse.json(
           { error: 'Only admins can create test bookings' },
           { status: 403 }
@@ -245,8 +250,9 @@ export async function POST(request: NextRequest) {
     )
   } catch (error) {
     console.error('Error creating booking:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create booking'
     return NextResponse.json(
-      { error: 'Failed to create booking' },
+      { error: errorMessage },
       { status: 500 }
     )
   }

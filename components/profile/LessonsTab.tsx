@@ -230,7 +230,7 @@ export function LessonsTab() {
                       </span>
                     </div>
                     {session.notes && (
-                      <p className="text-sm text-gray-600 mt-2 italic">"{session.notes}"</p>
+                      <p className="text-sm text-gray-600 mt-2 italic">&quot;{session.notes}&quot;</p>
                     )}
                   </div>
                 ))}
@@ -243,7 +243,7 @@ export function LessonsTab() {
               <CardContent className="py-12 text-center">
                 <GraduationCap className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No training sessions</h3>
-                <p className="text-gray-600">You haven't had any training sessions yet.</p>
+                <p className="text-gray-600">You haven&apos;t had any training sessions yet.</p>
               </CardContent>
             </Card>
           )}
@@ -314,7 +314,7 @@ export function LessonsTab() {
                       </span>
                     </div>
                     {request.adminNotes && (
-                      <p className="text-sm text-gray-600 mt-2 italic">"{request.adminNotes}"</p>
+                      <p className="text-sm text-gray-600 mt-2 italic">&quot;{request.adminNotes}&quot;</p>
                     )}
                   </div>
                 ))}
@@ -327,7 +327,7 @@ export function LessonsTab() {
               <CardContent className="py-12 text-center">
                 <History className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No lesson requests</h3>
-                <p className="text-gray-600">You haven't made any lesson requests yet.</p>
+                <p className="text-gray-600">You haven&apos;t made any lesson requests yet.</p>
               </CardContent>
             </Card>
           )}

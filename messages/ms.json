@@ -342,6 +342,10 @@
       "title": "Pengurusan Kelas",
       "description": "Jadualkan kelas dan lihat bil"
     },
+    "recurringPayments": {
+      "title": "Bayaran Berulang",
+      "description": "Urus invois bulanan untuk tempahan berulang"
+    },
     "bookings": {
       "title": "Pengurusan Tempahan",
       "description": "Lihat, tambah dan batal tempahan gelanggang",
@@ -432,6 +436,8 @@
       "court": "Gelanggang",
       "saveChanges": "Simpan Perubahan",
       "orEnterGuest": "Atau masukkan butiran tetamu (untuk pengguna tidak berdaftar)",
+      "assignToAccount": "Tugaskan ke Akaun",
+      "or": "atau",
       "guestName": "Nama Tetamu",
       "guestPhone": "Telefon Tetamu",
       "guestNamePlaceholder": "Masukkan nama tetamu",

@@ -342,6 +342,10 @@
       "title": "Lesson Management",
       "description": "Schedule lessons and view billing"
     },
+    "recurringPayments": {
+      "title": "Recurring Payments",
+      "description": "Manage monthly invoices for recurring bookings"
+    },
     "bookings": {
       "title": "Booking Management",
       "description": "View, add, and cancel court bookings",
@@ -432,6 +436,8 @@
       "court": "Court",
       "saveChanges": "Save Changes",
       "orEnterGuest": "Or enter guest details (for non-registered users)",
+      "assignToAccount": "Assign to Account",
+      "or": "or",
       "guestName": "Guest Name",
       "guestPhone": "Guest Phone",
       "guestNamePlaceholder": "Enter guest name",

@@ -44,15 +44,83 @@ function getPhoneSearchVariants(phone: string): string[] {
   return [...new Set(variants)]
 }
 
-// GET - Fetch bookings by phone number
+// GET - Fetch bookings by phone number or booking ID
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const phone = searchParams.get('phone')
+    const bookingId = searchParams.get('bookingId')
 
+    // If bookingId is provided, fetch that specific booking
+    if (bookingId) {
+      const booking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        include: {
+          court: true,
+          user: {
+            select: {
+              name: true,
+              email: true,
+              phone: true,
+            },
+          },
+        },
+      })
+
+      if (!booking) {
+        return NextResponse.json(
+          { error: 'Booking not found' },
+          { status: 404 }
+        )
+      }
+
+      // Also fetch related bookings from the same stripe session
+      let relatedBookings: typeof booking[] = []
+      if (booking.stripeSessionId) {
+        relatedBookings = await prisma.booking.findMany({
+          where: {
+            stripeSessionId: booking.stripeSessionId,
+            id: { not: bookingId },
+          },
+          include: {
+            court: true,
+            user: {
+              select: {
+                name: true,
+                email: true,
+                phone: true,
+              },
+            },
+          },
+          orderBy: { startTime: 'asc' },
+        })
+      }
+
+      const allBookings = [booking, ...relatedBookings]
+      const formattedBookings = allBookings.map((b) => ({
+        id: b.id,
+        court: b.court.name,
+        sport: b.sport,
+        bookingDate: b.bookingDate,
+        startTime: b.startTime,
+        endTime: b.endTime,
+        totalAmount: b.totalAmount,
+        status: b.status,
+        paymentStatus: b.paymentStatus,
+        name: b.guestName || b.user?.name || 'Unknown',
+        email: b.guestEmail || b.user?.email || '',
+        phone: b.guestPhone || b.user?.phone || '',
+        createdAt: b.createdAt,
+        stripeSessionId: b.stripeSessionId,
+      }))
+
+      return NextResponse.json({ bookings: formattedBookings })
+    }
+
+    // If phone is provided, search by phone
     if (!phone) {
       return NextResponse.json(
-        { error: 'Phone number is required' },
+        { error: 'Phone number or booking ID is required' },
         { status: 400 }
       )
     }
@@ -85,6 +153,7 @@ export async function GET(request: NextRequest) {
         user: {
           select: {
             name: true,
+            email: true,
             phone: true,
           },
         },
@@ -106,6 +175,7 @@ export async function GET(request: NextRequest) {
       totalAmount: booking.totalAmount,
       status: booking.status,
       name: booking.guestName || booking.user?.name || 'Unknown',
+      email: booking.guestEmail || booking.user?.email || '',
       phone: booking.guestPhone || booking.user?.phone || '',
       createdAt: booking.createdAt,
     }))

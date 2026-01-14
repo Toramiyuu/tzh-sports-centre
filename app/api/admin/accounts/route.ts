@@ -6,12 +6,41 @@ import bcrypt from 'bcryptjs'
 
 const DEFAULT_PASSWORD = 'temp1234'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await auth()
 
     if (!session?.user || !isAdmin(session.user.email)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Check if looking up a single user by UID
+    const searchParams = request.nextUrl.searchParams
+    const uidParam = searchParams.get('uid')
+
+    if (uidParam) {
+      // Look up single user by UID
+      const user = await prisma.user.findUnique({
+        where: { uid: BigInt(uidParam) },
+        select: {
+          id: true,
+          uid: true,
+          name: true,
+          email: true,
+          phone: true,
+        },
+      })
+
+      if (!user) {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      }
+
+      return NextResponse.json({
+        user: {
+          ...user,
+          uid: user.uid.toString(),
+        },
+      })
     }
 
     const users = await prisma.user.findMany({

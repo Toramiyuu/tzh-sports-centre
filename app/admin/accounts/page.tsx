@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PhoneInput } from '@/components/ui/phone-input'
 import {
   Dialog,
   DialogContent,
@@ -949,13 +950,11 @@ export default function AdminAccountsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="newPhone">{t('phone')} *</Label>
-                  <Input
+                  <PhoneInput
                     id="newPhone"
                     value={newPhone}
-                    onChange={(e) => setNewPhone(e.target.value)}
-                    placeholder="012-345 6789"
+                    onChange={setNewPhone}
                   />
-                  <p className="text-xs text-gray-500">{t('phoneFormat')}</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="newEmail">{t('email')} ({t('optional')})</Label>

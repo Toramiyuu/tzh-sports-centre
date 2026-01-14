@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PhoneInput } from '@/components/ui/phone-input'
 import { Loader2, Save, X, Pencil, Mail, Phone, User, AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -143,12 +144,10 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
               Phone Number
             </Label>
             {editing ? (
-              <Input
+              <PhoneInput
                 id="phone"
-                type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="012-345-6789"
+                onChange={(value) => setFormData({ ...formData, phone: value })}
               />
             ) : (
               <p className="text-gray-900 py-2">{profile.phone}</p>

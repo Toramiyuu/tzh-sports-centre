@@ -280,6 +280,10 @@
       "title": "课程管理",
       "description": "安排课程和查看账单"
     },
+    "recurringPayments": {
+      "title": "定期付款",
+      "description": "管理定期预订的月度发票"
+    },
     "bookings": {
       "title": "管理预订",
       "description": "查看和管理所有球场预订",
@@ -375,6 +379,8 @@
       "court": "球场",
       "saveChanges": "保存更改",
       "orEnterGuest": "或输入访客信息（非注册用户）",
+      "assignToAccount": "分配给账户",
+      "or": "或",
       "guestName": "访客姓名",
       "guestPhone": "访客电话",
       "guestNamePlaceholder": "输入访客姓名",

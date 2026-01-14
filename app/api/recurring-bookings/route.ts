@@ -4,7 +4,7 @@ import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 
 // GET - List all recurring bookings (admin only)
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await auth()
 
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate all time slots between start and end
-    let slotsToBook: string[] = []
+    const slotsToBook: string[] = []
 
     if (endTime) {
       // New format: explicit end time provided
@@ -282,6 +282,7 @@ export async function PATCH(request: NextRequest) {
       userId,
       guestName,
       guestPhone,
+      hourlyRate,
     } = body
 
     if (!id) {
@@ -314,6 +315,7 @@ export async function PATCH(request: NextRequest) {
       userId?: string | null
       guestName?: string | null
       guestPhone?: string | null
+      hourlyRate?: number | null
     } = {}
 
     if (label !== undefined) updateData.label = label
@@ -325,6 +327,7 @@ export async function PATCH(request: NextRequest) {
     if (userId !== undefined) updateData.userId = userId
     if (guestName !== undefined) updateData.guestName = guestName
     if (guestPhone !== undefined) updateData.guestPhone = guestPhone
+    if (hourlyRate !== undefined) updateData.hourlyRate = hourlyRate
 
     // Check for conflicts if changing day, time, or court
     if (dayOfWeek !== undefined || startTime !== undefined || courtId !== undefined) {

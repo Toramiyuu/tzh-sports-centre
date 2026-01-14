@@ -82,7 +82,7 @@ function SuccessContent() {
         if (data.status === 'paid') {
           celebrateBooking()
         }
-      } catch (err) {
+      } catch (_err) {
         setError('Failed to verify payment')
       } finally {
         setLoading(false)
@@ -223,16 +223,11 @@ function SuccessContent() {
             </Link>
           </Button>
           {paymentData.bookings[0] && (
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => {
-                const bookingId = paymentData.bookings[0].id
-                window.open(`/api/receipt?bookingId=${bookingId}`, '_blank')
-              }}
-            >
-              <Receipt className="w-4 h-4 mr-2" />
-              View Receipt
+            <Button asChild variant="outline" className="flex-1">
+              <Link href={`/booking/receipt?bookingId=${paymentData.bookings[0].id}`}>
+                <Receipt className="w-4 h-4 mr-2" />
+                View Receipt
+              </Link>
             </Button>
           )}
         </div>
