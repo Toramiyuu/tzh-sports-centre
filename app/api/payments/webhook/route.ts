@@ -26,6 +26,13 @@ function getEndTime(startTime: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 503 }
+      )
+    }
+
     const body = await request.text()
     const signature = request.headers.get('stripe-signature')
 

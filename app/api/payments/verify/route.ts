@@ -22,6 +22,13 @@ function getEndTime(startTime: string): string {
 
 export async function GET(request: NextRequest) {
   try {
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 503 }
+      )
+    }
+
     const sessionId = request.nextUrl.searchParams.get('session_id')
 
     if (!sessionId) {
