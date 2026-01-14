@@ -41,6 +41,8 @@ import {
   Pencil,
   Search,
   X,
+  CreditCard,
+  Banknote,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import { useTranslations } from 'next-intl'
@@ -94,6 +96,7 @@ interface BookingInfo {
   email: string | null
   sport: string
   status: string
+  paymentStatus?: string
   isGuest: boolean
   isRecurring?: boolean
   recurringLabel?: string
@@ -108,6 +111,7 @@ interface FullBooking {
   endTime: string
   totalAmount: number
   status: string
+  paymentStatus: string
   guestName: string | null
   guestPhone: string | null
   guestEmail: string | null
@@ -895,6 +899,21 @@ export default function AdminBookingsPage() {
                                         {booking.phone}
                                       </div>
                                     )}
+                                    {!booking.isRecurring && booking.paymentStatus && (
+                                      <div className="mt-1">
+                                        {booking.paymentStatus === 'paid' ? (
+                                          <Badge className="text-[10px] px-1 py-0 bg-green-100 text-green-700 border-0">
+                                            <CreditCard className="w-2.5 h-2.5 mr-0.5" />
+                                            Paid
+                                          </Badge>
+                                        ) : (
+                                          <Badge className="text-[10px] px-1 py-0 bg-yellow-100 text-yellow-700 border-0">
+                                            <Banknote className="w-2.5 h-2.5 mr-0.5" />
+                                            Pending
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    )}
                                     {!selectionMode && booking.isRecurring && (
                                       <Button
                                         variant="ghost"
@@ -1059,8 +1078,21 @@ export default function AdminBookingsPage() {
                                 {booking.court.name} | {booking.startTime} - {booking.endTime}
                               </span>
                             </div>
-                            <div className="text-sm font-medium mt-1">
-                              RM{booking.totalAmount.toFixed(2)}
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-sm font-medium">
+                                RM{booking.totalAmount.toFixed(2)}
+                              </span>
+                              {booking.paymentStatus === 'paid' ? (
+                                <Badge className="bg-green-100 text-green-700 border-0 text-xs">
+                                  <CreditCard className="w-3 h-3 mr-1" />
+                                  Paid
+                                </Badge>
+                              ) : (
+                                <Badge className="bg-yellow-100 text-yellow-700 border-0 text-xs">
+                                  <Banknote className="w-3 h-3 mr-1" />
+                                  Pending
+                                </Badge>
+                              )}
                             </div>
                           </div>
                           <Button

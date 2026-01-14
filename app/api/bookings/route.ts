@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth()
     const body = await request.json()
-    const { slots, date, sport, isTestBooking, isGuestBooking, guestName, guestPhone, guestEmail } = body
+    const { slots, date, sport, isTestBooking, isGuestBooking, guestName, guestPhone, guestEmail, payAtCounter } = body
 
     // Validate common required fields
     if (!slots || !Array.isArray(slots) || slots.length === 0) {
@@ -66,19 +66,26 @@ export async function POST(request: NextRequest) {
     let bookingGuestPhone: string | null = null
     let bookingGuestEmail: string | null = null
     let bookingStatus = 'pending'
+    let paymentStatus = 'pending'
 
     if (isGuestBooking) {
       // Guest booking - no login required
-      if (!guestName || !guestPhone) {
+      if (!guestName) {
         return NextResponse.json(
-          { error: 'Name and phone number are required for guest bookings' },
+          { error: 'Name is required for guest bookings' },
           { status: 400 }
         )
       }
       bookingGuestName = guestName
-      bookingGuestPhone = guestPhone
+      bookingGuestPhone = guestPhone || null
       bookingGuestEmail = guestEmail || null
-      bookingStatus = 'confirmed' // Guest bookings are confirmed (pay at counter)
+
+      // If paying at counter, confirm the booking immediately
+      if (payAtCounter) {
+        bookingStatus = 'confirmed'
+        paymentStatus = 'pending' // Will pay at counter
+      }
+      // Otherwise, booking stays pending until online payment completes
     } else if (isTestBooking) {
       // Admin test booking
       if (!session?.user?.id) {
@@ -95,6 +102,7 @@ export async function POST(request: NextRequest) {
       }
       userId = session.user.id
       bookingStatus = 'confirmed'
+      paymentStatus = 'paid' // Test bookings are free
     } else {
       // Regular logged-in user booking
       if (!session?.user?.id) {
@@ -104,8 +112,9 @@ export async function POST(request: NextRequest) {
         )
       }
       userId = session.user.id
-      // For now, auto-confirm (future: require payment)
-      bookingStatus = 'confirmed'
+      // Booking stays pending until payment completes
+      bookingStatus = 'pending'
+      paymentStatus = 'pending'
     }
 
     const bookingDate = new Date(date)
@@ -213,6 +222,7 @@ export async function POST(request: NextRequest) {
             endTime: getEndTime(slot.slotTime),
             totalAmount: slot.slotRate,
             status: bookingStatus,
+            paymentStatus,
             guestName: bookingGuestName,
             guestPhone: bookingGuestPhone,
             guestEmail: bookingGuestEmail,
@@ -228,6 +238,7 @@ export async function POST(request: NextRequest) {
       {
         message: 'Booking created successfully',
         bookings: createdBookings,
+        bookingIds: createdBookings.map(b => b.id),
         count: createdBookings.length,
       },
       { status: 201 }

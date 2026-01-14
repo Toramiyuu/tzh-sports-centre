@@ -89,6 +89,7 @@ export async function GET(request: NextRequest) {
       email: string | null
       sport: string
       status: string
+      paymentStatus?: string
       isGuest: boolean
       isRecurring?: boolean
       recurringLabel?: string
@@ -104,6 +105,7 @@ export async function GET(request: NextRequest) {
         email: booking.guestEmail || booking.user?.email || null,
         sport: booking.sport,
         status: booking.status,
+        paymentStatus: booking.paymentStatus,
         isGuest: !booking.userId,
       }
     })
@@ -260,6 +262,7 @@ export async function POST(request: NextRequest) {
         sport,
         totalAmount: hourlyRate,
         status: 'confirmed',
+        paymentStatus: 'paid', // Admin-created bookings are confirmed/paid
         guestName,
         guestPhone,
       },

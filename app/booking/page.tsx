@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User } from 'lucide-react'
+import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Banknote } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import { toast } from 'sonner'
 import { celebrateBooking } from '@/lib/confetti'
@@ -329,7 +329,83 @@ function BookingPageContent() {
     return true
   }
 
-  // Handle guest booking
+  // Handle booking with online payment
+  const handleOnlinePayment = async () => {
+    if (!validateMinimum()) return
+
+    // For guests, require name and phone
+    if (!session) {
+      if (!guestName.trim()) {
+        toast.error('Please enter your name')
+        return
+      }
+      if (!guestPhone.trim()) {
+        toast.error('Please enter your phone number')
+        return
+      }
+    }
+
+    setBooking(true)
+
+    try {
+      // Step 1: Create the booking(s) with pending payment status
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slots: selectedSlots.map((s) => ({
+            courtId: s.courtId,
+            slotTime: s.slotTime,
+            slotRate: s.slotRate,
+          })),
+          date: format(selectedDate, 'yyyy-MM-dd'),
+          sport,
+          isGuestBooking: !session,
+          guestName: session ? session.user?.name : guestName.trim(),
+          guestPhone: guestPhone.trim() || undefined,
+          guestEmail: session ? session.user?.email : (guestEmail.trim() || undefined),
+        }),
+      })
+
+      const bookingData = await res.json()
+
+      if (!res.ok) {
+        toast.error(bookingData.error || 'Failed to create booking')
+        return
+      }
+
+      // Step 2: Create Stripe checkout session
+      const checkoutRes = await fetch('/api/payments/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingIds: bookingData.bookingIds,
+          customerEmail: session?.user?.email || guestEmail.trim() || undefined,
+          customerName: session?.user?.name || guestName.trim(),
+          customerPhone: guestPhone.trim(),
+        }),
+      })
+
+      const checkoutData = await checkoutRes.json()
+
+      if (!checkoutRes.ok) {
+        toast.error(checkoutData.error || 'Failed to create payment session')
+        return
+      }
+
+      // Step 3: Redirect to Stripe checkout
+      if (checkoutData.url) {
+        window.location.href = checkoutData.url
+      } else {
+        toast.error('Failed to get payment URL')
+      }
+    } catch (err) {
+      toast.error('An unexpected error occurred')
+      setBooking(false)
+    }
+  }
+
+  // Handle guest booking (pay at counter - no online payment)
   const handleGuestBooking = async () => {
     if (!validateMinimum()) return
 
@@ -361,6 +437,7 @@ function BookingPageContent() {
           guestName: guestName.trim(),
           guestPhone: guestPhone.trim(),
           guestEmail: guestEmail.trim() || undefined,
+          payAtCounter: true,
         }),
       })
 
@@ -725,12 +802,12 @@ function BookingPageContent() {
                       </div>
                     )}
 
-                    {/* Guest booking button (for non-logged-in users) */}
-                    {!session && (
+                    {/* Pay Online button - Primary option */}
+                    {!userIsAdmin && (
                       <Button
                         className={`w-full mb-2 ${sport === 'pickleball' ? 'bg-green-600 hover:bg-green-700' : ''}`}
                         size="lg"
-                        onClick={handleGuestBooking}
+                        onClick={handleOnlinePayment}
                         disabled={booking}
                       >
                         {booking ? (
@@ -739,24 +816,19 @@ function BookingPageContent() {
                             {tCommon('loading')}
                           </>
                         ) : (
-                          `${t('bookNow')} (${t('guest.payAtCounter')})`
+                          <>
+                            <CreditCard className="mr-2 h-4 w-4" />
+                            {t('bookNow')} - Pay Online
+                          </>
                         )}
                       </Button>
                     )}
 
-                    {/* Logged-in user info */}
-                    {session && !userIsAdmin && (
-                      <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-600">
-                          {session.user?.name}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Logged-in user booking button */}
-                    {session && !userIsAdmin && (
+                    {/* Pay at Counter button - Secondary option for guests */}
+                    {!session && !userIsAdmin && (
                       <Button
-                        className={`w-full mb-2 ${sport === 'pickleball' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                        variant="outline"
+                        className="w-full mb-2"
                         size="lg"
                         onClick={handleGuestBooking}
                         disabled={booking}
@@ -767,7 +839,10 @@ function BookingPageContent() {
                             {tCommon('loading')}
                           </>
                         ) : (
-                          t('bookNow')
+                          <>
+                            <Banknote className="mr-2 h-4 w-4" />
+                            {t('guest.payAtCounter')}
+                          </>
                         )}
                       </Button>
                     )}

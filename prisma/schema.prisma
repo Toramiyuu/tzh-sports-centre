@@ -72,7 +72,14 @@ model Booking {
   endTime         String   @map("end_time")
   totalAmount     Float    @map("total_amount")
   status          String   @default("pending") // pending, confirmed, cancelled
+
+  // Payment fields
+  paymentStatus   String   @default("pending") @map("payment_status") // pending, paid, failed, refunded
+  paymentMethod   String?  @map("payment_method") // card, fpx, grabpay, touchngo
   paymentIntentId String?  @map("payment_intent_id")
+  stripeSessionId String?  @map("stripe_session_id")
+  paidAt          DateTime? @map("paid_at")
+
   // Guest booking fields
   guestName       String?  @map("guest_name")
   guestPhone      String?  @map("guest_phone")
