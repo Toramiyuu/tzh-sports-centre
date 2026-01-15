@@ -107,6 +107,7 @@ interface CoachAvailability {
 
 interface Member {
   id: string
+  uid: string
   name: string
   phone: string
   skillLevel: string | null
@@ -208,6 +209,7 @@ export default function AdminLessonsPage() {
   const [lessonDuration, setLessonDuration] = useState<number>(1.5)
   const [lessonStudentIds, setLessonStudentIds] = useState<string[]>([])
   const [lessonNotes, setLessonNotes] = useState('')
+  const [studentSearch, setStudentSearch] = useState('')
 
   useEffect(() => {
     if (status === 'loading') return
@@ -468,6 +470,7 @@ export default function AdminLessonsPage() {
   const openAddLessonDialog = (courtId: number, slotTime: string) => {
     setLessonCourtId(courtId)
     setLessonStartTime(slotTime)
+    setStudentSearch('')
     setLessonDialogOpen(true)
   }
 
@@ -772,6 +775,7 @@ export default function AdminLessonsPage() {
                           onClick={() => {
                             setLessonCourtId(null)
                             setLessonStartTime('')
+                            setStudentSearch('')
                             setLessonDialogOpen(true)
                           }}
                           disabled={members.length === 0}
@@ -1508,34 +1512,62 @@ export default function AdminLessonsPage() {
 
             <div>
               <Label>Students</Label>
-              <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
-                {members.map((member) => (
-                  <label
-                    key={member.id}
-                    className={`flex items-center gap-2 p-2 rounded border cursor-pointer ${
-                      lessonStudentIds.includes(member.id)
-                        ? 'bg-blue-50 border-blue-300'
-                        : 'bg-white border-gray-200'
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={lessonStudentIds.includes(member.id)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setLessonStudentIds([...lessonStudentIds, member.id])
-                        } else {
-                          setLessonStudentIds(lessonStudentIds.filter(id => id !== member.id))
-                        }
-                      }}
-                      className="rounded"
-                    />
-                    <span>{member.name}</span>
-                    {member.skillLevel && (
-                      <Badge variant="outline" className="text-xs">{member.skillLevel}</Badge>
-                    )}
-                  </label>
-                ))}
+              <div className="mt-2">
+                <Input
+                  placeholder="Search by name or UID..."
+                  value={studentSearch}
+                  onChange={(e) => setStudentSearch(e.target.value)}
+                  className="mb-2"
+                />
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {members
+                    .filter((member) => {
+                      if (!studentSearch) return true
+                      const search = studentSearch.toLowerCase()
+                      return (
+                        member.name.toLowerCase().includes(search) ||
+                        member.uid.toLowerCase().includes(search)
+                      )
+                    })
+                    .map((member) => (
+                      <label
+                        key={member.id}
+                        className={`flex items-center gap-2 p-2 rounded border cursor-pointer ${
+                          lessonStudentIds.includes(member.id)
+                            ? 'bg-blue-50 border-blue-300'
+                            : 'bg-white border-gray-200'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={lessonStudentIds.includes(member.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setLessonStudentIds([...lessonStudentIds, member.id])
+                            } else {
+                              setLessonStudentIds(lessonStudentIds.filter(id => id !== member.id))
+                            }
+                          }}
+                          className="rounded"
+                        />
+                        <span className="text-xs text-gray-400">#{member.uid}</span>
+                        <span>{member.name}</span>
+                        {member.skillLevel && (
+                          <Badge variant="outline" className="text-xs">{member.skillLevel}</Badge>
+                        )}
+                      </label>
+                    ))}
+                  {members.filter((member) => {
+                    if (!studentSearch) return true
+                    const search = studentSearch.toLowerCase()
+                    return (
+                      member.name.toLowerCase().includes(search) ||
+                      member.uid.toLowerCase().includes(search)
+                    )
+                  }).length === 0 && (
+                    <p className="text-sm text-gray-500 text-center py-2">No members found</p>
+                  )}
+                </div>
               </div>
             </div>
 
