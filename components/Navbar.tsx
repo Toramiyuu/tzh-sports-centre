@@ -77,12 +77,12 @@ export function Navbar() {
               <UserMenu />
             ) : (
               <>
-                <Link href="/auth/login">
-                  <Button variant="ghost">{t('login')}</Button>
-                </Link>
-                <Link href="/auth/register">
-                  <Button>{t('signup')}</Button>
-                </Link>
+                <Button variant="ghost" asChild>
+                  <Link href="/auth/login">{t('login')}</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/auth/register">{t('signup')}</Link>
+                </Button>
               </>
             )}
           </div>
