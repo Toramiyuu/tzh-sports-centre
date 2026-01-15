@@ -3,12 +3,12 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  // Create 4 courts
+  // Create 4 courts (RM7.50 per 30 mins = RM15/hour)
   const courts = [
-    { name: 'Court 1', description: 'Standard badminton court', hourlyRate: 30.0 },
-    { name: 'Court 2', description: 'Standard badminton court', hourlyRate: 30.0 },
-    { name: 'Court 3', description: 'Standard badminton court', hourlyRate: 30.0 },
-    { name: 'Court 4', description: 'Premium court with better lighting', hourlyRate: 35.0 },
+    { name: 'Court 1', description: 'Standard badminton court', hourlyRate: 15.0 },
+    { name: 'Court 2', description: 'Standard badminton court', hourlyRate: 15.0 },
+    { name: 'Court 3', description: 'Standard badminton court', hourlyRate: 15.0 },
+    { name: 'Court 4', description: 'Standard badminton court', hourlyRate: 15.0 },
   ]
 
   for (const court of courts) {

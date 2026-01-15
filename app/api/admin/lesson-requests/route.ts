@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
+import { getLessonType, getLessonPrice, isMonthlyBilling } from '@/lib/lesson-config'
 
 // GET - Fetch all lesson requests
 export async function GET() {
@@ -38,29 +39,6 @@ export async function GET() {
       { status: 500 }
     )
   }
-}
-
-// Lesson pricing configuration - RM50 per additional 30 min
-const LESSON_PRICES: Record<string, { basePrice: number; minSlots: number; ratePerSlot: number }> = {
-  '1-to-1': { basePrice: 130, minSlots: 3, ratePerSlot: 50 },
-  '1-to-2': { basePrice: 160, minSlots: 3, ratePerSlot: 50 },
-  '1-to-3': { basePrice: 180, minSlots: 4, ratePerSlot: 50 },
-  '1-to-4': { basePrice: 200, minSlots: 4, ratePerSlot: 50 },
-}
-
-// Calculate price based on lesson type and duration in hours
-function calculateLessonPrice(lessonType: string, durationHours: number): number {
-  const config = LESSON_PRICES[lessonType]
-  if (!config) return 0
-
-  const slots = Math.round(durationHours * 2) // Convert hours to 30-min slots
-
-  if (slots <= config.minSlots) {
-    return config.basePrice
-  }
-
-  const additionalSlots = slots - config.minSlots
-  return Math.round(config.basePrice + (additionalSlots * config.ratePerSlot))
 }
 
 // PATCH - Update request status (approve, reject, suggest different time)
@@ -112,8 +90,9 @@ export async function PATCH(request: NextRequest) {
         )
       }
 
-      const lessonConfig = LESSON_PRICES[lessonRequest.lessonType]
-      if (!lessonConfig) {
+      // Validate lesson type
+      const lessonTypeConfig = getLessonType(lessonRequest.lessonType)
+      if (!lessonTypeConfig) {
         return NextResponse.json(
           { error: 'Invalid lesson type' },
           { status: 400 }
@@ -122,7 +101,8 @@ export async function PATCH(request: NextRequest) {
 
       // Use the requested duration from the member's request
       const duration = lessonRequest.requestedDuration
-      const price = calculateLessonPrice(lessonRequest.lessonType, duration)
+      const billingType = lessonTypeConfig.billingType
+      const price = getLessonPrice(lessonRequest.lessonType, duration)
 
       // Calculate end time based on requested duration
       const startTime = lessonRequest.requestedTime
@@ -217,6 +197,7 @@ export async function PATCH(request: NextRequest) {
           startTime,
           endTime,
           lessonType: lessonRequest.lessonType,
+          billingType,
           duration,
           price,
           status: 'scheduled',

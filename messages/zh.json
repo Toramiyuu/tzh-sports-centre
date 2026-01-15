@@ -281,8 +281,8 @@
       "description": "安排课程和查看账单"
     },
     "recurringPayments": {
-      "title": "定期付款",
-      "description": "管理定期预订的月度发票"
+      "title": "管理付款",
+      "description": "追踪和管理客户月度付款"
     },
     "bookings": {
       "title": "管理预订",

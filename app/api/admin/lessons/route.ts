@@ -2,14 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
-
-// Lesson pricing from the lessons page
-const LESSON_PRICES: Record<string, { price: number; duration: number }> = {
-  '1-to-1': { price: 130, duration: 1.5 },
-  '1-to-2': { price: 160, duration: 1.5 },
-  '1-to-3': { price: 180, duration: 2 },
-  '1-to-4': { price: 200, duration: 2 },
-}
+import {
+  getLessonType,
+  getLessonPrice,
+  getDefaultDuration,
+  isMonthlyBilling,
+} from '@/lib/lesson-config'
 
 // GET - Fetch lessons (with optional filters)
 export async function GET(request: NextRequest) {
@@ -84,7 +82,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { courtId, lessonDate, startTime, lessonType, studentIds, notes } = body
+    const { courtId, lessonDate, startTime, lessonType, duration, studentIds, notes } = body
 
     if (!courtId || !lessonDate || !startTime || !lessonType || !studentIds || studentIds.length === 0) {
       return NextResponse.json(
@@ -93,17 +91,43 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const lessonConfig = LESSON_PRICES[lessonType]
-    if (!lessonConfig) {
+    // Validate lesson type
+    const lessonTypeConfig = getLessonType(lessonType)
+    if (!lessonTypeConfig) {
       return NextResponse.json(
         { error: 'Invalid lesson type' },
         { status: 400 }
       )
     }
 
+    // Determine billing type
+    const billingType = lessonTypeConfig.billingType
+
+    // Use provided duration or default for this lesson type
+    const lessonDuration = duration || getDefaultDuration(lessonType)
+
+    // Validate duration based on lesson type
+    if (billingType === 'per_session') {
+      // Per-session lessons must use allowed durations
+      if (!lessonTypeConfig.allowedDurations.includes(lessonDuration)) {
+        return NextResponse.json(
+          { error: `Invalid duration for ${lessonTypeConfig.label}. Allowed: ${lessonTypeConfig.allowedDurations.join(', ')} hours` },
+          { status: 400 }
+        )
+      }
+    }
+
+    // Validate student count
+    if (studentIds.length > lessonTypeConfig.maxStudents) {
+      return NextResponse.json(
+        { error: `${lessonTypeConfig.label} allows maximum ${lessonTypeConfig.maxStudents} student(s)` },
+        { status: 400 }
+      )
+    }
+
     // Calculate end time based on duration
     const [hours, minutes] = startTime.split(':').map(Number)
-    const durationMinutes = lessonConfig.duration * 60
+    const durationMinutes = lessonDuration * 60
     const endMinutes = minutes + durationMinutes
     const endHours = hours + Math.floor(endMinutes / 60)
     const endTime = `${endHours.toString().padStart(2, '0')}:${(endMinutes % 60).toString().padStart(2, '0')}`
@@ -186,6 +210,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Calculate price using the centralized config
+    const price = getLessonPrice(lessonType, lessonDuration)
+
     // Create the lesson
     const lesson = await prisma.lessonSession.create({
       data: {
@@ -194,8 +221,9 @@ export async function POST(request: NextRequest) {
         startTime,
         endTime,
         lessonType,
-        duration: lessonConfig.duration,
-        price: lessonConfig.price,
+        billingType,
+        duration: lessonDuration,
+        price,
         status: 'scheduled',
         notes,
         students: {

@@ -15,6 +15,9 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Note: Expiration check is handled by cron job every hour
+    // The booking query below already filters out expired bookings
+
     const queryDate = new Date(date)
     const dayOfWeek = queryDate.getDay() // 0=Sunday, 1=Monday, etc.
 

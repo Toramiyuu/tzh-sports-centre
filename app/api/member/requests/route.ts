@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import {
+  getLessonType,
+  getDefaultDuration,
+  isMonthlyBilling,
+  LESSON_TYPES,
+} from '@/lib/lesson-config'
 
 // GET - Fetch member's lesson requests
 export async function GET() {
@@ -68,9 +74,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Default duration based on lesson type if not provided
-    const defaultDuration = (lessonType === '1-to-3' || lessonType === '1-to-4') ? 2 : 1.5
-    const duration = requestedDuration || defaultDuration
+    // Validate lesson type
+    const lessonTypeConfig = getLessonType(lessonType)
+    if (!lessonTypeConfig) {
+      return NextResponse.json(
+        { error: 'Invalid lesson type' },
+        { status: 400 }
+      )
+    }
+
+    // Monthly billing types are not available for member requests (admin only)
+    if (isMonthlyBilling(lessonType)) {
+      return NextResponse.json(
+        { error: 'Monthly billing lessons are managed by admin only. Please contact the coach directly.' },
+        { status: 400 }
+      )
+    }
+
+    // Default duration for this lesson type
+    const duration = requestedDuration || getDefaultDuration(lessonType)
+
+    // Validate duration (must be in allowed durations for this type)
+    if (!lessonTypeConfig.allowedDurations.includes(duration)) {
+      return NextResponse.json(
+        { error: `Invalid duration for ${lessonTypeConfig.label}. Allowed: ${lessonTypeConfig.allowedDurations.join(', ')} hours` },
+        { status: 400 }
+      )
+    }
 
     // Check if there's already a pending request for this time
     const existingRequest = await prisma.lessonRequest.findFirst({

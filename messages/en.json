@@ -343,8 +343,8 @@
       "description": "Schedule lessons and view billing"
     },
     "recurringPayments": {
-      "title": "Recurring Payments",
-      "description": "Manage monthly invoices for recurring bookings"
+      "title": "Manage Payments",
+      "description": "Track and manage monthly customer payments"
     },
     "bookings": {
       "title": "Booking Management",

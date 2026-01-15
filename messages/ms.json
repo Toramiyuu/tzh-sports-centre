@@ -343,8 +343,8 @@
       "description": "Jadualkan kelas dan lihat bil"
     },
     "recurringPayments": {
-      "title": "Bayaran Berulang",
-      "description": "Urus invois bulanan untuk tempahan berulang"
+      "title": "Urus Bayaran",
+      "description": "Jejak dan urus bayaran bulanan pelanggan"
     },
     "bookings": {
       "title": "Pengurusan Tempahan",

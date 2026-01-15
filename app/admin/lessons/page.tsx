@@ -39,36 +39,22 @@ import {
   Check,
   LayoutGrid,
   List,
+  Repeat,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import {
+  LESSON_TYPES,
+  getLessonType,
+  getLessonPrice,
+  getDefaultDuration,
+  isMonthlyBilling,
+  getDurationOptions,
+  type LessonTypeConfig,
+} from '@/lib/lesson-config'
 
 const DAYS_OF_WEEK_KEYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-
-// Lesson pricing: base price for minimum duration, RM50 per additional 30-min slot
-const LESSON_TYPES = [
-  { value: '1-to-1', label: '1-to-1 Private', basePrice: 130, minSlots: 3, ratePerSlot: 50, students: 1 },
-  { value: '1-to-2', label: '1-to-2', basePrice: 160, minSlots: 3, ratePerSlot: 50, students: 2 },
-  { value: '1-to-3', label: '1-to-3', basePrice: 180, minSlots: 4, ratePerSlot: 50, students: 3 },
-  { value: '1-to-4', label: '1-to-4', basePrice: 200, minSlots: 4, ratePerSlot: 50, students: 4 },
-]
-
-// Calculate price for a lesson based on type and duration in hours
-function calculateLessonPrice(lessonType: string, durationHours: number): number {
-  const type = LESSON_TYPES.find(t => t.value === lessonType)
-  if (!type) return 0
-
-  const slots = Math.round(durationHours * 2) // Convert hours to 30-min slots
-
-  if (slots <= type.minSlots) {
-    return type.basePrice
-  }
-
-  // Base price + additional slots at rate
-  const additionalSlots = slots - type.minSlots
-  return Math.round(type.basePrice + (additionalSlots * type.ratePerSlot))
-}
 
 // Generate time slots from 9 AM to 11 PM in 30-min increments
 const TIME_SLOTS = Array.from({ length: 29 }, (_, i) => {
@@ -219,6 +205,7 @@ export default function AdminLessonsPage() {
   const [lessonCourtId, setLessonCourtId] = useState<number | null>(null)
   const [lessonStartTime, setLessonStartTime] = useState('')
   const [lessonType, setLessonType] = useState('')
+  const [lessonDuration, setLessonDuration] = useState<number>(1.5)
   const [lessonStudentIds, setLessonStudentIds] = useState<string[]>([])
   const [lessonNotes, setLessonNotes] = useState('')
 
@@ -565,6 +552,7 @@ export default function AdminLessonsPage() {
           lessonDate: format(selectedDate, 'yyyy-MM-dd'),
           startTime: lessonStartTime,
           lessonType,
+          duration: lessonDuration,
           studentIds: lessonStudentIds,
           notes: lessonNotes || null,
         }),
@@ -575,6 +563,7 @@ export default function AdminLessonsPage() {
         setLessonCourtId(null)
         setLessonStartTime('')
         setLessonType('')
+        setLessonDuration(1.5)
         setLessonStudentIds([])
         setLessonNotes('')
         fetchLessonsForDate()
@@ -647,7 +636,7 @@ export default function AdminLessonsPage() {
     return Object.values(billing).sort((a, b) => b.total - a.total)
   }
 
-  const getLessonTypeInfo = (type: string) => LESSON_TYPES.find(t => t.value === type)
+  const getLessonTypeInfo = (type: string): LessonTypeConfig | undefined => getLessonType(type)
 
   if (status === 'loading') {
     return (
@@ -1197,7 +1186,7 @@ export default function AdminLessonsPage() {
                                       <strong>Requested:</strong> {format(new Date(request.requestedDate), 'EEEE, MMMM d, yyyy')} at {request.requestedTime}
                                     </div>
                                     <div className="text-sm text-gray-600">
-                                      <strong>Type:</strong> {typeInfo?.label} ({request.requestedDuration}hr) - <strong className="text-green-600">RM{calculateLessonPrice(request.lessonType, request.requestedDuration)}</strong>
+                                      <strong>Type:</strong> {typeInfo?.label} ({request.requestedDuration}hr) - <strong className="text-green-600">RM{getLessonPrice(request.lessonType, request.requestedDuration)}</strong>
                                     </div>
                                     <div className="text-xs text-gray-400 mt-1">
                                       Requested on {format(new Date(request.createdAt), 'MMM d, yyyy h:mm a')}
@@ -1276,7 +1265,7 @@ export default function AdminLessonsPage() {
                                       </Badge>
                                     </div>
                                     <div className="text-sm text-gray-600">
-                                      {format(new Date(request.requestedDate), 'MMM d, yyyy')} at {request.requestedTime} - {typeInfo?.label} ({request.requestedDuration}hr) - RM{calculateLessonPrice(request.lessonType, request.requestedDuration)}
+                                      {format(new Date(request.requestedDate), 'MMM d, yyyy')} at {request.requestedTime} - {typeInfo?.label} ({request.requestedDuration}hr) - RM{getLessonPrice(request.lessonType, request.requestedDuration)}
                                     </div>
                                     {request.adminNotes && (
                                       <div className="text-sm text-gray-500 mt-1">
@@ -1393,21 +1382,93 @@ export default function AdminLessonsPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div>
-              <Label>Lesson Type</Label>
-              <Select value={lessonType} onValueChange={setLessonType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {LESSON_TYPES.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label} - from RM{type.basePrice} (min {type.minSlots * 0.5}hr)
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Lesson Type</Label>
+                <Select
+                  value={lessonType}
+                  onValueChange={(v) => {
+                    setLessonType(v)
+                    // Auto-select default duration for this type
+                    setLessonDuration(getDefaultDuration(v))
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LESSON_TYPES.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        <div className="flex items-center gap-2">
+                          <span>{type.label}</span>
+                          {type.billingType === 'monthly' ? (
+                            <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                              RM{type.pricing as number}/mo
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                              From RM{Object.values(type.pricing as Record<number, number>)[0]}
+                            </Badge>
+                          )}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {lessonType && isMonthlyBilling(lessonType) && (
+                  <p className="text-xs text-purple-600 mt-1 flex items-center gap-1">
+                    <Repeat className="w-3 h-3" />
+                    Monthly billing - 4 sessions/month
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label>Duration</Label>
+                {lessonType && isMonthlyBilling(lessonType) ? (
+                  <div className="mt-2 p-3 bg-gray-100 rounded-lg text-sm text-gray-600">
+                    Duration is set by monthly schedule
+                  </div>
+                ) : (
+                  <Select
+                    value={lessonDuration.toString()}
+                    onValueChange={(v) => setLessonDuration(parseFloat(v))}
+                    disabled={!lessonType}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select duration" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {lessonType && getDurationOptions(lessonType).map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value.toString()}>
+                          {opt.label} - RM{opt.price}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
             </div>
+
+            {/* Price Display */}
+            {lessonType && (
+              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm text-gray-600">
+                      {isMonthlyBilling(lessonType) ? 'Monthly Price' : 'Session Price'}
+                    </span>
+                    <p className="font-bold text-xl text-blue-700">
+                      RM{getLessonPrice(lessonType, lessonDuration)}
+                      {isMonthlyBilling(lessonType) && <span className="text-sm font-normal">/month</span>}
+                    </p>
+                  </div>
+                  <div className="text-right text-sm text-gray-500">
+                    <p>Max {getLessonType(lessonType)?.maxStudents} student(s)</p>
+                    {!isMonthlyBilling(lessonType) && <p>{lessonDuration} hours</p>}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -1530,7 +1591,7 @@ export default function AdminLessonsPage() {
                   <div className="text-right">
                     <p className="font-medium">{format(new Date(selectedRequest.requestedDate), 'EEE, MMM d')}</p>
                     <p className="text-lg font-bold text-blue-600">{selectedRequest.requestedTime}</p>
-                    <p className="text-sm font-medium text-green-600">RM{calculateLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</p>
+                    <p className="text-sm font-medium text-green-600">RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</p>
                   </div>
                 </div>
               </div>
@@ -1591,7 +1652,7 @@ export default function AdminLessonsPage() {
                     <strong>{courts.find(c => c.id === approveCourtId)?.name}</strong> will be booked for{' '}
                     <strong>{selectedRequest.member.name}</strong> on{' '}
                     <strong>{format(new Date(selectedRequest.requestedDate), 'MMM d')}</strong> at{' '}
-                    <strong>{selectedRequest.requestedTime}</strong> ({selectedRequest.requestedDuration}hr) - <strong>RM{calculateLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</strong>
+                    <strong>{selectedRequest.requestedTime}</strong> ({selectedRequest.requestedDuration}hr) - <strong>RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</strong>
                   </p>
                 </div>
               )}

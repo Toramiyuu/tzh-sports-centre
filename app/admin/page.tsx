@@ -51,7 +51,7 @@ export default async function AdminPage() {
       titleKey: 'recurringPayments.title',
       descriptionKey: 'recurringPayments.description',
       icon: Receipt,
-      href: '/admin/recurring-payments',
+      href: '/admin/manage-payments',
       color: 'bg-yellow-100 text-yellow-600',
     },
   ]

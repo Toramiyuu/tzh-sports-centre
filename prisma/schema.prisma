@@ -21,6 +21,7 @@ model User {
   updatedAt         DateTime           @updatedAt @map("updated_at")
   bookings          Booking[]
   recurringBookings RecurringBooking[]
+  monthlyPayments   MonthlyPayment[]
 
   // Admin flag (in addition to hardcoded list)
   isAdmin           Boolean            @default(false) @map("is_admin")
@@ -30,6 +31,7 @@ model User {
   skillLevel        String?            @map("skill_level") // beginner, intermediate, advanced
   lessonSessions    LessonSession[]    @relation("StudentLessons")
   lessonRequests    LessonRequest[]
+  notifications     Notification[]
 
   // Profile & Account settings
   creditBalance         Float     @default(0) @map("credit_balance")
@@ -87,6 +89,11 @@ model Booking {
   // Cancellation fields
   cancelledAt     DateTime? @map("cancelled_at")
   creditRefunded  Float?    @map("credit_refunded")
+
+  // Expiration tracking
+  expirationWarningSent Boolean   @default(false) @map("expiration_warning_sent")
+  expiredAt             DateTime? @map("expired_at")
+
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
@@ -184,10 +191,11 @@ model LessonSession {
   startTime   String   @map("start_time") // "09:00", "09:30", etc.
   endTime     String   @map("end_time")
 
-  // Lesson type: "1-to-1", "1-to-2", "1-to-3", "1-to-4"
+  // Lesson type: "1-to-1", "1-to-2", "1-to-3", "1-to-4", "small-kids-beginners", etc.
   lessonType  String   @map("lesson_type")
+  billingType String   @default("per_session") @map("billing_type") // per_session, monthly
   duration    Float    // Duration in hours (1.5 or 2)
-  price       Float    // Total price for the session
+  price       Float    // Total price for the session (or pro-rated monthly)
 
   // Students in this session (can be multiple for group lessons)
   students    User[]   @relation("StudentLessons")
@@ -201,6 +209,54 @@ model LessonSession {
   court       Court    @relation(fields: [courtId], references: [id])
 
   @@map("lesson_sessions")
+}
+
+// Monthly payment tracking by User (for all bookings in a month)
+model MonthlyPayment {
+  id              String    @id @default(cuid())
+  userId          String    @map("user_id")
+  month           Int       // 1-12
+  year            Int
+
+  // Totals (computed when created/updated)
+  totalAmount     Float     @map("total_amount")     // Total due for the month
+  paidAmount      Float     @default(0) @map("paid_amount")  // Amount paid so far
+  bookingsCount   Int       @map("bookings_count")   // Number of bookings
+  totalHours      Float     @map("total_hours")      // Total hours booked
+
+  // Payment tracking
+  status          String    @default("unpaid") // unpaid, partial, paid
+
+  // Audit fields
+  markedPaidBy    String?   @map("marked_paid_by")   // Admin email who marked paid
+  markedPaidAt    DateTime? @map("marked_paid_at")
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user            User      @relation(fields: [userId], references: [id])
+  transactions    PaymentTransaction[]
+
+  @@unique([userId, month, year])
+  @@map("monthly_payments")
+}
+
+// Individual payment transactions (supports partial payments)
+model PaymentTransaction {
+  id                String    @id @default(cuid())
+  monthlyPaymentId  String    @map("monthly_payment_id")
+  amount            Float     // Amount of this payment
+  paymentMethod     String    @map("payment_method") // cash, tng, bank_transfer, card, duitnow
+  reference         String?   // Transaction reference number
+  notes             String?
+
+  // Audit fields
+  recordedBy        String    @map("recorded_by")   // Admin email who recorded
+  recordedAt        DateTime  @default(now()) @map("recorded_at")
+
+  monthlyPayment    MonthlyPayment @relation(fields: [monthlyPaymentId], references: [id], onDelete: Cascade)
+
+  @@map("payment_transactions")
 }
 
 // Member requests for lessons (pending approval)
@@ -222,4 +278,20 @@ model LessonRequest {
   member          User     @relation(fields: [memberId], references: [id])
 
   @@map("lesson_requests")
+}
+
+// In-app notifications for users
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  type        String   // booking_warning, booking_expired, booking_confirmed, etc.
+  title       String
+  message     String
+  link        String?  // Optional link to related page
+  isRead      Boolean  @default(false) @map("is_read")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
 }

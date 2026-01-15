@@ -540,7 +540,6 @@ function BookingPageContent() {
               }`}
             >
               {tHome('sports.badminton')}
-              <span className="ml-2 text-xs text-gray-400">RM15/hr (RM18 {t('peakHours')}) • 1hr min</span>
             </button>
             <button
               onClick={() => setSport('pickleball')}
@@ -551,7 +550,6 @@ function BookingPageContent() {
               }`}
             >
               {tHome('sports.pickleball')}
-              <span className="ml-2 text-xs text-gray-400">RM25/hr • 2hr min</span>
             </button>
           </nav>
         </div>
@@ -568,7 +566,7 @@ function BookingPageContent() {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600/70 to-transparent flex items-center">
                 <div className="px-6 text-white">
                   <h3 className="text-2xl font-bold">{tHome('sports.badminton')}</h3>
-                  <p className="text-sm opacity-90">{t('title')} • 1hr min</p>
+                  <p className="text-sm opacity-90">{t('title')}</p>
                 </div>
               </div>
             </div>
@@ -582,11 +580,64 @@ function BookingPageContent() {
               <div className="absolute inset-0 bg-gradient-to-r from-green-600/70 to-transparent flex items-center">
                 <div className="px-6 text-white">
                   <h3 className="text-2xl font-bold">{tHome('sports.pickleball')}</h3>
-                  <p className="text-sm opacity-90">{t('title')} • 2hr min</p>
+                  <p className="text-sm opacity-90">{t('title')}</p>
                 </div>
               </div>
             </div>
           )}
+        </div>
+
+        {/* Pricing & Minimum Booking Info Banner */}
+        <div className={`mt-4 p-4 rounded-lg border-2 ${
+          sport === 'badminton'
+            ? 'bg-blue-50 border-blue-200'
+            : 'bg-green-50 border-green-200'
+        }`}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-full ${
+                sport === 'badminton' ? 'bg-blue-100' : 'bg-green-100'
+              }`}>
+                <Clock className={`w-5 h-5 ${
+                  sport === 'badminton' ? 'text-blue-600' : 'text-green-600'
+                }`} />
+              </div>
+              <div>
+                <p className={`font-semibold text-lg ${
+                  sport === 'badminton' ? 'text-blue-800' : 'text-green-800'
+                }`}>
+                  {sport === 'badminton' ? (
+                    <>RM15/hr <span className="text-orange-600">(RM18/hr after 6 PM)</span></>
+                  ) : (
+                    <>RM25/hr</>
+                  )}
+                </p>
+                <p className={`text-sm ${
+                  sport === 'badminton' ? 'text-blue-600' : 'text-green-600'
+                }`}>
+                  {sport === 'badminton'
+                    ? 'Peak hours: 6 PM onwards'
+                    : 'Same rate all day'}
+                </p>
+              </div>
+            </div>
+            <div className={`px-4 py-2 rounded-lg ${
+              sport === 'badminton'
+                ? 'bg-blue-200 text-blue-800'
+                : 'bg-green-200 text-green-800'
+            }`}>
+              <p className="font-bold text-lg">
+                {sport === 'badminton'
+                  ? 'Minimum: 1 Hour'
+                  : 'Minimum: 2 Hours'}
+              </p>
+              <p className="text-sm">
+                {sport === 'badminton'
+                  ? '(Select at least 2 slots)'
+                  : '(Select at least 4 slots)'}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

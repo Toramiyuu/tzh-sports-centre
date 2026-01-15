@@ -41,6 +41,7 @@ import {
   DollarSign,
   Clock,
   Repeat,
+  Eye,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
@@ -787,6 +788,16 @@ export default function AdminAccountsPage() {
 
                         {/* Action buttons in expanded view */}
                         <div className="flex gap-2 justify-end pt-2 border-t">
+                          <Link href={`/admin/users/${user.id}`} onClick={(e) => e.stopPropagation()}>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700"
+                            >
+                              <Eye className="w-4 h-4 mr-1" />
+                              View Details
+                            </Button>
+                          </Link>
                           {!user.isSuperAdmin && (
                             <Button
                               variant="outline"

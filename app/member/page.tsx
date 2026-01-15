@@ -37,6 +37,14 @@ import {
 } from 'lucide-react'
 import { format, addDays, isBefore, startOfDay } from 'date-fns'
 import { useTranslations } from 'next-intl'
+import {
+  LESSON_TYPES,
+  getLessonType,
+  getLessonPrice,
+  getDefaultDuration,
+  isMonthlyBilling,
+  getDurationOptions,
+} from '@/lib/lesson-config'
 
 interface Lesson {
   id: string
@@ -71,58 +79,8 @@ interface Availability {
   endTime: string
 }
 
-// Lesson pricing: base price for minimum duration, RM50 per additional 30 min
-const LESSON_TYPES = [
-  { value: '1-to-1', label: '1-to-1 Private', basePrice: 130, minSlots: 3, ratePerSlot: 50 }, // 1.5hr min
-  { value: '1-to-2', label: '1-to-2', basePrice: 160, minSlots: 3, ratePerSlot: 50 }, // 1.5hr min
-  { value: '1-to-3', label: '1-to-3', basePrice: 180, minSlots: 4, ratePerSlot: 50 }, // 2hr min
-  { value: '1-to-4', label: '1-to-4', basePrice: 200, minSlots: 4, ratePerSlot: 50 }, // 2hr min
-]
-
-// Calculate price for a lesson based on type and number of 30-min slots
-function calculateLessonPrice(lessonType: string, slots: number): number {
-  const type = LESSON_TYPES.find(t => t.value === lessonType)
-  if (!type) return 0
-
-  if (slots <= type.minSlots) {
-    return type.basePrice
-  }
-
-  // Base price + additional slots at rate
-  const additionalSlots = slots - type.minSlots
-  return Math.round(type.basePrice + (additionalSlots * type.ratePerSlot))
-}
-
-// Get minimum duration in hours for a lesson type
-function getMinDuration(lessonType: string): number {
-  const type = LESSON_TYPES.find(t => t.value === lessonType)
-  return type ? type.minSlots * 0.5 : 1.5
-}
-
-// Get minimum slots for a lesson type
-function getMinSlots(lessonType: string): number {
-  const type = LESSON_TYPES.find(t => t.value === lessonType)
-  return type ? type.minSlots : 3
-}
-
-// Get available duration options for a lesson type (30-min increments up to 4 hours)
-function getDurationOptions(lessonType: string): { slots: number; label: string; price: number }[] {
-  const minSlots = getMinSlots(lessonType)
-  const maxSlots = 8 // 4 hours max
-  const options: { slots: number; label: string; price: number }[] = []
-
-  for (let slots = minSlots; slots <= maxSlots; slots++) {
-    const hours = slots * 0.5
-    const hourLabel = hours === 1 ? '1 hour' : `${hours} hours`
-    options.push({
-      slots,
-      label: hourLabel,
-      price: calculateLessonPrice(lessonType, slots),
-    })
-  }
-
-  return options
-}
+// Only per-session lesson types for member requests (monthly = admin only)
+const MEMBER_LESSON_TYPES = LESSON_TYPES.filter(t => t.billingType === 'per_session')
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -162,7 +120,7 @@ export default function MemberDashboard() {
   const [requestDate, setRequestDate] = useState('')
   const [requestTime, setRequestTime] = useState('')
   const [requestType, setRequestType] = useState('')
-  const [requestDuration, setRequestDuration] = useState(3) // Number of 30-min slots (default 1.5hr = 3 slots)
+  const [requestDuration, setRequestDuration] = useState<number>(1.5) // Duration in hours (default 1.5hr)
   const [availability, setAvailability] = useState<Availability[]>([])
   const [loadingAvailability, setLoadingAvailability] = useState(false)
 
@@ -257,9 +215,8 @@ export default function MemberDashboard() {
 
   const handleTypeChange = (value: string) => {
     setRequestType(value)
-    // Reset duration to minimum for the new type
-    const minSlots = getMinSlots(value)
-    setRequestDuration(minSlots)
+    // Auto-select default duration for this lesson type
+    setRequestDuration(getDefaultDuration(value))
   }
 
   const submitRequest = async () => {
@@ -274,7 +231,7 @@ export default function MemberDashboard() {
           requestedDate: requestDate,
           requestedTime: requestTime,
           lessonType: requestType,
-          requestedDuration: requestDuration * 0.5, // Convert slots to hours
+          requestedDuration: requestDuration, // Already in hours
         }),
       })
 
@@ -283,7 +240,7 @@ export default function MemberDashboard() {
         setRequestDate('')
         setRequestTime('')
         setRequestType('')
-        setRequestDuration(3)
+        setRequestDuration(1.5)
         setAvailability([])
         fetchRequests()
       } else {
@@ -524,7 +481,7 @@ export default function MemberDashboard() {
                       </p>
                     </div>
                     <p className="text-lg font-bold text-blue-600">
-                      RM{calculateLessonPrice(request.lessonType, request.requestedDuration * 2)}
+                      RM{getLessonPrice(request.lessonType, request.requestedDuration)}
                     </p>
                   </div>
 
@@ -598,7 +555,7 @@ export default function MemberDashboard() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium text-gray-900 mb-2">
-                      RM{calculateLessonPrice(request.lessonType, request.requestedDuration * 2)}
+                      RM{getLessonPrice(request.lessonType, request.requestedDuration)}
                     </p>
                     <Button
                       variant="ghost"
@@ -764,42 +721,48 @@ export default function MemberDashboard() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>{t('dialog.lessonType')}</Label>
-                  <Select value={requestType} onValueChange={handleTypeChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('dialog.selectLessonType')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LESSON_TYPES.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label} ({t('dialog.minHours', { hours: type.minSlots * 0.5 })})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{t('dialog.lessonType')}</Label>
+                    <Select value={requestType} onValueChange={handleTypeChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('dialog.selectLessonType')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {MEMBER_LESSON_TYPES.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            <div className="flex items-center gap-2">
+                              <span>{type.label}</span>
+                              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                From RM{Object.values(type.pricing as Record<number, number>)[0]}
+                              </Badge>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                {requestType && (
                   <div className="space-y-2">
                     <Label>{t('dialog.duration')}</Label>
                     <Select
                       value={requestDuration.toString()}
-                      onValueChange={(v) => setRequestDuration(parseInt(v))}
+                      onValueChange={(v) => setRequestDuration(parseFloat(v))}
+                      disabled={!requestType}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('dialog.selectDuration')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {getDurationOptions(requestType).map((opt) => (
-                          <SelectItem key={opt.slots} value={opt.slots.toString()}>
+                        {requestType && getDurationOptions(requestType).map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value.toString()}>
                             {opt.label} - RM{opt.price}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                )}
+                </div>
 
                 {/* Price Summary */}
                 {requestType && (
@@ -807,11 +770,14 @@ export default function MemberDashboard() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">
-                          {LESSON_TYPES.find(t => t.value === requestType)?.label} - {requestDuration * 0.5 === 1 ? t('dialog.hour', { count: 1 }) : t('dialog.hours', { count: requestDuration * 0.5 })}
+                          {getLessonType(requestType)?.label} - {requestDuration} hours
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Max {getLessonType(requestType)?.maxStudents} student(s)
                         </p>
                       </div>
                       <p className="text-lg font-bold text-blue-600">
-                        RM{calculateLessonPrice(requestType, requestDuration)}
+                        RM{getLessonPrice(requestType, requestDuration)}
                       </p>
                     </div>
                   </div>
