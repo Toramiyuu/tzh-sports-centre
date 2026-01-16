@@ -208,7 +208,15 @@ export async function PATCH(request: NextRequest) {
         },
         include: {
           court: true,
-          students: true,
+          students: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              skillLevel: true,
+            },
+          },
         },
       })
 
@@ -232,7 +240,24 @@ export async function PATCH(request: NextRequest) {
         },
       })
 
-      return NextResponse.json({ request: updatedRequest, lesson })
+      // Convert Decimal to number for JSON serialization
+      const lessonResponse = {
+        id: lesson.id,
+        courtId: lesson.courtId,
+        lessonDate: lesson.lessonDate,
+        startTime: lesson.startTime,
+        endTime: lesson.endTime,
+        lessonType: lesson.lessonType,
+        billingType: lesson.billingType,
+        duration: lesson.duration,
+        price: Number(lesson.price),
+        status: lesson.status,
+        notes: lesson.notes,
+        court: lesson.court,
+        students: lesson.students,
+      }
+
+      return NextResponse.json({ request: updatedRequest, lesson: lessonResponse })
     }
 
     // For other statuses (rejected, changed), just update the request

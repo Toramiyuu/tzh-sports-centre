@@ -134,3 +134,55 @@ export async function DELETE(request: NextRequest) {
     )
   }
 }
+
+// PATCH - Update coach availability
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || !isAdmin(session.user.email)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { id, dayOfWeek, startTime, endTime } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Availability ID is required' },
+        { status: 400 }
+      )
+    }
+
+    if (!startTime || !endTime) {
+      return NextResponse.json(
+        { error: 'Start time and end time are required' },
+        { status: 400 }
+      )
+    }
+
+    if (startTime >= endTime) {
+      return NextResponse.json(
+        { error: 'End time must be after start time' },
+        { status: 400 }
+      )
+    }
+
+    const updated = await prisma.coachAvailability.update({
+      where: { id },
+      data: {
+        dayOfWeek: dayOfWeek !== undefined ? dayOfWeek : undefined,
+        startTime,
+        endTime,
+      },
+    })
+
+    return NextResponse.json({ availability: updated })
+  } catch (error) {
+    console.error('Error updating availability:', error)
+    return NextResponse.json(
+      { error: 'Failed to update availability' },
+      { status: 500 }
+    )
+  }
+}

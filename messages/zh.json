@@ -674,6 +674,20 @@
       "hours": "{count}小时"
     },
     "enterTime": "输入您偏好的时间（例如：10:00 或 14:30）：",
-    "invalidTimeFormat": "请输入格式为 HH:MM 的时间（例如：10:00 或 14:30）"
+    "invalidTimeFormat": "请输入格式为 HH:MM 的时间（例如：10:00 或 14:30）",
+    "timetable": {
+      "title": "每周时间表",
+      "time": "时间",
+      "prevWeek": "上一周",
+      "nextWeek": "下一周",
+      "today": "今天",
+      "available": "可预约",
+      "booked": "已预约",
+      "myLesson": "您的课程",
+      "myPending": "待确认",
+      "unavailable": "不可用",
+      "clickToBook": "点击绿色时段申请课程",
+      "fetchError": "加载时间表失败"
+    }
   }
 }

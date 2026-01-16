@@ -1,0 +1,445 @@
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { GraduationCap, Loader2, Plus, Clock } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { startOfDay, isBefore, format } from 'date-fns'
+
+import { WeeklyTimetable } from './WeeklyTimetable'
+import { StatsCards } from './StatsCards'
+import { CoachSuggestedSection } from './CoachSuggestedSection'
+import { PendingRequestsSection } from './PendingRequestsSection'
+import { UpcomingLessonsSection } from './UpcomingLessonsSection'
+import { RequestHistorySection } from './RequestHistorySection'
+import { BookingDialog } from './BookingDialog'
+
+// Time slots for counter-propose dialog
+const TIME_SLOTS = Array.from({ length: 29 }, (_, i) => {
+  const hour = Math.floor(i / 2) + 9
+  const minutes = i % 2 === 0 ? '00' : '30'
+  const slotTime = `${hour.toString().padStart(2, '0')}:${minutes}`
+  const ampm = hour < 12 ? 'AM' : 'PM'
+  const displayHour = hour <= 12 ? hour : hour - 12
+  return { slotTime, displayName: `${displayHour}:${minutes} ${ampm}` }
+})
+
+interface Lesson {
+  id: string
+  lessonDate: string
+  startTime: string
+  endTime: string
+  lessonType: string
+  duration: number
+  price: number
+  status: string
+  notes: string | null
+  court: { name: string }
+  students: { id: string; name: string }[]
+}
+
+interface LessonRequest {
+  id: string
+  requestedDate: string
+  requestedTime: string
+  lessonType: string
+  requestedDuration: number
+  status: string
+  adminNotes: string | null
+  suggestedTime: string | null
+  createdAt: string
+}
+
+export function MemberDashboard() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const t = useTranslations('member')
+
+  const [lessons, setLessons] = useState<Lesson[]>([])
+  const [requests, setRequests] = useState<LessonRequest[]>([])
+  const [loading, setLoading] = useState(true)
+  const [isMember, setIsMember] = useState<boolean | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+
+  // Booking dialog state
+  const [bookingDialogOpen, setBookingDialogOpen] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedTime, setSelectedTime] = useState<string | null>(null)
+
+  // Counter-propose dialog state
+  const [counterDialogOpen, setCounterDialogOpen] = useState(false)
+  const [counterRequestId, setCounterRequestId] = useState<string | null>(null)
+  const [counterDate, setCounterDate] = useState<Date | undefined>(undefined)
+  const [counterTime, setCounterTime] = useState('')
+
+  // Key to force timetable refetch
+  const [timetableKey, setTimetableKey] = useState(0)
+
+  useEffect(() => {
+    if (status === 'loading') return
+    if (!session?.user) {
+      router.push('/auth/login?callbackUrl=/member')
+      return
+    }
+    checkMemberStatus()
+  }, [session, status, router])
+
+  const checkMemberStatus = async () => {
+    try {
+      const res = await fetch('/api/member/lessons')
+      if (res.status === 403) {
+        setIsMember(false)
+        setLoading(false)
+        return
+      }
+      if (res.ok) {
+        setIsMember(true)
+        const data = await res.json()
+        setLessons(data.lessons || [])
+        fetchRequests()
+      }
+    } catch (error) {
+      console.error('Error checking member status:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchRequests = async () => {
+    try {
+      const res = await fetch('/api/member/requests')
+      if (res.ok) {
+        const data = await res.json()
+        setRequests(data.requests || [])
+      }
+    } catch (error) {
+      console.error('Error fetching requests:', error)
+    }
+  }
+
+  const refreshData = useCallback(() => {
+    checkMemberStatus()
+    setTimetableKey(prev => prev + 1)
+  }, [])
+
+  const handleSlotSelect = (date: Date, time: string) => {
+    setSelectedDate(date)
+    setSelectedTime(time)
+    setBookingDialogOpen(true)
+  }
+
+  const handleBookingSubmit = async (data: {
+    requestedDate: string
+    requestedTime: string
+    lessonType: string
+    requestedDuration: number
+  }): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/member/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (res.ok) {
+        refreshData()
+        return true
+      } else {
+        const errorData = await res.json()
+        alert(errorData.error || 'Failed to submit request')
+        return false
+      }
+    } catch (error) {
+      console.error('Error submitting request:', error)
+      alert('Failed to submit request')
+      return false
+    }
+  }
+
+  const cancelRequest = async (requestId: string) => {
+    if (!confirm(t('cancelConfirm'))) return
+
+    try {
+      const res = await fetch('/api/member/requests', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId }),
+      })
+
+      if (res.ok) {
+        refreshData()
+      }
+    } catch (error) {
+      console.error('Error cancelling request:', error)
+    }
+  }
+
+  const acceptSuggestedTime = async (requestId: string) => {
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/member/requests', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId, action: 'accept' }),
+      })
+
+      if (res.ok) {
+        refreshData()
+      } else {
+        const data = await res.json()
+        alert(data.error || 'Failed to accept time')
+      }
+    } catch (error) {
+      console.error('Error accepting time:', error)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // Open counter-propose dialog
+  const counterProposeTime = (requestId: string) => {
+    // Find the request to get default values
+    const request = requests.find(r => r.id === requestId)
+    if (request) {
+      // Parse the suggested time if available
+      if (request.suggestedTime) {
+        const [datePart, timePart] = request.suggestedTime.split(' ')
+        setCounterDate(new Date(datePart))
+        setCounterTime(timePart || '')
+      } else {
+        setCounterDate(new Date(request.requestedDate))
+        setCounterTime(request.requestedTime)
+      }
+    } else {
+      setCounterDate(new Date())
+      setCounterTime('')
+    }
+    setCounterRequestId(requestId)
+    setCounterDialogOpen(true)
+  }
+
+  // Submit counter proposal
+  const submitCounterProposal = async () => {
+    if (!counterRequestId || !counterDate || !counterTime) return
+
+    setSubmitting(true)
+    try {
+      const newDateTime = `${format(counterDate, 'yyyy-MM-dd')} ${counterTime}`
+      const res = await fetch('/api/member/requests', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId: counterRequestId, action: 'counter', newTime: newDateTime }),
+      })
+
+      if (res.ok) {
+        setCounterDialogOpen(false)
+        refreshData()
+      } else {
+        const data = await res.json()
+        alert(data.error || 'Failed to suggest new time')
+      }
+    } catch (error) {
+      console.error('Error suggesting time:', error)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // Filter lessons and requests
+  const today = startOfDay(new Date())
+  const upcomingLessons = lessons.filter(l => !isBefore(new Date(l.lessonDate), today) && l.status === 'scheduled')
+  const pastLessons = lessons.filter(l => isBefore(new Date(l.lessonDate), today) || l.status !== 'scheduled')
+  const pendingRequests = requests.filter(r => r.status === 'pending')
+  const suggestedRequests = requests.filter(r => r.status === 'changed')
+  const completedCount = pastLessons.filter(l => l.status === 'completed').length
+
+  if (status === 'loading' || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      </div>
+    )
+  }
+
+  if (isMember === false) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Card className="text-center">
+          <CardContent className="pt-8 pb-8">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <GraduationCap className="w-8 h-8 text-gray-400" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('membersOnly.title')}</h2>
+            <p className="text-gray-600 mb-4">
+              {t('membersOnly.description')}
+            </p>
+            <Button onClick={() => router.push('/')} variant="outline">
+              {t('membersOnly.backToHome')}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+            <GraduationCap className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+            <p className="text-gray-600">{t('welcome', { name: session?.user?.name || '' })}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <StatsCards
+        upcomingCount={upcomingLessons.length}
+        pendingCount={pendingRequests.length}
+        completedCount={completedCount}
+      />
+
+      {/* Weekly Timetable */}
+      <div className="mb-6">
+        <WeeklyTimetable
+          key={timetableKey}
+          onSlotSelect={handleSlotSelect}
+          onAcceptSuggestion={acceptSuggestedTime}
+          onCounterSuggestion={counterProposeTime}
+        />
+      </div>
+
+      {/* Coach Suggested Times - Now hidden since shown in timetable, kept as fallback */}
+      {suggestedRequests.length > 0 && (
+        <CoachSuggestedSection
+          requests={suggestedRequests}
+          onAccept={acceptSuggestedTime}
+          onCounterPropose={counterProposeTime}
+          submitting={submitting}
+        />
+      )}
+
+      {/* Pending Requests */}
+      <PendingRequestsSection
+        requests={pendingRequests}
+        onCancel={cancelRequest}
+      />
+
+      {/* Upcoming Lessons */}
+      <UpcomingLessonsSection
+        lessons={upcomingLessons}
+        currentUserName={session?.user?.name}
+      />
+
+      {/* Request History */}
+      <RequestHistorySection requests={requests} />
+
+      {/* Booking Dialog */}
+      <BookingDialog
+        open={bookingDialogOpen}
+        onOpenChange={setBookingDialogOpen}
+        selectedDate={selectedDate}
+        selectedTime={selectedTime}
+        onSubmit={handleBookingSubmit}
+      />
+
+      {/* Counter-Propose Time Dialog */}
+      <Dialog open={counterDialogOpen} onOpenChange={setCounterDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-purple-600" />
+              {t('counterPropose.title') || 'Suggest Different Time'}
+            </DialogTitle>
+            <DialogDescription>
+              {t('counterPropose.description') || 'Suggest an alternative date and time for your lesson.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Date Picker */}
+            <div className="space-y-2">
+              <Label>{t('counterPropose.date') || 'Date'}</Label>
+              <div className="border rounded-lg p-3">
+                <Calendar
+                  mode="single"
+                  selected={counterDate}
+                  onSelect={setCounterDate}
+                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                  className="mx-auto"
+                />
+              </div>
+            </div>
+
+            {/* Time Picker */}
+            <div className="space-y-2">
+              <Label>{t('counterPropose.time') || 'Time'}</Label>
+              <Select value={counterTime} onValueChange={setCounterTime}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('counterPropose.selectTime') || 'Select time'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIME_SLOTS.map((slot) => (
+                    <SelectItem key={slot.slotTime} value={slot.slotTime}>
+                      {slot.displayName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Preview */}
+            {counterDate && counterTime && (
+              <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
+                <p className="text-sm text-purple-600 mb-1">{t('counterPropose.yourSuggestion') || 'Your suggestion'}:</p>
+                <p className="font-medium text-purple-700">
+                  {format(counterDate, 'EEEE, MMMM d, yyyy')} at{' '}
+                  {TIME_SLOTS.find(s => s.slotTime === counterTime)?.displayName || counterTime}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCounterDialogOpen(false)}>
+              {t('dialog.cancel') || 'Cancel'}
+            </Button>
+            <Button
+              onClick={submitCounterProposal}
+              disabled={submitting || !counterDate || !counterTime}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              {submitting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+              {t('counterPropose.submit') || 'Send Suggestion'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}

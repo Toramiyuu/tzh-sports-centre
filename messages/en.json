@@ -321,7 +321,41 @@
       "hours": "{count} hours"
     },
     "enterTime": "Enter your preferred time (e.g., 10:00 or 14:30):",
-    "invalidTimeFormat": "Please enter time in format HH:MM (e.g., 10:00 or 14:30)"
+    "invalidTimeFormat": "Please enter time in format HH:MM (e.g., 10:00 or 14:30)",
+    "counterPropose": {
+      "title": "Suggest Different Time",
+      "description": "Suggest an alternative date and time for your lesson.",
+      "date": "Date",
+      "time": "Time",
+      "selectTime": "Select time",
+      "yourSuggestion": "Your suggestion",
+      "submit": "Send Suggestion"
+    },
+    "timetable": {
+      "title": "Weekly Schedule",
+      "time": "Time",
+      "prevWeek": "Previous Week",
+      "nextWeek": "Next Week",
+      "today": "Today",
+      "available": "Available",
+      "booked": "Booked",
+      "myLesson": "Your Lesson",
+      "myPending": "Pending",
+      "coachSuggested": "Coach Suggested",
+      "actionNeeded": "Tap to respond",
+      "unavailable": "Unavailable",
+      "clickToBook": "Click on a green slot to request a lesson",
+      "fetchError": "Failed to load schedule",
+      "suggestionDialog": {
+        "title": "Coach Suggested New Time",
+        "description": "Your coach has suggested a different time for your lesson.",
+        "yourRequest": "Your request",
+        "suggested": "Suggested",
+        "coachNote": "Note from coach",
+        "accept": "Accept This Time",
+        "suggestDifferent": "Suggest Different Time"
+      }
+    }
   },
   "admin": {
     "title": "Admin Panel",

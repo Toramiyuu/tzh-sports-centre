@@ -321,7 +321,21 @@
       "hours": "{count} jam"
     },
     "enterTime": "Masukkan masa pilihan anda (cth., 10:00 atau 14:30):",
-    "invalidTimeFormat": "Sila masukkan masa dalam format JJ:MM (cth., 10:00 atau 14:30)"
+    "invalidTimeFormat": "Sila masukkan masa dalam format JJ:MM (cth., 10:00 atau 14:30)",
+    "timetable": {
+      "title": "Jadual Mingguan",
+      "time": "Masa",
+      "prevWeek": "Minggu Lepas",
+      "nextWeek": "Minggu Depan",
+      "today": "Hari Ini",
+      "available": "Tersedia",
+      "booked": "Ditempah",
+      "myLesson": "Kelas Anda",
+      "myPending": "Tertunda",
+      "unavailable": "Tidak Tersedia",
+      "clickToBook": "Klik pada slot hijau untuk memohon kelas",
+      "fetchError": "Gagal memuatkan jadual"
+    }
   },
   "admin": {
     "title": "Panel Pentadbir",

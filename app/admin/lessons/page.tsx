@@ -40,6 +40,10 @@ import {
   LayoutGrid,
   List,
   Repeat,
+  CheckSquare,
+  Square,
+  Pencil,
+  X,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
@@ -192,6 +196,7 @@ export default function AdminLessonsPage() {
   const [availabilityDialogOpen, setAvailabilityDialogOpen] = useState(false)
   const [lessonDialogOpen, setLessonDialogOpen] = useState(false)
   const [approveDialogOpen, setApproveDialogOpen] = useState(false)
+  const [requestDetailsDialogOpen, setRequestDetailsDialogOpen] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState<LessonRequest | null>(null)
   const [approveCourtId, setApproveCourtId] = useState<number | null>(null)
   const [courtAvailability, setCourtAvailability] = useState<Record<number, boolean>>({})
@@ -201,6 +206,23 @@ export default function AdminLessonsPage() {
   const [availDays, setAvailDays] = useState<number[]>([])
   const [availStartTime, setAvailStartTime] = useState('')
   const [availEndTime, setAvailEndTime] = useState('')
+
+  // Select mode states for availability
+  const [availSelectMode, setAvailSelectMode] = useState(false)
+  const [selectedAvailIds, setSelectedAvailIds] = useState<string[]>([])
+
+  // Edit availability dialog states
+  const [editAvailDialogOpen, setEditAvailDialogOpen] = useState(false)
+  const [editingAvail, setEditingAvail] = useState<CoachAvailability | null>(null)
+  const [editAvailDay, setEditAvailDay] = useState<number>(0)
+  const [editAvailStartTime, setEditAvailStartTime] = useState('')
+  const [editAvailEndTime, setEditAvailEndTime] = useState('')
+
+  // Suggest time dialog states
+  const [suggestTimeDialogOpen, setSuggestTimeDialogOpen] = useState(false)
+  const [suggestDate, setSuggestDate] = useState<Date | undefined>(undefined)
+  const [suggestTime, setSuggestTime] = useState('')
+  const [suggestNotes, setSuggestNotes] = useState('')
 
   // Form states for lesson
   const [lessonCourtId, setLessonCourtId] = useState<number | null>(null)
@@ -542,6 +564,87 @@ export default function AdminLessonsPage() {
     }
   }
 
+  const handleBulkDeleteAvailability = async () => {
+    if (selectedAvailIds.length === 0) return
+    if (!confirm(`Are you sure you want to delete ${selectedAvailIds.length} availability slot(s)?`)) return
+
+    setActionLoading(true)
+    try {
+      // Delete each selected availability
+      await Promise.all(
+        selectedAvailIds.map(id =>
+          fetch('/api/admin/coach-availability', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
+          })
+        )
+      )
+      setSelectedAvailIds([])
+      setAvailSelectMode(false)
+      fetchData()
+    } catch (error) {
+      console.error('Error bulk deleting availability:', error)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const openEditAvailDialog = (avail: CoachAvailability) => {
+    setEditingAvail(avail)
+    setEditAvailDay(avail.dayOfWeek)
+    setEditAvailStartTime(avail.startTime)
+    setEditAvailEndTime(avail.endTime)
+    setEditAvailDialogOpen(true)
+  }
+
+  const handleEditAvailability = async () => {
+    if (!editingAvail || !editAvailStartTime || !editAvailEndTime) return
+
+    setActionLoading(true)
+    try {
+      const res = await fetch('/api/admin/coach-availability', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingAvail.id,
+          dayOfWeek: editAvailDay,
+          startTime: editAvailStartTime,
+          endTime: editAvailEndTime,
+        }),
+      })
+
+      if (res.ok) {
+        setEditAvailDialogOpen(false)
+        setEditingAvail(null)
+        fetchData()
+      } else {
+        const data = await res.json()
+        alert(data.error || 'Failed to update availability')
+      }
+    } catch (error) {
+      console.error('Error updating availability:', error)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const toggleAvailSelection = (id: string) => {
+    setSelectedAvailIds(prev =>
+      prev.includes(id)
+        ? prev.filter(i => i !== id)
+        : [...prev, id]
+    )
+  }
+
+  const toggleAllAvailSelection = () => {
+    if (selectedAvailIds.length === coachAvailability.length) {
+      setSelectedAvailIds([])
+    } else {
+      setSelectedAvailIds(coachAvailability.map(a => a.id))
+    }
+  }
+
   const handleAddLesson = async () => {
     if (!lessonCourtId || !lessonStartTime || !lessonType || lessonStudentIds.length === 0) return
 
@@ -641,6 +744,52 @@ export default function AdminLessonsPage() {
 
   const getLessonTypeInfo = (type: string): LessonTypeConfig | undefined => getLessonType(type)
 
+  // Get pending/changed requests for the selected date
+  const getPendingRequestsForDate = () => {
+    const selectedDateStr = format(selectedDate, 'yyyy-MM-dd')
+    return lessonRequests.filter(r => {
+      const requestDateStr = format(new Date(r.requestedDate), 'yyyy-MM-dd')
+      // Include both pending AND changed (coach suggested different time)
+      return (r.status === 'pending' || r.status === 'changed') && requestDateStr === selectedDateStr
+    })
+  }
+
+  // Build a map of requests by time slot for grid display
+  const requestMap: Record<string, LessonRequest> = {}
+  const requestSkipSlots = new Set<string>() // Slots that should be skipped (covered by rowSpan)
+
+  getPendingRequestsForDate().forEach(request => {
+    requestMap[request.requestedTime] = request
+
+    // Calculate which slots this request covers (for rowSpan skipping)
+    const slotsCount = Math.round(request.requestedDuration * 2)
+    const [startHour, startMin] = request.requestedTime.split(':').map(Number)
+    let totalMinutes = startHour * 60 + startMin
+
+    // Skip the first slot (that's where the card renders), mark the rest as skip
+    for (let i = 1; i < slotsCount; i++) {
+      totalMinutes += 30 // Each slot is 30 minutes
+      const skipHour = Math.floor(totalMinutes / 60)
+      const skipMin = totalMinutes % 60
+      const skipTime = `${skipHour.toString().padStart(2, '0')}:${skipMin.toString().padStart(2, '0')}`
+      requestSkipSlots.add(skipTime)
+    }
+  })
+
+  // Handler to open request details dialog
+  const openRequestDetailsDialog = (request: LessonRequest) => {
+    setSelectedRequest(request)
+    setRequestDetailsDialogOpen(true)
+  }
+
+  // Handler to approve from details dialog (opens court selection)
+  const handleApproveFromDetails = () => {
+    setRequestDetailsDialogOpen(false)
+    if (selectedRequest) {
+      openApproveDialog(selectedRequest)
+    }
+  }
+
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -693,19 +842,6 @@ export default function AdminLessonsPage() {
         >
           <DollarSign className="w-4 h-4 mr-2" />
           {t('tabs.billing')}
-        </Button>
-        <Button
-          variant={activeTab === 'requests' ? 'default' : 'outline'}
-          onClick={() => setActiveTab('requests')}
-          className="relative"
-        >
-          <Users className="w-4 h-4 mr-2" />
-          {t('tabs.requests')}
-          {lessonRequests.filter(r => r.status === 'pending').length > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-              {lessonRequests.filter(r => r.status === 'pending').length}
-            </span>
-          )}
         </Button>
       </div>
 
@@ -814,6 +950,14 @@ export default function AdminLessonsPage() {
                                 {court.name}
                               </th>
                             ))}
+                            <th className="p-2 text-center text-sm font-medium text-gray-700 border-b min-w-[150px] bg-orange-50">
+                              Requests
+                              {getPendingRequestsForDate().length > 0 && (
+                                <Badge className="ml-2 bg-orange-500 text-white">
+                                  {getPendingRequestsForDate().length}
+                                </Badge>
+                              )}
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -937,6 +1081,49 @@ export default function AdminLessonsPage() {
                                     )
                                   }
                                 })}
+                                {/* Requests column cell */}
+                                {(() => {
+                                  // Check if this slot should be skipped (covered by a rowSpan)
+                                  if (requestSkipSlots.has(slot.slotTime)) {
+                                    return null
+                                  }
+
+                                  const request = requestMap[slot.slotTime]
+                                  if (request) {
+                                    const typeInfo = getLessonTypeInfo(request.lessonType)
+                                    const slotsCount = Math.round(request.requestedDuration * 2)
+                                    // Render request card with rowSpan
+                                    return (
+                                      <td
+                                        className="p-1 border-b"
+                                        rowSpan={slotsCount}
+                                      >
+                                        <div
+                                          className="p-2 rounded text-xs h-full bg-orange-100 border border-orange-300 cursor-pointer hover:bg-orange-200 transition-colors"
+                                          onClick={() => openRequestDetailsDialog(request)}
+                                        >
+                                          <div className="flex items-center gap-1 font-medium flex-wrap">
+                                            <Users className="w-3 h-3 text-orange-600" />
+                                            <span className="text-orange-700">{request.member.name}</span>
+                                          </div>
+                                          <div className="text-gray-600 mt-1">
+                                            {typeInfo?.label} ({request.requestedDuration}hr)
+                                          </div>
+                                          <div className="text-green-600 font-medium mt-1">
+                                            RM{getLessonPrice(request.lessonType, request.requestedDuration)}
+                                          </div>
+                                        </div>
+                                      </td>
+                                    )
+                                  }
+
+                                  // Empty request slot - just show empty cell
+                                  return (
+                                    <td className="p-1 border-b">
+                                      <div className="w-full h-10" />
+                                    </td>
+                                  )
+                                })()}
                               </tr>
                             )
                           })}
@@ -1032,10 +1219,68 @@ export default function AdminLessonsPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Coach Availability</CardTitle>
-                  <Button onClick={() => setAvailabilityDialogOpen(true)}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Availability
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {availSelectMode ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={toggleAllAvailSelection}
+                        >
+                          {selectedAvailIds.length === coachAvailability.length ? (
+                            <>
+                              <CheckSquare className="w-4 h-4 mr-2" />
+                              Deselect All
+                            </>
+                          ) : (
+                            <>
+                              <Square className="w-4 h-4 mr-2" />
+                              Select All
+                            </>
+                          )}
+                        </Button>
+                        {selectedAvailIds.length > 0 && (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={handleBulkDeleteAvailability}
+                            disabled={actionLoading}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete ({selectedAvailIds.length})
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setAvailSelectMode(false)
+                            setSelectedAvailIds([])
+                          }}
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Cancel
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        {coachAvailability.length > 0 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setAvailSelectMode(true)}
+                          >
+                            <CheckSquare className="w-4 h-4 mr-2" />
+                            Select
+                          </Button>
+                        )}
+                        <Button onClick={() => setAvailabilityDialogOpen(true)}>
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Availability
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
@@ -1045,33 +1290,73 @@ export default function AdminLessonsPage() {
                   </div>
                 ) : (
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {coachAvailability.map((avail) => (
-                      <div
-                        key={avail.id}
-                        className="p-4 rounded-lg border bg-blue-50 border-blue-200"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="font-medium">{DAYS_OF_WEEK[avail.dayOfWeek]}</div>
-                            <div className="text-sm text-gray-600">
-                              {avail.startTime} - {avail.endTime}
+                    {coachAvailability.map((avail) => {
+                      const isSelected = selectedAvailIds.includes(avail.id)
+                      return (
+                        <div
+                          key={avail.id}
+                          className={`p-4 rounded-lg border transition-all ${
+                            availSelectMode
+                              ? isSelected
+                                ? 'bg-blue-100 border-blue-400 ring-2 ring-blue-400'
+                                : 'bg-blue-50 border-blue-200 hover:border-blue-300 cursor-pointer'
+                              : 'bg-blue-50 border-blue-200'
+                          }`}
+                          onClick={() => availSelectMode && toggleAvailSelection(avail.id)}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-start gap-3">
+                              {availSelectMode && (
+                                <div className="pt-1">
+                                  {isSelected ? (
+                                    <CheckSquare className="w-5 h-5 text-blue-600" />
+                                  ) : (
+                                    <Square className="w-5 h-5 text-gray-400" />
+                                  )}
+                                </div>
+                              )}
+                              <div>
+                                <div className="font-medium">{DAYS_OF_WEEK[avail.dayOfWeek]}</div>
+                                <div className="text-sm text-gray-600">
+                                  {avail.startTime} - {avail.endTime}
+                                </div>
+                                {avail.isRecurring && (
+                                  <Badge variant="outline" className="mt-1">Weekly</Badge>
+                                )}
+                              </div>
                             </div>
-                            {avail.isRecurring && (
-                              <Badge variant="outline" className="mt-1">Weekly</Badge>
+                            {!availSelectMode && (
+                              <div className="flex gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-100"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    openEditAvailDialog(avail)
+                                  }}
+                                  disabled={actionLoading}
+                                >
+                                  <Pencil className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleDeleteAvailability(avail.id)
+                                  }}
+                                  disabled={actionLoading}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
                             )}
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-600"
-                            onClick={() => handleDeleteAvailability(avail.id)}
-                            disabled={actionLoading}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 )}
               </CardContent>
@@ -1153,147 +1438,6 @@ export default function AdminLessonsPage() {
             </div>
           )}
 
-          {/* Requests Tab */}
-          {activeTab === 'requests' && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Member Lesson Requests</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {lessonRequests.length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
-                    No lesson requests yet
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {/* Pending Requests */}
-                    {lessonRequests.filter(r => r.status === 'pending').length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 mb-3">Pending Requests</h3>
-                        <div className="space-y-3">
-                          {lessonRequests.filter(r => r.status === 'pending').map((request) => {
-                            const typeInfo = getLessonTypeInfo(request.lessonType)
-                            return (
-                              <div key={request.id} className="p-4 rounded-lg border bg-yellow-50 border-yellow-200">
-                                <div className="flex items-start justify-between">
-                                  <div>
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className="font-medium">{request.member.name}</span>
-                                      <Badge variant="outline">{request.member.phone}</Badge>
-                                      {request.member.skillLevel && (
-                                        <Badge className="bg-purple-100 text-purple-700 border-0">
-                                          {request.member.skillLevel}
-                                        </Badge>
-                                      )}
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                      <strong>Requested:</strong> {format(new Date(request.requestedDate), 'EEEE, MMMM d, yyyy')} at {request.requestedTime}
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                      <strong>Type:</strong> {typeInfo?.label} ({request.requestedDuration}hr) - <strong className="text-green-600">RM{getLessonPrice(request.lessonType, request.requestedDuration)}</strong>
-                                    </div>
-                                    <div className="text-xs text-gray-400 mt-1">
-                                      Requested on {format(new Date(request.createdAt), 'MMM d, yyyy h:mm a')}
-                                    </div>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <Button
-                                      size="sm"
-                                      className="bg-green-600 hover:bg-green-700"
-                                      onClick={() => openApproveDialog(request)}
-                                      disabled={actionLoading}
-                                    >
-                                      <Check className="w-4 h-4 mr-1" />
-                                      Approve
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="text-red-600 border-red-200 hover:bg-red-50"
-                                      onClick={() => {
-                                        const notes = prompt('Reason for rejection (optional):')
-                                        handleRequestAction(request.id, 'rejected', notes || undefined)
-                                      }}
-                                      disabled={actionLoading}
-                                    >
-                                      <Trash2 className="w-4 h-4 mr-1" />
-                                      Reject
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => {
-                                        const suggestedTime = prompt('Suggest a different time (e.g., 10:00):')
-                                        if (suggestedTime) {
-                                          const notes = prompt('Add a note for the member:')
-                                          handleRequestAction(request.id, 'changed', notes || undefined, suggestedTime)
-                                        }
-                                      }}
-                                      disabled={actionLoading}
-                                    >
-                                      <Clock className="w-4 h-4 mr-1" />
-                                      Suggest Time
-                                    </Button>
-                                  </div>
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Processed Requests */}
-                    {lessonRequests.filter(r => r.status !== 'pending').length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 mb-3 mt-6">Processed Requests</h3>
-                        <div className="space-y-3">
-                          {lessonRequests.filter(r => r.status !== 'pending').slice(0, 10).map((request) => {
-                            const typeInfo = getLessonTypeInfo(request.lessonType)
-                            return (
-                              <div key={request.id} className={`p-4 rounded-lg border ${
-                                request.status === 'approved' ? 'bg-green-50 border-green-200' :
-                                request.status === 'rejected' ? 'bg-red-50 border-red-200' :
-                                'bg-blue-50 border-blue-200'
-                              }`}>
-                                <div className="flex items-start justify-between">
-                                  <div>
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className="font-medium">{request.member.name}</span>
-                                      <Badge className={
-                                        request.status === 'approved' ? 'bg-green-600' :
-                                        request.status === 'rejected' ? 'bg-red-600' :
-                                        'bg-blue-600'
-                                      }>
-                                        {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                                      </Badge>
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                      {format(new Date(request.requestedDate), 'MMM d, yyyy')} at {request.requestedTime} - {typeInfo?.label} ({request.requestedDuration}hr) - RM{getLessonPrice(request.lessonType, request.requestedDuration)}
-                                    </div>
-                                    {request.adminNotes && (
-                                      <div className="text-sm text-gray-500 mt-1">
-                                        Note: {request.adminNotes}
-                                      </div>
-                                    )}
-                                    {request.suggestedTime && (
-                                      <div className="text-sm text-blue-600 mt-1">
-                                        Suggested time: {request.suggestedTime}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
         </>
       )}
 
@@ -1700,6 +1844,299 @@ export default function AdminLessonsPage() {
               className="bg-green-600 hover:bg-green-700"
             >
               {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Approve & Schedule'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Availability Dialog */}
+      <Dialog open={editAvailDialogOpen} onOpenChange={setEditAvailDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Availability</DialogTitle>
+            <DialogDescription>
+              Update the day and time for this availability slot
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label className="mb-2 block">Day of Week</Label>
+              <Select
+                value={editAvailDay.toString()}
+                onValueChange={(v) => setEditAvailDay(parseInt(v))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select day" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DAYS_OF_WEEK.map((day, idx) => (
+                    <SelectItem key={idx} value={idx.toString()}>
+                      {day}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Start Time</Label>
+                <Select value={editAvailStartTime} onValueChange={setEditAvailStartTime}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select start" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_SLOTS.map((slot) => (
+                      <SelectItem key={slot.slotTime} value={slot.slotTime}>
+                        {slot.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>End Time</Label>
+                <Select value={editAvailEndTime} onValueChange={setEditAvailEndTime}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select end" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_SLOTS.filter(s => s.slotTime > editAvailStartTime).map((slot) => (
+                      <SelectItem key={slot.slotTime} value={slot.slotTime}>
+                        {slot.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditAvailDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEditAvailability}
+              disabled={actionLoading || !editAvailStartTime || !editAvailEndTime}
+            >
+              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Request Details Dialog */}
+      <Dialog open={requestDetailsDialogOpen} onOpenChange={setRequestDetailsDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Lesson Request Details</DialogTitle>
+            <DialogDescription>
+              Review and take action on this request
+            </DialogDescription>
+          </DialogHeader>
+          {selectedRequest && (
+            <div className="py-4 space-y-4">
+              {/* Member Info */}
+              <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="w-5 h-5 text-orange-600" />
+                  <span className="font-semibold text-lg">{selectedRequest.member.name}</span>
+                </div>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p><strong>Phone:</strong> {selectedRequest.member.phone}</p>
+                  {selectedRequest.member.skillLevel && (
+                    <p><strong>Skill Level:</strong> {selectedRequest.member.skillLevel}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Request Details */}
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Date:</span>
+                  <span className="font-medium">
+                    {format(new Date(selectedRequest.requestedDate), 'EEEE, MMM d, yyyy')}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Time:</span>
+                  <span className="font-medium">{selectedRequest.requestedTime}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Type:</span>
+                  <span className="font-medium">{getLessonTypeInfo(selectedRequest.lessonType)?.label}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Duration:</span>
+                  <span className="font-medium">{selectedRequest.requestedDuration} hour(s)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Price:</span>
+                  <span className="font-medium text-green-600">
+                    RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Request timestamp */}
+              <p className="text-xs text-gray-400">
+                Requested on {format(new Date(selectedRequest.createdAt), 'MMM d, yyyy h:mm a')}
+              </p>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              className="text-red-600 border-red-200 hover:bg-red-50"
+              onClick={() => {
+                const notes = prompt('Reason for rejection (optional):')
+                if (selectedRequest) {
+                  handleRequestAction(selectedRequest.id, 'rejected', notes || undefined)
+                  setRequestDetailsDialogOpen(false)
+                }
+              }}
+              disabled={actionLoading}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Reject
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Open suggest time dialog with current request's date/time as defaults
+                if (selectedRequest) {
+                  setSuggestDate(new Date(selectedRequest.requestedDate))
+                  setSuggestTime(selectedRequest.requestedTime)
+                  setSuggestNotes('')
+                  setSuggestTimeDialogOpen(true)
+                }
+              }}
+              disabled={actionLoading}
+            >
+              <Clock className="w-4 h-4 mr-2" />
+              Suggest Time
+            </Button>
+            <Button
+              className="bg-green-600 hover:bg-green-700"
+              onClick={handleApproveFromDetails}
+              disabled={actionLoading}
+            >
+              <Check className="w-4 h-4 mr-2" />
+              Approve
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Suggest Time Dialog */}
+      <Dialog open={suggestTimeDialogOpen} onOpenChange={setSuggestTimeDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-blue-600" />
+              Suggest Alternative Time
+            </DialogTitle>
+            <DialogDescription>
+              Suggest a different date and time for this lesson request. The member will be notified.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Original Request Info */}
+            {selectedRequest && (
+              <div className="p-3 bg-gray-50 rounded-lg border">
+                <p className="text-sm text-gray-600 mb-1">Original request:</p>
+                <p className="font-medium">
+                  {format(new Date(selectedRequest.requestedDate), 'EEEE, MMMM d, yyyy')} at{' '}
+                  {(() => {
+                    const [h, m] = selectedRequest.requestedTime.split(':').map(Number)
+                    const period = h >= 12 ? 'PM' : 'AM'
+                    const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h
+                    return `${displayHour}:${m.toString().padStart(2, '0')} ${period}`
+                  })()}
+                </p>
+              </div>
+            )}
+
+            {/* Date Picker */}
+            <div className="space-y-2">
+              <Label>Suggested Date</Label>
+              <div className="border rounded-lg p-3">
+                <Calendar
+                  mode="single"
+                  selected={suggestDate}
+                  onSelect={setSuggestDate}
+                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                  className="mx-auto"
+                />
+              </div>
+            </div>
+
+            {/* Time Picker */}
+            <div className="space-y-2">
+              <Label>Suggested Time</Label>
+              <Select value={suggestTime} onValueChange={setSuggestTime}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select time" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIME_SLOTS.map((slot) => (
+                    <SelectItem key={slot.slotTime} value={slot.slotTime}>
+                      {slot.displayName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-2">
+              <Label>Note to Member (optional)</Label>
+              <Input
+                placeholder="e.g., This slot works better with my schedule"
+                value={suggestNotes}
+                onChange={(e) => setSuggestNotes(e.target.value)}
+              />
+            </div>
+
+            {/* Preview */}
+            {suggestDate && suggestTime && (
+              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-blue-600 mb-1">New suggested time:</p>
+                <p className="font-medium text-blue-700">
+                  {format(suggestDate, 'EEEE, MMMM d, yyyy')} at{' '}
+                  {(() => {
+                    const [h, m] = suggestTime.split(':').map(Number)
+                    const period = h >= 12 ? 'PM' : 'AM'
+                    const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h
+                    return `${displayHour}:${m.toString().padStart(2, '0')} ${period}`
+                  })()}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSuggestTimeDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedRequest && suggestDate && suggestTime) {
+                  const suggestedDateTime = `${format(suggestDate, 'yyyy-MM-dd')} ${suggestTime}`
+                  handleRequestAction(
+                    selectedRequest.id,
+                    'changed',
+                    suggestNotes || undefined,
+                    suggestedDateTime
+                  )
+                  setSuggestTimeDialogOpen(false)
+                  setRequestDetailsDialogOpen(false)
+                }
+              }}
+              disabled={actionLoading || !suggestDate || !suggestTime}
+            >
+              {actionLoading && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+              Send Suggestion
             </Button>
           </DialogFooter>
         </DialogContent>
