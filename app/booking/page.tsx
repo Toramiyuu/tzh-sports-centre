@@ -80,6 +80,7 @@ interface TimeSlot {
 
 interface SlotAvailability extends TimeSlot {
   available: boolean
+  isPast?: boolean
 }
 
 interface CourtAvailability {
@@ -729,7 +730,9 @@ function BookingPageContent() {
                                   disabled={!courtSlot.available}
                                   className={`w-full py-2 px-3 rounded text-sm font-medium transition-colors ${
                                     !courtSlot.available
-                                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                      ? courtSlot.isPast
+                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                       : selected
                                       ? sport === 'badminton'
                                         ? 'bg-blue-600 text-white'
@@ -740,7 +743,9 @@ function BookingPageContent() {
                                   }`}
                                 >
                                   {!courtSlot.available
-                                    ? t('booked')
+                                    ? courtSlot.isPast
+                                      ? t('past') || 'Past'
+                                      : t('booked')
                                     : selected
                                     ? t('selected')
                                     : t('available')}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { shouldUseWeekendHours, getHolidayName } from '@/lib/holidays'
+import { isTodayInMalaysia, isSlotTimePast, getMalaysiaTimeString } from '@/lib/malaysia-time'
 
 export async function GET(request: NextRequest) {
   try {
@@ -133,14 +134,22 @@ export async function GET(request: NextRequest) {
       orderBy: { id: 'asc' },
     })
 
+    // Check if query date is today in Malaysia timezone
+    const isToday = isTodayInMalaysia(date)
+    const currentMalaysiaTime = isToday ? getMalaysiaTimeString() : null
+
     // Build availability matrix
     const availability = courts.map((court) => ({
       court,
       slots: timeSlots.map((slot) => {
         const key = `${court.id}-${slot.slotTime}`
+        const isBooked = bookedSlots[court.id]?.has(slot.slotTime) || false
+        // Mark slot as unavailable if it's today and the time has passed
+        const isPast = isToday && isSlotTimePast(slot.slotTime)
         return {
           ...slot,
-          available: !bookedSlots[court.id]?.has(slot.slotTime),
+          available: !isBooked && !isPast,
+          isPast, // Include this flag so frontend can show "Past" instead of "Booked"
           recurringLabel: recurringLabels[key] || null,
         }
       }),
@@ -151,6 +160,8 @@ export async function GET(request: NextRequest) {
       dayOfWeek,
       isWeekend: useWeekendHours,
       holidayName,
+      isToday,
+      currentMalaysiaTime,
       timeSlots,
       courts,
       availability,

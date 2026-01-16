@@ -97,6 +97,7 @@
     "court": "球场 {number}",
     "available": "可用",
     "booked": "已预订",
+    "past": "已过期",
     "selected": "已选",
     "recurring": "固定预订",
     "lesson": "课程",

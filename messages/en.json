@@ -97,6 +97,7 @@
     "court": "Court {number}",
     "available": "Available",
     "booked": "Booked",
+    "past": "Past",
     "selected": "Selected",
     "recurring": "Recurring",
     "lesson": "Lesson",
