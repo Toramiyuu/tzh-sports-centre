@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         user: {
           ...user,
-          uid: user.uid.toString(),
+          uid: user.uid.toString().padStart(3, '0'),
         },
       })
     }
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
 
       return {
         id: u.id,
-        uid: u.uid.toString(),
+        uid: u.uid.toString().padStart(3, '0'),
         name: u.name,
         email: u.email,
         phone: u.phone,
@@ -266,7 +266,7 @@ export async function POST(request: NextRequest) {
       success: true,
       user: {
         ...newUser,
-        uid: newUser.uid.toString(),
+        uid: newUser.uid.toString().padStart(3, '0'),
       },
       defaultPassword: DEFAULT_PASSWORD,
     })
@@ -326,7 +326,7 @@ export async function PATCH(request: NextRequest) {
       success: true,
       user: {
         ...updatedUser,
-        uid: updatedUser.uid.toString(),
+        uid: updatedUser.uid.toString().padStart(3, '0'),
       },
     })
   } catch (error) {

@@ -63,12 +63,12 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await bcrypt.hash(password, 12)
 
-    // Get the maximum UID and generate a new one
+    // Get the maximum UID and generate a new one (starting from 1)
     const maxUidResult = await prisma.user.findFirst({
       select: { uid: true },
       orderBy: { uid: 'desc' },
     })
-    const newUid = maxUidResult ? maxUidResult.uid + BigInt(1) : BigInt(100000001)
+    const newUid = maxUidResult ? maxUidResult.uid + BigInt(1) : BigInt(1)
 
     const user = await prisma.user.create({
       data: {

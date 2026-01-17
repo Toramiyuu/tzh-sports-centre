@@ -33,10 +33,10 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Convert BigInt uid to string for JSON serialization
+    // Convert BigInt uid to 3-digit string for JSON serialization
     return NextResponse.json({
       ...user,
-      uid: user.uid.toString(),
+      uid: user.uid.toString().padStart(3, '0'),
     })
   } catch (error) {
     console.error('Profile fetch error:', error)

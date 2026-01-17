@@ -242,7 +242,7 @@ export async function GET(
     return NextResponse.json({
       user: {
         id: user.id,
-        uid: user.uid.toString(),
+        uid: user.uid.toString().padStart(3, '0'),
         name: user.name,
         email: user.email,
         phone: user.phone,

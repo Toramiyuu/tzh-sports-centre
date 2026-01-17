@@ -186,7 +186,7 @@ export async function GET(request: NextRequest) {
 
       return {
         userId: user.id,
-        uid: user.uid.toString(),
+        uid: user.uid.toString().padStart(3, '0'),
         name: user.name,
         email: user.email,
         phone: user.phone,
@@ -343,7 +343,7 @@ async function getDetailedBreakdown(userId: string, month: number, year: number)
   return NextResponse.json({
     user: {
       id: user.id,
-      uid: user.uid.toString(),
+      uid: user.uid.toString().padStart(3, '0'),
       name: user.name,
       email: user.email,
       phone: user.phone,

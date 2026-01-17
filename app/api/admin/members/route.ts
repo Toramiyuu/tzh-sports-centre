@@ -34,10 +34,10 @@ export async function GET() {
       ],
     })
 
-    // Serialize BigInt uid to string
+    // Serialize BigInt uid to 3-digit string
     const serializedUsers = users.map(u => ({
       ...u,
-      uid: u.uid.toString(),
+      uid: u.uid.toString().padStart(3, '0'),
     }))
 
     // Get members with their lesson session counts
@@ -98,7 +98,7 @@ export async function PATCH(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({ user: { ...updatedUser, uid: updatedUser.uid.toString() } })
+    return NextResponse.json({ user: { ...updatedUser, uid: updatedUser.uid.toString().padStart(3, '0') } })
   } catch (error) {
     console.error('Error updating member:', error)
     return NextResponse.json(

@@ -32,12 +32,12 @@ export async function GET() {
       ],
     })
 
-    // Convert BigInt uid to string
+    // Convert BigInt uid to 3-digit string
     const serialized = recurringBookings.map(rb => ({
       ...rb,
       user: rb.user ? {
         ...rb.user,
-        uid: rb.user.uid.toString(),
+        uid: rb.user.uid.toString().padStart(3, '0'),
       } : null,
     }))
 
@@ -380,7 +380,7 @@ export async function PATCH(request: NextRequest) {
       ...updatedBooking,
       user: updatedBooking.user ? {
         ...updatedBooking.user,
-        uid: updatedBooking.user.uid.toString(),
+        uid: updatedBooking.user.uid.toString().padStart(3, '0'),
       } : null,
     }
 
