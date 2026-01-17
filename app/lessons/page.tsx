@@ -9,10 +9,8 @@ import {
   BadgeCheck,
   Phone,
   GraduationCap,
-  Star,
-  Sparkles
+  Star
 } from 'lucide-react'
-import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import TrialRequestForm from '@/components/TrialRequestForm'
 
@@ -96,7 +94,6 @@ const groupLessons = [
 
 export default function LessonsPage() {
   const t = useTranslations('lessons')
-  const tNav = useTranslations('nav')
 
   return (
     <div>
@@ -297,28 +294,6 @@ export default function LessonsPage() {
       <section className="py-16 md:py-24" id="trial-form">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <TrialRequestForm />
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-blue-600 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            {t('request.title')}
-          </h2>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
-                <Phone className="w-5 h-5 mr-2" />
-                WhatsApp: 011-7575 8508
-              </Button>
-            </a>
-            <Link href="/booking">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                {tNav('booking')}
-              </Button>
-            </Link>
-          </div>
         </div>
       </section>
     </div>
