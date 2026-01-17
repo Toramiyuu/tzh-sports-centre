@@ -147,14 +147,19 @@
       "bam": "Badminton Association of Malaysia"
     },
     "packages": {
-      "title": "Lesson Packages",
+      "title": "Private Lessons",
+      "privateSubtitle": "One-on-one and small group coaching",
+      "groupTitle": "Group Lessons",
+      "groupSubtitle": "Kids and adult group training programs",
       "private": "Private Lesson",
       "group": "Group Lesson",
       "perSession": "per session",
+      "perMonth": "per month",
       "duration": "{minutes} minutes",
       "popular": "Popular",
       "student": "student",
-      "students": "students"
+      "students": "students",
+      "maxStudents": "Max {count} students"
     },
     "features": {
       "courtBooking": {
@@ -178,6 +183,25 @@
       "submit": "Submit Request",
       "success": "Lesson request submitted successfully",
       "error": "Failed to submit lesson request"
+    },
+    "trial": {
+      "title": "Request a Trial Lesson",
+      "subtitle": "Fill in your details and we'll get back to you shortly",
+      "name": "Name",
+      "namePlaceholder": "Your full name",
+      "phone": "Phone Number",
+      "email": "Email (optional)",
+      "lessonType": "Interested Lesson Type",
+      "selectLessonType": "Select a lesson type",
+      "preferredDate": "Preferred Date (optional)",
+      "preferredTime": "Preferred Time (optional)",
+      "selectTime": "Select time",
+      "message": "Message (optional)",
+      "messagePlaceholder": "Any questions or special requests?",
+      "submit": "Submit Request",
+      "submitting": "Submitting...",
+      "successTitle": "Request Submitted!",
+      "successMessage": "Thank you for your interest! We will contact you within 24 hours to arrange your trial lesson."
     }
   },
   "auth": {
@@ -380,6 +404,10 @@
     "recurringPayments": {
       "title": "Manage Payments",
       "description": "Track and manage monthly customer payments"
+    },
+    "trialRequests": {
+      "title": "Trial Requests",
+      "description": "View and manage trial lesson requests"
     },
     "bookings": {
       "title": "Booking Management",

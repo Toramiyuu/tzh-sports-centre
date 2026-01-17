@@ -295,3 +295,26 @@ model Notification {
 
   @@map("notifications")
 }
+
+// Trial lesson requests from potential students
+model TrialRequest {
+  id                  String    @id @default(cuid())
+  name                String
+  phone               String
+  email               String?
+  preferredLessonType String    @map("preferred_lesson_type") // 1-to-1, group-kids, adult-group, etc.
+  preferredDate       DateTime? @map("preferred_date")
+  preferredTime       String?   @map("preferred_time") // "09:00", "14:00", etc.
+  message             String?   // Additional notes from the requester
+
+  // Admin management
+  status              String    @default("new") // new, contacted, scheduled, converted, not_interested
+  adminNotes          String?   @map("admin_notes")
+  contactedAt         DateTime? @map("contacted_at")
+  handledBy           String?   @map("handled_by") // Admin email who handled
+
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  @@map("trial_requests")
+}

@@ -147,14 +147,19 @@
       "bam": "Persatuan Badminton Malaysia"
     },
     "packages": {
-      "title": "Pakej Kelas",
+      "title": "Kelas Persendirian",
+      "privateSubtitle": "Bimbingan satu-satu dan kumpulan kecil",
+      "groupTitle": "Kelas Berkumpulan",
+      "groupSubtitle": "Program latihan kanak-kanak dan dewasa",
       "private": "Kelas Persendirian",
       "group": "Kelas Berkumpulan",
       "perSession": "setiap sesi",
+      "perMonth": "setiap bulan",
       "duration": "{minutes} minit",
       "popular": "Popular",
       "student": "pelajar",
-      "students": "pelajar"
+      "students": "pelajar",
+      "maxStudents": "Maks {count} pelajar"
     },
     "features": {
       "courtBooking": {
@@ -178,6 +183,25 @@
       "submit": "Hantar Permohonan",
       "success": "Permohonan kelas berjaya dihantar",
       "error": "Gagal menghantar permohonan kelas"
+    },
+    "trial": {
+      "title": "Mohon Kelas Percubaan",
+      "subtitle": "Isi butiran anda dan kami akan menghubungi anda",
+      "name": "Nama",
+      "namePlaceholder": "Nama penuh anda",
+      "phone": "Nombor Telefon",
+      "email": "Emel (pilihan)",
+      "lessonType": "Jenis Kelas Diminati",
+      "selectLessonType": "Pilih jenis kelas",
+      "preferredDate": "Tarikh Pilihan (pilihan)",
+      "preferredTime": "Masa Pilihan (pilihan)",
+      "selectTime": "Pilih masa",
+      "message": "Mesej (pilihan)",
+      "messagePlaceholder": "Ada soalan atau permintaan khas?",
+      "submit": "Hantar Permohonan",
+      "submitting": "Menghantar...",
+      "successTitle": "Permohonan Dihantar!",
+      "successMessage": "Terima kasih atas minat anda! Kami akan menghubungi anda dalam masa 24 jam untuk mengatur kelas percubaan."
     }
   },
   "auth": {
@@ -360,6 +384,10 @@
     "recurringPayments": {
       "title": "Urus Bayaran",
       "description": "Jejak dan urus bayaran bulanan pelanggan"
+    },
+    "trialRequests": {
+      "title": "Permohonan Percubaan",
+      "description": "Lihat dan urus permohonan kelas percubaan"
     },
     "bookings": {
       "title": "Pengurusan Tempahan",

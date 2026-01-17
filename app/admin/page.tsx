@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Shield, Calendar, Users, GraduationCap, Receipt } from 'lucide-react'
+import { Shield, Calendar, Users, GraduationCap, Receipt, ClipboardList } from 'lucide-react'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
@@ -53,6 +53,13 @@ export default async function AdminPage() {
       icon: Receipt,
       href: '/admin/manage-payments',
       color: 'bg-yellow-100 text-yellow-600',
+    },
+    {
+      titleKey: 'trialRequests.title',
+      descriptionKey: 'trialRequests.description',
+      icon: ClipboardList,
+      href: '/admin/trial-requests',
+      color: 'bg-pink-100 text-pink-600',
     },
   ]
 

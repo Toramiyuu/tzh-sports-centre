@@ -147,14 +147,19 @@
       "bam": "马来西亚羽毛球协会"
     },
     "packages": {
-      "title": "课程套餐",
+      "title": "私人课程",
+      "privateSubtitle": "一对一及小组指导",
+      "groupTitle": "团体课程",
+      "groupSubtitle": "儿童及成人团体训练计划",
       "private": "私人课程",
       "group": "团体课程",
       "perSession": "每节",
+      "perMonth": "每月",
       "duration": "{minutes} 分钟",
       "popular": "热门",
       "student": "学员",
-      "students": "学员"
+      "students": "学员",
+      "maxStudents": "最多 {count} 名学员"
     },
     "features": {
       "courtBooking": {
@@ -178,6 +183,25 @@
       "submit": "提交申请",
       "success": "课程申请提交成功",
       "error": "课程申请提交失败"
+    },
+    "trial": {
+      "title": "申请试课",
+      "subtitle": "填写您的信息，我们会尽快与您联系",
+      "name": "姓名",
+      "namePlaceholder": "您的全名",
+      "phone": "电话号码",
+      "email": "电子邮件（选填）",
+      "lessonType": "感兴趣的课程类型",
+      "selectLessonType": "选择课程类型",
+      "preferredDate": "首选日期（选填）",
+      "preferredTime": "首选时间（选填）",
+      "selectTime": "选择时间",
+      "message": "留言（选填）",
+      "messagePlaceholder": "有任何问题或特殊要求吗？",
+      "submit": "提交申请",
+      "submitting": "提交中...",
+      "successTitle": "申请已提交！",
+      "successMessage": "感谢您的关注！我们将在24小时内与您联系安排试课。"
     }
   },
   "auth": {
@@ -284,6 +308,10 @@
     "recurringPayments": {
       "title": "管理付款",
       "description": "追踪和管理客户月度付款"
+    },
+    "trialRequests": {
+      "title": "试课申请",
+      "description": "查看和管理试课申请"
     },
     "bookings": {
       "title": "管理预订",
