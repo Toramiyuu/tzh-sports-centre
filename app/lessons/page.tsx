@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useRef } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -9,91 +10,143 @@ import {
   BadgeCheck,
   Phone,
   GraduationCap,
-  Star
+  Star,
+  Eye
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import TrialRequestForm from '@/components/TrialRequestForm'
+import { LessonDetailsModal } from '@/components/LessonDetailsModal'
+import {
+  LESSON_TYPES,
+  LessonTypeConfig,
+  getPricePerPerson,
+  getLessonPrice,
+} from '@/lib/lesson-config'
 
-const privateLesson = [
-  {
-    name: '1-to-1 Private',
-    price: 130,
-    priceLabel: 'RM130',
-    duration: '1.5 hours',
-    students: 1,
-    popular: false,
-    billingType: 'per_session' as const,
-  },
-  {
-    name: '1-to-2',
-    price: 160,
-    priceLabel: 'RM160',
-    duration: '1.5 hours',
-    students: 2,
-    popular: true,
-    billingType: 'per_session' as const,
-  },
-  {
-    name: '1-to-3',
-    price: 180,
-    priceLabel: 'RM180',
-    duration: '2 hours',
-    students: 3,
-    popular: false,
-    billingType: 'per_session' as const,
-  },
-  {
-    name: '1-to-4',
-    price: 200,
-    priceLabel: 'RM200',
-    duration: '2 hours',
-    students: 4,
-    popular: false,
-    billingType: 'per_session' as const,
-  },
-]
+// Split lesson types into private and group
+const privateLessons = LESSON_TYPES.filter(
+  t => t.billingType === 'per_session' && t.maxStudents <= 4 && t.value !== 'small-adult-group'
+)
+const groupLessons = LESSON_TYPES.filter(
+  t => t.billingType === 'monthly' || t.value === 'small-adult-group'
+)
 
-const groupLessons = [
-  {
-    name: 'Small Group Kids (Beginners)',
-    price: 50,
-    priceLabel: 'RM50',
-    duration: '4 sessions/month',
-    students: 6,
-    popular: false,
-    billingType: 'monthly' as const,
-  },
-  {
-    name: 'Large Group Kids',
-    price: 100,
-    priceLabel: 'RM100',
-    duration: '4 sessions/month',
-    students: 12,
-    popular: true,
-    billingType: 'monthly' as const,
-  },
-  {
-    name: 'Large Group Kids (Intermediate)',
-    price: 140,
-    priceLabel: 'RM140',
-    duration: '4 sessions/month',
-    students: 12,
-    popular: false,
-    billingType: 'monthly' as const,
-  },
-  {
-    name: 'Small Adult Group',
-    price: 50,
-    priceLabel: 'RM50',
-    duration: '2 hours',
-    students: 6,
-    popular: false,
-    billingType: 'per_session' as const,
-  },
-]
+// Popular lesson types
+const popularLessons = ['1-to-2', 'large-kids']
+
+function formatDuration(lesson: LessonTypeConfig): string {
+  if (lesson.billingType === 'monthly') {
+    return `${lesson.sessionsPerMonth} sessions/month`
+  }
+  if (lesson.allowedDurations.length === 1) {
+    return `${lesson.allowedDurations[0]} hours`
+  }
+  return `${lesson.allowedDurations[0]}-${lesson.allowedDurations[lesson.allowedDurations.length - 1]} hours`
+}
+
+function getDisplayPrice(lesson: LessonTypeConfig): number {
+  return getLessonPrice(lesson.value)
+}
 
 export default function LessonsPage() {
   const t = useTranslations('lessons')
+  const [selectedLesson, setSelectedLesson] = useState<LessonTypeConfig | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const trialFormRef = useRef<HTMLDivElement>(null)
+
+  const handleLessonClick = (lesson: LessonTypeConfig) => {
+    setSelectedLesson(lesson)
+    setModalOpen(true)
+  }
+
+  const handleRequestTrial = () => {
+    // Scroll to trial form
+    trialFormRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  // Get translated lesson type label
+  const getLessonLabel = (lessonValue: string) => {
+    return t(`types.${lessonValue}`)
+  }
+
+  const renderLessonCard = (lesson: LessonTypeConfig, colorClass: string) => {
+    const isPopular = popularLessons.includes(lesson.value)
+    const price = getDisplayPrice(lesson)
+    const perPersonPrice = getPricePerPerson(lesson.value)
+    const isMonthly = lesson.billingType === 'monthly'
+
+    return (
+      <Card
+        key={lesson.value}
+        className={`relative border-2 cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] ${
+          isPopular ? `border-${colorClass}-500` : 'border-gray-200'
+        }`}
+        onClick={() => handleLessonClick(lesson)}
+      >
+        {isPopular && (
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+            <Badge className={`bg-${colorClass}-500 text-white`}>
+              <Star className="w-3 h-3 mr-1" />
+              {t('packages.popular')}
+            </Badge>
+          </div>
+        )}
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Users className={`w-5 h-5 text-${colorClass}-500`} />
+              <h3 className="font-semibold text-lg">{getLessonLabel(lesson.value)}</h3>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-gray-500 hover:text-gray-700"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleLessonClick(lesson)
+              }}
+            >
+              <Eye className="w-4 h-4 mr-1" />
+              {t('packages.viewDetails')}
+            </Button>
+          </div>
+
+          <div className="mb-4">
+            {/* Per-person pricing for group lessons */}
+            {perPersonPrice && lesson.maxStudents > 1 && !isMonthly ? (
+              <div>
+                <span className="text-3xl font-bold text-gray-900">RM{perPersonPrice}</span>
+                <span className="text-gray-500 text-sm"> / {t('packages.perPerson')}</span>
+                <div className="text-xs text-gray-400 mt-1">
+                  ({t('packages.total')}: RM{price})
+                </div>
+              </div>
+            ) : (
+              <div>
+                <span className="text-3xl font-bold text-gray-900">RM{price}</span>
+                <span className="text-gray-500 text-sm">
+                  {' '}/ {isMonthly ? t('packages.perMonth') : t('packages.perSession')}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-gray-400" />
+              {formatDuration(lesson)}
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-gray-400" />
+              {lesson.maxStudents === 1
+                ? t('packages.student')
+                : t('packages.maxStudents', { count: lesson.maxStudents })}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <div>
@@ -133,43 +186,7 @@ export default function LessonsPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {privateLesson.map((lesson) => (
-              <Card
-                key={lesson.name}
-                className={`relative border-2 ${lesson.popular ? 'border-blue-500' : 'border-gray-200'}`}
-              >
-                {lesson.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-blue-500 text-white">
-                      <Star className="w-3 h-3 mr-1" />
-                      {t('packages.popular')}
-                    </Badge>
-                  </div>
-                )}
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Users className="w-5 h-5 text-blue-500" />
-                    <h3 className="font-semibold text-lg">{lesson.name}</h3>
-                  </div>
-
-                  <div className="mb-4">
-                    <span className="text-3xl font-bold text-gray-900">{lesson.priceLabel}</span>
-                    <span className="text-gray-500 text-sm"> / {t('packages.perSession')}</span>
-                  </div>
-
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gray-400" />
-                      {lesson.duration}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-gray-400" />
-                      {lesson.students} {lesson.students === 1 ? t('packages.student') : t('packages.students')}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {privateLessons.map((lesson) => renderLessonCard(lesson, 'blue'))}
           </div>
         </div>
       </section>
@@ -185,43 +202,7 @@ export default function LessonsPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {groupLessons.map((lesson) => (
-              <Card
-                key={lesson.name}
-                className={`relative border-2 ${lesson.popular ? 'border-green-500' : 'border-gray-200'}`}
-              >
-                {lesson.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-green-500 text-white">
-                      <Star className="w-3 h-3 mr-1" />
-                      {t('packages.popular')}
-                    </Badge>
-                  </div>
-                )}
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Users className="w-5 h-5 text-green-500" />
-                    <h3 className="font-semibold text-lg">{lesson.name}</h3>
-                  </div>
-
-                  <div className="mb-4">
-                    <span className="text-3xl font-bold text-gray-900">{lesson.priceLabel}</span>
-                    <span className="text-gray-500 text-sm"> / {lesson.billingType === 'monthly' ? t('packages.perMonth') : t('packages.perSession')}</span>
-                  </div>
-
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gray-400" />
-                      {lesson.duration}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-gray-400" />
-                      {t('packages.maxStudents', { count: lesson.students })}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {groupLessons.map((lesson) => renderLessonCard(lesson, 'green'))}
           </div>
         </div>
       </section>
@@ -291,11 +272,19 @@ export default function LessonsPage() {
       </section>
 
       {/* Trial Request Form */}
-      <section className="py-16 md:py-24" id="trial-form">
+      <section className="py-16 md:py-24" id="trial-form" ref={trialFormRef}>
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <TrialRequestForm />
         </div>
       </section>
+
+      {/* Lesson Details Modal */}
+      <LessonDetailsModal
+        lesson={selectedLesson}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onRequestTrial={handleRequestTrial}
+      />
     </div>
   )
 }

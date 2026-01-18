@@ -98,6 +98,7 @@ interface BookingInfo {
   sport: string
   status: string
   paymentStatus?: string
+  paymentUserConfirmed?: boolean
   isGuest: boolean
   isRecurring?: boolean
   recurringLabel?: string
@@ -113,6 +114,7 @@ interface FullBooking {
   totalAmount: number
   status: string
   paymentStatus: string
+  paymentUserConfirmed?: boolean
   guestName: string | null
   guestPhone: string | null
   guestEmail: string | null
@@ -1062,6 +1064,12 @@ export default function AdminBookingsPage() {
                                               <Banknote className="w-2.5 h-2.5 mr-0.5" />
                                               Pending
                                             </Badge>
+                                            {booking.paymentUserConfirmed && (
+                                              <Badge className="text-[10px] px-1 py-0 bg-blue-100 text-blue-700 border-0">
+                                                <Check className="w-2.5 h-2.5 mr-0.5" />
+                                                User Confirmed
+                                              </Badge>
+                                            )}
                                             {!selectionMode && (
                                               <Button
                                                 variant="ghost"

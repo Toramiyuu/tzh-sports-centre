@@ -11,7 +11,8 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PhoneInput } from '@/components/ui/phone-input'
-import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Smartphone, MessageCircle } from 'lucide-react'
+import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Smartphone, MessageCircle, Download, CheckCircle2 } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
 import {
   Dialog,
   DialogContent,
@@ -126,11 +127,35 @@ function BookingPageContent() {
   const [showTngModal, setShowTngModal] = useState(false)
   const [tngBookingCreated, setTngBookingCreated] = useState(false)
   const [, setTngBookingIds] = useState<string[]>([])
+  const [tngHasPaid, setTngHasPaid] = useState(false)
 
   // DuitNow payment modal state
   const [showDuitNowModal, setShowDuitNowModal] = useState(false)
   const [duitNowBookingCreated, setDuitNowBookingCreated] = useState(false)
   const [, setDuitNowBookingIds] = useState<string[]>([])
+  const [duitNowHasPaid, setDuitNowHasPaid] = useState(false)
+
+  // Download QR code to gallery
+  const downloadQrCode = async (qrType: 'tng' | 'duitnow') => {
+    const imagePath = qrType === 'tng' ? '/images/tng-qr.png' : '/images/duitnow-qr.png'
+    const filename = qrType === 'tng' ? 'TZH-TouchNGo-QR.png' : 'TZH-DuitNow-QR.png'
+
+    try {
+      const response = await fetch(imagePath)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      toast.success('QR code saved to your device!')
+    } catch (_err) {
+      toast.error('Failed to download QR code')
+    }
+  }
 
   // Fix hydration mismatch by only rendering calendar after mount
   useEffect(() => {
@@ -390,6 +415,7 @@ function BookingPageContent() {
     // Show the TNG modal
     setShowTngModal(true)
     setTngBookingCreated(false)
+    setTngHasPaid(false)
   }
 
   // Create TNG booking after user confirms they've paid
@@ -413,6 +439,7 @@ function BookingPageContent() {
           guestPhone: guestPhone.trim(),
           guestEmail: guestEmail.trim() || session?.user?.email,
           paymentMethod: 'tng', // Mark as TNG payment
+          paymentUserConfirmed: true, // User confirmed they have paid via toggle
         }),
       })
 
@@ -443,6 +470,7 @@ function BookingPageContent() {
     setShowTngModal(false)
     setTngBookingCreated(false)
     setTngBookingIds([])
+    setTngHasPaid(false)
   }
 
   // Handle DuitNow payment - show QR code modal
@@ -464,6 +492,7 @@ function BookingPageContent() {
     // Show the DuitNow modal
     setShowDuitNowModal(true)
     setDuitNowBookingCreated(false)
+    setDuitNowHasPaid(false)
   }
 
   // Create DuitNow booking after user confirms they've paid
@@ -487,6 +516,7 @@ function BookingPageContent() {
           guestPhone: guestPhone.trim(),
           guestEmail: guestEmail.trim() || session?.user?.email,
           paymentMethod: 'duitnow', // Mark as DuitNow payment
+          paymentUserConfirmed: true, // User confirmed they have paid via toggle
         }),
       })
 
@@ -517,6 +547,7 @@ function BookingPageContent() {
     setShowDuitNowModal(false)
     setDuitNowBookingCreated(false)
     setDuitNowBookingIds([])
+    setDuitNowHasPaid(false)
   }
 
   return (
@@ -608,7 +639,7 @@ function BookingPageContent() {
                   sport === 'badminton' ? 'text-blue-800' : 'text-green-800'
                 }`}>
                   {sport === 'badminton' ? (
-                    <>RM15/hr <span className="text-orange-600">(RM18/hr after 6 PM)</span></>
+                    <>RM15/hr <span className="text-orange-600">/ RM18/hr</span></>
                   ) : (
                     <>RM25/hr</>
                   )}
@@ -617,7 +648,7 @@ function BookingPageContent() {
                   sport === 'badminton' ? 'text-blue-600' : 'text-green-600'
                 }`}>
                   {sport === 'badminton'
-                    ? 'Peak hours: 6 PM onwards'
+                    ? '9 AM - 6 PM: RM15 | 6 PM - 12 AM: RM18'
                     : 'Same rate all day'}
                 </p>
               </div>
@@ -954,114 +985,173 @@ function BookingPageContent() {
         </div>
       </div>
 
-      {/* Touch 'n Go Payment Modal */}
+      {/* Touch 'n Go Payment Modal - Mobile-First Design */}
       <Dialog open={showTngModal} onOpenChange={setShowTngModal}>
-        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-lg">
               <Smartphone className="w-5 h-5 text-blue-600" />
               Pay with Touch &apos;n Go
             </DialogTitle>
           </DialogHeader>
 
           {!tngBookingCreated ? (
-            <div className="flex flex-col sm:flex-row gap-6">
-              {/* Left: QR Code */}
-              <div className="flex-shrink-0 flex justify-center">
-                <div className="p-4 bg-white rounded-lg border">
-                  <img
-                    src="/images/tng-qr.png"
-                    alt="Touch 'n Go QR Code"
-                    className="w-80 h-80 object-contain"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.style.display = 'none'
-                      target.parentElement!.innerHTML = `
-                        <div class="w-80 h-80 flex items-center justify-center bg-gray-100 rounded-lg text-center p-4">
-                          <p class="text-sm text-gray-500">QR Code placeholder<br/><br/>Add your TNG QR image to:<br/><code class="text-xs">/public/images/tng-qr.png</code></p>
-                        </div>
-                      `
-                    }}
-                  />
-                </div>
+            <div className="space-y-4">
+              {/* Amount Banner */}
+              <div className="bg-blue-600 text-white rounded-xl p-4 text-center">
+                <p className="text-sm opacity-90">Amount to pay</p>
+                <p className="text-3xl font-bold">RM{total.toFixed(2)}</p>
               </div>
 
-              {/* Right: Instructions & Button */}
-              <div className="flex-1 space-y-4">
-                {/* Amount */}
-                <div>
-                  <p className="text-sm text-gray-600">Amount to pay:</p>
-                  <p className="text-3xl font-bold text-blue-600">RM{total.toFixed(2)}</p>
+              {/* Step 1: Save QR Code */}
+              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                  <h4 className="font-semibold text-gray-900">Save the QR Code</h4>
                 </div>
-
-                {/* Instructions */}
-                <div className="bg-blue-50 rounded-lg p-4 space-y-2">
-                  <h4 className="font-medium text-blue-900">How to pay:</h4>
-                  <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                    <li>Open your Touch &apos;n Go eWallet app</li>
-                    <li>Tap &quot;Scan&quot; and scan the QR code</li>
-                    <li>Enter the amount: <strong>RM{total.toFixed(2)}</strong></li>
-                    <li>Complete the payment</li>
-                  </ol>
+                <div className="flex justify-center">
+                  <div className="p-3 bg-white rounded-lg border-2 border-gray-200">
+                    <img
+                      src="/images/tng-qr.png"
+                      alt="Touch 'n Go QR Code"
+                      className="w-48 h-48 sm:w-56 sm:h-56 object-contain"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.style.display = 'none'
+                        target.parentElement!.innerHTML = `
+                          <div class="w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center bg-gray-100 rounded-lg text-center p-4">
+                            <p class="text-sm text-gray-500">QR Code placeholder</p>
+                          </div>
+                        `
+                      }}
+                    />
+                  </div>
                 </div>
+                <Button
+                  variant="outline"
+                  className="w-full h-12 text-base border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+                  onClick={() => downloadQrCode('tng')}
+                >
+                  <Download className="mr-2 h-5 w-5" />
+                  Save QR Code to Gallery
+                </Button>
+                <p className="text-xs text-center text-gray-500">Tap to save this QR code to your phone</p>
+              </div>
 
-                {/* WhatsApp contact */}
-                <div className="bg-green-50 rounded-lg p-3">
-                  <div className="flex items-center gap-2 text-green-800">
-                    <MessageCircle className="w-5 h-5 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-medium">Send payment screenshot to:</p>
-                      <a
-                        href="https://wa.me/60116868508"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-green-600 hover:underline font-bold"
-                      >
-                        011-6868 8508 (WhatsApp)
-                      </a>
-                    </div>
+              {/* Step 2-5: Instructions */}
+              <div className="space-y-3">
+                {/* Step 2 */}
+                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Open Touch &apos;n Go App</p>
+                    <p className="text-sm text-gray-600">Open your Touch &apos;n Go eWallet app</p>
                   </div>
                 </div>
 
-                {/* Confirm Button */}
-                <Button
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                  size="lg"
-                  onClick={handleTngBookingConfirm}
-                  disabled={booking}
-                >
-                  {booking ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Booking...
-                    </>
-                  ) : (
-                    <>
-                      I&apos;ve Paid - Confirm My Booking
-                    </>
-                  )}
-                </Button>
+                {/* Step 3 */}
+                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Scan from Gallery</p>
+                    <p className="text-sm text-gray-600">Tap &apos;Scan&apos;, then select the QR code from your gallery</p>
+                  </div>
+                </div>
 
-                <p className="text-xs text-center text-gray-500">
-                  Your booking will be pending until payment is verified by our staff.
+                {/* Step 4 */}
+                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Enter Amount</p>
+                    <p className="text-sm text-gray-600">Enter exactly <strong className="text-blue-600">RM{total.toFixed(2)}</strong></p>
+                  </div>
+                </div>
+
+                {/* Step 5 */}
+                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Complete Payment</p>
+                    <p className="text-sm text-gray-600">Confirm and complete the payment in your app</p>
+                  </div>
+                </div>
+
+                {/* Step 6: WhatsApp Screenshot */}
+                <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">6</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Send Screenshot via WhatsApp</p>
+                    <p className="text-sm text-gray-600 mb-2">Send your payment screenshot to:</p>
+                    <a
+                      href="https://wa.me/60116868508"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      011-6868 8508
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* "I have paid" Toggle */}
+              <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {tngHasPaid && <CheckCircle2 className="w-5 h-5 text-green-600" />}
+                    <Label htmlFor="tng-paid-toggle" className="text-base font-semibold text-gray-900 cursor-pointer">
+                      I have paid
+                    </Label>
+                  </div>
+                  <Switch
+                    id="tng-paid-toggle"
+                    checked={tngHasPaid}
+                    onCheckedChange={setTngHasPaid}
+                    className="data-[state=checked]:bg-green-600"
+                  />
+                </div>
+                <p className="text-xs text-yellow-800">
+                  Only turn this on after you have successfully paid in Touch &apos;n Go
                 </p>
               </div>
+
+              {/* Confirm Button */}
+              <Button
+                className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed'}`}
+                size="lg"
+                onClick={handleTngBookingConfirm}
+                disabled={!tngHasPaid || booking}
+              >
+                {booking ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Creating Booking...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="mr-2 h-5 w-5" />
+                    Confirm My Booking
+                  </>
+                )}
+              </Button>
+              <p className="text-xs text-center text-gray-500">
+                This will submit your booking for payment verification
+              </p>
             </div>
           ) : (
             // Success state
-            <div className="space-y-4 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="space-y-4 text-center py-4">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-10 h-10 text-green-600" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900">Booking Created!</h3>
+              <h3 className="text-xl font-bold text-gray-900">Booking Created!</h3>
               <p className="text-gray-600">
-                Your booking has been created and is pending payment verification.
+                Your booking is pending payment verification.
               </p>
-              <div className="bg-yellow-50 rounded-lg p-4 text-left">
+              <div className="bg-yellow-50 rounded-xl p-4 text-left">
                 <p className="text-sm text-yellow-800">
-                  <strong>Important:</strong> Please send your payment screenshot to{' '}
+                  <strong>Reminder:</strong> Make sure you sent your payment screenshot to{' '}
                   <a
                     href="https://wa.me/60116868508"
                     target="_blank"
@@ -1070,10 +1160,10 @@ function BookingPageContent() {
                   >
                     011-6868 8508
                   </a>{' '}
-                  via WhatsApp for confirmation.
+                  via WhatsApp.
                 </p>
               </div>
-              <Button className="w-full" onClick={closeTngModal}>
+              <Button className="w-full h-12 text-base" onClick={closeTngModal}>
                 Done
               </Button>
             </div>
@@ -1081,115 +1171,173 @@ function BookingPageContent() {
         </DialogContent>
       </Dialog>
 
-      {/* DuitNow Payment Modal */}
+      {/* DuitNow Payment Modal - Mobile-First Design */}
       <Dialog open={showDuitNowModal} onOpenChange={setShowDuitNowModal}>
-        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-lg">
               <CreditCard className="w-5 h-5 text-pink-600" />
               Pay with DuitNow
             </DialogTitle>
           </DialogHeader>
 
           {!duitNowBookingCreated ? (
-            <div className="flex flex-col sm:flex-row gap-6">
-              {/* Left: QR Code */}
-              <div className="flex-shrink-0 flex justify-center">
-                <div className="p-4 bg-white rounded-lg border">
-                  <img
-                    src="/images/duitnow-qr.png"
-                    alt="DuitNow QR Code"
-                    className="w-80 h-80 object-contain"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.style.display = 'none'
-                      target.parentElement!.innerHTML = `
-                        <div class="w-80 h-80 flex items-center justify-center bg-gray-100 rounded-lg text-center p-4">
-                          <p class="text-sm text-gray-500">QR Code placeholder<br/><br/>Add your DuitNow QR image to:<br/><code class="text-xs">/public/images/duitnow-qr.png</code></p>
-                        </div>
-                      `
-                    }}
-                  />
-                </div>
+            <div className="space-y-4">
+              {/* Amount Banner */}
+              <div className="bg-pink-600 text-white rounded-xl p-4 text-center">
+                <p className="text-sm opacity-90">Amount to pay</p>
+                <p className="text-3xl font-bold">RM{total.toFixed(2)}</p>
               </div>
 
-              {/* Right: Instructions & Button */}
-              <div className="flex-1 space-y-4">
-                {/* Amount */}
-                <div>
-                  <p className="text-sm text-gray-600">Amount to pay:</p>
-                  <p className="text-3xl font-bold text-pink-600">RM{total.toFixed(2)}</p>
+              {/* Step 1: Save QR Code */}
+              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                  <h4 className="font-semibold text-gray-900">Save the QR Code</h4>
                 </div>
-
-                {/* Instructions */}
-                <div className="bg-pink-50 rounded-lg p-4 space-y-2">
-                  <h4 className="font-medium text-pink-900">How to pay:</h4>
-                  <ol className="text-sm text-pink-800 space-y-1 list-decimal list-inside">
-                    <li>Open your banking app (Maybank, CIMB, etc.)</li>
-                    <li>Tap &quot;Scan &amp; Pay&quot; or &quot;DuitNow QR&quot;</li>
-                    <li>Scan the QR code</li>
-                    <li>Enter the amount: <strong>RM{total.toFixed(2)}</strong></li>
-                    <li>Complete the payment</li>
-                  </ol>
+                <div className="flex justify-center">
+                  <div className="p-3 bg-white rounded-lg border-2 border-gray-200">
+                    <img
+                      src="/images/duitnow-qr.png"
+                      alt="DuitNow QR Code"
+                      className="w-48 h-48 sm:w-56 sm:h-56 object-contain"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.style.display = 'none'
+                        target.parentElement!.innerHTML = `
+                          <div class="w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center bg-gray-100 rounded-lg text-center p-4">
+                            <p class="text-sm text-gray-500">QR Code placeholder</p>
+                          </div>
+                        `
+                      }}
+                    />
+                  </div>
                 </div>
+                <Button
+                  variant="outline"
+                  className="w-full h-12 text-base border-2 border-pink-600 text-pink-600 hover:bg-pink-50"
+                  onClick={() => downloadQrCode('duitnow')}
+                >
+                  <Download className="mr-2 h-5 w-5" />
+                  Save QR Code to Gallery
+                </Button>
+                <p className="text-xs text-center text-gray-500">Tap to save this QR code to your phone</p>
+              </div>
 
-                {/* WhatsApp contact */}
-                <div className="bg-green-50 rounded-lg p-3">
-                  <div className="flex items-center gap-2 text-green-800">
-                    <MessageCircle className="w-5 h-5 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-medium">Send payment screenshot to:</p>
-                      <a
-                        href="https://wa.me/60116868508"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-green-600 hover:underline font-bold"
-                      >
-                        011-6868 8508 (WhatsApp)
-                      </a>
-                    </div>
+              {/* Step 2-5: Instructions */}
+              <div className="space-y-3">
+                {/* Step 2 */}
+                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-7 h-7 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Open Your Banking App</p>
+                    <p className="text-sm text-gray-600">Maybank, CIMB, RHB, Public Bank, etc.</p>
                   </div>
                 </div>
 
-                {/* Confirm Button */}
-                <Button
-                  className="w-full bg-pink-600 hover:bg-pink-700"
-                  size="lg"
-                  onClick={handleDuitNowBookingConfirm}
-                  disabled={booking}
-                >
-                  {booking ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Booking...
-                    </>
-                  ) : (
-                    <>
-                      I&apos;ve Paid - Confirm My Booking
-                    </>
-                  )}
-                </Button>
+                {/* Step 3 */}
+                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-7 h-7 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Scan from Gallery</p>
+                    <p className="text-sm text-gray-600">Tap &apos;Scan &amp; Pay&apos; or &apos;DuitNow QR&apos;, then select from gallery</p>
+                  </div>
+                </div>
 
-                <p className="text-xs text-center text-gray-500">
-                  Your booking will be pending until payment is verified by our staff.
+                {/* Step 4 */}
+                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-7 h-7 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Enter Amount</p>
+                    <p className="text-sm text-gray-600">Enter exactly <strong className="text-pink-600">RM{total.toFixed(2)}</strong></p>
+                  </div>
+                </div>
+
+                {/* Step 5 */}
+                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-7 h-7 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Complete Payment</p>
+                    <p className="text-sm text-gray-600">Confirm and complete the payment in your app</p>
+                  </div>
+                </div>
+
+                {/* Step 6: WhatsApp Screenshot */}
+                <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">6</div>
+                  <div>
+                    <p className="font-medium text-gray-900">Send Screenshot via WhatsApp</p>
+                    <p className="text-sm text-gray-600 mb-2">Send your payment screenshot to:</p>
+                    <a
+                      href="https://wa.me/60116868508"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      011-6868 8508
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* "I have paid" Toggle */}
+              <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {duitNowHasPaid && <CheckCircle2 className="w-5 h-5 text-green-600" />}
+                    <Label htmlFor="duitnow-paid-toggle" className="text-base font-semibold text-gray-900 cursor-pointer">
+                      I have paid
+                    </Label>
+                  </div>
+                  <Switch
+                    id="duitnow-paid-toggle"
+                    checked={duitNowHasPaid}
+                    onCheckedChange={setDuitNowHasPaid}
+                    className="data-[state=checked]:bg-green-600"
+                  />
+                </div>
+                <p className="text-xs text-yellow-800">
+                  Only turn this on after you have successfully paid via DuitNow
                 </p>
               </div>
+
+              {/* Confirm Button */}
+              <Button
+                className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? 'bg-pink-600 hover:bg-pink-700' : 'bg-gray-300 cursor-not-allowed'}`}
+                size="lg"
+                onClick={handleDuitNowBookingConfirm}
+                disabled={!duitNowHasPaid || booking}
+              >
+                {booking ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Creating Booking...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="mr-2 h-5 w-5" />
+                    Confirm My Booking
+                  </>
+                )}
+              </Button>
+              <p className="text-xs text-center text-gray-500">
+                This will submit your booking for payment verification
+              </p>
             </div>
           ) : (
             // Success state
-            <div className="space-y-4 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="space-y-4 text-center py-4">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-10 h-10 text-green-600" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900">Booking Created!</h3>
+              <h3 className="text-xl font-bold text-gray-900">Booking Created!</h3>
               <p className="text-gray-600">
-                Your booking has been created and is pending payment verification.
+                Your booking is pending payment verification.
               </p>
-              <div className="bg-yellow-50 rounded-lg p-4 text-left">
+              <div className="bg-yellow-50 rounded-xl p-4 text-left">
                 <p className="text-sm text-yellow-800">
-                  <strong>Important:</strong> Please send your payment screenshot to{' '}
+                  <strong>Reminder:</strong> Make sure you sent your payment screenshot to{' '}
                   <a
                     href="https://wa.me/60116868508"
                     target="_blank"
@@ -1198,10 +1346,10 @@ function BookingPageContent() {
                   >
                     011-6868 8508
                   </a>{' '}
-                  via WhatsApp for confirmation.
+                  via WhatsApp.
                 </p>
               </div>
-              <Button className="w-full" onClick={closeDuitNowModal}>
+              <Button className="w-full h-12 text-base" onClick={closeDuitNowModal}>
                 Done
               </Button>
             </div>

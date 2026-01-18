@@ -90,6 +90,7 @@ export async function GET(request: NextRequest) {
       sport: string
       status: string
       paymentStatus?: string
+      paymentUserConfirmed?: boolean
       isGuest: boolean
       isRecurring?: boolean
       recurringLabel?: string
@@ -106,6 +107,7 @@ export async function GET(request: NextRequest) {
         sport: booking.sport,
         status: booking.status,
         paymentStatus: booking.paymentStatus,
+        paymentUserConfirmed: booking.paymentUserConfirmed,
         isGuest: !booking.userId,
       }
     })

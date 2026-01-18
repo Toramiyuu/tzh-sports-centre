@@ -82,6 +82,9 @@ model Booking {
   stripeSessionId String?  @map("stripe_session_id")
   paidAt          DateTime? @map("paid_at")
 
+  // User-confirmed payment (for TNG/DuitNow - user toggles "I have paid")
+  paymentUserConfirmed Boolean @default(false) @map("payment_user_confirmed")
+
   // Guest booking fields
   guestName       String?  @map("guest_name")
   guestPhone      String?  @map("guest_phone")

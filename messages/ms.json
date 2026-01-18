@@ -35,41 +35,129 @@
   },
   "home": {
     "hero": {
-      "subtitle": "Tempahan Gelanggang",
+      "subtitle": "Sewa Gelanggang & Latihan",
       "title": "TZH Sports Centre",
-      "description": "Gelanggang badminton dan pickleball tersedia untuk ditempah. Tiada akaun diperlukan.",
+      "description": "Gelanggang badminton dan pickleball di Ayer Itam. Tempah online atau walk-in.",
       "bookCourt": "Tempah Gelanggang",
       "viewLessons": "Lihat Kelas"
     },
+    "pricing": {
+      "from": "Dari",
+      "openDaily": "Buka Setiap Hari",
+      "courts": "4 Gelanggang",
+      "courtsLabel": "Gelanggang",
+      "perHour": "sejam",
+      "weekdaysStart": "Hari Bekerja",
+      "badminton": {
+        "title": "Badminton",
+        "offPeak": "9 PG – 6 PTG",
+        "peak": "Selepas 6 PTG"
+      },
+      "pickleball": {
+        "title": "Pickleball",
+        "rate": "Semua waktu",
+        "minimum": "Minimum 2 jam setiap tempahan"
+      },
+      "coaching": {
+        "title": "Latihan",
+        "from": "Dari",
+        "note": "1-ke-1, 1.5 jam"
+      },
+      "noHiddenFees": "Tiada caj tersembunyi. Bayar hanya untuk apa yang anda pilih.",
+      "hours": {
+        "weekdays": "Hari Bekerja: 3 PTG – 12 MLM",
+        "weekends": "Hujung Minggu & Cuti: 9 PG – 12 MLM"
+      }
+    },
+    "services": {
+      "title": "Apa Yang Kami Tawarkan",
+      "subtitle": "Sewa gelanggang dan latihan di Ayer Itam, Pulau Pinang",
+      "badminton": {
+        "title": "Sewa Gelanggang Badminton",
+        "desc": "4 gelanggang tersedia. Tempah mengikut jam, tiada keahlian diperlukan."
+      },
+      "pickleball": {
+        "title": "Sewa Gelanggang Pickleball",
+        "desc": "Gelanggang tersedia setiap hari. Tempahan minimum 2 jam."
+      },
+      "coaching": {
+        "title": "Latihan Badminton",
+        "desc": "Kelas persendirian dan berkumpulan untuk semua umur dan tahap."
+      }
+    },
     "sports": {
-      "title": "Sukan Tersedia",
-      "courts": "{count} gelanggang",
-      "perHour": "RM{price}/jam",
-      "minHours": "({hours}jam min)",
       "badminton": "Badminton",
       "pickleball": "Pickleball"
+    },
+    "availableSports": {
+      "title": "Sukan Tersedia",
+      "badminton": {
+        "name": "Badminton",
+        "courts": "4 gelanggang",
+        "price": "RM15/jam"
+      },
+      "pickleball": {
+        "name": "Pickleball",
+        "courts": "4 gelanggang",
+        "price": "RM25/jam (min 2jam)"
+      }
     },
     "info": {
       "hours": {
         "title": "Waktu Operasi",
-        "weekdays": "Hari Bekerja: 3 PTG - 12 MLM",
-        "weekends": "Hujung Minggu & Cuti Umum: 9 PG - 12 MLM"
+        "weekdays": "Hari Bekerja: 3 PTG – 12 MLM",
+        "weekends": "Hujung Minggu & Cuti: 9 PG – 12 MLM"
       },
-      "location": {
-        "title": "Lokasi",
-        "address": "Jalan Sekolah La Salle, Ayer Itam",
+      "contact": {
+        "title": "Hubungi"
+      }
+    },
+    "whyChooseUs": {
+      "title": "Kenapa Pilih Kami",
+      "clean": {
+        "title": "Gelanggang dibersihkan kerap",
+        "desc": "Kami membersihkan gelanggang supaya ia kering dan tidak licin."
+      },
+      "ventilation": {
+        "title": "Pengudaraan yang baik",
+        "desc": "Kipas dan tingkap memastikan aliran udara semasa bermain."
+      },
+      "lighting": {
+        "title": "Pencahayaan selesa",
+        "desc": "Lampu diletakkan dari sisi supaya tidak menyilaukan mata."
+      },
+      "nets": {
+        "title": "Jaring dipasang dengan betul",
+        "desc": "Jaring badminton dipasang pada ketinggian yang betul."
+      },
+      "tidy": {
+        "title": "Persekitaran bersih",
+        "desc": "Gelanggang dan kawasan sekeliling dijaga dengan kemas."
+      },
+      "snacks": {
+        "title": "Minuman dan snek tersedia",
+        "desc": "Kami menjual minuman dan snek di premis."
+      },
+      "cta": "Tempah Gelanggang"
+    },
+    "location": {
+      "title": "Lokasi Kami",
+      "address": {
+        "title": "Alamat",
+        "line1": "Jalan Sekolah La Salle",
+        "line2": "11400 Ayer Itam, Pulau Pinang",
         "directions": "Dapatkan Arah"
+      },
+      "hours": {
+        "title": "Waktu Operasi",
+        "weekdays": "Hari Bekerja: 3 PTG – 12 MLM",
+        "weekends": "Hujung Minggu & Cuti: 9 PG – 12 MLM"
       },
       "contact": {
         "title": "Hubungi",
-        "bookings": "Tempahan: 011-6868 8508",
+        "bookings": "Tempahan Gelanggang: 011-6868 8508",
         "lessons": "Kelas: 011-7575 8508"
       }
-    },
-    "cta": {
-      "title": "Ingin tingkatkan permainan anda?",
-      "description": "Bimbingan profesional tersedia. Jurulatih bertauliah BAM dengan Sijil Tahap 1.",
-      "button": "Lihat Kelas"
     },
     "footer": "© 2025 TZH Sports Centre"
   },
@@ -139,10 +227,20 @@
   },
   "lessons": {
     "title": "Kelas Badminton",
-    "subtitle": "Bimbingan profesional dengan jurulatih bertauliah BAM",
+    "subtitle": "Bimbingan profesional. Bertauliah oleh Persatuan Badminton Malaysia",
+    "types": {
+      "1-to-1": "1-ke-1 Persendirian",
+      "1-to-2": "1-ke-2",
+      "1-to-3": "1-ke-3",
+      "1-to-4": "1-ke-4",
+      "small-kids-beginners": "Kumpulan Kecil Kanak-kanak (Pemula)",
+      "large-kids": "Kumpulan Besar Kanak-kanak",
+      "large-kids-intermediate": "Kumpulan Besar Kanak-kanak (Pertengahan)",
+      "small-adult-group": "Kumpulan Kecil Dewasa"
+    },
     "coach": {
       "title": "Jurulatih Kami",
-      "certification": "Bertauliah BAM Tahap 1",
+      "certification": "Bertauliah oleh Persatuan Badminton Malaysia",
       "experience": "Tahun Pengalaman",
       "bam": "Persatuan Badminton Malaysia"
     },
@@ -155,11 +253,24 @@
       "group": "Kelas Berkumpulan",
       "perSession": "setiap sesi",
       "perMonth": "setiap bulan",
+      "perPerson": "seorang",
+      "total": "Jumlah",
+      "hours": "jam",
       "duration": "{minutes} minit",
       "popular": "Popular",
       "student": "pelajar",
       "students": "pelajar",
-      "maxStudents": "Maks {count} pelajar"
+      "maxStudents": "Maks {count} pelajar",
+      "viewDetails": "Butiran"
+    },
+    "modal": {
+      "benefits": "Kelebihan",
+      "pricing": "Harga",
+      "perPerson": "seorang",
+      "total": "Jumlah",
+      "perPersonValue": "RM{price} seorang",
+      "sessionsPerMonth": "sesi/bulan",
+      "requestTrial": "Mohon Kelas Percubaan"
     },
     "features": {
       "courtBooking": {
@@ -347,6 +458,15 @@
     },
     "enterTime": "Masukkan masa pilihan anda (cth., 10:00 atau 14:30):",
     "invalidTimeFormat": "Sila masukkan masa dalam format JJ:MM (cth., 10:00 atau 14:30)",
+    "counterPropose": {
+      "title": "Cadang Masa Lain",
+      "description": "Cadangkan tarikh dan masa alternatif untuk kelas anda.",
+      "date": "Tarikh",
+      "time": "Masa",
+      "selectTime": "Pilih masa",
+      "yourSuggestion": "Cadangan anda",
+      "submit": "Hantar Cadangan"
+    },
     "timetable": {
       "title": "Jadual Mingguan",
       "time": "Masa",
@@ -357,9 +477,20 @@
       "booked": "Ditempah",
       "myLesson": "Kelas Anda",
       "myPending": "Tertunda",
+      "coachSuggested": "Cadangan Jurulatih",
+      "actionNeeded": "Ketik untuk respons",
       "unavailable": "Tidak Tersedia",
       "clickToBook": "Klik pada slot hijau untuk memohon kelas",
-      "fetchError": "Gagal memuatkan jadual"
+      "fetchError": "Gagal memuatkan jadual",
+      "suggestionDialog": {
+        "title": "Jurulatih Cadang Masa Baru",
+        "description": "Jurulatih anda telah mencadangkan masa lain untuk kelas anda.",
+        "yourRequest": "Permohonan anda",
+        "suggested": "Dicadangkan",
+        "coachNote": "Nota dari jurulatih",
+        "accept": "Terima Masa Ini",
+        "suggestDifferent": "Cadang Masa Lain"
+      }
     }
   },
   "admin": {

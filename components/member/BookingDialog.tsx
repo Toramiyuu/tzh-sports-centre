@@ -27,6 +27,7 @@ import {
   getLessonPrice,
   getDefaultDuration,
   getDurationOptions,
+  getPricePerPerson,
 } from '@/lib/lesson-config'
 import { formatDateString } from '@/lib/timetable-utils'
 
@@ -62,6 +63,7 @@ export function BookingDialog({
 }: BookingDialogProps) {
   const t = useTranslations('member.dialog')
   const tCommon = useTranslations('member')
+  const tLessons = useTranslations('lessons.types')
 
   const [lessonType, setLessonType] = useState('')
   const [duration, setDuration] = useState<number>(1.5)
@@ -143,7 +145,7 @@ export function BookingDialog({
               <SelectContent>
                 {MEMBER_LESSON_TYPES.map((type) => (
                   <SelectItem key={type.value} value={type.value}>
-                    {type.label}
+                    {tLessons(type.value)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -165,6 +167,7 @@ export function BookingDialog({
                   {durationOptions.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value.toString()}>
                       {opt.label} - RM{opt.price}
+                      {opt.pricePerPerson && ` (RM${opt.pricePerPerson}/person)`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -178,15 +181,34 @@ export function BookingDialog({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">
-                    {selectedTypeConfig.label} - {duration} hours
+                    {tLessons(lessonType)} - {duration} {t('hours', { count: duration })}
                   </p>
                   <p className="text-xs text-gray-500">
                     Max {selectedTypeConfig.maxStudents} student(s)
                   </p>
                 </div>
-                <p className="text-lg font-bold text-blue-600">
-                  RM{price}
-                </p>
+                <div className="text-right">
+                  {(() => {
+                    const perPersonPrice = getPricePerPerson(lessonType, duration)
+                    if (perPersonPrice && selectedTypeConfig.maxStudents > 1) {
+                      return (
+                        <>
+                          <p className="text-lg font-bold text-blue-600">
+                            RM{perPersonPrice} / person
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            (Total: RM{price})
+                          </p>
+                        </>
+                      )
+                    }
+                    return (
+                      <p className="text-lg font-bold text-blue-600">
+                        RM{price}
+                      </p>
+                    )
+                  })()}
+                </div>
               </div>
             </div>
           )}

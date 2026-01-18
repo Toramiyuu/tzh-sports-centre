@@ -281,7 +281,8 @@ export function MemberDashboard() {
     )
   }
 
-  if (isMember === false) {
+  // Show "members only" message if not a confirmed member (false or null)
+  if (isMember !== true) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="text-center">

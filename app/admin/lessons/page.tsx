@@ -55,6 +55,7 @@ import {
   getDefaultDuration,
   isMonthlyBilling,
   getDurationOptions,
+  getPricePerPerson,
   type LessonTypeConfig,
 } from '@/lib/lesson-config'
 
@@ -1589,6 +1590,7 @@ export default function AdminLessonsPage() {
                       {lessonType && getDurationOptions(lessonType).map((opt) => (
                         <SelectItem key={opt.value} value={opt.value.toString()}>
                           {opt.label} - RM{opt.price}
+                          {opt.pricePerPerson && ` (RM${opt.pricePerPerson}/person)`}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -1605,10 +1607,30 @@ export default function AdminLessonsPage() {
                     <span className="text-sm text-gray-600">
                       {isMonthlyBilling(lessonType) ? 'Monthly Price' : 'Session Price'}
                     </span>
-                    <p className="font-bold text-xl text-blue-700">
-                      RM{getLessonPrice(lessonType, lessonDuration)}
-                      {isMonthlyBilling(lessonType) && <span className="text-sm font-normal">/month</span>}
-                    </p>
+                    {(() => {
+                      const typeConfig = getLessonType(lessonType)
+                      const perPersonPrice = getPricePerPerson(lessonType, lessonDuration)
+                      const totalPrice = getLessonPrice(lessonType, lessonDuration)
+                      const showPerPerson = perPersonPrice && typeConfig && typeConfig.maxStudents > 1 && !isMonthlyBilling(lessonType)
+
+                      if (showPerPerson) {
+                        return (
+                          <div>
+                            <p className="font-bold text-xl text-blue-700">
+                              RM{perPersonPrice} <span className="text-sm font-normal">/ person</span>
+                            </p>
+                            <p className="text-xs text-gray-500">(Total: RM{totalPrice})</p>
+                          </div>
+                        )
+                      }
+
+                      return (
+                        <p className="font-bold text-xl text-blue-700">
+                          RM{totalPrice}
+                          {isMonthlyBilling(lessonType) && <span className="text-sm font-normal">/month</span>}
+                        </p>
+                      )
+                    })()}
                   </div>
                   <div className="text-right text-sm text-gray-500">
                     <p>Max {getLessonType(lessonType)?.maxStudents} student(s)</p>

@@ -35,41 +35,129 @@
   },
   "home": {
     "hero": {
-      "subtitle": "Court Booking",
+      "subtitle": "Court Rental & Coaching",
       "title": "TZH Sports Centre",
-      "description": "Badminton and pickleball courts available for booking. No account required.",
+      "description": "Badminton and pickleball courts in Ayer Itam. Book online or walk in.",
       "bookCourt": "Book a Court",
       "viewLessons": "View Lessons"
     },
+    "pricing": {
+      "from": "From",
+      "openDaily": "Open Daily",
+      "courts": "4 Courts",
+      "courtsLabel": "Courts",
+      "perHour": "per hour",
+      "weekdaysStart": "Weekdays",
+      "badminton": {
+        "title": "Badminton",
+        "offPeak": "9 AM – 6 PM",
+        "peak": "After 6 PM"
+      },
+      "pickleball": {
+        "title": "Pickleball",
+        "rate": "All hours",
+        "minimum": "Minimum 2 hours per booking"
+      },
+      "coaching": {
+        "title": "Coaching",
+        "from": "From",
+        "note": "1-to-1, 1.5 hours"
+      },
+      "noHiddenFees": "No hidden fees. Pay only for what you choose.",
+      "hours": {
+        "weekdays": "Weekdays: 3 PM – 12 AM",
+        "weekends": "Weekends & Holidays: 9 AM – 12 AM"
+      }
+    },
+    "services": {
+      "title": "What We Offer",
+      "subtitle": "Court rental and coaching in Ayer Itam, Penang",
+      "badminton": {
+        "title": "Badminton Court Rental",
+        "desc": "4 courts available. Book by the hour, no membership needed."
+      },
+      "pickleball": {
+        "title": "Pickleball Court Rental",
+        "desc": "Courts available daily. 2-hour minimum booking."
+      },
+      "coaching": {
+        "title": "Badminton Coaching",
+        "desc": "Private and group lessons for all ages and skill levels."
+      }
+    },
     "sports": {
-      "title": "Available Sports",
-      "courts": "{count} courts",
-      "perHour": "RM{price}/hr",
-      "minHours": "({hours}hr min)",
       "badminton": "Badminton",
       "pickleball": "Pickleball"
     },
+    "availableSports": {
+      "title": "Available Sports",
+      "badminton": {
+        "name": "Badminton",
+        "courts": "4 courts",
+        "price": "RM15/hr"
+      },
+      "pickleball": {
+        "name": "Pickleball",
+        "courts": "4 courts",
+        "price": "RM25/hr (2hr min)"
+      }
+    },
     "info": {
       "hours": {
-        "title": "Operating Hours",
-        "weekdays": "Weekdays: 3 PM - 12 AM",
-        "weekends": "Weekends & Public Holidays: 9 AM - 12 AM"
+        "title": "Opening Hours",
+        "weekdays": "Weekdays: 3 PM – 12 AM",
+        "weekends": "Weekends & Holidays: 9 AM – 12 AM"
       },
-      "location": {
-        "title": "Location",
-        "address": "Jalan Sekolah La Salle, Ayer Itam",
+      "contact": {
+        "title": "Contact"
+      }
+    },
+    "whyChooseUs": {
+      "title": "Why Choose Us",
+      "clean": {
+        "title": "Courts are cleaned often",
+        "desc": "We clean the court regularly so it stays dry and not slippery."
+      },
+      "ventilation": {
+        "title": "Good ventilation",
+        "desc": "Fans and windows keep airflow moving during games."
+      },
+      "lighting": {
+        "title": "Comfortable lighting",
+        "desc": "Lighting is placed from the side so it's easier on the eyes."
+      },
+      "nets": {
+        "title": "Nets are set properly",
+        "desc": "Badminton nets are set at the correct height."
+      },
+      "tidy": {
+        "title": "Clean surroundings",
+        "desc": "The court and surrounding area are kept tidy."
+      },
+      "snacks": {
+        "title": "Drinks and snacks available",
+        "desc": "We sell drinks and snacks on-site."
+      },
+      "cta": "Book a Court"
+    },
+    "location": {
+      "title": "Where to Find Us",
+      "address": {
+        "title": "Address",
+        "line1": "Jalan Sekolah La Salle",
+        "line2": "11400 Ayer Itam, Penang",
         "directions": "Get Directions"
+      },
+      "hours": {
+        "title": "Opening Hours",
+        "weekdays": "Weekdays: 3 PM – 12 AM",
+        "weekends": "Weekends & Holidays: 9 AM – 12 AM"
       },
       "contact": {
         "title": "Contact",
         "bookings": "Court Bookings: 011-6868 8508",
         "lessons": "Lessons: 011-7575 8508"
       }
-    },
-    "cta": {
-      "title": "Want to improve your game?",
-      "description": "Professional coaching available. BAM Certified coach with Level 1 Certification.",
-      "button": "View Lessons"
     },
     "footer": "© 2025 TZH Sports Centre"
   },
@@ -139,10 +227,20 @@
   },
   "lessons": {
     "title": "Badminton Lessons",
-    "subtitle": "Professional coaching with BAM certified instructors",
+    "subtitle": "Professional coaching. Certified by Badminton Association of Malaysia",
+    "types": {
+      "1-to-1": "1-to-1 Private",
+      "1-to-2": "1-to-2",
+      "1-to-3": "1-to-3",
+      "1-to-4": "1-to-4",
+      "small-kids-beginners": "Small Group Kids (Beginners)",
+      "large-kids": "Large Group Kids",
+      "large-kids-intermediate": "Large Group Kids (Intermediate)",
+      "small-adult-group": "Small Adult Group"
+    },
     "coach": {
       "title": "Our Coach",
-      "certification": "BAM Level 1 Certified",
+      "certification": "Certified by Badminton Association of Malaysia",
       "experience": "Years of Experience",
       "bam": "Badminton Association of Malaysia"
     },
@@ -155,11 +253,24 @@
       "group": "Group Lesson",
       "perSession": "per session",
       "perMonth": "per month",
+      "perPerson": "person",
+      "total": "Total",
+      "hours": "hours",
       "duration": "{minutes} minutes",
       "popular": "Popular",
       "student": "student",
       "students": "students",
-      "maxStudents": "Max {count} students"
+      "maxStudents": "Max {count} students",
+      "viewDetails": "Details"
+    },
+    "modal": {
+      "benefits": "Benefits",
+      "pricing": "Pricing",
+      "perPerson": "person",
+      "total": "Total",
+      "perPersonValue": "RM{price} per person",
+      "sessionsPerMonth": "sessions/month",
+      "requestTrial": "Request Trial Lesson"
     },
     "features": {
       "courtBooking": {

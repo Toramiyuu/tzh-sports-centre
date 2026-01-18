@@ -33,24 +33,38 @@ export function WeeklyTimetable({ onSlotSelect, onAcceptSuggestion, onCounterSug
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchWeeklyAvailability = useCallback(async (weekStart: Date) => {
+  const fetchWeeklyAvailability = useCallback(async (weekStart: Date, retryCount = 0) => {
     setLoading(true)
     setError(null)
+
+    const maxRetries = 2
 
     try {
       const startDateStr = formatDateString(weekStart)
       const res = await fetch(`/api/member/weekly-availability?startDate=${startDateStr}`)
 
       if (!res.ok) {
+        // Retry on server errors (database cold start)
+        if (res.status >= 500 && retryCount < maxRetries) {
+          console.log(`Retrying fetch (attempt ${retryCount + 2}/${maxRetries + 1})...`)
+          setTimeout(() => fetchWeeklyAvailability(weekStart, retryCount + 1), 1000)
+          return
+        }
         throw new Error('Failed to fetch availability')
       }
 
       const data: WeeklyAvailabilityResponse = await res.json()
       setAvailabilityData(data.days)
+      setLoading(false)
     } catch (err) {
       console.error('Error fetching weekly availability:', err)
+      // Retry on network errors
+      if (retryCount < maxRetries) {
+        console.log(`Retrying fetch (attempt ${retryCount + 2}/${maxRetries + 1})...`)
+        setTimeout(() => fetchWeeklyAvailability(weekStart, retryCount + 1), 1000)
+        return
+      }
       setError(t('fetchError') || 'Failed to load schedule')
-    } finally {
       setLoading(false)
     }
   }, [t])

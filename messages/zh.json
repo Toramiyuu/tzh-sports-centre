@@ -35,19 +35,72 @@
   },
   "home": {
     "hero": {
-      "subtitle": "球场预订",
+      "subtitle": "球场租用 & 培训",
       "title": "TZH 体育中心",
-      "description": "羽毛球和匹克球场开放预订，无需注册账户。",
+      "description": "亚依淡羽毛球和匹克球场。可在线预订或直接到场。",
       "bookCourt": "预订球场",
       "viewLessons": "查看课程"
     },
+    "pricing": {
+      "from": "起价",
+      "openDaily": "每天营业",
+      "courts": "4个球场",
+      "courtsLabel": "球场",
+      "perHour": "每小时",
+      "weekdaysStart": "平日开始",
+      "badminton": {
+        "title": "羽毛球",
+        "offPeak": "上午9点 – 下午6点",
+        "peak": "下午6点后"
+      },
+      "pickleball": {
+        "title": "匹克球",
+        "rate": "全天",
+        "minimum": "每次预订最少2小时"
+      },
+      "coaching": {
+        "title": "培训",
+        "from": "起价",
+        "note": "一对一，1.5小时"
+      },
+      "noHiddenFees": "无隐藏收费。只需支付您选择的项目。",
+      "hours": {
+        "weekdays": "平日: 下午3点 - 午夜12点",
+        "weekends": "周末及假日: 上午9点 - 午夜12点"
+      }
+    },
+    "services": {
+      "title": "我们提供",
+      "subtitle": "球场租用和培训服务",
+      "badminton": {
+        "title": "羽毛球场租用",
+        "desc": "4个球场可用。按小时预订，无需会员资格。"
+      },
+      "pickleball": {
+        "title": "匹克球场租用",
+        "desc": "每天开放。最少预订2小时。"
+      },
+      "coaching": {
+        "title": "羽毛球培训",
+        "desc": "提供私人和团体课程，适合各年龄和水平。"
+      }
+    },
     "sports": {
-      "title": "可用运动",
-      "courts": "{count} 个球场",
-      "perHour": "RM{price}/小时",
-      "minHours": "(最少{hours}小时)",
       "badminton": "羽毛球",
       "pickleball": "匹克球"
+    },
+    "availableSports": {
+      "title": "可用运动",
+      "badminton": {
+        "name": "羽毛球",
+        "courts": "4个球场",
+        "price": "RM15/小时"
+      },
+      "pickleball": {
+        "name": "匹克球",
+        "courts": "4个球场",
+        "price": "RM25/小时 (最少2小时)"
+      }
     },
     "info": {
       "hours": {
@@ -55,23 +108,57 @@
         "weekdays": "平日: 下午3点 - 午夜12点",
         "weekends": "周末及假日: 上午9点 - 午夜12点"
       },
-      "location": {
+      "contact": {
+        "title": "联系方式"
+      }
+    },
+    "whyChooseUs": {
+      "title": "为何选择我们",
+      "clean": {
+        "title": "球场经常清洁",
+        "desc": "我们定期清洁球场，保持干燥不滑。"
+      },
+      "ventilation": {
+        "title": "通风良好",
+        "desc": "风扇和窗户保持比赛时空气流通。"
+      },
+      "lighting": {
+        "title": "照明舒适",
+        "desc": "灯光从侧面照射，不刺眼。"
+      },
+      "nets": {
+        "title": "球网设置正确",
+        "desc": "羽毛球网设置在正确高度。"
+      },
+      "tidy": {
+        "title": "环境整洁",
+        "desc": "球场及周围环境保持整洁。"
+      },
+      "snacks": {
+        "title": "提供饮料和零食",
+        "desc": "现场售卖饮料和零食。"
+      },
+      "cta": "预订球场"
+    },
+    "location": {
+      "title": "我们的位置",
+      "address": {
         "title": "地址",
-        "address": "Jalan Sekolah La Salle, Ayer Itam",
+        "line1": "Jalan Sekolah La Salle",
+        "line2": "11400 Ayer Itam, 槟城",
         "directions": "获取路线"
+      },
+      "hours": {
+        "title": "营业时间",
+        "weekdays": "平日: 下午3点 - 午夜12点",
+        "weekends": "周末及假日: 上午9点 - 午夜12点"
       },
       "contact": {
         "title": "联系方式",
         "bookings": "球场预订: 011-6868 8508",
         "lessons": "课程咨询: 011-7575 8508"
       }
-    },
-    "cta": {
-      "title": "想提升您的球技吗？",
-      "description": "提供专业教练指导。BAM认证一级教练。",
-      "button": "查看课程"
-    },
-    "footer": "© 2025 TZH 体育中心"
+    }
   },
   "booking": {
     "title": "预订球场",
@@ -139,10 +226,20 @@
   },
   "lessons": {
     "title": "羽毛球课程",
-    "subtitle": "BAM认证教练专业指导",
+    "subtitle": "马来西亚羽毛球协会认证教练专业指导",
+    "types": {
+      "1-to-1": "一对一私教",
+      "1-to-2": "一对二",
+      "1-to-3": "一对三",
+      "1-to-4": "一对四",
+      "small-kids-beginners": "小组儿童班（初学）",
+      "large-kids": "大组儿童班",
+      "large-kids-intermediate": "大组儿童班（中级）",
+      "small-adult-group": "小组成人班"
+    },
     "coach": {
       "title": "我们的教练",
-      "certification": "BAM一级认证",
+      "certification": "马来西亚羽毛球协会认证",
       "experience": "年教学经验",
       "bam": "马来西亚羽毛球协会"
     },
@@ -155,11 +252,24 @@
       "group": "团体课程",
       "perSession": "每节",
       "perMonth": "每月",
+      "perPerson": "每人",
+      "total": "总计",
+      "hours": "小时",
       "duration": "{minutes} 分钟",
       "popular": "热门",
       "student": "学员",
       "students": "学员",
-      "maxStudents": "最多 {count} 名学员"
+      "maxStudents": "最多 {count} 名学员",
+      "viewDetails": "详情"
+    },
+    "modal": {
+      "benefits": "优势",
+      "pricing": "价格",
+      "perPerson": "每人",
+      "total": "总计",
+      "perPersonValue": "每人 RM{price}",
+      "sessionsPerMonth": "节课/月",
+      "requestTrial": "申请试课"
     },
     "features": {
       "courtBooking": {
@@ -704,6 +814,15 @@
     },
     "enterTime": "输入您偏好的时间（例如：10:00 或 14:30）：",
     "invalidTimeFormat": "请输入格式为 HH:MM 的时间（例如：10:00 或 14:30）",
+    "counterPropose": {
+      "title": "建议其他时间",
+      "description": "为您的课程建议其他日期和时间。",
+      "date": "日期",
+      "time": "时间",
+      "selectTime": "选择时间",
+      "yourSuggestion": "您的建议",
+      "submit": "发送建议"
+    },
     "timetable": {
       "title": "每周时间表",
       "time": "时间",
@@ -714,9 +833,20 @@
       "booked": "已预约",
       "myLesson": "您的课程",
       "myPending": "待确认",
+      "coachSuggested": "教练建议",
+      "actionNeeded": "点击回复",
       "unavailable": "不可用",
       "clickToBook": "点击绿色时段申请课程",
-      "fetchError": "加载时间表失败"
+      "fetchError": "加载时间表失败",
+      "suggestionDialog": {
+        "title": "教练建议新时间",
+        "description": "您的教练建议了其他课程时间。",
+        "yourRequest": "您的请求",
+        "suggested": "建议时间",
+        "coachNote": "教练留言",
+        "accept": "接受此时间",
+        "suggestDifferent": "建议其他时间"
+      }
     }
   }
 }
