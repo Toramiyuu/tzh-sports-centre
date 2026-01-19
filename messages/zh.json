@@ -464,6 +464,18 @@
       "title": "试课申请",
       "description": "查看和管理试课申请"
     },
+    "courtManagement": {
+      "title": "球场管理",
+      "description": "管理预订和付款",
+      "tabs": {
+        "bookings": "预订",
+        "payments": "付款"
+      }
+    },
+    "trainingOrders": {
+      "title": "训练订单",
+      "description": "管理球拍穿线订单"
+    },
     "bookings": {
       "title": "管理预订",
       "description": "查看和管理所有球场预订",
@@ -689,7 +701,8 @@
         "schedule": "时间表",
         "availability": "可用时间",
         "billing": "月度账单",
-        "requests": "请求"
+        "requests": "请求",
+        "trialRequests": "试课申请"
       },
       "scheduled": {
         "title": "已安排课程",
@@ -830,6 +843,8 @@
       "racketDetails": "球拍详情",
       "racketModel": "球拍型号",
       "selectRacket": "选择球拍型号",
+      "searchRacket": "搜索球拍...",
+      "noRacketFound": "未找到球拍",
       "otherRacket": "其他（请注明）",
       "customRacket": "自定义球拍型号",
       "customRacketPlaceholder": "输入您的球拍型号",

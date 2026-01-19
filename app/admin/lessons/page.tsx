@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { format } from 'date-fns'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -48,6 +48,7 @@ import {
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import TrialRequestsContent from '@/components/admin/TrialRequestsContent'
 import {
   LESSON_TYPES,
   getLessonType,
@@ -166,9 +167,10 @@ interface BookingSlot {
   recurringLabel?: string
 }
 
-export default function AdminLessonsPage() {
+function AdminLessonsContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const t = useTranslations('admin.lessonManagement')
   const tAdmin = useTranslations('admin')
   const tDays = useTranslations('days')
@@ -176,9 +178,11 @@ export default function AdminLessonsPage() {
   // Create translated DAYS_OF_WEEK array
   const DAYS_OF_WEEK = DAYS_OF_WEEK_KEYS.map(key => tDays(key))
 
+  // Get initial tab from URL params
+  const urlTab = searchParams.get('tab') as 'schedule' | 'availability' | 'billing' | 'requests' | null
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState<'schedule' | 'availability' | 'billing' | 'requests'>('schedule')
+  const [activeTab, setActiveTab] = useState<'schedule' | 'availability' | 'billing' | 'requests'>(urlTab || 'schedule')
 
   // Data states
   const [coachAvailability, setCoachAvailability] = useState<CoachAvailability[]>([])
@@ -844,6 +848,13 @@ export default function AdminLessonsPage() {
           <DollarSign className="w-4 h-4 mr-2" />
           {t('tabs.billing')}
         </Button>
+        <Button
+          variant={activeTab === 'requests' ? 'default' : 'outline'}
+          onClick={() => setActiveTab('requests')}
+        >
+          <Users className="w-4 h-4 mr-2" />
+          {t('tabs.trialRequests')}
+        </Button>
       </div>
 
       {loading ? (
@@ -1437,6 +1448,11 @@ export default function AdminLessonsPage() {
                 </CardContent>
               </Card>
             </div>
+          )}
+
+          {/* Trial Requests Tab */}
+          {activeTab === 'requests' && (
+            <TrialRequestsContent />
           )}
 
         </>
@@ -2164,5 +2180,17 @@ export default function AdminLessonsPage() {
         </DialogContent>
       </Dialog>
     </div>
+  )
+}
+
+export default function AdminLessonsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      </div>
+    }>
+      <AdminLessonsContent />
+    </Suspense>
   )
 }

@@ -561,6 +561,18 @@
       "title": "Trial Requests",
       "description": "View and manage trial lesson requests"
     },
+    "courtManagement": {
+      "title": "Court Management",
+      "description": "Manage bookings and payments",
+      "tabs": {
+        "bookings": "Bookings",
+        "payments": "Payments"
+      }
+    },
+    "trainingOrders": {
+      "title": "Training Orders",
+      "description": "Manage racket stringing orders"
+    },
     "bookings": {
       "title": "Booking Management",
       "description": "View, add, and cancel court bookings",
@@ -782,7 +794,8 @@
         "requests": "Requests",
         "scheduled": "Scheduled",
         "availability": "Availability",
-        "billing": "Monthly Billing"
+        "billing": "Monthly Billing",
+        "trialRequests": "Trial Requests"
       },
       "requests": {
         "title": "Lesson Requests",
@@ -927,6 +940,8 @@
       "racketDetails": "Racket Details",
       "racketModel": "Racket Model",
       "selectRacket": "Select racket model",
+      "searchRacket": "Search racket...",
+      "noRacketFound": "No racket found",
       "otherRacket": "Other (specify)",
       "customRacket": "Custom Racket Model",
       "customRacketPlaceholder": "Enter your racket model",

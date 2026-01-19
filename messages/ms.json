@@ -561,6 +561,18 @@
       "title": "Permohonan Percubaan",
       "description": "Lihat dan urus permohonan kelas percubaan"
     },
+    "courtManagement": {
+      "title": "Pengurusan Gelanggang",
+      "description": "Urus tempahan dan pembayaran",
+      "tabs": {
+        "bookings": "Tempahan",
+        "payments": "Pembayaran"
+      }
+    },
+    "trainingOrders": {
+      "title": "Pesanan Latihan",
+      "description": "Urus pesanan perkhidmatan tali raket"
+    },
     "bookings": {
       "title": "Pengurusan Tempahan",
       "description": "Lihat, tambah dan batal tempahan gelanggang",
@@ -782,7 +794,8 @@
         "requests": "Permohonan",
         "scheduled": "Dijadualkan",
         "availability": "Ketersediaan",
-        "billing": "Bil Bulanan"
+        "billing": "Bil Bulanan",
+        "trialRequests": "Permohonan Percubaan"
       },
       "requests": {
         "title": "Permohonan Kelas",
@@ -926,6 +939,8 @@
       "racketDetails": "Butiran Raket",
       "racketModel": "Model Raket",
       "selectRacket": "Pilih model raket",
+      "searchRacket": "Cari raket...",
+      "noRacketFound": "Raket tidak dijumpai",
       "otherRacket": "Lain-lain (nyatakan)",
       "customRacket": "Model Raket Tersuai",
       "customRacketPlaceholder": "Masukkan model raket anda",

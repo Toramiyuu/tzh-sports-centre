@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Shield, Calendar, Users, GraduationCap, Receipt, ClipboardList, Wrench } from 'lucide-react'
+import { Shield, Calendar, Users, GraduationCap, Wrench } from 'lucide-react'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
@@ -18,27 +18,17 @@ export default async function AdminPage() {
     redirect('/')
   }
 
+  // Row 1: Court Management, Lesson Management
+  // Row 2: Manage Members, Registered Accounts
+  // Row 3: Training Orders
   const adminFeatures = [
+    // Row 1
     {
-      titleKey: 'manageBookings.title',
-      descriptionKey: 'manageBookings.description',
+      titleKey: 'courtManagement.title',
+      descriptionKey: 'courtManagement.description',
       icon: Calendar,
-      href: '/admin/bookings',
+      href: '/admin/court-management',
       color: 'bg-blue-100 text-blue-600',
-    },
-    {
-      titleKey: 'accounts.title',
-      descriptionKey: 'accounts.description',
-      icon: Users,
-      href: '/admin/accounts',
-      color: 'bg-green-100 text-green-600',
-    },
-    {
-      titleKey: 'members.title',
-      descriptionKey: 'members.description',
-      icon: Users,
-      href: '/admin/members',
-      color: 'bg-purple-100 text-purple-600',
     },
     {
       titleKey: 'lessons.title',
@@ -47,23 +37,25 @@ export default async function AdminPage() {
       href: '/admin/lessons',
       color: 'bg-orange-100 text-orange-600',
     },
+    // Row 2
     {
-      titleKey: 'recurringPayments.title',
-      descriptionKey: 'recurringPayments.description',
-      icon: Receipt,
-      href: '/admin/manage-payments',
-      color: 'bg-yellow-100 text-yellow-600',
+      titleKey: 'members.title',
+      descriptionKey: 'members.description',
+      icon: Users,
+      href: '/admin/members',
+      color: 'bg-purple-100 text-purple-600',
     },
     {
-      titleKey: 'trialRequests.title',
-      descriptionKey: 'trialRequests.description',
-      icon: ClipboardList,
-      href: '/admin/trial-requests',
-      color: 'bg-pink-100 text-pink-600',
+      titleKey: 'accounts.title',
+      descriptionKey: 'accounts.description',
+      icon: Users,
+      href: '/admin/accounts',
+      color: 'bg-green-100 text-green-600',
     },
+    // Row 3
     {
-      titleKey: 'stringing.title',
-      descriptionKey: 'stringing.description',
+      titleKey: 'trainingOrders.title',
+      descriptionKey: 'trainingOrders.description',
       icon: Wrench,
       href: '/admin/stringing',
       color: 'bg-cyan-100 text-cyan-600',
