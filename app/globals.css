@@ -173,6 +173,7 @@
   .btn-press:active {
     transform: scale(0.97);
   }
+
 }
 
 @keyframes fadeIn {

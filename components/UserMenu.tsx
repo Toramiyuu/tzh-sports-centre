@@ -1,7 +1,7 @@
 'use client'
 
 import { signOut, useSession } from 'next-auth/react'
-import { User, LogOut, CalendarDays } from 'lucide-react'
+import { User, LogOut, CalendarDays, CircleDot } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -13,9 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useTranslations } from 'next-intl'
 
 export function UserMenu() {
   const { data: session } = useSession()
+  const t = useTranslations('nav')
 
   if (!session?.user) {
     return null
@@ -52,13 +54,19 @@ export function UserMenu() {
         <DropdownMenuItem asChild>
           <Link href="/dashboard" className="cursor-pointer">
             <CalendarDays className="mr-2 h-4 w-4" />
-            My Bookings
+            {t('myBookings')}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/profile" className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
-            Profile
+            {t('profile')}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/profile/racket" className="cursor-pointer">
+            <CircleDot className="mr-2 h-4 w-4" />
+            {t('myRacket')}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -67,7 +75,7 @@ export function UserMenu() {
           onClick={() => signOut({ callbackUrl: '/' })}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Sign out
+          {t('logout')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

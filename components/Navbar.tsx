@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
-import { CalendarDays, User, Menu, X, Shield, Receipt, GraduationCap } from 'lucide-react'
+import { CalendarDays, User, Menu, X, Shield, Receipt, GraduationCap, Wrench } from 'lucide-react'
 import { useState } from 'react'
 import { UserMenu } from '@/components/UserMenu'
 import { isAdmin } from '@/lib/admin'
@@ -17,7 +17,7 @@ export function Navbar() {
   const t = useTranslations('nav')
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -47,6 +47,13 @@ export function Navbar() {
             >
               <GraduationCap className="w-4 h-4" />
               {t('lessons')}
+            </Link>
+            <Link
+              href="/stringing"
+              className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
+            >
+              <Wrench className="w-4 h-4" />
+              {t('stringing')}
             </Link>
             {session?.user && (
               <Link
@@ -120,6 +127,13 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('lessons')}
+            </Link>
+            <Link
+              href="/stringing"
+              className="block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t('stringing')}
             </Link>
             {session?.user && (
               <Link

@@ -32,6 +32,8 @@ model User {
   lessonSessions    LessonSession[]    @relation("StudentLessons")
   lessonRequests    LessonRequest[]
   notifications     Notification[]
+  stringingOrders   StringingOrder[]
+  racketProfile     RacketProfile?
 
   // Profile & Account settings
   creditBalance         Float     @default(0) @map("credit_balance")
@@ -320,4 +322,93 @@ model TrialRequest {
   updatedAt           DateTime  @updatedAt @map("updated_at")
 
   @@map("trial_requests")
+}
+
+// Stringing service orders
+model StringingOrder {
+  id                    String    @id @default(cuid())
+  userId                String?   @map("user_id")
+  stringName            String    @map("string_name")
+  stringColor           String?   @map("string_color") // Selected color variant
+  price                 Int
+  customerName          String    @map("customer_name")
+  customerPhone         String    @map("customer_phone")
+  customerEmail         String?   @map("customer_email")
+  racketModel           String    @map("racket_model")
+  racketModelCustom     String?   @map("racket_model_custom")
+  tensionMain           Int       @map("tension_main")
+  tensionCross          Int       @map("tension_cross")
+  pickupDate            DateTime  @map("pickup_date")
+  notes                 String?
+  paymentMethod         String?   @map("payment_method")
+  paymentUserConfirmed  Boolean   @default(false) @map("payment_user_confirmed")
+  paymentStatus         String    @default("pending") @map("payment_status")
+  markedPaidBy          String?   @map("marked_paid_by")
+  markedPaidAt          DateTime? @map("marked_paid_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  user                  User?     @relation(fields: [userId], references: [id])
+
+  @@map("stringing_orders")
+}
+
+// String stock tracking (per color variant)
+model StringStock {
+  id              String    @id @default(cuid())
+  stringId        String    @map("string_id") // Matches string ID from stringing-config.ts
+  color           String    // Color variant (e.g., "Red", "Blue", "White")
+  quantity        Int       @default(0)
+  lowStockAlert   Int       @default(3) @map("low_stock_alert") // Alert when stock falls below this
+  lastUpdatedBy   String?   @map("last_updated_by") // Admin email who last updated
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  logs            StringStockLog[]
+
+  @@unique([stringId, color])
+  @@map("string_stocks")
+}
+
+// Stock change history log
+model StringStockLog {
+  id              String    @id @default(cuid())
+  stockId         String    @map("stock_id")
+  previousQty     Int       @map("previous_qty")
+  newQty          Int       @map("new_qty")
+  changeType      String    @map("change_type") // order, manual_adjust, restock
+  reason          String?   // Optional reason/notes for manual adjustments
+  orderId         String?   @map("order_id") // Link to stringing order if applicable
+  changedBy       String?   @map("changed_by") // Admin email or "system" for auto
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  stock           StringStock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@map("string_stock_logs")
+}
+
+// User's racket profile for stringing preferences
+model RacketProfile {
+  id              String    @id @default(cuid())
+  userId          String    @unique @map("user_id")
+
+  // Required fields
+  brand           String    // e.g. "VICTOR", "YONEX"
+  model           String    // e.g. "ARS 100X Ultra"
+  color           String    // e.g. "Pink"
+  weight          String    // e.g. "3U", "4U", "5U"
+
+  // Optional fields
+  swingWeight     String?   @map("swing_weight") // kg.cm value from swing weight machine
+  shaftNumber     String?   @map("shaft_number") // Racket shaft number
+  tensionMain     Int?      @map("tension_main") // Preferred main string tension in lbs
+  tensionCross    Int?      @map("tension_cross") // Preferred cross string tension in lbs
+  purchasedDate   DateTime? @map("purchased_date") // When racket was purchased
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("racket_profiles")
 }

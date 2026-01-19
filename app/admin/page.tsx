@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Shield, Calendar, Users, GraduationCap, Receipt, ClipboardList } from 'lucide-react'
+import { Shield, Calendar, Users, GraduationCap, Receipt, ClipboardList, Wrench } from 'lucide-react'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
@@ -60,6 +60,13 @@ export default async function AdminPage() {
       icon: ClipboardList,
       href: '/admin/trial-requests',
       color: 'bg-pink-100 text-pink-600',
+    },
+    {
+      titleKey: 'stringing.title',
+      descriptionKey: 'stringing.description',
+      icon: Wrench,
+      href: '/admin/stringing',
+      color: 'bg-cyan-100 text-cyan-600',
     },
   ]
 
