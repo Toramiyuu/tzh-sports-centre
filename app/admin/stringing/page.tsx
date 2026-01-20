@@ -8,18 +8,24 @@ import { format } from 'date-fns'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   ArrowLeft,
   Calendar,
   CheckCircle2,
   Clock,
+  Image,
   Loader2,
   MessageCircle,
   Package,
   Phone,
   RefreshCw,
   Wrench,
+  Tag,
+  Play,
+  Check,
+  PackageCheck,
 } from 'lucide-react'
 import {
   Select,
@@ -48,9 +54,16 @@ interface StringingOrder {
   paymentMethod: string | null
   paymentUserConfirmed: boolean
   paymentStatus: string
+  paymentScreenshotUrl: string | null
   markedPaidBy: string | null
   markedPaidAt: string | null
   createdAt: string
+  jobUid: string | null
+  status: string
+  receivedAt: string | null
+  inProgressAt: string | null
+  readyAt: string | null
+  collectedAt: string | null
   user: {
     id: string
     name: string
@@ -58,6 +71,13 @@ interface StringingOrder {
     phone: string
   } | null
 }
+
+const ORDER_STATUSES = [
+  { key: 'RECEIVED', label: 'Received', color: 'bg-blue-100 text-blue-700' },
+  { key: 'IN_PROGRESS', label: 'In Progress', color: 'bg-yellow-100 text-yellow-700' },
+  { key: 'READY', label: 'Ready', color: 'bg-green-100 text-green-700' },
+  { key: 'COLLECTED', label: 'Collected', color: 'bg-gray-100 text-gray-700' },
+]
 
 interface Stats {
   totalOrders: number
@@ -77,6 +97,10 @@ export default function AdminStringingPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [timeFilter, setTimeFilter] = useState('all')
   const [markingPaid, setMarkingPaid] = useState<string | null>(null)
+  const [editingJobUid, setEditingJobUid] = useState<string | null>(null)
+  const [jobUidInput, setJobUidInput] = useState('')
+  const [savingJobUid, setSavingJobUid] = useState(false)
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
 
   const userIsAdmin = isAdmin(session?.user?.email)
 
@@ -125,6 +149,71 @@ export default function AdminStringingPage() {
     } finally {
       setMarkingPaid(null)
     }
+  }
+
+  const handleAssignJobUid = async (orderId: string) => {
+    if (!jobUidInput.trim()) {
+      toast.error('Please enter a tracking number')
+      return
+    }
+
+    try {
+      setSavingJobUid(true)
+      const res = await fetch('/api/admin/stringing', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, action: 'assignJobUid', jobUid: jobUidInput.trim().toUpperCase() }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'Failed to assign tracking number')
+
+      toast.success('Tracking number assigned')
+      setEditingJobUid(null)
+      setJobUidInput('')
+      fetchOrders()
+    } catch (error) {
+      console.error('Error assigning job UID:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to assign tracking number')
+    } finally {
+      setSavingJobUid(false)
+    }
+  }
+
+  const handleUpdateStatus = async (orderId: string, newStatus: string) => {
+    try {
+      setUpdatingStatus(orderId)
+      const res = await fetch('/api/admin/stringing', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, action: 'updateStatus', status: newStatus }),
+      })
+
+      if (!res.ok) throw new Error('Failed to update status')
+
+      toast.success(`Status updated to ${newStatus.replace('_', ' ')}`)
+      fetchOrders()
+    } catch (error) {
+      console.error('Error updating status:', error)
+      toast.error('Failed to update status')
+    } finally {
+      setUpdatingStatus(null)
+    }
+  }
+
+  const getNextStatus = (currentStatus: string) => {
+    const statusOrder = ['RECEIVED', 'IN_PROGRESS', 'READY', 'COLLECTED']
+    const currentIndex = statusOrder.indexOf(currentStatus)
+    if (currentIndex < statusOrder.length - 1) {
+      return statusOrder[currentIndex + 1]
+    }
+    return null
+  }
+
+  const getOrderStatusBadge = (status: string) => {
+    const statusInfo = ORDER_STATUSES.find(s => s.key === status)
+    if (!statusInfo) return null
+    return <Badge className={statusInfo.color}>{statusInfo.label}</Badge>
   }
 
   const getStatusBadge = (order: StringingOrder) => {
@@ -268,9 +357,79 @@ export default function AdminStringingPage() {
                       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                         {/* Order Info */}
                         <div className="space-y-3 flex-1">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 flex-wrap">
                             <h3 className="font-semibold text-lg">{order.customerName}</h3>
                             {getStatusBadge(order)}
+                            {order.jobUid && getOrderStatusBadge(order.status)}
+                          </div>
+
+                          {/* Tracking Number Section */}
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <Tag className="w-4 h-4 text-gray-500" />
+                                <span className="text-sm text-gray-500">Tracking #:</span>
+                                {order.jobUid ? (
+                                  <span className="font-mono font-bold text-blue-600">{order.jobUid}</span>
+                                ) : editingJobUid === order.id ? (
+                                  <div className="flex items-center gap-2">
+                                    <Input
+                                      value={jobUidInput}
+                                      onChange={(e) => setJobUidInput(e.target.value.toUpperCase())}
+                                      placeholder="e.g., ABC"
+                                      className="w-24 h-8 text-sm font-mono uppercase"
+                                      maxLength={10}
+                                    />
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleAssignJobUid(order.id)}
+                                      disabled={savingJobUid}
+                                    >
+                                      {savingJobUid ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Save'}
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => { setEditingJobUid(null); setJobUidInput(''); }}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setEditingJobUid(order.id)}
+                                  >
+                                    Assign
+                                  </Button>
+                                )}
+                              </div>
+                              {order.jobUid && order.status !== 'COLLECTED' && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    const nextStatus = getNextStatus(order.status)
+                                    if (nextStatus) handleUpdateStatus(order.id, nextStatus)
+                                  }}
+                                  disabled={updatingStatus === order.id}
+                                  className="bg-blue-600 hover:bg-blue-700"
+                                >
+                                  {updatingStatus === order.id ? (
+                                    <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                                  ) : order.status === 'RECEIVED' ? (
+                                    <Play className="w-3 h-3 mr-1" />
+                                  ) : order.status === 'IN_PROGRESS' ? (
+                                    <Check className="w-3 h-3 mr-1" />
+                                  ) : (
+                                    <PackageCheck className="w-3 h-3 mr-1" />
+                                  )}
+                                  {order.status === 'RECEIVED' && 'Start'}
+                                  {order.status === 'IN_PROGRESS' && 'Ready'}
+                                  {order.status === 'READY' && 'Collected'}
+                                </Button>
+                              )}
+                            </div>
                           </div>
 
                           <div className="grid sm:grid-cols-2 gap-4 text-sm">
@@ -346,6 +505,18 @@ export default function AdminStringingPage() {
                               )}
                               {t('admin.markPaid')}
                             </Button>
+                          )}
+                          {order.paymentScreenshotUrl && (
+                            <a
+                              href={order.paymentScreenshotUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Button variant="outline" className="w-full bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100">
+                                <Image className="w-4 h-4 mr-2" />
+                                View Receipt
+                              </Button>
+                            </a>
                           )}
                           <a
                             href={formatWhatsAppLink(order.customerPhone)}

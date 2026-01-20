@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PhoneInput } from '@/components/ui/phone-input'
-import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Smartphone, MessageCircle, Download, CheckCircle2 } from 'lucide-react'
+import { CalendarDays, Clock, CreditCard, FlaskConical, Loader2, User, Smartphone, MessageCircle, Download, CheckCircle2, ImagePlus, X } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import {
   Dialog,
@@ -135,6 +135,13 @@ function BookingPageContent() {
   const [, setDuitNowBookingIds] = useState<string[]>([])
   const [duitNowHasPaid, setDuitNowHasPaid] = useState(false)
 
+  // Receipt upload state
+  const [tngReceiptFile, setTngReceiptFile] = useState<File | null>(null)
+  const [tngReceiptPreview, setTngReceiptPreview] = useState<string | null>(null)
+  const [duitNowReceiptFile, setDuitNowReceiptFile] = useState<File | null>(null)
+  const [duitNowReceiptPreview, setDuitNowReceiptPreview] = useState<string | null>(null)
+  const [uploadingReceipt, setUploadingReceipt] = useState(false)
+
   // Download QR code to gallery
   const downloadQrCode = async (qrType: 'tng' | 'duitnow') => {
     const imagePath = qrType === 'tng' ? '/images/tng-qr.png' : '/images/duitnow-qr.png'
@@ -154,6 +161,68 @@ function BookingPageContent() {
       toast.success('QR code saved to your device!')
     } catch (_err) {
       toast.error('Failed to download QR code')
+    }
+  }
+
+  // Receipt upload handlers
+  const handleReceiptSelect = (e: React.ChangeEvent<HTMLInputElement>, type: 'tng' | 'duitnow') => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error(t('invalidFileType') || 'Invalid file type. Please upload an image.')
+      return
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(t('fileTooLarge') || 'File too large. Maximum size is 5MB.')
+      return
+    }
+
+    const previewUrl = URL.createObjectURL(file)
+
+    if (type === 'tng') {
+      setTngReceiptFile(file)
+      setTngReceiptPreview(previewUrl)
+    } else {
+      setDuitNowReceiptFile(file)
+      setDuitNowReceiptPreview(previewUrl)
+    }
+  }
+
+  const removeReceipt = (type: 'tng' | 'duitnow') => {
+    if (type === 'tng') {
+      if (tngReceiptPreview) URL.revokeObjectURL(tngReceiptPreview)
+      setTngReceiptFile(null)
+      setTngReceiptPreview(null)
+    } else {
+      if (duitNowReceiptPreview) URL.revokeObjectURL(duitNowReceiptPreview)
+      setDuitNowReceiptFile(null)
+      setDuitNowReceiptPreview(null)
+    }
+  }
+
+  const uploadReceipt = async (file: File): Promise<string | null> => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const res = await fetch('/api/upload/receipt', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        throw new Error('Upload failed')
+      }
+
+      const data = await res.json()
+      return data.url
+    } catch (error) {
+      console.error('Error uploading receipt:', error)
+      return null
     }
   }
 
@@ -423,6 +492,19 @@ function BookingPageContent() {
     setBooking(true)
 
     try {
+      // Upload receipt if provided
+      let receiptUrl: string | null = null
+      if (tngReceiptFile) {
+        setUploadingReceipt(true)
+        receiptUrl = await uploadReceipt(tngReceiptFile)
+        setUploadingReceipt(false)
+        if (!receiptUrl) {
+          toast.error(t('uploadFailed') || 'Failed to upload receipt. Please try again.')
+          setBooking(false)
+          return
+        }
+      }
+
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -440,6 +522,7 @@ function BookingPageContent() {
           guestEmail: guestEmail.trim() || session?.user?.email,
           paymentMethod: 'tng', // Mark as TNG payment
           paymentUserConfirmed: true, // User confirmed they have paid via toggle
+          receiptUrl,
         }),
       })
 
@@ -500,6 +583,19 @@ function BookingPageContent() {
     setBooking(true)
 
     try {
+      // Upload receipt if provided
+      let receiptUrl: string | null = null
+      if (duitNowReceiptFile) {
+        setUploadingReceipt(true)
+        receiptUrl = await uploadReceipt(duitNowReceiptFile)
+        setUploadingReceipt(false)
+        if (!receiptUrl) {
+          toast.error(t('uploadFailed') || 'Failed to upload receipt. Please try again.')
+          setBooking(false)
+          return
+        }
+      }
+
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -517,6 +613,7 @@ function BookingPageContent() {
           guestEmail: guestEmail.trim() || session?.user?.email,
           paymentMethod: 'duitnow', // Mark as DuitNow payment
           paymentUserConfirmed: true, // User confirmed they have paid via toggle
+          receiptUrl,
         }),
       })
 
@@ -1076,22 +1173,49 @@ function BookingPageContent() {
                   </div>
                 </div>
 
-                {/* Step 6: WhatsApp Screenshot */}
-                <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                  <div className="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">6</div>
-                  <div>
-                    <p className="font-medium text-gray-900">Send Screenshot via WhatsApp</p>
-                    <p className="text-sm text-gray-600 mb-2">Send your payment screenshot to:</p>
-                    <a
-                      href="https://wa.me/60116868508"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      011-6868 8508
-                    </a>
+                {/* Step 6: Upload Receipt */}
+                <div className="bg-blue-50 rounded-xl p-4 space-y-3 border border-blue-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">{t('uploadReceipt') || 'Upload Payment Receipt'}</h4>
+                      <p className="text-sm text-gray-600">{t('uploadReceiptDesc') || 'Upload a screenshot of your payment confirmation for faster verification.'}</p>
+                    </div>
                   </div>
+
+                  {tngReceiptPreview ? (
+                    <div className="relative">
+                      <img
+                        src={tngReceiptPreview}
+                        alt="Receipt preview"
+                        className="w-full max-h-48 object-contain rounded-lg border border-gray-200"
+                      />
+                      <button
+                        onClick={() => removeReceipt('tng')}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
+                        <CheckCircle2 className="w-4 h-4" />
+                        {t('receiptUploaded') || 'Receipt uploaded'}
+                      </p>
+                    </div>
+                  ) : (
+                    <label className="block cursor-pointer">
+                      <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-500 hover:bg-blue-50/50 transition-colors">
+                        <ImagePlus className="w-10 h-10 mx-auto text-blue-400 mb-2" />
+                        <p className="text-sm font-medium text-gray-700">{t('tapToUpload') || 'Tap to upload receipt'}</p>
+                        <p className="text-xs text-gray-500 mt-1">{t('maxFileSize') || 'Max 5MB (JPG, PNG)'}</p>
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleReceiptSelect(e, 'tng')}
+                      />
+                    </label>
+                  )}
                 </div>
               </div>
 
@@ -1121,12 +1245,12 @@ function BookingPageContent() {
                 className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed'}`}
                 size="lg"
                 onClick={handleTngBookingConfirm}
-                disabled={!tngHasPaid || booking}
+                disabled={!tngHasPaid || booking || uploadingReceipt}
               >
-                {booking ? (
+                {booking || uploadingReceipt ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Creating Booking...
+                    {uploadingReceipt ? (t('uploadingReceipt') || 'Uploading receipt...') : 'Creating Booking...'}
                   </>
                 ) : (
                   <>
@@ -1148,21 +1272,8 @@ function BookingPageContent() {
               <h3 className="text-xl font-bold text-gray-900">Booking Created!</h3>
               <p className="text-gray-600">
                 Your booking is pending payment verification.
+                {tngReceiptFile && <span className="block text-green-600 font-medium mt-1">Receipt uploaded!</span>}
               </p>
-              <div className="bg-yellow-50 rounded-xl p-4 text-left">
-                <p className="text-sm text-yellow-800">
-                  <strong>Reminder:</strong> Make sure you sent your payment screenshot to{' '}
-                  <a
-                    href="https://wa.me/60116868508"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline font-bold"
-                  >
-                    011-6868 8508
-                  </a>{' '}
-                  via WhatsApp.
-                </p>
-              </div>
               <Button className="w-full h-12 text-base" onClick={closeTngModal}>
                 Done
               </Button>
@@ -1262,22 +1373,49 @@ function BookingPageContent() {
                   </div>
                 </div>
 
-                {/* Step 6: WhatsApp Screenshot */}
-                <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                  <div className="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">6</div>
-                  <div>
-                    <p className="font-medium text-gray-900">Send Screenshot via WhatsApp</p>
-                    <p className="text-sm text-gray-600 mb-2">Send your payment screenshot to:</p>
-                    <a
-                      href="https://wa.me/60116868508"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      011-6868 8508
-                    </a>
+                {/* Step 6: Upload Receipt */}
+                <div className="bg-pink-50 rounded-xl p-4 space-y-3 border border-pink-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">{t('uploadReceipt') || 'Upload Payment Receipt'}</h4>
+                      <p className="text-sm text-gray-600">{t('uploadReceiptDesc') || 'Upload a screenshot of your payment confirmation for faster verification.'}</p>
+                    </div>
                   </div>
+
+                  {duitNowReceiptPreview ? (
+                    <div className="relative">
+                      <img
+                        src={duitNowReceiptPreview}
+                        alt="Receipt preview"
+                        className="w-full max-h-48 object-contain rounded-lg border border-gray-200"
+                      />
+                      <button
+                        onClick={() => removeReceipt('duitnow')}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
+                        <CheckCircle2 className="w-4 h-4" />
+                        {t('receiptUploaded') || 'Receipt uploaded'}
+                      </p>
+                    </div>
+                  ) : (
+                    <label className="block cursor-pointer">
+                      <div className="border-2 border-dashed border-pink-300 rounded-lg p-6 text-center hover:border-pink-500 hover:bg-pink-50/50 transition-colors">
+                        <ImagePlus className="w-10 h-10 mx-auto text-pink-400 mb-2" />
+                        <p className="text-sm font-medium text-gray-700">{t('tapToUpload') || 'Tap to upload receipt'}</p>
+                        <p className="text-xs text-gray-500 mt-1">{t('maxFileSize') || 'Max 5MB (JPG, PNG)'}</p>
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleReceiptSelect(e, 'duitnow')}
+                      />
+                    </label>
+                  )}
                 </div>
               </div>
 
@@ -1307,12 +1445,12 @@ function BookingPageContent() {
                 className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? 'bg-pink-600 hover:bg-pink-700' : 'bg-gray-300 cursor-not-allowed'}`}
                 size="lg"
                 onClick={handleDuitNowBookingConfirm}
-                disabled={!duitNowHasPaid || booking}
+                disabled={!duitNowHasPaid || booking || uploadingReceipt}
               >
-                {booking ? (
+                {booking || uploadingReceipt ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Creating Booking...
+                    {uploadingReceipt ? (t('uploadingReceipt') || 'Uploading receipt...') : 'Creating Booking...'}
                   </>
                 ) : (
                   <>
@@ -1334,21 +1472,8 @@ function BookingPageContent() {
               <h3 className="text-xl font-bold text-gray-900">Booking Created!</h3>
               <p className="text-gray-600">
                 Your booking is pending payment verification.
+                {duitNowReceiptFile && <span className="block text-green-600 font-medium mt-1">Receipt uploaded!</span>}
               </p>
-              <div className="bg-yellow-50 rounded-xl p-4 text-left">
-                <p className="text-sm text-yellow-800">
-                  <strong>Reminder:</strong> Make sure you sent your payment screenshot to{' '}
-                  <a
-                    href="https://wa.me/60116868508"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline font-bold"
-                  >
-                    011-6868 8508
-                  </a>{' '}
-                  via WhatsApp.
-                </p>
-              </div>
               <Button className="w-full h-12 text-base" onClick={closeDuitNowModal}>
                 Done
               </Button>

@@ -194,7 +194,16 @@
     "lesson": "Lesson",
     "holiday": "Holiday",
     "peakHours": "Peak Hours",
-    "offPeak": "Off-Peak"
+    "offPeak": "Off-Peak",
+    "uploadReceipt": "Upload Payment Receipt",
+    "uploadReceiptDesc": "Upload a screenshot of your payment confirmation for faster verification.",
+    "receiptUploaded": "Receipt uploaded",
+    "tapToUpload": "Tap to upload receipt",
+    "maxFileSize": "Max 5MB (JPG, PNG)",
+    "invalidFileType": "Invalid file type. Please upload an image.",
+    "fileTooLarge": "File too large. Maximum size is 5MB.",
+    "uploadFailed": "Failed to upload receipt. Please try again.",
+    "uploadingReceipt": "Uploading receipt..."
   },
   "profile": {
     "title": "My Profile",
@@ -964,7 +973,16 @@
       "requiredField": "This field is required",
       "useSavedRacket": "Use My Saved Racket",
       "savedRacketInfo": "Your saved racket: {brand} {model}",
-      "racketProfileApplied": "Racket details filled from your saved profile"
+      "racketProfileApplied": "Racket details filled from your saved profile",
+      "uploadReceipt": "Upload Payment Receipt",
+      "uploadReceiptDesc": "Upload a screenshot of your payment confirmation for faster verification.",
+      "receiptUploaded": "Receipt uploaded",
+      "tapToUpload": "Tap to upload receipt",
+      "maxFileSize": "Max 5MB (JPG, PNG)",
+      "invalidFileType": "Invalid file type. Please upload an image.",
+      "fileTooLarge": "File too large. Maximum size is 5MB.",
+      "uploadFailed": "Failed to upload receipt. Please try again.",
+      "uploadingReceipt": "Uploading receipt..."
     },
     "payment": {
       "tng": "Touch 'n Go",
@@ -1006,6 +1024,30 @@
       "pending": "Pending Payment",
       "paid": "Paid",
       "completed": "Completed"
+    },
+    "track": {
+      "title": "Track Your Order",
+      "subtitle": "Enter your order details to check the status of your stringing order",
+      "jobUid": "Order ID",
+      "jobUidPlaceholder": "e.g., ABC",
+      "phone": "Phone Number",
+      "phonePlaceholder": "e.g., 012-345 6789",
+      "trackButton": "Track Order",
+      "searching": "Searching...",
+      "fieldsRequired": "Please fill in all fields",
+      "error": "Failed to track order. Please try again.",
+      "notFound": "Order Not Found",
+      "notFoundDesc": "We couldn't find an order matching these details. Please check your Order ID and phone number.",
+      "orderStatus": "Order Status",
+      "jobUidLabel": "Order ID",
+      "orderDetails": "Order Details",
+      "string": "String",
+      "price": "Price",
+      "racket": "Racket",
+      "tension": "Tension",
+      "pickupDate": "Pickup Date",
+      "orderDate": "Order Date",
+      "notes": "Notes"
     }
   }
 }

@@ -193,7 +193,16 @@
     "lesson": "课程",
     "holiday": "假日",
     "peakHours": "高峰时段",
-    "offPeak": "非高峰"
+    "offPeak": "非高峰",
+    "uploadReceipt": "上传付款收据",
+    "uploadReceiptDesc": "上传付款截图以加快验证速度。",
+    "receiptUploaded": "收据已上传",
+    "tapToUpload": "点击上传收据",
+    "maxFileSize": "最大5MB (JPG, PNG)",
+    "invalidFileType": "文件类型无效。请上传图片。",
+    "fileTooLarge": "文件太大。最大尺寸为5MB。",
+    "uploadFailed": "上传收据失败。请重试。",
+    "uploadingReceipt": "正在上传收据..."
   },
   "profile": {
     "title": "我的资料",
@@ -867,7 +876,16 @@
       "requiredField": "此项为必填",
       "useSavedRacket": "使用我保存的球拍",
       "savedRacketInfo": "您保存的球拍：{brand} {model}",
-      "racketProfileApplied": "已从您保存的球拍资料填入详情"
+      "racketProfileApplied": "已从您保存的球拍资料填入详情",
+      "uploadReceipt": "上传付款收据",
+      "uploadReceiptDesc": "上传付款截图以加快验证速度。",
+      "receiptUploaded": "收据已上传",
+      "tapToUpload": "点击上传收据",
+      "maxFileSize": "最大5MB (JPG, PNG)",
+      "invalidFileType": "文件类型无效。请上传图片。",
+      "fileTooLarge": "文件太大。最大尺寸为5MB。",
+      "uploadFailed": "上传收据失败。请重试。",
+      "uploadingReceipt": "正在上传收据..."
     },
     "payment": {
       "tng": "Touch 'n Go",
@@ -909,6 +927,30 @@
       "pending": "待付款",
       "paid": "已付款",
       "completed": "已完成"
+    },
+    "track": {
+      "title": "追踪您的订单",
+      "subtitle": "输入订单详情以查看穿线订单状态",
+      "jobUid": "订单号",
+      "jobUidPlaceholder": "例如：ABC",
+      "phone": "电话号码",
+      "phonePlaceholder": "例如：012-345 6789",
+      "trackButton": "追踪订单",
+      "searching": "搜索中...",
+      "fieldsRequired": "请填写所有字段",
+      "error": "追踪订单失败。请重试。",
+      "notFound": "未找到订单",
+      "notFoundDesc": "我们找不到符合这些详情的订单。请检查您的订单号和电话号码。",
+      "orderStatus": "订单状态",
+      "jobUidLabel": "订单号",
+      "orderDetails": "订单详情",
+      "string": "球线",
+      "price": "价格",
+      "racket": "球拍",
+      "tension": "张力",
+      "pickupDate": "取货日期",
+      "orderDate": "下单日期",
+      "notes": "备注"
     }
   },
   "member": {

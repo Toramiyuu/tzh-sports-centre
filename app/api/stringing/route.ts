@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
       notes,
       paymentMethod,
       paymentUserConfirmed,
+      receiptUrl,
     } = body
 
     // Validation
@@ -111,6 +112,7 @@ export async function POST(request: NextRequest) {
         paymentMethod: paymentMethod || null,
         paymentUserConfirmed: paymentUserConfirmed || false,
         paymentStatus: paymentUserConfirmed ? 'pending_verification' : 'pending',
+        paymentScreenshotUrl: receiptUrl || null,
       },
     })
 

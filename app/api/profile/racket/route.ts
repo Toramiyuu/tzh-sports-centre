@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
-// GET /api/profile/racket - Get user's racket profile
+// GET /api/profile/racket - Get user's racket profile(s)
 export async function GET() {
   try {
     const session = await auth()
@@ -19,7 +19,14 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ racketProfile: user.racketProfile })
+    // Return the default racket or first one for backwards compatibility
+    const racketProfiles = user.racketProfile || []
+    const defaultRacket = racketProfiles.find(r => r.isDefault) || racketProfiles[0] || null
+
+    return NextResponse.json({
+      racketProfile: defaultRacket,
+      racketProfiles: racketProfiles
+    })
   } catch (error) {
     console.error('Error fetching racket profile:', error)
     return NextResponse.json(
@@ -96,12 +103,13 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    if (!user.racketProfile) {
+    const racketProfiles = user.racketProfile || []
+    if (racketProfiles.length === 0) {
       return NextResponse.json({ error: 'No racket profile found' }, { status: 404 })
     }
 
     const body = await request.json()
-    const { brand, model, weight, shaftNumber, tensionMain, tensionCross } = body
+    const { id, brand, model, weight, shaftNumber, tensionMain, tensionCross, isDefault } = body
 
     // Validate required fields
     if (!brand || !model || !weight) {
@@ -111,8 +119,25 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
+    // Determine which racket to update - use provided id or default/first racket
+    const racketId = id || racketProfiles.find(r => r.isDefault)?.id || racketProfiles[0].id
+
+    // Verify the racket belongs to this user
+    const targetRacket = racketProfiles.find(r => r.id === racketId)
+    if (!targetRacket) {
+      return NextResponse.json({ error: 'Racket not found' }, { status: 404 })
+    }
+
+    // If setting as default, unset all other rackets first
+    if (isDefault) {
+      await prisma.racketProfile.updateMany({
+        where: { userId: user.id, id: { not: racketId } },
+        data: { isDefault: false }
+      })
+    }
+
     const racketProfile = await prisma.racketProfile.update({
-      where: { userId: user.id },
+      where: { id: racketId },
       data: {
         brand,
         model,
@@ -120,6 +145,7 @@ export async function PATCH(request: NextRequest) {
         shaftNumber: shaftNumber || null,
         tensionMain: tensionMain || null,
         tensionCross: tensionCross || null,
+        isDefault: isDefault ?? targetRacket.isDefault,
       },
     })
 

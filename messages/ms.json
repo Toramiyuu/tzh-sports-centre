@@ -194,7 +194,16 @@
     "lesson": "Kelas",
     "holiday": "Cuti",
     "peakHours": "Waktu Puncak",
-    "offPeak": "Luar Puncak"
+    "offPeak": "Luar Puncak",
+    "uploadReceipt": "Muat Naik Resit Pembayaran",
+    "uploadReceiptDesc": "Muat naik tangkapan skrin pembayaran anda untuk pengesahan lebih cepat.",
+    "receiptUploaded": "Resit dimuat naik",
+    "tapToUpload": "Ketik untuk muat naik resit",
+    "maxFileSize": "Maks 5MB (JPG, PNG)",
+    "invalidFileType": "Jenis fail tidak sah. Sila muat naik imej.",
+    "fileTooLarge": "Fail terlalu besar. Saiz maksimum 5MB.",
+    "uploadFailed": "Gagal memuat naik resit. Sila cuba lagi.",
+    "uploadingReceipt": "Memuat naik resit..."
   },
   "profile": {
     "title": "Profil Saya",
@@ -963,7 +972,16 @@
       "requiredField": "Medan ini diperlukan",
       "useSavedRacket": "Guna Raket Tersimpan",
       "savedRacketInfo": "Raket tersimpan anda: {brand} {model}",
-      "racketProfileApplied": "Butiran raket diisi dari profil tersimpan anda"
+      "racketProfileApplied": "Butiran raket diisi dari profil tersimpan anda",
+      "uploadReceipt": "Muat Naik Resit Pembayaran",
+      "uploadReceiptDesc": "Muat naik tangkapan skrin pembayaran anda untuk pengesahan lebih cepat.",
+      "receiptUploaded": "Resit dimuat naik",
+      "tapToUpload": "Ketik untuk muat naik resit",
+      "maxFileSize": "Maks 5MB (JPG, PNG)",
+      "invalidFileType": "Jenis fail tidak sah. Sila muat naik imej.",
+      "fileTooLarge": "Fail terlalu besar. Saiz maksimum 5MB.",
+      "uploadFailed": "Gagal memuat naik resit. Sila cuba lagi.",
+      "uploadingReceipt": "Memuat naik resit..."
     },
     "payment": {
       "tng": "Touch 'n Go",
@@ -1005,6 +1023,30 @@
       "pending": "Menunggu Pembayaran",
       "paid": "Dibayar",
       "completed": "Selesai"
+    },
+    "track": {
+      "title": "Jejak Pesanan Anda",
+      "subtitle": "Masukkan butiran pesanan untuk menyemak status pesanan tali anda",
+      "jobUid": "ID Pesanan",
+      "jobUidPlaceholder": "cth., ABC",
+      "phone": "Nombor Telefon",
+      "phonePlaceholder": "cth., 012-345 6789",
+      "trackButton": "Jejak Pesanan",
+      "searching": "Mencari...",
+      "fieldsRequired": "Sila isi semua ruangan",
+      "error": "Gagal menjejak pesanan. Sila cuba lagi.",
+      "notFound": "Pesanan Tidak Ditemui",
+      "notFoundDesc": "Kami tidak dapat mencari pesanan dengan butiran ini. Sila semak ID Pesanan dan nombor telefon anda.",
+      "orderStatus": "Status Pesanan",
+      "jobUidLabel": "ID Pesanan",
+      "orderDetails": "Butiran Pesanan",
+      "string": "Tali",
+      "price": "Harga",
+      "racket": "Raket",
+      "tension": "Ketegangan",
+      "pickupDate": "Tarikh Ambil",
+      "orderDate": "Tarikh Pesanan",
+      "notes": "Nota"
     }
   }
 }

@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth()
     const body = await request.json()
-    const { slots, date, sport, isTestBooking, isGuestBooking, guestName, guestPhone, guestEmail, payAtCounter, paymentMethod, paymentUserConfirmed } = body
+    const { slots, date, sport, isTestBooking, isGuestBooking, guestName, guestPhone, guestEmail, payAtCounter, paymentMethod, paymentUserConfirmed, receiptUrl } = body
 
     // Validate common required fields
     if (!slots || !Array.isArray(slots) || slots.length === 0) {
@@ -230,6 +230,7 @@ export async function POST(request: NextRequest) {
             paymentStatus,
             paymentMethod: paymentMethod || null,
             paymentUserConfirmed: paymentUserConfirmed || false,
+            paymentScreenshotUrl: receiptUrl || null,
             guestName: bookingGuestName,
             guestPhone: bookingGuestPhone,
             guestEmail: bookingGuestEmail,

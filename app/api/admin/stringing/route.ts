@@ -21,7 +21,12 @@ export async function GET(request: NextRequest) {
     // Build where clause
     const where: Record<string, unknown> = {}
     if (status && status !== 'all') {
-      where.paymentStatus = status
+      // Include both 'pending' and 'pending_verification' for pending filter
+      if (status === 'pending') {
+        where.paymentStatus = { in: ['pending', 'pending_verification'] }
+      } else {
+        where.paymentStatus = status
+      }
     }
 
     // Add time filter
@@ -47,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all stringing orders
-    const orders = await prisma.stringingOrder.findMany({
+    const ordersRaw = await prisma.stringingOrder.findMany({
       where,
       include: {
         user: {
@@ -63,6 +68,12 @@ export async function GET(request: NextRequest) {
         createdAt: 'desc',
       },
     })
+
+    // Convert BigInt fields to strings for JSON serialization
+    const orders = ordersRaw.map(order => ({
+      ...order,
+      uid: order.uid?.toString() ?? null,
+    }))
 
     // Get stats
     const [totalOrders, pendingOrders, paidOrders] = await Promise.all([
@@ -118,7 +129,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (action === 'markPaid') {
-      const order = await prisma.stringingOrder.update({
+      const orderRaw = await prisma.stringingOrder.update({
         where: { id: orderId },
         data: {
           paymentStatus: 'paid',
@@ -126,6 +137,99 @@ export async function PATCH(request: NextRequest) {
           markedPaidAt: new Date(),
         },
       })
+
+      // Convert BigInt to string for JSON serialization
+      const order = {
+        ...orderRaw,
+        uid: orderRaw.uid?.toString() ?? null,
+      }
+
+      return NextResponse.json({
+        success: true,
+        order,
+      })
+    }
+
+    if (action === 'assignJobUid') {
+      const { jobUid } = body
+      if (!jobUid) {
+        return NextResponse.json(
+          { message: 'Job UID is required' },
+          { status: 400 }
+        )
+      }
+
+      // Check if jobUid is already in use
+      const existing = await prisma.stringingOrder.findUnique({
+        where: { jobUid },
+      })
+      if (existing && existing.id !== orderId) {
+        return NextResponse.json(
+          { message: 'This Job UID is already in use' },
+          { status: 400 }
+        )
+      }
+
+      const orderRaw = await prisma.stringingOrder.update({
+        where: { id: orderId },
+        data: {
+          jobUid,
+          // Also set status to RECEIVED and timestamp if not already set
+          status: 'RECEIVED',
+          receivedAt: new Date(),
+        },
+      })
+
+      const order = {
+        ...orderRaw,
+        uid: orderRaw.uid?.toString() ?? null,
+      }
+
+      return NextResponse.json({
+        success: true,
+        order,
+      })
+    }
+
+    if (action === 'updateStatus') {
+      const { status } = body
+      const validStatuses = ['RECEIVED', 'IN_PROGRESS', 'READY', 'COLLECTED']
+
+      if (!status || !validStatuses.includes(status)) {
+        return NextResponse.json(
+          { message: 'Invalid status' },
+          { status: 400 }
+        )
+      }
+
+      // Build update data with appropriate timestamp
+      const updateData: Record<string, unknown> = { status }
+      const now = new Date()
+
+      switch (status) {
+        case 'RECEIVED':
+          updateData.receivedAt = now
+          break
+        case 'IN_PROGRESS':
+          updateData.inProgressAt = now
+          break
+        case 'READY':
+          updateData.readyAt = now
+          break
+        case 'COLLECTED':
+          updateData.collectedAt = now
+          break
+      }
+
+      const orderRaw = await prisma.stringingOrder.update({
+        where: { id: orderId },
+        data: updateData,
+      })
+
+      const order = {
+        ...orderRaw,
+        uid: orderRaw.uid?.toString() ?? null,
+      }
 
       return NextResponse.json({
         success: true,

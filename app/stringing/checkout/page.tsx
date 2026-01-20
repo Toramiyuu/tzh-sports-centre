@@ -38,11 +38,13 @@ import {
   CalendarIcon,
   CheckCircle2,
   Download,
+  ImagePlus,
   Loader2,
   MessageCircle,
   Smartphone,
   User,
   Wrench,
+  X,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
@@ -84,6 +86,13 @@ function CheckoutContent() {
   const [tngHasPaid, setTngHasPaid] = useState(false)
   const [showDuitNowModal, setShowDuitNowModal] = useState(false)
   const [duitNowHasPaid, setDuitNowHasPaid] = useState(false)
+
+  // Receipt upload state
+  const [tngReceiptFile, setTngReceiptFile] = useState<File | null>(null)
+  const [tngReceiptPreview, setTngReceiptPreview] = useState<string | null>(null)
+  const [duitNowReceiptFile, setDuitNowReceiptFile] = useState<File | null>(null)
+  const [duitNowReceiptPreview, setDuitNowReceiptPreview] = useState<string | null>(null)
+  const [uploadingReceipt, setUploadingReceipt] = useState(false)
 
   // Saved racket profile state
   const [savedRacketProfile, setSavedRacketProfile] = useState<{
@@ -210,11 +219,85 @@ function CheckoutContent() {
     }
   }
 
-  const handleSubmitOrder = async (paymentMethod: string, hasPaid: boolean) => {
+  const handleReceiptSelect = (e: React.ChangeEvent<HTMLInputElement>, type: 'tng' | 'duitnow') => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error(t('checkout.invalidFileType'))
+      return
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(t('checkout.fileTooLarge'))
+      return
+    }
+
+    const previewUrl = URL.createObjectURL(file)
+
+    if (type === 'tng') {
+      setTngReceiptFile(file)
+      setTngReceiptPreview(previewUrl)
+    } else {
+      setDuitNowReceiptFile(file)
+      setDuitNowReceiptPreview(previewUrl)
+    }
+  }
+
+  const removeReceipt = (type: 'tng' | 'duitnow') => {
+    if (type === 'tng') {
+      if (tngReceiptPreview) URL.revokeObjectURL(tngReceiptPreview)
+      setTngReceiptFile(null)
+      setTngReceiptPreview(null)
+    } else {
+      if (duitNowReceiptPreview) URL.revokeObjectURL(duitNowReceiptPreview)
+      setDuitNowReceiptFile(null)
+      setDuitNowReceiptPreview(null)
+    }
+  }
+
+  const uploadReceipt = async (file: File): Promise<string | null> => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const res = await fetch('/api/upload/receipt', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        throw new Error('Upload failed')
+      }
+
+      const data = await res.json()
+      return data.url
+    } catch (error) {
+      console.error('Error uploading receipt:', error)
+      return null
+    }
+  }
+
+  const handleSubmitOrder = async (paymentMethod: string, hasPaid: boolean, receiptFile: File | null) => {
     if (!selectedString || !isFormValid()) return
 
     setSubmitting(true)
     try {
+      // Upload receipt if provided
+      let receiptUrl: string | null = null
+      if (receiptFile) {
+        setUploadingReceipt(true)
+        receiptUrl = await uploadReceipt(receiptFile)
+        setUploadingReceipt(false)
+        if (!receiptUrl) {
+          toast.error(t('checkout.uploadFailed'))
+          setSubmitting(false)
+          return
+        }
+      }
+
       const res = await fetch('/api/stringing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -234,6 +317,7 @@ function CheckoutContent() {
           notes: notes.trim() || null,
           paymentMethod,
           paymentUserConfirmed: hasPaid,
+          receiptUrl,
         }),
       })
 
@@ -624,21 +708,49 @@ function CheckoutContent() {
                   <p className="text-sm text-gray-600">Enter exactly <strong className="text-blue-600">RM{total.toFixed(2)}</strong></p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                <div className="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
-                <div>
-                  <p className="font-medium text-gray-900">Send Screenshot via WhatsApp</p>
-                  <p className="text-sm text-gray-600 mb-2">Send your payment screenshot to:</p>
-                  <a
-                    href="https://wa.me/60116868508"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    011-6868 8508
-                  </a>
+              {/* Step 5: Upload Receipt */}
+              <div className="bg-blue-50 rounded-xl p-4 space-y-3 border border-blue-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">5</div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{t('checkout.uploadReceipt')}</h4>
+                    <p className="text-sm text-gray-600">{t('checkout.uploadReceiptDesc')}</p>
+                  </div>
                 </div>
+
+                {tngReceiptPreview ? (
+                  <div className="relative">
+                    <img
+                      src={tngReceiptPreview}
+                      alt="Receipt preview"
+                      className="w-full max-h-48 object-contain rounded-lg border border-gray-200"
+                    />
+                    <button
+                      onClick={() => removeReceipt('tng')}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                    <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
+                      <CheckCircle2 className="w-4 h-4" />
+                      {t('checkout.receiptUploaded')}
+                    </p>
+                  </div>
+                ) : (
+                  <label className="block cursor-pointer">
+                    <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-500 hover:bg-blue-50/50 transition-colors">
+                      <ImagePlus className="w-10 h-10 mx-auto text-blue-400 mb-2" />
+                      <p className="text-sm font-medium text-gray-700">{t('checkout.tapToUpload')}</p>
+                      <p className="text-xs text-gray-500 mt-1">{t('checkout.maxFileSize')}</p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleReceiptSelect(e, 'tng')}
+                    />
+                  </label>
+                )}
               </div>
             </div>
 
@@ -667,13 +779,13 @@ function CheckoutContent() {
             <Button
               className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed'}`}
               size="lg"
-              onClick={() => handleSubmitOrder('tng', tngHasPaid)}
-              disabled={!tngHasPaid || submitting}
+              onClick={() => handleSubmitOrder('tng', tngHasPaid, tngReceiptFile)}
+              disabled={!tngHasPaid || submitting || uploadingReceipt}
             >
-              {submitting ? (
+              {submitting || uploadingReceipt ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Processing...
+                  {uploadingReceipt ? t('checkout.uploadingReceipt') : 'Processing...'}
                 </>
               ) : (
                 t('checkout.confirmOrder')
@@ -752,21 +864,49 @@ function CheckoutContent() {
                   <p className="text-sm text-gray-600">Enter exactly <strong className="text-pink-600">RM{total.toFixed(2)}</strong></p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                <div className="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
-                <div>
-                  <p className="font-medium text-gray-900">Send Screenshot via WhatsApp</p>
-                  <p className="text-sm text-gray-600 mb-2">Send your payment screenshot to:</p>
-                  <a
-                    href="https://wa.me/60116868508"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    011-6868 8508
-                  </a>
+              {/* Step 5: Upload Receipt */}
+              <div className="bg-pink-50 rounded-xl p-4 space-y-3 border border-pink-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-sm">5</div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{t('checkout.uploadReceipt')}</h4>
+                    <p className="text-sm text-gray-600">{t('checkout.uploadReceiptDesc')}</p>
+                  </div>
                 </div>
+
+                {duitNowReceiptPreview ? (
+                  <div className="relative">
+                    <img
+                      src={duitNowReceiptPreview}
+                      alt="Receipt preview"
+                      className="w-full max-h-48 object-contain rounded-lg border border-gray-200"
+                    />
+                    <button
+                      onClick={() => removeReceipt('duitnow')}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                    <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
+                      <CheckCircle2 className="w-4 h-4" />
+                      {t('checkout.receiptUploaded')}
+                    </p>
+                  </div>
+                ) : (
+                  <label className="block cursor-pointer">
+                    <div className="border-2 border-dashed border-pink-300 rounded-lg p-6 text-center hover:border-pink-500 hover:bg-pink-50/50 transition-colors">
+                      <ImagePlus className="w-10 h-10 mx-auto text-pink-400 mb-2" />
+                      <p className="text-sm font-medium text-gray-700">{t('checkout.tapToUpload')}</p>
+                      <p className="text-xs text-gray-500 mt-1">{t('checkout.maxFileSize')}</p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleReceiptSelect(e, 'duitnow')}
+                    />
+                  </label>
+                )}
               </div>
             </div>
 
@@ -795,13 +935,13 @@ function CheckoutContent() {
             <Button
               className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? 'bg-pink-600 hover:bg-pink-700' : 'bg-gray-300 cursor-not-allowed'}`}
               size="lg"
-              onClick={() => handleSubmitOrder('duitnow', duitNowHasPaid)}
-              disabled={!duitNowHasPaid || submitting}
+              onClick={() => handleSubmitOrder('duitnow', duitNowHasPaid, duitNowReceiptFile)}
+              disabled={!duitNowHasPaid || submitting || uploadingReceipt}
             >
-              {submitting ? (
+              {submitting || uploadingReceipt ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Processing...
+                  {uploadingReceipt ? t('checkout.uploadingReceipt') : 'Processing...'}
                 </>
               ) : (
                 t('checkout.confirmOrder')
