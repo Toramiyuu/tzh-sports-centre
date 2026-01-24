@@ -135,93 +135,99 @@ export async function POST(request: NextRequest) {
     const bookingDate = new Date(date)
     const dayOfWeek = bookingDate.getDay()
 
-    // Wrap all conflict checks AND booking creation in a single serializable
-    // transaction to prevent race conditions (double-bookings)
-    const createdBookings = await prisma.$transaction(async (tx) => {
-      // Check for conflicts - any existing booking for these court/time combinations
-      const existingBookings = await tx.booking.findMany({
-        where: {
-          bookingDate,
-          status: { in: ['pending', 'confirmed'] },
-          OR: slots.map((slot: { courtId: number; slotTime: string }) => ({
-            courtId: slot.courtId,
-            startTime: slot.slotTime,
-          })),
-        },
-      })
+    // Check for conflicts - any existing booking for these court/time combinations
+    const existingBookings = await prisma.booking.findMany({
+      where: {
+        bookingDate,
+        status: { in: ['pending', 'confirmed'] },
+        OR: slots.map((slot: { courtId: number; slotTime: string }) => ({
+          courtId: slot.courtId,
+          startTime: slot.slotTime,
+        })),
+      },
+    })
 
-      if (existingBookings.length > 0) {
-        throw new Error('CONFLICT:One or more slots are no longer available')
-      }
-
-      // Check for recurring booking conflicts
-      const recurringConflicts = await tx.recurringBooking.findMany({
-        where: {
-          dayOfWeek,
-          isActive: true,
-          startDate: { lte: bookingDate },
-          OR: [
-            { endDate: null },
-            { endDate: { gte: bookingDate } },
-          ],
-        },
-      })
-
-      const recurringSlotSet = new Set(
-        recurringConflicts.map(r => `${r.courtId}-${r.startTime}`)
+    if (existingBookings.length > 0) {
+      return NextResponse.json(
+        { error: 'One or more slots are no longer available' },
+        { status: 409 }
       )
+    }
 
-      const hasRecurringConflict = slots.some(
-        (slot: { courtId: number; slotTime: string }) =>
-          recurringSlotSet.has(`${slot.courtId}-${slot.slotTime}`)
+    // Check for recurring booking conflicts
+    const recurringConflicts = await prisma.recurringBooking.findMany({
+      where: {
+        dayOfWeek,
+        isActive: true,
+        startDate: { lte: bookingDate },
+        OR: [
+          { endDate: null },
+          { endDate: { gte: bookingDate } },
+        ],
+      },
+    })
+
+    const recurringSlotSet = new Set(
+      recurringConflicts.map(r => `${r.courtId}-${r.startTime}`)
+    )
+
+    const hasRecurringConflict = slots.some(
+      (slot: { courtId: number; slotTime: string }) =>
+        recurringSlotSet.has(`${slot.courtId}-${slot.slotTime}`)
+    )
+
+    if (hasRecurringConflict) {
+      return NextResponse.json(
+        { error: 'One or more slots conflict with a recurring booking' },
+        { status: 409 }
       )
+    }
 
-      if (hasRecurringConflict) {
-        throw new Error('CONFLICT:One or more slots conflict with a recurring booking')
-      }
+    // Check for lesson session conflicts
+    const lessonSessions = await prisma.lessonSession.findMany({
+      where: {
+        lessonDate: bookingDate,
+        status: 'scheduled',
+      },
+      select: {
+        courtId: true,
+        startTime: true,
+        endTime: true,
+      },
+    })
 
-      // Check for lesson session conflicts
-      const lessonSessions = await tx.lessonSession.findMany({
-        where: {
-          lessonDate: bookingDate,
-          status: 'scheduled',
-        },
-        select: {
-          courtId: true,
-          startTime: true,
-          endTime: true,
-        },
-      })
+    // Build a set of all slots occupied by lessons
+    const lessonSlotSet = new Set<string>()
+    const timeSlots = await prisma.timeSlot.findMany({ orderBy: { id: 'asc' } })
+    const allSlotTimes = timeSlots.map(s => s.slotTime)
 
-      // Build a set of all slots occupied by lessons
-      const lessonSlotSet = new Set<string>()
-      const timeSlots = await tx.timeSlot.findMany({ orderBy: { id: 'asc' } })
-      const allSlotTimes = timeSlots.map(s => s.slotTime)
-
-      lessonSessions.forEach((lesson) => {
-        const startIdx = allSlotTimes.indexOf(lesson.startTime)
-        const endIdx = allSlotTimes.indexOf(lesson.endTime)
-        if (startIdx !== -1) {
-          const endIndex = endIdx !== -1 ? endIdx : allSlotTimes.length
-          for (let i = startIdx; i < endIndex; i++) {
-            lessonSlotSet.add(`${lesson.courtId}-${allSlotTimes[i]}`)
-          }
+    lessonSessions.forEach((lesson) => {
+      const startIdx = allSlotTimes.indexOf(lesson.startTime)
+      const endIdx = allSlotTimes.indexOf(lesson.endTime)
+      if (startIdx !== -1) {
+        const endIndex = endIdx !== -1 ? endIdx : allSlotTimes.length
+        for (let i = startIdx; i < endIndex; i++) {
+          lessonSlotSet.add(`${lesson.courtId}-${allSlotTimes[i]}`)
         }
-      })
-
-      const hasLessonConflict = slots.some(
-        (slot: { courtId: number; slotTime: string }) =>
-          lessonSlotSet.has(`${slot.courtId}-${slot.slotTime}`)
-      )
-
-      if (hasLessonConflict) {
-        throw new Error('CONFLICT:One or more slots conflict with a scheduled lesson')
       }
+    })
 
-      // Create bookings for each slot (each slot is 30 minutes)
-      const bookings = []
-      for (const slot of slots as { courtId: number; slotTime: string; slotRate: number }[]) {
-        const booking = await tx.booking.create({
+    const hasLessonConflict = slots.some(
+      (slot: { courtId: number; slotTime: string }) =>
+        lessonSlotSet.has(`${slot.courtId}-${slot.slotTime}`)
+    )
+
+    if (hasLessonConflict) {
+      return NextResponse.json(
+        { error: 'One or more slots conflict with a scheduled lesson' },
+        { status: 409 }
+      )
+    }
+
+    // Create bookings for each slot in a batch transaction
+    const createdBookings = await prisma.$transaction(
+      slots.map((slot: { courtId: number; slotTime: string; slotRate: number }) =>
+        prisma.booking.create({
           data: {
             userId,
             courtId: slot.courtId,
@@ -243,11 +249,8 @@ export async function POST(request: NextRequest) {
             court: true,
           },
         })
-        bookings.push(booking)
-      }
-
-      return bookings
-    })
+      )
+    )
 
     return NextResponse.json(
       {
@@ -259,12 +262,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    if (error instanceof Error && error.message.startsWith('CONFLICT:')) {
-      return NextResponse.json(
-        { error: error.message.replace('CONFLICT:', '') },
-        { status: 409 }
-      )
-    }
     console.error('Error creating booking:', error)
     return NextResponse.json(
       { error: 'Failed to create booking' },

@@ -443,47 +443,45 @@ export async function POST(request: NextRequest) {
     const newPaidAmount = (monthlyPayment?.paidAmount || 0) + amount
     const newStatus = newPaidAmount >= totalAmount ? 'paid' : newPaidAmount > 0 ? 'partial' : 'unpaid'
 
-    const result = await prisma.$transaction(async (tx) => {
-      // Upsert monthly payment
-      const payment = await tx.monthlyPayment.upsert({
-        where: { userId_month_year: { userId, month, year } },
-        create: {
-          userId,
-          month,
-          year,
-          totalAmount,
-          paidAmount: amount,
-          bookingsCount,
-          totalHours,
-          status: newStatus,
-          markedPaidBy: newStatus === 'paid' ? session.user!.email : null,
-          markedPaidAt: newStatus === 'paid' ? new Date() : null,
-        },
-        update: {
-          totalAmount,
-          paidAmount: newPaidAmount,
-          bookingsCount,
-          totalHours,
-          status: newStatus,
-          markedPaidBy: newStatus === 'paid' ? session.user!.email : undefined,
-          markedPaidAt: newStatus === 'paid' ? new Date() : undefined,
-        },
-      })
-
-      // Create transaction record
-      const transaction = await tx.paymentTransaction.create({
-        data: {
-          monthlyPaymentId: payment.id,
-          amount,
-          paymentMethod,
-          reference,
-          notes,
-          recordedBy: session.user!.email!,
-        },
-      })
-
-      return { payment, transaction }
+    // Upsert monthly payment then create transaction record
+    const payment = await prisma.monthlyPayment.upsert({
+      where: { userId_month_year: { userId, month, year } },
+      create: {
+        userId,
+        month,
+        year,
+        totalAmount,
+        paidAmount: amount,
+        bookingsCount,
+        totalHours,
+        status: newStatus,
+        markedPaidBy: newStatus === 'paid' ? session.user!.email : null,
+        markedPaidAt: newStatus === 'paid' ? new Date() : null,
+      },
+      update: {
+        totalAmount,
+        paidAmount: newPaidAmount,
+        bookingsCount,
+        totalHours,
+        status: newStatus,
+        markedPaidBy: newStatus === 'paid' ? session.user!.email : undefined,
+        markedPaidAt: newStatus === 'paid' ? new Date() : undefined,
+      },
     })
+
+    // Create transaction record
+    const transaction = await prisma.paymentTransaction.create({
+      data: {
+        monthlyPaymentId: payment.id,
+        amount,
+        paymentMethod,
+        reference,
+        notes,
+        recordedBy: session.user!.email!,
+      },
+    })
+
+    const result = { payment, transaction }
 
     return NextResponse.json({
       success: true,
@@ -583,42 +581,40 @@ export async function PATCH(request: NextRequest) {
         if (amountToPay <= 0) continue // Already paid
 
         // Mark as paid
-        await prisma.$transaction(async (tx) => {
-          const payment = await tx.monthlyPayment.upsert({
-            where: { userId_month_year: { userId, month, year } },
-            create: {
-              userId,
-              month,
-              year,
-              totalAmount,
-              paidAmount: totalAmount,
-              bookingsCount,
-              totalHours,
-              status: 'paid',
-              markedPaidBy: session.user!.email,
-              markedPaidAt: new Date(),
-            },
-            update: {
-              totalAmount,
-              paidAmount: totalAmount,
-              bookingsCount,
-              totalHours,
-              status: 'paid',
-              markedPaidBy: session.user!.email,
-              markedPaidAt: new Date(),
-            },
-          })
+        const payment = await prisma.monthlyPayment.upsert({
+          where: { userId_month_year: { userId, month, year } },
+          create: {
+            userId,
+            month,
+            year,
+            totalAmount,
+            paidAmount: totalAmount,
+            bookingsCount,
+            totalHours,
+            status: 'paid',
+            markedPaidBy: session.user!.email,
+            markedPaidAt: new Date(),
+          },
+          update: {
+            totalAmount,
+            paidAmount: totalAmount,
+            bookingsCount,
+            totalHours,
+            status: 'paid',
+            markedPaidBy: session.user!.email,
+            markedPaidAt: new Date(),
+          },
+        })
 
-          await tx.paymentTransaction.create({
-            data: {
-              monthlyPaymentId: payment.id,
-              amount: amountToPay,
-              paymentMethod,
-              reference,
-              notes: notes || `Bulk payment for ${month}/${year}`,
-              recordedBy: session.user!.email!,
-            },
-          })
+        await prisma.paymentTransaction.create({
+          data: {
+            monthlyPaymentId: payment.id,
+            amount: amountToPay,
+            paymentMethod,
+            reference,
+            notes: notes || `Bulk payment for ${month}/${year}`,
+            recordedBy: session.user!.email!,
+          },
         })
 
         results.push({ userId, name: user.name, amount: amountToPay, success: true })

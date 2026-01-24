@@ -47,30 +47,21 @@ export async function generateJobUid(): Promise<string> {
   const maxRetries = 3
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      // Atomic upsert + fetch in a single transaction
-      const result = await prisma.$transaction(async (tx) => {
-        // Upsert: insert with counter=1, or increment existing counter
-        await tx.$executeRaw`
-          INSERT INTO stringing_month_counters (id, year, month, counter)
-          VALUES (gen_random_uuid()::text, ${year}, ${month}, 1)
-          ON CONFLICT (year, month)
-          DO UPDATE SET counter = stringing_month_counters.counter + 1
-        `
+      // Single atomic query: upsert and return counter in one statement
+      // No interactive transaction needed - works with Neon pooler
+      const rows = await prisma.$queryRaw<{ counter: number }[]>`
+        INSERT INTO stringing_month_counters (id, year, month, counter)
+        VALUES (gen_random_uuid()::text, ${year}, ${month}, 1)
+        ON CONFLICT (year, month)
+        DO UPDATE SET counter = stringing_month_counters.counter + 1
+        RETURNING counter
+      `
 
-        // Fetch the updated counter value
-        const rows = await tx.$queryRaw<{ counter: number }[]>`
-          SELECT counter FROM stringing_month_counters
-          WHERE year = ${year} AND month = ${month}
-        `
+      if (!rows || rows.length === 0) {
+        throw new Error('Failed to generate Job UID: counter not found after upsert')
+      }
 
-        if (!rows || rows.length === 0) {
-          throw new Error('Failed to generate Job UID: counter not found after upsert')
-        }
-
-        return rows[0].counter
-      })
-
-      return formatJobUid(year, month, result)
+      return formatJobUid(year, month, rows[0].counter)
     } catch (error) {
       // Retry on serialization/deadlock errors
       if (attempt < maxRetries - 1 && error instanceof Error &&

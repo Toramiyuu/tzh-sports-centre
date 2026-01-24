@@ -93,64 +93,65 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create order and decrement stock atomically in a single transaction
-    const order = await prisma.$transaction(async (tx) => {
-      // Re-check stock inside transaction to prevent race conditions
-      if (stock) {
-        const currentStock = await tx.stringStock.findUnique({
-          where: { id: stock.id },
-        })
-        if (!currentStock || currentStock.quantity <= 0) {
-          throw new Error('STOCK:This string is currently out of stock')
-        }
+    // Atomically decrement stock first (if applicable), then create order
+    // Uses raw SQL for atomic decrement - avoids interactive transactions (Neon pooler)
+    let decrementedFromQty: number | null = null
+
+    if (stock) {
+      // Atomic decrement: only succeeds if quantity > 0
+      const decrementResult = await prisma.$queryRaw<{ quantity: number }[]>`
+        UPDATE string_stock
+        SET quantity = quantity - 1
+        WHERE id = ${stock.id} AND quantity > 0
+        RETURNING quantity
+      `
+
+      if (!decrementResult || decrementResult.length === 0) {
+        return NextResponse.json(
+          { message: 'This string is currently out of stock' },
+          { status: 400 }
+        )
       }
 
-      const newOrder = await tx.stringingOrder.create({
+      decrementedFromQty = stock.quantity // Previous quantity before decrement
+    }
+
+    // Create the order
+    const order = await prisma.stringingOrder.create({
+      data: {
+        userId: session?.user?.id || null,
+        stringName,
+        stringColor: stringColor || null,
+        price,
+        customerName,
+        customerPhone,
+        customerEmail: customerEmail || null,
+        racketModel,
+        racketModelCustom: racketModelCustom || null,
+        tensionMain,
+        tensionCross,
+        pickupDate: new Date(pickupDate),
+        notes: notes || null,
+        paymentMethod: paymentMethod || null,
+        paymentUserConfirmed: paymentUserConfirmed || false,
+        paymentStatus: paymentUserConfirmed ? 'pending_verification' : 'pending',
+        paymentScreenshotUrl: receiptUrl || null,
+      },
+    })
+
+    // Log the stock change if we decremented
+    if (stock && decrementedFromQty !== null) {
+      await prisma.stringStockLog.create({
         data: {
-          userId: session?.user?.id || null,
-          stringName,
-          stringColor: stringColor || null,
-          price,
-          customerName,
-          customerPhone,
-          customerEmail: customerEmail || null,
-          racketModel,
-          racketModelCustom: racketModelCustom || null,
-          tensionMain,
-          tensionCross,
-          pickupDate: new Date(pickupDate),
-          notes: notes || null,
-          paymentMethod: paymentMethod || null,
-          paymentUserConfirmed: paymentUserConfirmed || false,
-          paymentStatus: paymentUserConfirmed ? 'pending_verification' : 'pending',
-          paymentScreenshotUrl: receiptUrl || null,
+          stockId: stock.id,
+          previousQty: decrementedFromQty,
+          newQty: decrementedFromQty - 1,
+          changeType: 'order',
+          orderId: order.id,
+          changedBy: 'system',
         },
       })
-
-      // Decrease stock and log the change if we have a stock record
-      if (stock) {
-        const previousQty = stock.quantity
-        await tx.stringStock.update({
-          where: { id: stock.id },
-          data: {
-            quantity: { decrement: 1 },
-          },
-        })
-
-        await tx.stringStockLog.create({
-          data: {
-            stockId: stock.id,
-            previousQty,
-            newQty: previousQty - 1,
-            changeType: 'order',
-            orderId: newOrder.id,
-            changedBy: 'system',
-          },
-        })
-      }
-
-      return newOrder
-    })
+    }
 
     return NextResponse.json({
       success: true,
@@ -164,12 +165,6 @@ export async function POST(request: NextRequest) {
       },
     })
   } catch (error) {
-    if (error instanceof Error && error.message.startsWith('STOCK:')) {
-      return NextResponse.json(
-        { message: error.message.replace('STOCK:', '') },
-        { status: 400 }
-      )
-    }
     console.error('Error creating stringing order:', error)
     return NextResponse.json(
       { message: 'Failed to create stringing order' },
