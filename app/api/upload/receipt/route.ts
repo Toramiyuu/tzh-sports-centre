@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import { existsSync } from 'fs'
-import path from 'path'
+import { put } from '@vercel/blob'
 
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads', 'receipts')
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']
 
@@ -35,29 +32,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Ensure upload directory exists
-    if (!existsSync(UPLOAD_DIR)) {
-      await mkdir(UPLOAD_DIR, { recursive: true })
+    // Determine extension from MIME type for reliability
+    const mimeToExt: Record<string, string> = {
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+      'image/webp': 'webp',
+      'image/heic': 'heic',
+      'image/heif': 'heif',
     }
+    const extension = mimeToExt[file.type] || 'jpg'
 
     // Generate unique filename
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 8)
-    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-    const filename = `receipt-${timestamp}-${randomString}.${extension}`
-    const filepath = path.join(UPLOAD_DIR, filename)
+    const filename = `receipts/receipt-${timestamp}-${randomString}.${extension}`
 
-    // Convert file to buffer and save
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filepath, buffer)
-
-    // Return the public URL
-    const url = `/uploads/receipts/${filename}`
+    // Upload to Vercel Blob
+    const blob = await put(filename, file, {
+      access: 'public',
+      addRandomSuffix: false,
+    })
 
     return NextResponse.json({
       success: true,
-      url,
+      url: blob.url,
       filename,
     })
   } catch (error) {

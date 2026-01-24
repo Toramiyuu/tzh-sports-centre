@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { auth } from '@/lib/auth'
+import { isAdmin } from '@/lib/admin'
 
 // POST - Upload payment screenshot for a stringing order
 export async function POST(
@@ -79,6 +81,14 @@ export async function GET(
   { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
+    const session = await auth()
+    if (!session?.user?.email || !isAdmin(session.user.email)) {
+      return NextResponse.json(
+        { message: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const { orderId } = await params
 
     const order = await prisma.stringingOrder.findUnique({

@@ -28,20 +28,16 @@ export async function GET() {
 
 // POST /api/admin/stringing/stock - Add a new color variant for a string
 export async function POST(request: NextRequest) {
-  console.log('[Stock API] POST request received')
-
   // Step 1: Auth check
   let session
   try {
     session = await auth()
-    console.log('[Stock API] Session:', session?.user?.email)
   } catch (authError) {
     console.error('[Stock API] Auth error:', authError)
     return NextResponse.json({ error: 'Authentication failed' }, { status: 500 })
   }
 
   if (!session?.user?.email || !isAdmin(session.user.email)) {
-    console.log('[Stock API] Unauthorized')
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -49,7 +45,6 @@ export async function POST(request: NextRequest) {
   let body
   try {
     body = await request.json()
-    console.log('[Stock API] Request body:', JSON.stringify(body))
   } catch (parseError) {
     console.error('[Stock API] Body parse error:', parseError)
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
@@ -58,7 +53,6 @@ export async function POST(request: NextRequest) {
   const { stringId, color, quantity, lowStockAlert } = body
 
   if (!stringId || !color) {
-    console.log('[Stock API] Missing stringId or color')
     return NextResponse.json(
       { error: 'String ID and color are required' },
       { status: 400 }
@@ -67,7 +61,6 @@ export async function POST(request: NextRequest) {
 
   // Normalize color (capitalize first letter)
   const normalizedColor = color.trim().charAt(0).toUpperCase() + color.trim().slice(1).toLowerCase()
-  console.log('[Stock API] Normalized color:', normalizedColor)
 
   // Step 3: Check if color exists
   let existingColors
@@ -75,7 +68,6 @@ export async function POST(request: NextRequest) {
     existingColors = await prisma.stringStock.findMany({
       where: { stringId },
     })
-    console.log('[Stock API] Existing colors:', existingColors.map((c: { color: string }) => c.color).join(', '))
   } catch (dbError) {
     console.error('[Stock API] DB query error:', dbError)
     return NextResponse.json({ error: 'Database query failed' }, { status: 500 })
@@ -86,7 +78,6 @@ export async function POST(request: NextRequest) {
   )
 
   if (existing) {
-    console.log('[Stock API] Color already exists:', normalizedColor)
     return NextResponse.json(
       { error: `Color "${normalizedColor}" already exists for this string` },
       { status: 400 }
@@ -96,7 +87,6 @@ export async function POST(request: NextRequest) {
   // Step 4: Create stock record
   let stock
   try {
-    console.log('[Stock API] Creating stock record...')
     stock = await prisma.stringStock.create({
       data: {
         stringId,
@@ -106,7 +96,6 @@ export async function POST(request: NextRequest) {
         lastUpdatedBy: session.user.email,
       },
     })
-    console.log('[Stock API] Stock created:', stock.id)
   } catch (createError) {
     console.error('[Stock API] Create error:', createError)
     return NextResponse.json({ error: 'Failed to create stock record' }, { status: 500 })
@@ -114,7 +103,6 @@ export async function POST(request: NextRequest) {
 
   // Step 5: Create log entry
   try {
-    console.log('[Stock API] Creating log entry...')
     await prisma.stringStockLog.create({
       data: {
         stockId: stock.id,
@@ -125,7 +113,6 @@ export async function POST(request: NextRequest) {
         changedBy: session.user.email,
       },
     })
-    console.log('[Stock API] Log created')
   } catch (logError) {
     console.error('[Stock API] Log error:', logError)
     // Don't fail the request if logging fails

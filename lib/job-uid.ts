@@ -4,7 +4,6 @@
 // Race-condition safe using database transactions
 
 import { prisma } from './prisma'
-import { Prisma } from '@prisma/client'
 
 // Month abbreviations for Job UID format
 const MONTH_ABBREV = [
@@ -34,8 +33,9 @@ function formatJobUid(year: number, month: number, counter: number): string {
 }
 
 /**
- * Generate a unique Job UID using a transaction to prevent race conditions.
- * Uses optimistic locking with upsert to handle concurrent requests.
+ * Generate a unique Job UID using atomic SQL to prevent race conditions.
+ * Uses INSERT ... ON CONFLICT with RETURNING for a single atomic operation.
+ * Retries on serialization failures.
  *
  * @returns The generated Job UID in format MON-###-YYYY
  */
@@ -44,35 +44,45 @@ export async function generateJobUid(): Promise<string> {
   const year = malaysiaDate.getFullYear()
   const month = malaysiaDate.getMonth() + 1 // JavaScript months are 0-indexed
 
-  // Use a transaction with raw SQL for atomic counter increment
-  // This prevents race conditions where two requests might get the same counter
-  const result = await prisma.$transaction(async (tx) => {
-    // First, try to upsert the counter row
-    // Use raw SQL with ON CONFLICT DO UPDATE for atomic increment
-    await tx.$executeRaw`
-      INSERT INTO stringing_month_counters (id, year, month, counter)
-      VALUES (gen_random_uuid()::text, ${year}, ${month}, 1)
-      ON CONFLICT (year, month)
-      DO UPDATE SET counter = stringing_month_counters.counter + 1
-    `
+  const maxRetries = 3
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      // Atomic upsert + fetch in a single transaction
+      const result = await prisma.$transaction(async (tx) => {
+        // Upsert: insert with counter=1, or increment existing counter
+        await tx.$executeRaw`
+          INSERT INTO stringing_month_counters (id, year, month, counter)
+          VALUES (gen_random_uuid()::text, ${year}, ${month}, 1)
+          ON CONFLICT (year, month)
+          DO UPDATE SET counter = stringing_month_counters.counter + 1
+        `
 
-    // Then fetch the current counter value
-    const counterRow = await tx.stringingMonthCounter.findUnique({
-      where: {
-        year_month: { year, month }
+        // Fetch the updated counter value
+        const rows = await tx.$queryRaw<{ counter: number }[]>`
+          SELECT counter FROM stringing_month_counters
+          WHERE year = ${year} AND month = ${month}
+        `
+
+        if (!rows || rows.length === 0) {
+          throw new Error('Failed to generate Job UID: counter not found after upsert')
+        }
+
+        return rows[0].counter
+      })
+
+      return formatJobUid(year, month, result)
+    } catch (error) {
+      // Retry on serialization/deadlock errors
+      if (attempt < maxRetries - 1 && error instanceof Error &&
+          (error.message.includes('serialization') || error.message.includes('deadlock'))) {
+        await new Promise(resolve => setTimeout(resolve, 50 * (attempt + 1)))
+        continue
       }
-    })
-
-    if (!counterRow) {
-      throw new Error('Failed to generate Job UID: counter not found after upsert')
+      throw error
     }
+  }
 
-    return counterRow.counter
-  }, {
-    isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-  })
-
-  return formatJobUid(year, month, result)
+  throw new Error('Failed to generate Job UID after retries')
 }
 
 /**

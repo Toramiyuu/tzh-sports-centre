@@ -91,6 +91,9 @@ export async function GET(request: NextRequest) {
       status: string
       paymentStatus?: string
       paymentUserConfirmed?: boolean
+      paymentMethod?: string
+      paymentScreenshotUrl?: string | null
+      totalAmount?: number
       isGuest: boolean
       isRecurring?: boolean
       recurringLabel?: string
@@ -108,6 +111,9 @@ export async function GET(request: NextRequest) {
         status: booking.status,
         paymentStatus: booking.paymentStatus,
         paymentUserConfirmed: booking.paymentUserConfirmed,
+        paymentMethod: booking.paymentMethod || undefined,
+        paymentScreenshotUrl: booking.paymentScreenshotUrl,
+        totalAmount: booking.totalAmount,
         isGuest: !booking.userId,
       }
     })
@@ -253,7 +259,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Court not found' }, { status: 404 })
     }
 
-    const hourlyRate = sport === 'pickleball' ? 25 : 15
+    // Calculate slot rate based on court hourly rate (slots are 30 minutes)
+    const slotRate = court.hourlyRate / 2
 
     const booking = await prisma.booking.create({
       data: {
@@ -262,7 +269,7 @@ export async function POST(request: NextRequest) {
         startTime,
         endTime,
         sport,
-        totalAmount: hourlyRate,
+        totalAmount: slotRate,
         status: 'confirmed',
         paymentStatus: 'paid', // Admin-created bookings are confirmed/paid
         guestName,

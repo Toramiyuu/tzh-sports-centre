@@ -98,6 +98,9 @@ interface BookingInfo {
   status: string
   paymentStatus?: string
   paymentUserConfirmed?: boolean
+  paymentMethod?: string
+  paymentScreenshotUrl?: string | null
+  totalAmount?: number
   isGuest: boolean
   isRecurring?: boolean
   recurringLabel?: string
@@ -114,6 +117,8 @@ interface FullBooking {
   status: string
   paymentStatus: string
   paymentUserConfirmed?: boolean
+  paymentMethod?: string
+  paymentScreenshotUrl?: string | null
   guestName: string | null
   guestPhone: string | null
   guestEmail: string | null
@@ -1269,6 +1274,9 @@ export default function BookingsContent() {
                                         sport: booking.sport,
                                         status: booking.status,
                                         paymentStatus: booking.paymentStatus,
+                                        paymentMethod: booking.paymentMethod,
+                                        paymentScreenshotUrl: booking.paymentScreenshotUrl,
+                                        totalAmount: booking.totalAmount,
                                         isGuest: !booking.user,
                                       })
                                       setPaymentConfirmOpen(true)
@@ -2348,6 +2356,26 @@ export default function BookingsContent() {
               <p>
                 <strong>{t('sport')}:</strong> {bookingToConfirmPayment.sport}
               </p>
+              {bookingToConfirmPayment.paymentMethod && (
+                <p>
+                  <strong>Payment Method:</strong> {bookingToConfirmPayment.paymentMethod.toUpperCase()}
+                </p>
+              )}
+              {bookingToConfirmPayment.totalAmount != null && (
+                <p>
+                  <strong>Amount:</strong> RM {bookingToConfirmPayment.totalAmount.toFixed(2)}
+                </p>
+              )}
+              {bookingToConfirmPayment.paymentScreenshotUrl && (
+                <div className="mt-3">
+                  <p className="text-sm font-medium mb-2">Payment Receipt:</p>
+                  <img
+                    src={bookingToConfirmPayment.paymentScreenshotUrl}
+                    alt="Payment receipt"
+                    className="max-w-full max-h-64 rounded-lg border border-gray-200 object-contain"
+                  />
+                </div>
+              )}
               <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                 <p className="text-sm text-green-800">
                   This will mark the payment as <strong>Paid</strong> and confirm the booking.

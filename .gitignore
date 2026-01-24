@@ -45,3 +45,4 @@ prisma/dev.db
 next-env.d.ts
 
 /lib/generated/prisma
+.env*.local

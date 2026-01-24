@@ -33,12 +33,21 @@ export async function POST(request: NextRequest) {
     // Normalize stored phone for comparison
     const storedPhone = order.customerPhone.replace(/\D/g, '')
 
-    // Verify phone number matches
-    // Allow matching with or without country code
+    // Strip Malaysian country code (60) and leading zeros to get the core number
+    function getCoreNumber(digits: string): string {
+      if (digits.startsWith('60')) {
+        digits = digits.slice(2)
+      }
+      if (digits.startsWith('0')) {
+        digits = digits.slice(1)
+      }
+      return digits
+    }
+
+    // Compare core numbers (the part after country code and leading zero)
     const phoneMatches =
       storedPhone === normalizedPhone ||
-      storedPhone.endsWith(normalizedPhone) ||
-      normalizedPhone.endsWith(storedPhone)
+      getCoreNumber(storedPhone) === getCoreNumber(normalizedPhone)
 
     if (!phoneMatches) {
       return NextResponse.json(

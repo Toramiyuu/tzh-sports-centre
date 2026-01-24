@@ -3,8 +3,11 @@ import { auth } from '@/lib/auth'
 import { isAdmin, isSuperAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 
-const DEFAULT_PASSWORD = 'temp1234'
+function generateTempPassword(): string {
+  return crypto.randomBytes(6).toString('base64url') // 8 chars, URL-safe
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -230,8 +233,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Hash the default password
-    const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 12)
+    // Generate and hash a temporary password
+    const tempPassword = generateTempPassword()
+    const passwordHash = await bcrypt.hash(tempPassword, 12)
 
     // Generate a placeholder email if not provided (required by schema)
     const userEmail = email || `${cleanPhone}@temp.tzh.local`
@@ -268,7 +272,7 @@ export async function POST(request: NextRequest) {
         ...newUser,
         uid: newUser.uid.toString().padStart(3, '0'),
       },
-      defaultPassword: DEFAULT_PASSWORD,
+      defaultPassword: tempPassword,
     })
   } catch (error) {
     console.error('Error creating account:', error)

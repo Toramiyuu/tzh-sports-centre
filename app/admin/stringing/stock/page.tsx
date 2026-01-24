@@ -227,12 +227,9 @@ export default function AdminStockPage() {
         }),
       })
 
-      console.log('API Response Status:', res.status, res.statusText)
       const data = await res.json()
-      console.log('API Response Data:', data)
 
       if (!res.ok) {
-        console.error('API Error Response:', data)
         toast.error(data.error || `Failed to add color (Status: ${res.status})`)
         return
       }

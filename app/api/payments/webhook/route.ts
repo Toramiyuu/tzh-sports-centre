@@ -41,19 +41,28 @@ export async function POST(request: NextRequest) {
     // If we have a webhook secret, verify the signature
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
 
-    if (webhookSecret && signature) {
-      try {
-        event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
-      } catch (err) {
-        console.error('Webhook signature verification failed:', err)
-        return NextResponse.json(
-          { error: 'Webhook signature verification failed' },
-          { status: 400 }
-        )
-      }
-    } else {
-      // For development without webhook secret
-      event = JSON.parse(body) as Stripe.Event
+    if (!webhookSecret) {
+      return NextResponse.json(
+        { error: 'Webhook secret not configured' },
+        { status: 500 }
+      )
+    }
+
+    if (!signature) {
+      return NextResponse.json(
+        { error: 'Missing stripe-signature header' },
+        { status: 400 }
+      )
+    }
+
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err)
+      return NextResponse.json(
+        { error: 'Webhook signature verification failed' },
+        { status: 400 }
+      )
     }
 
     // Handle the event
@@ -63,7 +72,6 @@ export async function POST(request: NextRequest) {
 
         // Only process if payment is complete
         if (session.payment_status !== 'paid') {
-          console.log('Checkout completed but payment not yet confirmed')
           break
         }
 
@@ -77,7 +85,6 @@ export async function POST(request: NextRequest) {
         const userId = session.metadata?.userId || null
 
         if (slots.length === 0 || !date || !sport) {
-          console.log('Invalid session metadata, skipping booking creation')
           break
         }
 
@@ -89,7 +96,6 @@ export async function POST(request: NextRequest) {
         })
 
         if (existingBookings.length > 0) {
-          console.log(`Bookings already exist for session ${session.id}`)
           break
         }
 
@@ -136,26 +142,21 @@ export async function POST(request: NextRequest) {
           )
         )
 
-        console.log(`Created ${createdBookings.length} bookings for session ${session.id}`)
         break
       }
 
       case 'checkout.session.expired': {
-        const session = event.data.object as Stripe.Checkout.Session
-        console.log(`Checkout session expired: ${session.id}`)
         // No bookings to cancel since we don't create them until payment
         break
       }
 
       case 'payment_intent.payment_failed': {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent
-        console.log(`Payment failed for intent: ${paymentIntent.id}`)
         // No bookings to update since we don't create them until payment
         break
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
+        break
     }
 
     return NextResponse.json({ received: true })

@@ -170,14 +170,23 @@ export async function PATCH(request: NextRequest) {
         )
       }
 
+      // Get current order to check existing status
+      const currentOrder = await prisma.stringingOrder.findUnique({
+        where: { id: orderId },
+      })
+
+      // Only set status/receivedAt if not already set
+      const updateData: Record<string, unknown> = { jobUid }
+      if (!currentOrder?.status) {
+        updateData.status = 'RECEIVED'
+      }
+      if (!currentOrder?.receivedAt) {
+        updateData.receivedAt = new Date()
+      }
+
       const orderRaw = await prisma.stringingOrder.update({
         where: { id: orderId },
-        data: {
-          jobUid,
-          // Also set status to RECEIVED and timestamp if not already set
-          status: 'RECEIVED',
-          receivedAt: new Date(),
-        },
+        data: updateData,
       })
 
       const order = {
@@ -202,22 +211,34 @@ export async function PATCH(request: NextRequest) {
         )
       }
 
-      // Build update data with appropriate timestamp
+      // Get current order to avoid overwriting existing timestamps
+      const currentOrder = await prisma.stringingOrder.findUnique({
+        where: { id: orderId },
+      })
+
+      if (!currentOrder) {
+        return NextResponse.json(
+          { message: 'Order not found' },
+          { status: 404 }
+        )
+      }
+
+      // Build update data - only set timestamp if not already set
       const updateData: Record<string, unknown> = { status }
       const now = new Date()
 
       switch (status) {
         case 'RECEIVED':
-          updateData.receivedAt = now
+          if (!currentOrder.receivedAt) updateData.receivedAt = now
           break
         case 'IN_PROGRESS':
-          updateData.inProgressAt = now
+          if (!currentOrder.inProgressAt) updateData.inProgressAt = now
           break
         case 'READY':
-          updateData.readyAt = now
+          if (!currentOrder.readyAt) updateData.readyAt = now
           break
         case 'COLLECTED':
-          updateData.collectedAt = now
+          if (!currentOrder.collectedAt) updateData.collectedAt = now
           break
       }
 

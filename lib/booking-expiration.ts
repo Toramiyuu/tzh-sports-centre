@@ -48,10 +48,13 @@ export async function checkAndExpireBookings(
     errors: [],
   }
 
-  // Build query
+  // Build query - include both 'pending' bookings AND 'confirmed' bookings
+  // with pending payment (TNG/DuitNow that were never paid)
   const whereClause: Record<string, unknown> = {
-    status: 'pending',
-    expiredAt: null,
+    OR: [
+      { status: 'pending', expiredAt: null },
+      { status: 'confirmed', paymentStatus: 'pending', expiredAt: null },
+    ],
   }
 
   if (bookingIds && bookingIds.length > 0) {

@@ -93,50 +93,64 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create the stringing order
-    const order = await prisma.stringingOrder.create({
-      data: {
-        userId: session?.user?.id || null,
-        stringName,
-        stringColor: stringColor || null,
-        price,
-        customerName,
-        customerPhone,
-        customerEmail: customerEmail || null,
-        racketModel,
-        racketModelCustom: racketModelCustom || null,
-        tensionMain,
-        tensionCross,
-        pickupDate: new Date(pickupDate),
-        notes: notes || null,
-        paymentMethod: paymentMethod || null,
-        paymentUserConfirmed: paymentUserConfirmed || false,
-        paymentStatus: paymentUserConfirmed ? 'pending_verification' : 'pending',
-        paymentScreenshotUrl: receiptUrl || null,
-      },
+    // Create order and decrement stock atomically in a single transaction
+    const order = await prisma.$transaction(async (tx) => {
+      // Re-check stock inside transaction to prevent race conditions
+      if (stock) {
+        const currentStock = await tx.stringStock.findUnique({
+          where: { id: stock.id },
+        })
+        if (!currentStock || currentStock.quantity <= 0) {
+          throw new Error('STOCK:This string is currently out of stock')
+        }
+      }
+
+      const newOrder = await tx.stringingOrder.create({
+        data: {
+          userId: session?.user?.id || null,
+          stringName,
+          stringColor: stringColor || null,
+          price,
+          customerName,
+          customerPhone,
+          customerEmail: customerEmail || null,
+          racketModel,
+          racketModelCustom: racketModelCustom || null,
+          tensionMain,
+          tensionCross,
+          pickupDate: new Date(pickupDate),
+          notes: notes || null,
+          paymentMethod: paymentMethod || null,
+          paymentUserConfirmed: paymentUserConfirmed || false,
+          paymentStatus: paymentUserConfirmed ? 'pending_verification' : 'pending',
+          paymentScreenshotUrl: receiptUrl || null,
+        },
+      })
+
+      // Decrease stock and log the change if we have a stock record
+      if (stock) {
+        const previousQty = stock.quantity
+        await tx.stringStock.update({
+          where: { id: stock.id },
+          data: {
+            quantity: { decrement: 1 },
+          },
+        })
+
+        await tx.stringStockLog.create({
+          data: {
+            stockId: stock.id,
+            previousQty,
+            newQty: previousQty - 1,
+            changeType: 'order',
+            orderId: newOrder.id,
+            changedBy: 'system',
+          },
+        })
+      }
+
+      return newOrder
     })
-
-    // Decrease stock and log the change if we have a stock record
-    if (stock) {
-      const previousQty = stock.quantity
-      await prisma.stringStock.update({
-        where: { id: stock.id },
-        data: {
-          quantity: { decrement: 1 },
-        },
-      })
-
-      await prisma.stringStockLog.create({
-        data: {
-          stockId: stock.id,
-          previousQty,
-          newQty: previousQty - 1,
-          changeType: 'order',
-          orderId: order.id,
-          changedBy: 'system',
-        },
-      })
-    }
 
     return NextResponse.json({
       success: true,
@@ -150,6 +164,12 @@ export async function POST(request: NextRequest) {
       },
     })
   } catch (error) {
+    if (error instanceof Error && error.message.startsWith('STOCK:')) {
+      return NextResponse.json(
+        { message: error.message.replace('STOCK:', '') },
+        { status: 400 }
+      )
+    }
     console.error('Error creating stringing order:', error)
     return NextResponse.json(
       { message: 'Failed to create stringing order' },

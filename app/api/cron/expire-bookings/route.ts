@@ -5,9 +5,12 @@ import { checkAndExpireBookings } from '@/lib/booking-expiration'
 const CRON_SECRET = process.env.CRON_SECRET
 
 export async function GET(request: NextRequest) {
-  // Verify authorization (optional - can be set via env var)
+  // Verify authorization - CRON_SECRET is required in production
   const authHeader = request.headers.get('authorization')
-  if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
+  if (!CRON_SECRET) {
+    return NextResponse.json({ error: 'CRON_SECRET not configured' }, { status: 500 })
+  }
+  if (authHeader !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

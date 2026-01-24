@@ -128,15 +128,15 @@ export async function GET(request: NextRequest) {
     // Get all phone search variants
     const phoneVariants = getPhoneSearchVariants(phone)
 
-    // Build OR conditions for each variant
-    const guestPhoneConditions = phoneVariants.flatMap(variant => [
-      { guestPhone: variant },
-      { guestPhone: { contains: variant } },
-    ])
+    // Build OR conditions for each variant - use exact matches only
+    // to prevent information disclosure from partial phone matches
+    const guestPhoneConditions = phoneVariants.map(variant => ({
+      guestPhone: variant,
+    }))
 
     const userPhoneConditions = phoneVariants.map(variant => ({
       user: {
-        phone: { contains: variant },
+        phone: variant,
       },
     }))
 
