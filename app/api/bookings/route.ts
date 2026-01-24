@@ -247,8 +247,6 @@ export async function POST(request: NextRequest) {
       }
 
       return bookings
-    }, {
-      isolationLevel: 'Serializable',
     })
 
     return NextResponse.json(
