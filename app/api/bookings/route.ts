@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     let bookingStatus = 'pending'
     let paymentStatus = 'pending'
 
-    if (isGuestBooking || paymentMethod === 'tng') {
+    if (isGuestBooking || paymentMethod === 'tng' || paymentMethod === 'duitnow') {
       // Guest booking or TNG payment - no login required for guests
       if (!guestName && !session?.user?.name) {
         return NextResponse.json(
@@ -95,10 +95,10 @@ export async function POST(request: NextRequest) {
         userId = session.user.id
       }
 
-      // If paying at counter or TNG, confirm the booking but mark payment as pending
-      if (payAtCounter || paymentMethod === 'tng') {
+      // If paying at counter, TNG, or DuitNow, confirm the booking but mark payment as pending
+      if (payAtCounter || paymentMethod === 'tng' || paymentMethod === 'duitnow') {
         bookingStatus = 'confirmed'
-        paymentStatus = 'pending' // Will pay at counter or via TNG (manual verification)
+        paymentStatus = 'pending' // Will pay at counter or via QR payment (manual verification)
       }
       // Otherwise, booking stays pending until online payment completes
     } else if (isTestBooking) {
@@ -263,8 +263,10 @@ export async function POST(request: NextRequest) {
     )
   } catch (error) {
     console.error('Error creating booking:', error)
+    // Return more detailed error in development/for debugging
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to create booking' },
+      { error: 'Failed to create booking', details: errorMessage },
       { status: 500 }
     )
   }
