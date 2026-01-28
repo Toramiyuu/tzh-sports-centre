@@ -224,33 +224,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create bookings for each slot in a batch transaction
-    const createdBookings = await prisma.$transaction(
-      slots.map((slot: { courtId: number; slotTime: string; slotRate: number }) =>
-        prisma.booking.create({
-          data: {
-            userId,
-            courtId: slot.courtId,
-            sport,
-            bookingDate,
-            startTime: slot.slotTime,
-            endTime: getEndTime(slot.slotTime),
-            totalAmount: slot.slotRate,
-            status: bookingStatus,
-            paymentStatus,
-            paymentMethod: paymentMethod || null,
-            paymentUserConfirmed: paymentUserConfirmed || false,
-            paymentScreenshotUrl: receiptUrl || null,
-            guestName: bookingGuestName,
-            guestPhone: bookingGuestPhone,
-            guestEmail: bookingGuestEmail,
-          },
-          include: {
-            court: true,
-          },
-        })
-      )
-    )
+    // Create bookings for each slot sequentially (works with Neon pooler)
+    const createdBookings = []
+    for (const slot of slots as { courtId: number; slotTime: string; slotRate: number }[]) {
+      const booking = await prisma.booking.create({
+        data: {
+          userId,
+          courtId: slot.courtId,
+          sport,
+          bookingDate,
+          startTime: slot.slotTime,
+          endTime: getEndTime(slot.slotTime),
+          totalAmount: slot.slotRate,
+          status: bookingStatus,
+          paymentStatus,
+          paymentMethod: paymentMethod || null,
+          paymentUserConfirmed: paymentUserConfirmed || false,
+          paymentScreenshotUrl: receiptUrl || null,
+          guestName: bookingGuestName,
+          guestPhone: bookingGuestPhone,
+          guestEmail: bookingGuestEmail,
+        },
+        include: {
+          court: true,
+        },
+      })
+      createdBookings.push(booking)
+    }
 
     return NextResponse.json(
       {
