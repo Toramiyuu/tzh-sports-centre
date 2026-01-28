@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
 
     // Build a set of all slots occupied by lessons
     const lessonSlotSet = new Set<string>()
-    const timeSlots = await prisma.timeSlot.findMany({ orderBy: { id: 'asc' } })
+    const timeSlots = await prisma.timeSlot.findMany({ orderBy: { slotTime: 'asc' } })
     const allSlotTimes = timeSlots.map(s => s.slotTime)
 
     lessonSessions.forEach((lesson) => {

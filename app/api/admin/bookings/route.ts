@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
 
     // Get all time slots
     const timeSlots = await prisma.timeSlot.findMany({
-      orderBy: { id: 'asc' },
+      orderBy: { slotTime: 'asc' },
     })
 
     // Get all courts
@@ -93,6 +93,8 @@ export async function GET(request: NextRequest) {
       paymentUserConfirmed?: boolean
       paymentMethod?: string
       paymentScreenshotUrl?: string | null
+      receiptVerificationStatus?: string | null
+      verificationNotes?: string | null
       totalAmount?: number
       isGuest: boolean
       isRecurring?: boolean
@@ -113,6 +115,8 @@ export async function GET(request: NextRequest) {
         paymentUserConfirmed: booking.paymentUserConfirmed,
         paymentMethod: booking.paymentMethod || undefined,
         paymentScreenshotUrl: booking.paymentScreenshotUrl,
+        receiptVerificationStatus: booking.receiptVerificationStatus,
+        verificationNotes: booking.verificationNotes,
         totalAmount: booking.totalAmount,
         isGuest: !booking.userId,
       }
@@ -282,6 +286,74 @@ export async function POST(request: NextRequest) {
     console.error('Error creating booking:', error)
     return NextResponse.json(
       { error: 'Failed to create booking' },
+      { status: 500 }
+    )
+  }
+}
+
+// Verify receipt (approve/reject)
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || !isAdmin(session.user.email)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { bookingId, action, notes } = await request.json()
+
+    if (!bookingId || !action) {
+      return NextResponse.json({ error: 'Booking ID and action are required' }, { status: 400 })
+    }
+
+    if (!['approve', 'reject'].includes(action)) {
+      return NextResponse.json({ error: 'Invalid action. Must be "approve" or "reject"' }, { status: 400 })
+    }
+
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+    })
+
+    if (!booking) {
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
+    }
+
+    if (action === 'approve') {
+      // Approve the receipt - mark as paid and confirmed
+      await prisma.booking.update({
+        where: { id: bookingId },
+        data: {
+          receiptVerificationStatus: 'approved',
+          verificationNotes: notes || null,
+          verifiedAt: new Date(),
+          verifiedBy: session.user.email,
+          paymentStatus: 'paid',
+          status: 'confirmed',
+          paidAt: new Date(),
+        },
+      })
+
+      return NextResponse.json({ success: true, status: 'approved' })
+    } else {
+      // Reject the receipt - cancel the booking
+      await prisma.booking.update({
+        where: { id: bookingId },
+        data: {
+          receiptVerificationStatus: 'rejected',
+          verificationNotes: notes || null,
+          verifiedAt: new Date(),
+          verifiedBy: session.user.email,
+          status: 'cancelled',
+          cancelledAt: new Date(),
+        },
+      })
+
+      return NextResponse.json({ success: true, status: 'rejected' })
+    }
+  } catch (error) {
+    console.error('Error verifying receipt:', error)
+    return NextResponse.json(
+      { error: 'Failed to verify receipt' },
       { status: 500 }
     )
   }

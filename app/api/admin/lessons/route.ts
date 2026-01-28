@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check recurring bookings conflict
-    const timeSlots = await prisma.timeSlot.findMany({ orderBy: { id: 'asc' } })
+    const timeSlots = await prisma.timeSlot.findMany({ orderBy: { slotTime: 'asc' } })
     const allSlotTimes = timeSlots.map(s => s.slotTime)
     const startIdx = allSlotTimes.indexOf(startTime)
     const endIdx = allSlotTimes.indexOf(endTime)

@@ -43,7 +43,12 @@ import {
   X,
   CreditCard,
   Banknote,
+  XCircle,
+  ZoomIn,
+  Eye,
+  AlertCircle,
 } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
 import { isAdmin } from '@/lib/admin'
 import { useTranslations } from 'next-intl'
 
@@ -100,6 +105,8 @@ interface BookingInfo {
   paymentUserConfirmed?: boolean
   paymentMethod?: string
   paymentScreenshotUrl?: string | null
+  receiptVerificationStatus?: string | null
+  verificationNotes?: string | null
   totalAmount?: number
   isGuest: boolean
   isRecurring?: boolean
@@ -209,6 +216,9 @@ export default function BookingsContent() {
   // Payment confirmation
   const [paymentConfirmOpen, setPaymentConfirmOpen] = useState(false)
   const [bookingToConfirmPayment, setBookingToConfirmPayment] = useState<BookingInfo | null>(null)
+  const [verificationNotes, setVerificationNotes] = useState('')
+  const [imageZoomOpen, setImageZoomOpen] = useState(false)
+  const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null)
 
   // Bulk edit for recurring bookings
   const [bulkEditOpen, setBulkEditOpen] = useState(false)
@@ -293,19 +303,52 @@ export default function BookingsContent() {
 
     setActionLoading(true)
     try {
-      const res = await fetch('/api/admin/bookings/confirm-payment', {
+      const res = await fetch('/api/admin/bookings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookingIds: [bookingToConfirmPayment.id] }),
+        body: JSON.stringify({
+          bookingId: bookingToConfirmPayment.id,
+          action: 'approve',
+          notes: verificationNotes || null,
+        }),
       })
 
       if (res.ok) {
         setPaymentConfirmOpen(false)
         setBookingToConfirmPayment(null)
+        setVerificationNotes('')
         fetchBookings()
       }
     } catch (error) {
       console.error('Error confirming payment:', error)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleRejectPayment = async () => {
+    if (!bookingToConfirmPayment) return
+
+    setActionLoading(true)
+    try {
+      const res = await fetch('/api/admin/bookings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId: bookingToConfirmPayment.id,
+          action: 'reject',
+          notes: verificationNotes || null,
+        }),
+      })
+
+      if (res.ok) {
+        setPaymentConfirmOpen(false)
+        setBookingToConfirmPayment(null)
+        setVerificationNotes('')
+        fetchBookings()
+      }
+    } catch (error) {
+      console.error('Error rejecting payment:', error)
     } finally {
       setActionLoading(false)
     }
@@ -998,6 +1041,12 @@ export default function BookingsContent() {
                                         ? 'ring-2 ring-red-500 bg-red-50'
                                         : booking.isRecurring
                                         ? 'bg-purple-100 border border-purple-200'
+                                        : booking.receiptVerificationStatus === 'rejected'
+                                        ? 'bg-red-100 border border-red-300'
+                                        : booking.receiptVerificationStatus === 'approved' || booking.paymentStatus === 'paid'
+                                        ? 'bg-green-100 border border-green-300'
+                                        : booking.receiptVerificationStatus === 'pending_verification' || (booking.paymentScreenshotUrl && booking.paymentStatus === 'pending')
+                                        ? 'bg-yellow-100 border border-yellow-300'
                                         : booking.sport === 'badminton'
                                         ? 'bg-blue-100 border border-blue-200'
                                         : 'bg-green-100 border border-green-200'
@@ -1046,23 +1095,44 @@ export default function BookingsContent() {
                                     )}
                                     {!booking.isRecurring && booking.paymentStatus && (
                                       <div className="mt-1 flex items-center gap-1 flex-wrap">
-                                        {booking.paymentStatus === 'paid' ? (
+                                        {booking.receiptVerificationStatus === 'approved' || booking.paymentStatus === 'paid' ? (
                                           <Badge className="text-[10px] px-1 py-0 bg-green-100 text-green-700 border-0">
-                                            <CreditCard className="w-2.5 h-2.5 mr-0.5" />
-                                            Paid
+                                            <Check className="w-2.5 h-2.5 mr-0.5" />
+                                            Approved
                                           </Badge>
-                                        ) : (
+                                        ) : booking.receiptVerificationStatus === 'rejected' ? (
+                                          <Badge className="text-[10px] px-1 py-0 bg-red-100 text-red-700 border-0">
+                                            <XCircle className="w-2.5 h-2.5 mr-0.5" />
+                                            Rejected
+                                          </Badge>
+                                        ) : booking.paymentScreenshotUrl ? (
                                           <>
                                             <Badge className="text-[10px] px-1 py-0 bg-yellow-100 text-yellow-700 border-0">
-                                              <Banknote className="w-2.5 h-2.5 mr-0.5" />
-                                              Pending
+                                              <Eye className="w-2.5 h-2.5 mr-0.5" />
+                                              Needs Review
                                             </Badge>
-                                            {booking.paymentUserConfirmed && (
-                                              <Badge className="text-[10px] px-1 py-0 bg-blue-100 text-blue-700 border-0">
-                                                <Check className="w-2.5 h-2.5 mr-0.5" />
-                                                User Confirmed
-                                              </Badge>
+                                            {!selectionMode && (
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-5 px-1.5 text-[10px] text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                                onClick={(e) => {
+                                                  e.stopPropagation()
+                                                  setBookingToConfirmPayment(booking)
+                                                  setPaymentConfirmOpen(true)
+                                                }}
+                                              >
+                                                <Eye className="w-2.5 h-2.5 mr-0.5" />
+                                                Review
+                                              </Button>
                                             )}
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Badge className="text-[10px] px-1 py-0 bg-gray-100 text-gray-600 border-0">
+                                              <Banknote className="w-2.5 h-2.5 mr-0.5" />
+                                              No Receipt
+                                            </Badge>
                                             {!selectionMode && (
                                               <Button
                                                 variant="ghost"
@@ -1075,7 +1145,7 @@ export default function BookingsContent() {
                                                 }}
                                               >
                                                 <Check className="w-2.5 h-2.5 mr-0.5" />
-                                                Confirm
+                                                Verify
                                               </Button>
                                             )}
                                           </>
@@ -2334,61 +2404,132 @@ export default function BookingsContent() {
       </Dialog>
 
       {/* Payment Confirmation Dialog */}
-      <Dialog open={paymentConfirmOpen} onOpenChange={setPaymentConfirmOpen}>
-        <DialogContent>
+      {/* Receipt Verification Dialog */}
+      <Dialog open={paymentConfirmOpen} onOpenChange={(open) => {
+        setPaymentConfirmOpen(open)
+        if (!open) {
+          setBookingToConfirmPayment(null)
+          setVerificationNotes('')
+        }
+      }}>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-green-600">
-              <CreditCard className="w-5 h-5" />
-              Confirm Payment
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="w-5 h-5" />
+              Verify Payment Receipt
             </DialogTitle>
             <DialogDescription>
-              Mark this booking&apos;s payment as received and confirmed.
+              Review the payment receipt and approve or reject.
             </DialogDescription>
           </DialogHeader>
           {bookingToConfirmPayment && (
-            <div className="py-4 space-y-2">
-              <p>
-                <strong>{t('name')}:</strong> {bookingToConfirmPayment.name}
-              </p>
-              <p>
-                <strong>{t('phone')}:</strong> {bookingToConfirmPayment.phone || 'N/A'}
-              </p>
-              <p>
-                <strong>{t('sport')}:</strong> {bookingToConfirmPayment.sport}
-              </p>
-              {bookingToConfirmPayment.paymentMethod && (
-                <p>
-                  <strong>Payment Method:</strong> {bookingToConfirmPayment.paymentMethod.toUpperCase()}
-                </p>
-              )}
-              {bookingToConfirmPayment.totalAmount != null && (
-                <p>
-                  <strong>Amount:</strong> RM {bookingToConfirmPayment.totalAmount.toFixed(2)}
-                </p>
-              )}
-              {bookingToConfirmPayment.paymentScreenshotUrl && (
-                <div className="mt-3">
-                  <p className="text-sm font-medium mb-2">Payment Receipt:</p>
-                  <img
-                    src={bookingToConfirmPayment.paymentScreenshotUrl}
-                    alt="Payment receipt"
-                    className="max-w-full max-h-64 rounded-lg border border-gray-200 object-contain"
-                  />
+            <div className="py-4 space-y-4">
+              {/* Booking Details */}
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-gray-500">Name:</span>
+                  <span className="ml-2 font-medium">{bookingToConfirmPayment.name}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Phone:</span>
+                  <span className="ml-2 font-medium">{bookingToConfirmPayment.phone || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Sport:</span>
+                  <span className="ml-2 font-medium capitalize">{bookingToConfirmPayment.sport}</span>
+                </div>
+                {bookingToConfirmPayment.paymentMethod && (
+                  <div>
+                    <span className="text-gray-500">Method:</span>
+                    <span className="ml-2 font-medium">{bookingToConfirmPayment.paymentMethod.toUpperCase()}</span>
+                  </div>
+                )}
+                {bookingToConfirmPayment.totalAmount != null && (
+                  <div>
+                    <span className="text-gray-500">Amount:</span>
+                    <span className="ml-2 font-bold text-green-600">RM {bookingToConfirmPayment.totalAmount.toFixed(2)}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Receipt Image */}
+              {bookingToConfirmPayment.paymentScreenshotUrl ? (
+                <div>
+                  <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                    Payment Receipt
+                    <span className="text-xs text-gray-400">(Click to zoom)</span>
+                  </p>
+                  <div
+                    className="relative cursor-zoom-in group"
+                    onClick={() => {
+                      setZoomedImageUrl(bookingToConfirmPayment.paymentScreenshotUrl!)
+                      setImageZoomOpen(true)
+                    }}
+                  >
+                    <img
+                      src={bookingToConfirmPayment.paymentScreenshotUrl}
+                      alt="Payment receipt"
+                      className="max-w-full max-h-48 rounded-lg border border-gray-200 object-contain"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-lg flex items-center justify-center">
+                      <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 bg-gray-50 rounded-lg text-center text-gray-500">
+                  <AlertCircle className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                  No receipt uploaded
                 </div>
               )}
-              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-800">
-                  This will mark the payment as <strong>Paid</strong> and confirm the booking.
-                </p>
+
+              {/* Notes Field */}
+              <div>
+                <Label htmlFor="verification-notes">Notes (visible to customer)</Label>
+                <Textarea
+                  id="verification-notes"
+                  placeholder="Add notes about this verification (e.g., reason for rejection)"
+                  value={verificationNotes}
+                  onChange={(e) => setVerificationNotes(e.target.value)}
+                  className="mt-1"
+                  rows={2}
+                />
+              </div>
+
+              {/* Action Info */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-xs text-green-800">
+                    <strong>Approve:</strong> Marks as paid & confirms booking
+                  </p>
+                </div>
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-xs text-red-800">
+                    <strong>Reject:</strong> Cancels booking (customer notified)
+                  </p>
+                </div>
               </div>
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="flex gap-2">
             <Button variant="outline" onClick={() => {
               setPaymentConfirmOpen(false)
               setBookingToConfirmPayment(null)
+              setVerificationNotes('')
             }}>
               {tAdmin('cancel')}
+            </Button>
+            <Button
+              onClick={handleRejectPayment}
+              disabled={actionLoading}
+              variant="destructive"
+            >
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <XCircle className="w-4 h-4 mr-2" />
+              )}
+              Reject
             </Button>
             <Button
               onClick={handleConfirmPayment}
@@ -2400,7 +2541,33 @@ export default function BookingsContent() {
               ) : (
                 <Check className="w-4 h-4 mr-2" />
               )}
-              Confirm Payment
+              Approve
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Image Zoom Dialog - Lightbox for receipt images */}
+      <Dialog open={imageZoomOpen} onOpenChange={setImageZoomOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] p-2 z-[100]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ZoomIn className="w-5 h-5" />
+              Payment Receipt
+            </DialogTitle>
+          </DialogHeader>
+          {zoomedImageUrl && (
+            <div className="flex items-center justify-center bg-gray-100 rounded-lg p-4">
+              <img
+                src={zoomedImageUrl}
+                alt="Payment receipt (zoomed)"
+                className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg"
+              />
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setImageZoomOpen(false)}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

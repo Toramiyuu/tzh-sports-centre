@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     // Get all time slots
     const allTimeSlots = await prisma.timeSlot.findMany({
-      orderBy: { id: 'asc' },
+      orderBy: { slotTime: 'asc' },
     })
 
     // Filter time slots based on day type:

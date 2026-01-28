@@ -79,9 +79,13 @@ model Booking {
   expiredAt             DateTime? @map("expired_at")
   createdAt             DateTime  @default(now()) @map("created_at")
   updatedAt             DateTime  @updatedAt @map("updated_at")
-  paymentScreenshotUrl  String?   @map("payment_screenshot_url")
-  court                 Court     @relation(fields: [courtId], references: [id])
-  user                  User?     @relation(fields: [userId], references: [id])
+  paymentScreenshotUrl       String?   @map("payment_screenshot_url")
+  receiptVerificationStatus  String?   @map("receipt_verification_status") // pending_verification, approved, rejected
+  verificationNotes          String?   @map("verification_notes")
+  verifiedAt                 DateTime? @map("verified_at")
+  verifiedBy                 String?   @map("verified_by")
+  court                      Court     @relation(fields: [courtId], references: [id])
+  user                       User?     @relation(fields: [userId], references: [id])
 
   @@map("bookings")
 }
@@ -289,8 +293,12 @@ model StringingOrder {
   priceFinal             Int?      @map("price_final")
   readyAt                DateTime? @map("ready_at")
   receivedAt             DateTime? @map("received_at")
-  status                 String    @default("RECEIVED")
-  user                   User?     @relation(fields: [userId], references: [id])
+  status                      String    @default("RECEIVED")
+  receiptVerificationStatus   String?   @map("receipt_verification_status") // pending_verification, approved, rejected
+  verificationNotes           String?   @map("verification_notes")
+  verifiedAt                  DateTime? @map("verified_at")
+  verifiedBy                  String?   @map("verified_by")
+  user                        User?     @relation(fields: [userId], references: [id])
 
   @@map("stringing_orders")
 }
