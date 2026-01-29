@@ -126,6 +126,8 @@ interface FullBooking {
   paymentUserConfirmed?: boolean
   paymentMethod?: string
   paymentScreenshotUrl?: string | null
+  receiptVerificationStatus?: string | null
+  verificationNotes?: string | null
   guestName: string | null
   guestPhone: string | null
   guestEmail: string | null
@@ -1320,16 +1322,52 @@ export default function BookingsContent() {
                               <span className="text-sm font-medium">
                                 RM{booking.totalAmount.toFixed(2)}
                               </span>
-                              {booking.paymentStatus === 'paid' ? (
+                              {booking.receiptVerificationStatus === 'approved' || booking.paymentStatus === 'paid' ? (
                                 <Badge className="bg-green-100 text-green-700 border-0 text-xs">
-                                  <CreditCard className="w-3 h-3 mr-1" />
-                                  Paid
+                                  <Check className="w-3 h-3 mr-1" />
+                                  Approved
                                 </Badge>
-                              ) : (
+                              ) : booking.receiptVerificationStatus === 'rejected' ? (
+                                <Badge className="bg-red-100 text-red-700 border-0 text-xs">
+                                  <XCircle className="w-3 h-3 mr-1" />
+                                  Rejected
+                                </Badge>
+                              ) : booking.paymentScreenshotUrl ? (
                                 <>
                                   <Badge className="bg-yellow-100 text-yellow-700 border-0 text-xs">
+                                    <Eye className="w-3 h-3 mr-1" />
+                                    Needs Review
+                                  </Badge>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                    onClick={() => {
+                                      setBookingToConfirmPayment({
+                                        id: booking.id,
+                                        name: booking.guestName || booking.user?.name || 'Unknown',
+                                        phone: booking.guestPhone || booking.user?.phone || '',
+                                        email: booking.guestEmail || booking.user?.email || null,
+                                        sport: booking.sport,
+                                        status: booking.status,
+                                        paymentStatus: booking.paymentStatus,
+                                        paymentMethod: booking.paymentMethod,
+                                        paymentScreenshotUrl: booking.paymentScreenshotUrl,
+                                        totalAmount: booking.totalAmount,
+                                        isGuest: !booking.user,
+                                      })
+                                      setPaymentConfirmOpen(true)
+                                    }}
+                                  >
+                                    <Eye className="w-3 h-3 mr-1" />
+                                    Review
+                                  </Button>
+                                </>
+                              ) : (
+                                <>
+                                  <Badge className="bg-gray-100 text-gray-600 border-0 text-xs">
                                     <Banknote className="w-3 h-3 mr-1" />
-                                    Pending
+                                    No Receipt
                                   </Badge>
                                   <Button
                                     variant="ghost"
@@ -1353,7 +1391,7 @@ export default function BookingsContent() {
                                     }}
                                   >
                                     <Check className="w-3 h-3 mr-1" />
-                                    Confirm Payment
+                                    Verify
                                   </Button>
                                 </>
                               )}
