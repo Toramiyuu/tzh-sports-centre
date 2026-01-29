@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getCachedTimeSlots, getCachedCourts } from '@/lib/cache'
 import { shouldUseWeekendHours, getHolidayName } from '@/lib/holidays'
 import { isTodayInMalaysia, isSlotTimePast, getMalaysiaTimeString } from '@/lib/malaysia-time'
 
@@ -26,62 +27,57 @@ export async function GET(request: NextRequest) {
     const useWeekendHours = shouldUseWeekendHours(queryDate)
     const holidayName = getHolidayName(queryDate)
 
-    // Get all time slots
-    const allTimeSlots = await prisma.timeSlot.findMany({
-      orderBy: { slotTime: 'asc' },
-    })
+    // Fetch all data in parallel for performance
+    const [allTimeSlots, bookings, recurringBookings, lessonSessions, courts] = await Promise.all([
+      getCachedTimeSlots(),
+      prisma.booking.findMany({
+        where: {
+          bookingDate: queryDate,
+          status: { in: ['pending', 'confirmed'] },
+          ...(courtId ? { courtId: parseInt(courtId) } : {}),
+        },
+        select: {
+          courtId: true,
+          startTime: true,
+        },
+      }),
+      prisma.recurringBooking.findMany({
+        where: {
+          dayOfWeek,
+          isActive: true,
+          startDate: { lte: queryDate },
+          OR: [
+            { endDate: null },
+            { endDate: { gte: queryDate } },
+          ],
+          ...(courtId ? { courtId: parseInt(courtId) } : {}),
+        },
+        select: {
+          courtId: true,
+          startTime: true,
+          label: true,
+        },
+      }),
+      prisma.lessonSession.findMany({
+        where: {
+          lessonDate: queryDate,
+          status: 'scheduled',
+          ...(courtId ? { courtId: parseInt(courtId) } : {}),
+        },
+        select: {
+          courtId: true,
+          startTime: true,
+          endTime: true,
+        },
+      }),
+      getCachedCourts(),
+    ])
 
     // Filter time slots based on day type:
     // - Weekdays (Mon-Fri, non-holiday): 3 PM (15:00) to 12 AM
     // - Weekends & Public Holidays: 9 AM (09:00) to 12 AM
     const startTimeFilter = useWeekendHours ? '09:00' : '15:00'
     const timeSlots = allTimeSlots.filter(slot => slot.slotTime >= startTimeFilter)
-
-    // Get existing bookings for the date
-    const bookings = await prisma.booking.findMany({
-      where: {
-        bookingDate: queryDate,
-        status: { in: ['pending', 'confirmed'] },
-        ...(courtId ? { courtId: parseInt(courtId) } : {}),
-      },
-      select: {
-        courtId: true,
-        startTime: true,
-      },
-    })
-
-    // Get recurring bookings that apply to this day of week
-    const recurringBookings = await prisma.recurringBooking.findMany({
-      where: {
-        dayOfWeek,
-        isActive: true,
-        startDate: { lte: queryDate },
-        OR: [
-          { endDate: null },
-          { endDate: { gte: queryDate } },
-        ],
-        ...(courtId ? { courtId: parseInt(courtId) } : {}),
-      },
-      select: {
-        courtId: true,
-        startTime: true,
-        label: true,
-      },
-    })
-
-    // Get lesson sessions for the date
-    const lessonSessions = await prisma.lessonSession.findMany({
-      where: {
-        lessonDate: queryDate,
-        status: 'scheduled',
-        ...(courtId ? { courtId: parseInt(courtId) } : {}),
-      },
-      select: {
-        courtId: true,
-        startTime: true,
-        endTime: true,
-      },
-    })
 
     // Create a set of booked slots per court
     const bookedSlots: Record<number, Set<string>> = {}
@@ -107,7 +103,6 @@ export async function GET(request: NextRequest) {
       if (!bookedSlots[lesson.courtId]) {
         bookedSlots[lesson.courtId] = new Set()
       }
-      // Find all 30-min slots between startTime and endTime
       const allSlots = allTimeSlots.map(s => s.slotTime)
       const startIdx = allSlots.indexOf(lesson.startTime)
       const endIdx = allSlots.indexOf(lesson.endTime)
@@ -126,12 +121,6 @@ export async function GET(request: NextRequest) {
         const key = `${recurring.courtId}-${recurring.startTime}`
         recurringLabels[key] = recurring.label
       }
-    })
-
-    // Get courts
-    const courts = await prisma.court.findMany({
-      where: { isActive: true },
-      orderBy: { id: 'asc' },
     })
 
     // Check if query date is today in Malaysia timezone

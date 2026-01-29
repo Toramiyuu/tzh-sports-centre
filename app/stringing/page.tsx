@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dialog'
 import { Slider } from '@/components/ui/slider'
 import { Search, Filter, X, Wrench, Phone, Palette, Check, PackageSearch } from 'lucide-react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import {
   STRING_INVENTORY,
@@ -376,29 +377,37 @@ export default function StringingPage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-600 to-blue-800 text-white">
-        <div className="absolute inset-0 bg-black/20" />
+      <section className="relative bg-blue-900 text-white overflow-hidden">
+        {/* Background Image */}
+        <Image
+          src="https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=1600&q=80"
+          alt="Badminton racket stringing"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/85 via-blue-900/70 to-blue-900/40" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div className="max-w-2xl">
-            <Badge className="bg-white/20 text-white mb-4">
+            <Badge className="bg-white/20 text-white mb-4 backdrop-blur-sm">
               <Wrench className="w-4 h-4 mr-1" />
               Professional Service
             </Badge>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 drop-shadow-lg">
               {t('title')}
             </h1>
-            <p className="text-lg text-blue-100 mb-6">
+            <p className="text-lg text-blue-100 mb-6 drop-shadow">
               {t('subtitle')}
             </p>
             <div className="flex gap-3">
               <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
+                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg">
                   <Phone className="w-5 h-5 mr-2" />
                   WhatsApp
                 </Button>
               </a>
               <Link href="/stringing/track">
-                <Button size="lg" className="bg-white/20 text-white border border-white/50 hover:bg-white/30">
+                <Button size="lg" className="bg-white/20 text-white border border-white/50 hover:bg-white/30 backdrop-blur-sm shadow-lg">
                   <PackageSearch className="w-5 h-5 mr-2" />
                   Track Order
                 </Button>

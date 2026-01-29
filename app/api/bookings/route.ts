@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCachedTimeSlots } from '@/lib/cache'
 import { isAdmin } from '@/lib/admin'
 
 // GET - Fetch user's bookings
@@ -135,17 +136,42 @@ export async function POST(request: NextRequest) {
     const bookingDate = new Date(date)
     const dayOfWeek = bookingDate.getDay()
 
-    // Check for conflicts - any existing booking for these court/time combinations
-    const existingBookings = await prisma.booking.findMany({
-      where: {
-        bookingDate,
-        status: { in: ['pending', 'confirmed'] },
-        OR: slots.map((slot: { courtId: number; slotTime: string }) => ({
-          courtId: slot.courtId,
-          startTime: slot.slotTime,
-        })),
-      },
-    })
+    // Check all conflicts in parallel for performance
+    const [existingBookings, recurringConflicts, lessonSessions, timeSlots] = await Promise.all([
+      prisma.booking.findMany({
+        where: {
+          bookingDate,
+          status: { in: ['pending', 'confirmed'] },
+          OR: slots.map((slot: { courtId: number; slotTime: string }) => ({
+            courtId: slot.courtId,
+            startTime: slot.slotTime,
+          })),
+        },
+      }),
+      prisma.recurringBooking.findMany({
+        where: {
+          dayOfWeek,
+          isActive: true,
+          startDate: { lte: bookingDate },
+          OR: [
+            { endDate: null },
+            { endDate: { gte: bookingDate } },
+          ],
+        },
+      }),
+      prisma.lessonSession.findMany({
+        where: {
+          lessonDate: bookingDate,
+          status: 'scheduled',
+        },
+        select: {
+          courtId: true,
+          startTime: true,
+          endTime: true,
+        },
+      }),
+      getCachedTimeSlots(),
+    ])
 
     if (existingBookings.length > 0) {
       return NextResponse.json(
@@ -153,19 +179,6 @@ export async function POST(request: NextRequest) {
         { status: 409 }
       )
     }
-
-    // Check for recurring booking conflicts
-    const recurringConflicts = await prisma.recurringBooking.findMany({
-      where: {
-        dayOfWeek,
-        isActive: true,
-        startDate: { lte: bookingDate },
-        OR: [
-          { endDate: null },
-          { endDate: { gte: bookingDate } },
-        ],
-      },
-    })
 
     const recurringSlotSet = new Set(
       recurringConflicts.map(r => `${r.courtId}-${r.startTime}`)
@@ -183,22 +196,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check for lesson session conflicts
-    const lessonSessions = await prisma.lessonSession.findMany({
-      where: {
-        lessonDate: bookingDate,
-        status: 'scheduled',
-      },
-      select: {
-        courtId: true,
-        startTime: true,
-        endTime: true,
-      },
-    })
-
     // Build a set of all slots occupied by lessons
     const lessonSlotSet = new Set<string>()
-    const timeSlots = await prisma.timeSlot.findMany({ orderBy: { slotTime: 'asc' } })
     const allSlotTimes = timeSlots.map(s => s.slotTime)
 
     lessonSessions.forEach((lesson) => {

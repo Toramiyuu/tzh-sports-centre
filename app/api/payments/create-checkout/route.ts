@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe, formatAmountForStripe, PAYMENT_METHOD_TYPES } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
+import { getCachedTimeSlots } from '@/lib/cache'
 import { auth } from '@/lib/auth'
 
 interface SlotData {
@@ -47,17 +48,47 @@ export async function POST(request: NextRequest) {
     const bookingDate = new Date(date)
     const dayOfWeek = bookingDate.getDay()
 
-    // Check for conflicts with existing bookings
-    const existingBookings = await prisma.booking.findMany({
-      where: {
-        bookingDate,
-        status: { in: ['pending', 'confirmed'] },
-        OR: slots.map((slot: SlotData) => ({
-          courtId: slot.courtId,
-          startTime: slot.slotTime,
-        })),
-      },
-    })
+    // Check all conflicts and fetch courts in parallel for performance
+    const courtIds = [...new Set(slots.map((s: SlotData) => s.courtId))] as number[]
+
+    const [existingBookings, recurringConflicts, lessonSessions, timeSlots, courts] = await Promise.all([
+      prisma.booking.findMany({
+        where: {
+          bookingDate,
+          status: { in: ['pending', 'confirmed'] },
+          OR: slots.map((slot: SlotData) => ({
+            courtId: slot.courtId,
+            startTime: slot.slotTime,
+          })),
+        },
+      }),
+      prisma.recurringBooking.findMany({
+        where: {
+          dayOfWeek,
+          isActive: true,
+          startDate: { lte: bookingDate },
+          OR: [
+            { endDate: null },
+            { endDate: { gte: bookingDate } },
+          ],
+        },
+      }),
+      prisma.lessonSession.findMany({
+        where: {
+          lessonDate: bookingDate,
+          status: 'scheduled',
+        },
+        select: {
+          courtId: true,
+          startTime: true,
+          endTime: true,
+        },
+      }),
+      getCachedTimeSlots(),
+      prisma.court.findMany({
+        where: { id: { in: courtIds } },
+      }),
+    ])
 
     if (existingBookings.length > 0) {
       return NextResponse.json(
@@ -65,19 +96,6 @@ export async function POST(request: NextRequest) {
         { status: 409 }
       )
     }
-
-    // Check for recurring booking conflicts
-    const recurringConflicts = await prisma.recurringBooking.findMany({
-      where: {
-        dayOfWeek,
-        isActive: true,
-        startDate: { lte: bookingDate },
-        OR: [
-          { endDate: null },
-          { endDate: { gte: bookingDate } },
-        ],
-      },
-    })
 
     const recurringSlotSet = new Set(
       recurringConflicts.map(r => `${r.courtId}-${r.startTime}`)
@@ -94,20 +112,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check for lesson session conflicts
-    const lessonSessions = await prisma.lessonSession.findMany({
-      where: {
-        lessonDate: bookingDate,
-        status: 'scheduled',
-      },
-      select: {
-        courtId: true,
-        startTime: true,
-        endTime: true,
-      },
-    })
-
-    const timeSlots = await prisma.timeSlot.findMany({ orderBy: { slotTime: 'asc' } })
     const allSlotTimes = timeSlots.map(s => s.slotTime)
     const lessonSlotSet = new Set<string>()
 
@@ -132,12 +136,6 @@ export async function POST(request: NextRequest) {
         { status: 409 }
       )
     }
-
-    // Fetch court information for line items
-    const courtIds = [...new Set(slots.map((s: SlotData) => s.courtId))] as number[]
-    const courts = await prisma.court.findMany({
-      where: { id: { in: courtIds } },
-    })
     const courtMap = new Map(courts.map(c => [c.id, c]))
 
     // Calculate total amount
