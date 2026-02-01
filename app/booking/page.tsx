@@ -664,7 +664,7 @@ function BookingPageContent() {
               onClick={() => setSport('badminton')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 sport === 'badminton'
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-teal-500 text-teal-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -692,7 +692,7 @@ function BookingPageContent() {
                 alt="Badminton player in action"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/70 to-transparent flex items-center">
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-600/70 to-transparent flex items-center">
                 <div className="px-6 text-white">
                   <h3 className="text-2xl font-bold">{tHome('sports.badminton')}</h3>
                   <p className="text-sm opacity-90">{t('title')}</p>
@@ -719,21 +719,21 @@ function BookingPageContent() {
         {/* Pricing & Minimum Booking Info Banner */}
         <div className={`mt-4 p-4 rounded-lg border-2 ${
           sport === 'badminton'
-            ? 'bg-blue-50 border-blue-200'
+            ? 'bg-teal-50 border-teal-200'
             : 'bg-green-50 border-green-200'
         }`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className={`p-2 rounded-full ${
-                sport === 'badminton' ? 'bg-blue-100' : 'bg-green-100'
+                sport === 'badminton' ? 'bg-teal-100' : 'bg-green-100'
               }`}>
                 <Clock className={`w-5 h-5 ${
-                  sport === 'badminton' ? 'text-blue-600' : 'text-green-600'
+                  sport === 'badminton' ? 'text-teal-600' : 'text-green-600'
                 }`} />
               </div>
               <div>
                 <p className={`font-semibold text-lg ${
-                  sport === 'badminton' ? 'text-blue-800' : 'text-green-800'
+                  sport === 'badminton' ? 'text-teal-800' : 'text-green-800'
                 }`}>
                   {sport === 'badminton' ? (
                     <>RM15/hr <span className="text-orange-600">/ RM18/hr</span></>
@@ -742,7 +742,7 @@ function BookingPageContent() {
                   )}
                 </p>
                 <p className={`text-sm ${
-                  sport === 'badminton' ? 'text-blue-600' : 'text-green-600'
+                  sport === 'badminton' ? 'text-teal-600' : 'text-green-600'
                 }`}>
                   {sport === 'badminton'
                     ? '9 AM - 6 PM: RM15 | 6 PM - 12 AM: RM18'
@@ -752,7 +752,7 @@ function BookingPageContent() {
             </div>
             <div className={`px-4 py-2 rounded-lg ${
               sport === 'badminton'
-                ? 'bg-blue-200 text-blue-800'
+                ? 'bg-teal-200 text-teal-800'
                 : 'bg-green-200 text-green-800'
             }`}>
               <p className="font-bold text-lg">
@@ -809,7 +809,7 @@ function BookingPageContent() {
                 {t('selectTime')} - {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                 <Badge
                   variant="outline"
-                  className={sport === 'badminton' ? 'ml-2 bg-blue-50' : 'ml-2 bg-green-50'}
+                  className={sport === 'badminton' ? 'ml-2 bg-teal-50' : 'ml-2 bg-green-50'}
                 >
                   {sport === 'badminton' ? tHome('sports.badminton') : tHome('sports.pickleball')}
                 </Badge>
@@ -863,10 +863,10 @@ function BookingPageContent() {
                                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                       : selected
                                       ? sport === 'badminton'
-                                        ? 'bg-blue-600 text-white'
+                                        ? 'bg-teal-600 text-white'
                                         : 'bg-green-600 text-white'
                                       : sport === 'badminton'
-                                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                                      ? 'bg-teal-100 text-teal-700 hover:bg-teal-200'
                                       : 'bg-green-100 text-green-700 hover:bg-green-200'
                                   }`}
                                 >
@@ -910,7 +910,7 @@ function BookingPageContent() {
                   <div>
                     <p className="text-sm text-gray-600 mb-1">
                       <strong>{t('selectSport')}:</strong>{' '}
-                      <span className={sport === 'badminton' ? 'text-blue-600' : 'text-green-600'}>
+                      <span className={sport === 'badminton' ? 'text-teal-600' : 'text-green-600'}>
                         {sport === 'badminton' ? tHome('sports.badminton') : tHome('sports.pickleball')}
                       </span>
                     </p>
@@ -1061,7 +1061,7 @@ function BookingPageContent() {
               <div className="mt-6 pt-4 border-t border-gray-200">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <Clock className="w-4 h-4 text-blue-600" />
+                    <Clock className="w-4 h-4 text-teal-600" />
                     <div>
                       <p className="font-medium text-gray-900">{tHome('info.hours.title')}</p>
                       <p className="text-gray-500">{tHome('info.hours.weekdays')}</p>
@@ -1069,10 +1069,10 @@ function BookingPageContent() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <User className="w-4 h-4 text-blue-600" />
+                    <User className="w-4 h-4 text-teal-600" />
                     <div>
                       <p className="font-medium text-gray-900">{tHome('info.contact.title')}</p>
-                      <p className="text-gray-500">011-6868 8508</p>
+                      <p className="text-gray-500"><a href="tel:+60116868508" className="hover:text-teal-600 transition-colors">011-6868 8508</a></p>
                     </div>
                   </div>
                 </div>
@@ -1087,7 +1087,7 @@ function BookingPageContent() {
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
-              <Smartphone className="w-5 h-5 text-blue-600" />
+              <Smartphone className="w-5 h-5 text-teal-600" />
               Pay with Touch &apos;n Go
             </DialogTitle>
           </DialogHeader>
@@ -1095,7 +1095,7 @@ function BookingPageContent() {
           {!tngBookingCreated ? (
             <div className="space-y-4">
               {/* Amount Banner */}
-              <div className="bg-blue-600 text-white rounded-xl p-4 text-center">
+              <div className="bg-teal-600 text-white rounded-xl p-4 text-center">
                 <p className="text-sm opacity-90">Amount to pay</p>
                 <p className="text-3xl font-bold">RM{total.toFixed(2)}</p>
               </div>
@@ -1103,7 +1103,7 @@ function BookingPageContent() {
               {/* Step 1: Save QR Code */}
               <div className="bg-gray-50 rounded-xl p-4 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                  <div className="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
                   <h4 className="font-semibold text-gray-900">Save the QR Code</h4>
                 </div>
                 <div className="flex justify-center">
@@ -1126,7 +1126,7 @@ function BookingPageContent() {
                 </div>
                 <Button
                   variant="outline"
-                  className="w-full h-12 text-base border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+                  className="w-full h-12 text-base border-2 border-teal-600 text-teal-600 hover:bg-teal-50"
                   onClick={() => downloadQrCode('tng')}
                 >
                   <Download className="mr-2 h-5 w-5" />
@@ -1139,7 +1139,7 @@ function BookingPageContent() {
               <div className="space-y-3">
                 {/* Step 2 */}
                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                  <div className="w-7 h-7 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
                   <div>
                     <p className="font-medium text-gray-900">Open Touch &apos;n Go App</p>
                     <p className="text-sm text-gray-600">Open your Touch &apos;n Go eWallet app</p>
@@ -1148,7 +1148,7 @@ function BookingPageContent() {
 
                 {/* Step 3 */}
                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                  <div className="w-7 h-7 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
                   <div>
                     <p className="font-medium text-gray-900">Scan from Gallery</p>
                     <p className="text-sm text-gray-600">Tap &apos;Scan&apos;, then select the QR code from your gallery</p>
@@ -1157,16 +1157,16 @@ function BookingPageContent() {
 
                 {/* Step 4 */}
                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
+                  <div className="w-7 h-7 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
                   <div>
                     <p className="font-medium text-gray-900">Enter Amount</p>
-                    <p className="text-sm text-gray-600">Enter exactly <strong className="text-blue-600">RM{total.toFixed(2)}</strong></p>
+                    <p className="text-sm text-gray-600">Enter exactly <strong className="text-teal-600">RM{total.toFixed(2)}</strong></p>
                   </div>
                 </div>
 
                 {/* Step 5 */}
                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
+                  <div className="w-7 h-7 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
                   <div>
                     <p className="font-medium text-gray-900">Complete Payment</p>
                     <p className="text-sm text-gray-600">Confirm and complete the payment in your app</p>
@@ -1174,9 +1174,9 @@ function BookingPageContent() {
                 </div>
 
                 {/* Step 6: Upload Receipt */}
-                <div className="bg-blue-50 rounded-xl p-4 space-y-3 border border-blue-200">
+                <div className="bg-teal-50 rounded-xl p-4 space-y-3 border border-teal-200">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
+                    <div className="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
                     <div>
                       <h4 className="font-semibold text-gray-900">{t('uploadReceipt') || 'Upload Payment Receipt'}</h4>
                       <p className="text-sm text-gray-600">{t('uploadReceiptDesc') || 'Upload a screenshot of your payment confirmation for faster verification.'}</p>
@@ -1203,8 +1203,8 @@ function BookingPageContent() {
                     </div>
                   ) : (
                     <label className="block cursor-pointer">
-                      <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-500 hover:bg-blue-50/50 transition-colors">
-                        <ImagePlus className="w-10 h-10 mx-auto text-blue-400 mb-2" />
+                      <div className="border-2 border-dashed border-teal-300 rounded-lg p-6 text-center hover:border-teal-500 hover:bg-teal-50/50 transition-colors">
+                        <ImagePlus className="w-10 h-10 mx-auto text-teal-400 mb-2" />
                         <p className="text-sm font-medium text-gray-700">{t('tapToUpload') || 'Tap to upload receipt'}</p>
                         <p className="text-xs text-gray-500 mt-1">{t('maxFileSize') || 'Max 5MB (JPG, PNG)'}</p>
                       </div>
@@ -1242,7 +1242,7 @@ function BookingPageContent() {
 
               {/* Confirm Button */}
               <Button
-                className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed'}`}
+                className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-teal-600 hover:bg-teal-700' : 'bg-gray-300 cursor-not-allowed'}`}
                 size="lg"
                 onClick={handleTngBookingConfirm}
                 disabled={!tngHasPaid || booking || uploadingReceipt}

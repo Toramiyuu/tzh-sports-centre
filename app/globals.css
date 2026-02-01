@@ -49,36 +49,36 @@
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(0.165 0.022 265);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.165 0.022 265);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --popover-foreground: oklch(0.165 0.022 265);
+  --primary: oklch(0.588 0.107 178);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.968 0.007 247);
+  --secondary-foreground: oklch(0.165 0.022 265);
+  --muted: oklch(0.968 0.007 247);
+  --muted-foreground: oklch(0.446 0.025 258);
+  --accent: oklch(0.968 0.007 247);
+  --accent-foreground: oklch(0.165 0.022 265);
+  --destructive: oklch(0.639 0.222 17);
+  --border: oklch(0.922 0.008 250);
+  --input: oklch(0.922 0.008 250);
+  --ring: oklch(0.588 0.107 178);
+  --chart-1: oklch(0.588 0.107 178);
+  --chart-2: oklch(0.705 0.191 47);
+  --chart-3: oklch(0.696 0.153 163);
+  --chart-4: oklch(0.750 0.160 72);
+  --chart-5: oklch(0.490 0.096 178);
   --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-foreground: oklch(0.165 0.022 265);
+  --sidebar-primary: oklch(0.588 0.107 178);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.968 0.007 247);
+  --sidebar-accent-foreground: oklch(0.165 0.022 265);
+  --sidebar-border: oklch(0.922 0.008 250);
+  --sidebar-ring: oklch(0.588 0.107 178);
 }
 
 .dark {
@@ -88,8 +88,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.696 0.107 178);
+  --primary-foreground: oklch(0.165 0.022 265);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -99,20 +99,20 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
+  --ring: oklch(0.588 0.107 178);
+  --chart-1: oklch(0.588 0.107 178);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.588 0.107 178);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: oklch(0.588 0.107 178);
 }
 
 @layer base {
@@ -126,32 +126,46 @@
 
 /* Smooth animations */
 @layer utilities {
-  /* Fade in animation */
   .animate-fade-in {
     animation: fadeIn 0.3s ease-out forwards;
   }
 
-  /* Slide up animation */
   .animate-slide-up {
     animation: slideUp 0.3s ease-out forwards;
   }
 
-  /* Slide down animation */
   .animate-slide-down {
     animation: slideDown 0.3s ease-out forwards;
   }
 
-  /* Scale in animation */
   .animate-scale-in {
     animation: scaleIn 0.2s ease-out forwards;
   }
 
-  /* Bounce animation for buttons */
   .animate-bounce-subtle {
     animation: bounceSubtle 0.4s ease-out;
   }
 
-  /* Smooth hover transitions */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-fade-in-up-delay-1 {
+    animation: fadeInUp 0.6s ease-out 0.15s forwards;
+    opacity: 0;
+  }
+
+  .animate-fade-in-up-delay-2 {
+    animation: fadeInUp 0.6s ease-out 0.3s forwards;
+    opacity: 0;
+  }
+
+  .animate-fade-in-up-delay-3 {
+    animation: fadeInUp 0.6s ease-out 0.45s forwards;
+    opacity: 0;
+  }
+
   .hover-lift {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -160,7 +174,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  /* Card hover effect */
   .card-hover {
     transition: all 0.2s ease;
   }
@@ -169,60 +182,37 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   }
 
-  /* Button press effect */
   .btn-press:active {
     transform: scale(0.97);
   }
-
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes bounceSubtle {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

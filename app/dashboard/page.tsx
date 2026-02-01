@@ -96,7 +96,7 @@ export default function DashboardPage() {
 
   const getSportBadge = (sport: string) => {
     return sport === 'badminton' ? (
-      <Badge className="bg-blue-100 text-blue-700">Badminton</Badge>
+      <Badge className="bg-teal-100 text-teal-700">Badminton</Badge>
     ) : (
       <Badge className="bg-green-100 text-green-700">Pickleball</Badge>
     )
@@ -166,7 +166,7 @@ export default function DashboardPage() {
               {upcomingBookings.length === 0 ? (
                 <div className="text-center py-6 text-gray-500">
                   <p>No upcoming bookings</p>
-                  <Link href="/booking" className="text-blue-600 hover:underline text-sm">
+                  <Link href="/booking" className="text-teal-600 hover:underline text-sm">
                     Book a court
                   </Link>
                 </div>

@@ -38,11 +38,16 @@
   },
   "home": {
     "hero": {
-      "subtitle": "Sewa Gelanggang & Latihan",
-      "title": "TZH Sports Centre",
-      "description": "Gelanggang badminton dan pickleball di Ayer Itam. Tempah online atau walk-in.",
+      "socialProof": "4.7 bintang di Google",
+      "headline": "Dua Sukan. Satu Ketik. Jom Main.",
+      "subheadline": "Gelanggang badminton dan pickleball di Ayer Itam. Tempah online, hadir, main.",
       "bookCourt": "Tempah Gelanggang",
-      "viewLessons": "Lihat Kelas"
+      "viewLessons": "Lihat Kelas",
+      "stat": {
+        "courts": "4 Gelanggang",
+        "price": "Dari RM15/jam",
+        "hours": "Buka Lewat Malam"
+      }
     },
     "pricing": {
       "from": "Dari",
@@ -117,31 +122,40 @@
     },
     "whyChooseUs": {
       "title": "Kenapa Pilih Kami",
-      "clean": {
-        "title": "Gelanggang dibersihkan kerap",
-        "desc": "Kami membersihkan gelanggang supaya ia kering dan tidak licin."
+      "subtitle": "Semua yang anda perlukan di bawah satu bumbung",
+      "dualSport": {
+        "title": "Pusat Dua Sukan",
+        "desc": "Badminton dan pickleball di bawah satu bumbung. 4 gelanggang sedia untuk kedua-dua sukan — antara sedikit tempat di Ayer Itam yang menawarkan kedua-duanya.",
+        "badge": "Unik di Ayer Itam"
       },
-      "ventilation": {
-        "title": "Pengudaraan yang baik",
-        "desc": "Kipas dan tingkap memastikan aliran udara semasa bermain."
+      "bookOnline": {
+        "title": "Tempah Segera Dalam Talian",
+        "desc": "Lihat ketersediaan gelanggang secara langsung dan tempah dalam beberapa saat. Tiada perlu WhatsApp berulang-alik."
       },
-      "lighting": {
-        "title": "Pencahayaan selesa",
-        "desc": "Lampu diletakkan dari sisi supaya tidak menyilaukan mata."
+      "playerServices": {
+        "title": "Perkhidmatan Pemain Lengkap",
+        "desc": "Latihan profesional dari jurulatih bertauliah BAM serta perkhidmatan pasang tali raket di premis dengan 18+ pilihan tali."
       },
-      "nets": {
-        "title": "Jaring dipasang dengan betul",
-        "desc": "Jaring badminton dipasang pada ketinggian yang betul."
-      },
-      "tidy": {
-        "title": "Persekitaran bersih",
-        "desc": "Gelanggang dan kawasan sekeliling dijaga dengan kemas."
-      },
-      "snacks": {
-        "title": "Minuman dan snek tersedia",
-        "desc": "Kami menjual minuman dan snek di premis."
+      "facilities": {
+        "title": "Kemudahan Mengutamakan Pemain",
+        "desc": "Gelanggang dibersihkan antara sesi, lampu sisi tanpa silau, dan makanan ringan di premis.",
+        "badge": "Buka Lewat Malam"
       },
       "cta": "Tempah Gelanggang"
+    },
+    "googleReviews": {
+      "title": "Apa Kata Pemain Kami",
+      "subtitle": "Penilaian 4.7 daripada 5 di Google Maps",
+      "review1": "Panas tapi seronok gila!",
+      "review1Time": "2 bulan lalu",
+      "review2": "Gelanggang yang bagus dan suasana mesra. Sangat disyorkan!",
+      "review2Time": "9 bulan lalu",
+      "viewOnGoogle": "Lihat semua ulasan di Google Maps"
+    },
+    "stringingPromo": {
+      "title": "Perkhidmatan Tali Raket Profesional",
+      "description": "18+ pilihan tali dari jenama terkemuka. Harga dari RM33 setiap raket.",
+      "cta": "Lihat Tali"
     },
     "location": {
       "title": "Lokasi Kami",
@@ -159,7 +173,9 @@
       "contact": {
         "title": "Hubungi",
         "bookings": "Tempahan Gelanggang: 011-6868 8508",
-        "lessons": "Kelas: 011-7575 8508"
+        "lessons": "Kelas: 011-7575 8508",
+        "bookingsLabel": "Tempahan Gelanggang:",
+        "lessonsLabel": "Kelas:"
       }
     },
     "footer": "© 2025 TZH Sports Centre"
@@ -290,9 +306,13 @@
     },
     "coach": {
       "title": "Jurulatih Kami",
-      "certification": "Bertauliah oleh Persatuan Badminton Malaysia",
+      "bio": "Jurulatih bertauliah BAM kami mempunyai pengalaman bertanding dan mengajar selama bertahun-tahun, melatih pemain dari semua peringkat umur dan tahap kemahiran.",
+      "certification": "Jurulatih Bertauliah BAM",
       "experience": "Tahun Pengalaman",
-      "bam": "Persatuan Badminton Malaysia"
+      "bam": "Persatuan Badminton Malaysia",
+      "experienceYears": "Semua Umur & Tahap",
+      "experienceDesc": "Kanak-kanak, remaja & dewasa dialu-alukan",
+      "bookTrial": "Tempah Kelas Percubaan"
     },
     "packages": {
       "title": "Kelas Persendirian",
@@ -439,6 +459,8 @@
     "weekends": "Hujung Minggu & Cuti Umum: 9 PG - 12 MLM",
     "quickLinks": "Pautan Pantas",
     "bookCourt": "Tempah Gelanggang",
+    "lessons": "Kelas",
+    "stringing": "Tali Raket",
     "myBookings": "Tempahan Saya",
     "login": "Log Masuk",
     "signUp": "Daftar",
@@ -449,9 +471,28 @@
     "welcome": "Selamat kembali, {name}",
     "requestLesson": "Mohon Kelas",
     "membersOnly": {
-      "title": "Ahli Sahaja",
-      "description": "Kawasan ini untuk ahli latihan sahaja. Jika anda berminat untuk menyertai program latihan kami, sila hubungi kami.",
-      "backToHome": "Kembali ke Utama"
+      "title": "Jadi Ahli Latihan",
+      "description": "Sertai program kejurulatihan kami dan dapatkan akses kepada kelas berjadual, jadual peribadi, dan banyak lagi.",
+      "backToHome": "Kembali ke Utama",
+      "enquire": "Tanya melalui WhatsApp",
+      "benefits": {
+        "scheduling": {
+          "title": "Sesi Latihan Berjadual",
+          "desc": "Dapatkan sesi latihan mingguan tetap dengan jurulatih bertauliah BAM kami."
+        },
+        "lessons": {
+          "title": "Mohon Kelas Bila-bila Masa",
+          "desc": "Mohon kelas peribadi atau berkumpulan tambahan melalui papan pemuka anda."
+        },
+        "timetable": {
+          "title": "Jadual Mingguan Peribadi",
+          "desc": "Lihat sesi akan datang, tugasan gelanggang, dan rakan latihan anda."
+        },
+        "recurring": {
+          "title": "Tempahan Keutamaan",
+          "desc": "Ahli mendapat keutamaan untuk slot masa berulang dan tempahan gelanggang."
+        }
+      }
     },
     "stats": {
       "upcomingLessons": "Kelas Akan Datang",
@@ -579,7 +620,7 @@
       }
     },
     "trainingOrders": {
-      "title": "Pesanan Latihan",
+      "title": "Pesanan Tali Raket",
       "description": "Urus pesanan perkhidmatan tali raket"
     },
     "bookings": {

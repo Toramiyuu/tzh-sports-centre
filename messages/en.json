@@ -38,11 +38,16 @@
   },
   "home": {
     "hero": {
-      "subtitle": "Court Rental & Coaching",
-      "title": "TZH Sports Centre",
-      "description": "Badminton and pickleball courts in Ayer Itam. Book online or walk in.",
+      "socialProof": "4.7 stars on Google",
+      "headline": "Two Sports. One Tap. Game On.",
+      "subheadline": "Badminton & pickleball courts in Ayer Itam. Book online, show up, play.",
       "bookCourt": "Book a Court",
-      "viewLessons": "View Lessons"
+      "viewLessons": "View Lessons",
+      "stat": {
+        "courts": "4 Courts",
+        "price": "From RM15/hr",
+        "hours": "Open Late"
+      }
     },
     "pricing": {
       "from": "From",
@@ -117,31 +122,40 @@
     },
     "whyChooseUs": {
       "title": "Why Choose Us",
-      "clean": {
-        "title": "Courts are cleaned often",
-        "desc": "We clean the court regularly so it stays dry and not slippery."
+      "subtitle": "Everything you need under one roof",
+      "dualSport": {
+        "title": "Dual-Sport Venue",
+        "desc": "Badminton and pickleball under one roof. 4 courts ready for both sports — one of the few venues in Ayer Itam offering both.",
+        "badge": "Unique in Ayer Itam"
       },
-      "ventilation": {
-        "title": "Good ventilation",
-        "desc": "Fans and windows keep airflow moving during games."
+      "bookOnline": {
+        "title": "Book Instantly Online",
+        "desc": "See real-time court availability and book in seconds. No WhatsApp back-and-forth needed."
       },
-      "lighting": {
-        "title": "Comfortable lighting",
-        "desc": "Lighting is placed from the side so it's easier on the eyes."
+      "playerServices": {
+        "title": "Complete Player Services",
+        "desc": "Professional coaching from BAM-certified coaches plus on-site racket stringing with 18+ string options."
       },
-      "nets": {
-        "title": "Nets are set properly",
-        "desc": "Badminton nets are set at the correct height."
-      },
-      "tidy": {
-        "title": "Clean surroundings",
-        "desc": "The court and surrounding area are kept tidy."
-      },
-      "snacks": {
-        "title": "Drinks and snacks available",
-        "desc": "We sell drinks and snacks on-site."
+      "facilities": {
+        "title": "Player-First Facilities",
+        "desc": "Clean courts between sessions, side-mounted lighting with zero glare, and refreshments on-site.",
+        "badge": "Open Late"
       },
       "cta": "Book a Court"
+    },
+    "googleReviews": {
+      "title": "What Our Players Say",
+      "subtitle": "Rated 4.7 out of 5 on Google Maps",
+      "review1": "So hot but fun as hell!",
+      "review1Time": "2 months ago",
+      "review2": "Great courts and friendly atmosphere. Highly recommend!",
+      "review2Time": "9 months ago",
+      "viewOnGoogle": "View all reviews on Google Maps"
+    },
+    "stringingPromo": {
+      "title": "Professional Racket Stringing",
+      "description": "18+ string options from top brands. Prices from RM33 per racket.",
+      "cta": "View Strings"
     },
     "location": {
       "title": "Where to Find Us",
@@ -159,7 +173,9 @@
       "contact": {
         "title": "Contact",
         "bookings": "Court Bookings: 011-6868 8508",
-        "lessons": "Lessons: 011-7575 8508"
+        "lessons": "Lessons: 011-7575 8508",
+        "bookingsLabel": "Court Bookings:",
+        "lessonsLabel": "Lessons:"
       }
     },
     "footer": "© 2025 TZH Sports Centre"
@@ -290,9 +306,13 @@
     },
     "coach": {
       "title": "Our Coach",
-      "certification": "Certified by Badminton Association of Malaysia",
+      "bio": "Our BAM-certified coach brings years of competitive and teaching experience, training players of all ages and skill levels from beginners to competitive athletes.",
+      "certification": "BAM Certified Coach",
       "experience": "Years of Experience",
-      "bam": "Badminton Association of Malaysia"
+      "bam": "Badminton Association of Malaysia",
+      "experienceYears": "All Ages & Levels",
+      "experienceDesc": "Kids, teens & adults welcome",
+      "bookTrial": "Book a Trial Lesson"
     },
     "packages": {
       "title": "Private Lessons",
@@ -439,6 +459,8 @@
     "weekends": "Weekends & Public Holidays: 9 AM - 12 AM",
     "quickLinks": "Quick Links",
     "bookCourt": "Book a Court",
+    "lessons": "Lessons",
+    "stringing": "Racket Stringing",
     "myBookings": "My Bookings",
     "login": "Log In",
     "signUp": "Sign Up",
@@ -449,9 +471,28 @@
     "welcome": "Welcome back, {name}",
     "requestLesson": "Request Lesson",
     "membersOnly": {
-      "title": "Members Only",
-      "description": "This area is for training members only. If you're interested in joining our training program, please contact us.",
-      "backToHome": "Back to Home"
+      "title": "Become a Training Member",
+      "description": "Join our coaching program and get access to scheduled lessons, a personal timetable, and more.",
+      "backToHome": "Back to Home",
+      "enquire": "Enquire via WhatsApp",
+      "benefits": {
+        "scheduling": {
+          "title": "Scheduled Coaching Sessions",
+          "desc": "Get placed into regular weekly training sessions with our BAM-certified coach."
+        },
+        "lessons": {
+          "title": "Request Lessons Anytime",
+          "desc": "Request additional private or group lessons directly through your dashboard."
+        },
+        "timetable": {
+          "title": "Personal Weekly Timetable",
+          "desc": "View your upcoming sessions, court assignments, and fellow training partners."
+        },
+        "recurring": {
+          "title": "Priority Booking",
+          "desc": "Members get priority access to recurring time slots and court reservations."
+        }
+      }
     },
     "stats": {
       "upcomingLessons": "Upcoming Lessons",
@@ -579,7 +620,7 @@
       }
     },
     "trainingOrders": {
-      "title": "Training Orders",
+      "title": "Stringing Orders",
       "description": "Manage racket stringing orders"
     },
     "bookings": {

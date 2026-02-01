@@ -20,7 +20,7 @@ export default async function AdminPage() {
 
   // Row 1: Court Management, Lesson Management
   // Row 2: Manage Members, Registered Accounts
-  // Row 3: Training Orders
+  // Row 3: Stringing Orders
   const adminFeatures = [
     // Row 1
     {

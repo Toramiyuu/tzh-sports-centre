@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { MapPin, Phone, Clock } from 'lucide-react'
+import { MapPin, Phone, Clock, MessageCircle } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 
@@ -16,7 +16,7 @@ export function Footer() {
           {/* About */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">TZH</span>
               </div>
               <span className="text-xl font-bold">TZH Sports Centre</span>
@@ -38,7 +38,7 @@ export function Footer() {
                     href="https://maps.app.goo.gl/6id7KLMbwohP7o9J6"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-blue-400 hover:text-blue-300 mt-1"
+                    className="block text-teal-400 hover:text-teal-300 mt-1"
                   >
                     {t('getDirections')}
                   </a>
@@ -47,9 +47,20 @@ export function Footer() {
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 flex-shrink-0" />
                 <div className="text-sm">
-                  <div>{t('courtBookings')}: 011-6868 8508</div>
-                  <div>{t('lessonsEnquiry')}: 011-7575 8508</div>
+                  <div>{t('courtBookings')}: <a href="tel:+60116868508" className="hover:text-white transition-colors">011-6868 8508</a></div>
+                  <div>{t('lessonsEnquiry')}: <a href="tel:+60117575508" className="hover:text-white transition-colors">011-7575 8508</a></div>
                 </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <MessageCircle className="w-5 h-5 flex-shrink-0" />
+                <a
+                  href="https://wa.me/60116868508?text=Hi%2C%20I%27d%20like%20to%20enquire%20about%20court%20booking"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-green-400 hover:text-green-300 transition-colors"
+                >
+                  WhatsApp Us
+                </a>
               </div>
               <div className="flex items-start gap-3">
                 <Clock className="w-5 h-5 flex-shrink-0 mt-0.5" />
@@ -70,6 +81,18 @@ export function Footer() {
                 className="block text-gray-400 hover:text-white transition-colors"
               >
                 {t('bookCourt')}
+              </Link>
+              <Link
+                href="/lessons"
+                className="block text-gray-400 hover:text-white transition-colors"
+              >
+                {t('lessons')}
+              </Link>
+              <Link
+                href="/stringing"
+                className="block text-gray-400 hover:text-white transition-colors"
+              >
+                {t('stringing')}
               </Link>
               <Link
                 href="/dashboard"

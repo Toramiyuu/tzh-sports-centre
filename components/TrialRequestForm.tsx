@@ -99,7 +99,7 @@ export default function TrialRequestForm() {
   }
 
   return (
-    <Card className="border-2 border-blue-100">
+    <Card className="border-2 border-teal-100">
       <CardHeader className="text-center pb-4">
         <CardTitle className="text-2xl font-bold text-gray-900">
           {t('title')}
@@ -223,7 +223,7 @@ export default function TrialRequestForm() {
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full bg-teal-600 hover:bg-teal-700"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

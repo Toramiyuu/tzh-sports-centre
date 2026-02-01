@@ -38,11 +38,16 @@
   },
   "home": {
     "hero": {
-      "subtitle": "球场租用 & 培训",
-      "title": "TZH 体育中心",
-      "description": "亚依淡羽毛球和匹克球场。可在线预订或直接到场。",
+      "socialProof": "Google 4.7 星评分",
+      "headline": "两项运动。一键预订。开打。",
+      "subheadline": "亚依淡羽毛球和匹克球场。在线预订，到场开打。",
       "bookCourt": "预订球场",
-      "viewLessons": "查看课程"
+      "viewLessons": "查看课程",
+      "stat": {
+        "courts": "4个球场",
+        "price": "RM15/小时起",
+        "hours": "营业至深夜"
+      }
     },
     "pricing": {
       "from": "起价",
@@ -117,31 +122,40 @@
     },
     "whyChooseUs": {
       "title": "为何选择我们",
-      "clean": {
-        "title": "球场经常清洁",
-        "desc": "我们定期清洁球场，保持干燥不滑。"
+      "subtitle": "一站式满足您的所有需求",
+      "dualSport": {
+        "title": "双运动场馆",
+        "desc": "羽毛球和匹克球同在一个屋檐下。4个球场支持两种运动——Ayer Itam少数提供双运动的场馆之一。",
+        "badge": "Ayer Itam 独有"
       },
-      "ventilation": {
-        "title": "通风良好",
-        "desc": "风扇和窗户保持比赛时空气流通。"
+      "bookOnline": {
+        "title": "即时在线预订",
+        "desc": "实时查看球场可用性，几秒钟内完成预订。无需WhatsApp来回沟通。"
       },
-      "lighting": {
-        "title": "照明舒适",
-        "desc": "灯光从侧面照射，不刺眼。"
+      "playerServices": {
+        "title": "全面球员服务",
+        "desc": "BAM认证教练专业指导，加上现场球拍穿线服务，提供18+种球线选择。"
       },
-      "nets": {
-        "title": "球网设置正确",
-        "desc": "羽毛球网设置在正确高度。"
-      },
-      "tidy": {
-        "title": "环境整洁",
-        "desc": "球场及周围环境保持整洁。"
-      },
-      "snacks": {
-        "title": "提供饮料和零食",
-        "desc": "现场售卖饮料和零食。"
+      "facilities": {
+        "title": "以球员为先的设施",
+        "desc": "每场比赛间清洁球场，侧面照明零眩光，现场提供饮料零食。",
+        "badge": "营业至深夜"
       },
       "cta": "预订球场"
+    },
+    "googleReviews": {
+      "title": "球员评价",
+      "subtitle": "Google Maps 评分 4.7 / 5",
+      "review1": "虽然很热但超级好玩！",
+      "review1Time": "2个月前",
+      "review2": "球场很好，氛围友好。强烈推荐！",
+      "review2Time": "9个月前",
+      "viewOnGoogle": "在 Google Maps 查看所有评价"
+    },
+    "stringingPromo": {
+      "title": "专业球拍穿线服务",
+      "description": "18+种顶级品牌球线选择。每支球拍RM33起。",
+      "cta": "查看球线"
     },
     "location": {
       "title": "我们的位置",
@@ -159,7 +173,9 @@
       "contact": {
         "title": "联系方式",
         "bookings": "球场预订: 011-6868 8508",
-        "lessons": "课程咨询: 011-7575 8508"
+        "lessons": "课程咨询: 011-7575 8508",
+        "bookingsLabel": "球场预订:",
+        "lessonsLabel": "课程咨询:"
       }
     }
   },
@@ -289,9 +305,13 @@
     },
     "coach": {
       "title": "我们的教练",
-      "certification": "马来西亚羽毛球协会认证",
+      "bio": "我们的BAM认证教练拥有多年的比赛和教学经验，培训各年龄段和技术水平的球员，从初学者到竞技运动员。",
+      "certification": "BAM 认证教练",
       "experience": "年教学经验",
-      "bam": "马来西亚羽毛球协会"
+      "bam": "马来西亚羽毛球协会",
+      "experienceYears": "所有年龄和水平",
+      "experienceDesc": "欢迎儿童、青少年和成人",
+      "bookTrial": "预约试课"
     },
     "packages": {
       "title": "私人课程",
@@ -438,6 +458,8 @@
     "weekends": "周末及假日: 上午9点 - 午夜12点",
     "quickLinks": "快速链接",
     "bookCourt": "预订球场",
+    "lessons": "课程",
+    "stringing": "球拍穿线",
     "myBookings": "我的预订",
     "login": "登录",
     "signUp": "注册",
@@ -482,7 +504,7 @@
       }
     },
     "trainingOrders": {
-      "title": "训练订单",
+      "title": "穿线订单",
       "description": "管理球拍穿线订单"
     },
     "bookings": {
@@ -958,9 +980,28 @@
     "welcome": "欢迎回来，{name}",
     "requestLesson": "申请课程",
     "membersOnly": {
-      "title": "仅限会员",
-      "description": "此区域仅供培训会员使用。如果您有兴趣加入我们的培训计划，请联系我们。",
-      "backToHome": "返回首页"
+      "title": "成为培训会员",
+      "description": "加入我们的教练计划，获得定期课程、个人课表等更多服务。",
+      "backToHome": "返回首页",
+      "enquire": "通过WhatsApp咨询",
+      "benefits": {
+        "scheduling": {
+          "title": "定期教练课程",
+          "desc": "由BAM认证教练安排每周固定训练课程。"
+        },
+        "lessons": {
+          "title": "随时申请课程",
+          "desc": "通过您的仪表板直接申请额外的私人或团体课程。"
+        },
+        "timetable": {
+          "title": "个人周课表",
+          "desc": "查看您的即将到来的课程、球场分配和训练伙伴。"
+        },
+        "recurring": {
+          "title": "优先预订",
+          "desc": "会员优先获得固定时段和球场预订。"
+        }
+      }
     },
     "stats": {
       "upcomingLessons": "即将到来的课程",

@@ -101,7 +101,7 @@ function LoginForm() {
           </Button>
           <p className="text-sm text-gray-600 text-center">
             {t('noAccount')}{' '}
-            <Link href="/auth/register" className="text-blue-600 hover:underline">
+            <Link href="/auth/register" className="text-teal-600 hover:underline">
               {t('signUp')}
             </Link>
           </p>

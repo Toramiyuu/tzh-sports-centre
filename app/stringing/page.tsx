@@ -180,7 +180,7 @@ function StringCard({
 
           <div className="flex items-center justify-between">
             <div>
-              <span className={`text-2xl font-bold ${isInStock ? 'text-blue-600' : 'text-gray-400'}`}>
+              <span className={`text-2xl font-bold ${isInStock ? 'text-teal-600' : 'text-gray-400'}`}>
                 RM{string.price}
               </span>
               <span className="text-sm text-gray-500 ml-1">
@@ -377,7 +377,7 @@ export default function StringingPage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-blue-900 text-white overflow-hidden">
+      <section className="relative bg-teal-900 text-white overflow-hidden">
         {/* Background Image */}
         <Image
           src="https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=1600&q=80"
@@ -386,7 +386,7 @@ export default function StringingPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/85 via-blue-900/70 to-blue-900/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-teal-900/85 via-teal-900/70 to-teal-900/40" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div className="max-w-2xl">
             <Badge className="bg-white/20 text-white mb-4 backdrop-blur-sm">
@@ -396,12 +396,12 @@ export default function StringingPage() {
             <h1 className="text-3xl md:text-4xl font-bold mb-4 drop-shadow-lg">
               {t('title')}
             </h1>
-            <p className="text-lg text-blue-100 mb-6 drop-shadow">
+            <p className="text-lg text-teal-100 mb-6 drop-shadow">
               {t('subtitle')}
             </p>
             <div className="flex gap-3">
               <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg">
+                <Button size="lg" className="bg-white text-teal-600 hover:bg-teal-50 shadow-lg">
                   <Phone className="w-5 h-5 mr-2" />
                   WhatsApp
                 </Button>
@@ -515,7 +515,7 @@ export default function StringingPage() {
                   onClick={() => setSelectedColor(colorOption.color)}
                   className={`relative flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
                     selectedColor === colorOption.color
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-teal-500 bg-teal-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -526,7 +526,7 @@ export default function StringingPage() {
                   <span className="text-sm font-medium">{colorOption.color}</span>
                   {selectedColor === colorOption.color && (
                     <div className="absolute top-1 right-1">
-                      <Check className="w-4 h-4 text-blue-500" />
+                      <Check className="w-4 h-4 text-teal-500" />
                     </div>
                   )}
                 </button>

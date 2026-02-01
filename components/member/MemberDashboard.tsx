@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { GraduationCap, Loader2, Plus, Clock } from 'lucide-react'
+import { GraduationCap, Loader2, Plus, Clock, CalendarCheck, BookOpen, Users, MessageCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { startOfDay, isBefore, format } from 'date-fns'
 
@@ -281,24 +281,59 @@ export function MemberDashboard() {
     )
   }
 
-  // Show "members only" message if not a confirmed member (false or null)
+  // Show membership benefits if not a confirmed member
   if (isMember !== true) {
+    const benefits = [
+      { icon: CalendarCheck, title: t('membersOnly.benefits.scheduling.title'), desc: t('membersOnly.benefits.scheduling.desc') },
+      { icon: BookOpen, title: t('membersOnly.benefits.lessons.title'), desc: t('membersOnly.benefits.lessons.desc') },
+      { icon: Users, title: t('membersOnly.benefits.timetable.title'), desc: t('membersOnly.benefits.timetable.desc') },
+      { icon: Clock, title: t('membersOnly.benefits.recurring.title'), desc: t('membersOnly.benefits.recurring.desc') },
+    ]
+
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="text-center">
-          <CardContent className="pt-8 pb-8">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <GraduationCap className="w-8 h-8 text-gray-400" />
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('membersOnly.title')}</h2>
-            <p className="text-gray-600 mb-4">
-              {t('membersOnly.description')}
-            </p>
-            <Button onClick={() => router.push('/')} variant="outline">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <GraduationCap className="w-8 h-8 text-teal-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('membersOnly.title')}</h2>
+          <p className="text-gray-600">
+            {t('membersOnly.description')}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          {benefits.map((benefit, i) => (
+            <Card key={i}>
+              <CardContent className="p-5 flex items-start gap-4">
+                <div className="w-10 h-10 bg-teal-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <benefit.icon className="w-5 h-5 text-teal-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 text-sm">{benefit.title}</h3>
+                  <p className="text-gray-500 text-sm mt-1">{benefit.desc}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="text-center space-y-3">
+          <a
+            href="https://wa.me/60117575508?text=Hi%2C%20I%27m%20interested%20in%20becoming%20a%20training%20member"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+          >
+            <MessageCircle className="w-5 h-5" />
+            {t('membersOnly.enquire')}
+          </a>
+          <div>
+            <Button onClick={() => router.push('/')} variant="outline" className="mt-2">
               {t('membersOnly.backToHome')}
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     )
   }
@@ -308,8 +343,8 @@ export function MemberDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-            <GraduationCap className="w-5 h-5 text-blue-600" />
+          <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+            <GraduationCap className="w-5 h-5 text-teal-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>

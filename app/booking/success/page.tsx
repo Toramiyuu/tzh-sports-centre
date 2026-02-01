@@ -96,7 +96,7 @@ function SuccessContent() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-teal-600 mx-auto mb-4" />
           <p className="text-gray-600">Verifying your payment...</p>
         </div>
       </div>
@@ -160,7 +160,7 @@ function SuccessContent() {
                 key={booking.id}
                 className={`p-4 rounded-lg ${
                   booking.sport === 'badminton'
-                    ? 'bg-blue-50 border border-blue-100'
+                    ? 'bg-teal-50 border border-teal-100'
                     : 'bg-green-50 border border-green-100'
                 }`}
               >
@@ -173,7 +173,7 @@ function SuccessContent() {
                         variant="outline"
                         className={
                           booking.sport === 'badminton'
-                            ? 'bg-blue-100 text-blue-700 border-0'
+                            ? 'bg-teal-100 text-teal-700 border-0'
                             : 'bg-green-100 text-green-700 border-0'
                         }
                       >
@@ -233,12 +233,12 @@ function SuccessContent() {
         </div>
 
         {/* Reminder */}
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
-          <h3 className="font-medium text-blue-900 mb-2">Important Reminders</h3>
-          <ul className="text-sm text-blue-700 space-y-1">
+        <div className="mt-8 p-4 bg-teal-50 rounded-lg border border-teal-100">
+          <h3 className="font-medium text-teal-900 mb-2">Important Reminders</h3>
+          <ul className="text-sm text-teal-700 space-y-1">
             <li>Please arrive 10 minutes before your booking time</li>
             <li>Bring your own rackets and shuttlecocks</li>
-            <li>Contact us at 011-6868 8508 for any changes</li>
+            <li>Contact us at <a href="tel:+60116868508" className="underline">011-6868 8508</a> for any changes</li>
           </ul>
         </div>
       </div>
@@ -251,7 +251,7 @@ export default function BookingSuccessPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+          <Loader2 className="w-12 h-12 animate-spin text-teal-600" />
         </div>
       }
     >

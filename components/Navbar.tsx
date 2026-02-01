@@ -23,7 +23,7 @@ export function Navbar() {
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
             <Link href="/" className="flex items-center gap-2 outline-none focus:outline-none">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">TZH</span>
               </div>
               <span className="text-xl font-bold text-gray-900 hidden sm:block">
@@ -67,7 +67,7 @@ export function Navbar() {
             {userIsAdmin && (
               <Link
                 href="/admin"
-                className="text-blue-600 hover:text-blue-700 flex items-center gap-2"
+                className="text-teal-600 hover:text-teal-700 flex items-center gap-2"
               >
                 <Shield className="w-4 h-4" />
                 {t('admin')}
@@ -147,7 +147,7 @@ export function Navbar() {
             {userIsAdmin && (
               <Link
                 href="/admin"
-                className="block px-3 py-2 rounded-md text-blue-600 hover:bg-blue-50"
+                className="block px-3 py-2 rounded-md text-teal-600 hover:bg-teal-50"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('admin')}
@@ -184,7 +184,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block px-3 py-2 rounded-md bg-blue-600 text-white text-center"
+                  className="block px-3 py-2 rounded-md bg-teal-600 text-white text-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t('signup')}
