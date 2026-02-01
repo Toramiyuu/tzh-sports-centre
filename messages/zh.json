@@ -495,6 +495,22 @@
       "title": "试课申请",
       "description": "查看和管理试课申请"
     },
+    "bookingsLessons": {
+      "title": "预订与课程",
+      "description": "管理球场预订、付款和课程安排",
+      "tabs": {
+        "courtBookings": "球场预订",
+        "lessons": "课程"
+      }
+    },
+    "membersAccounts": {
+      "title": "会员与账户",
+      "description": "管理培训会员和用户账户",
+      "tabs": {
+        "members": "会员",
+        "accounts": "账户"
+      }
+    },
     "courtManagement": {
       "title": "球场管理",
       "description": "管理预订和付款",

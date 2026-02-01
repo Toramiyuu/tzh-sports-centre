@@ -611,6 +611,22 @@
       "title": "Permohonan Percubaan",
       "description": "Lihat dan urus permohonan kelas percubaan"
     },
+    "bookingsLessons": {
+      "title": "Tempahan & Kelas",
+      "description": "Urus tempahan gelanggang, pembayaran, dan jadual kelas",
+      "tabs": {
+        "courtBookings": "Tempahan Gelanggang",
+        "lessons": "Kelas"
+      }
+    },
+    "membersAccounts": {
+      "title": "Ahli & Akaun",
+      "description": "Urus ahli latihan dan akaun pengguna",
+      "tabs": {
+        "members": "Ahli",
+        "accounts": "Akaun"
+      }
+    },
     "courtManagement": {
       "title": "Pengurusan Gelanggang",
       "description": "Urus tempahan dan pembayaran",

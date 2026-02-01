@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Shield, Calendar, Users, GraduationCap, Wrench } from 'lucide-react'
+import { Shield, Calendar, Users, Wrench } from 'lucide-react'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
@@ -18,41 +18,21 @@ export default async function AdminPage() {
     redirect('/')
   }
 
-  // Row 1: Court Management, Lesson Management
-  // Row 2: Manage Members, Registered Accounts
-  // Row 3: Stringing Orders
   const adminFeatures = [
-    // Row 1
     {
-      titleKey: 'courtManagement.title',
-      descriptionKey: 'courtManagement.description',
+      titleKey: 'bookingsLessons.title',
+      descriptionKey: 'bookingsLessons.description',
       icon: Calendar,
-      href: '/admin/court-management',
-      color: 'bg-blue-100 text-blue-600',
+      href: '/admin/bookings-lessons',
+      color: 'bg-teal-100 text-teal-600',
     },
     {
-      titleKey: 'lessons.title',
-      descriptionKey: 'lessons.description',
-      icon: GraduationCap,
-      href: '/admin/lessons',
-      color: 'bg-orange-100 text-orange-600',
-    },
-    // Row 2
-    {
-      titleKey: 'members.title',
-      descriptionKey: 'members.description',
+      titleKey: 'membersAccounts.title',
+      descriptionKey: 'membersAccounts.description',
       icon: Users,
-      href: '/admin/members',
+      href: '/admin/members-accounts',
       color: 'bg-purple-100 text-purple-600',
     },
-    {
-      titleKey: 'accounts.title',
-      descriptionKey: 'accounts.description',
-      icon: Users,
-      href: '/admin/accounts',
-      color: 'bg-green-100 text-green-600',
-    },
-    // Row 3
     {
       titleKey: 'trainingOrders.title',
       descriptionKey: 'trainingOrders.description',
@@ -76,7 +56,7 @@ export default async function AdminPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-3">
         {adminFeatures.map((feature) => (
           <Link key={feature.href} href={feature.href}>
             <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">

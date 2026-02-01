@@ -611,6 +611,22 @@
       "title": "Trial Requests",
       "description": "View and manage trial lesson requests"
     },
+    "bookingsLessons": {
+      "title": "Bookings & Lessons",
+      "description": "Manage court bookings, payments, and lesson scheduling",
+      "tabs": {
+        "courtBookings": "Court Bookings",
+        "lessons": "Lessons"
+      }
+    },
+    "membersAccounts": {
+      "title": "Members & Accounts",
+      "description": "Manage training members and user accounts",
+      "tabs": {
+        "members": "Members",
+        "accounts": "Accounts"
+      }
+    },
     "courtManagement": {
       "title": "Court Management",
       "description": "Manage bookings and payments",
