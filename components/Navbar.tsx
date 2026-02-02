@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
-import { CalendarDays, User, Menu, X, Shield, Receipt, GraduationCap, Wrench } from 'lucide-react'
+import { CalendarDays, User, Menu, X, Shield, Receipt, GraduationCap, Wrench, Newspaper } from 'lucide-react'
 import { useState } from 'react'
 import { UserMenu } from '@/components/UserMenu'
 import { isAdmin } from '@/lib/admin'
@@ -62,6 +62,15 @@ export function Navbar() {
               >
                 <User className="w-4 h-4" />
                 {t('member')}
+              </Link>
+            )}
+            {session?.user && (
+              <Link
+                href="/updates"
+                className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
+              >
+                <Newspaper className="w-4 h-4" />
+                {t('updates')}
               </Link>
             )}
             {userIsAdmin && (
@@ -142,6 +151,15 @@ export function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('member')}
+              </Link>
+            )}
+            {session?.user && (
+              <Link
+                href="/updates"
+                className="block px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('updates')}
               </Link>
             )}
             {userIsAdmin && (

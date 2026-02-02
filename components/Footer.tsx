@@ -100,6 +100,12 @@ export function Footer() {
               >
                 {t('myBookings')}
               </Link>
+              <Link
+                href="/updates"
+                className="block text-gray-400 hover:text-white transition-colors"
+              >
+                {t('updates')}
+              </Link>
               {!session && (
                 <>
                   <Link

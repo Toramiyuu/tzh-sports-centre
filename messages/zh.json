@@ -34,7 +34,8 @@
     "admin": "管理",
     "myBookings": "我的预订",
     "myRacket": "我的球拍",
-    "member": "会员"
+    "member": "会员",
+    "updates": "更新日志"
   },
   "home": {
     "hero": {
@@ -461,6 +462,7 @@
     "lessons": "课程",
     "stringing": "球拍穿线",
     "myBookings": "我的预订",
+    "updates": "更新日志",
     "login": "登录",
     "signUp": "注册",
     "copyright": "TZH 体育中心。版权所有。"
@@ -853,6 +855,42 @@
     "stringing": {
       "title": "穿线订单",
       "description": "管理球拍穿线订单"
+    }
+  },
+  "updates": {
+    "title": "更新日志",
+    "description": "查看最新改进和变更",
+    "back": "返回",
+    "entries": {
+      "adminPanelMerge": {
+        "title": "管理面板重新设计",
+        "change1": "将球场管理和课程管理合并为一个「预订与课程」页面",
+        "change2": "将会员管理和注册账户合并为一个「会员与账户」页面",
+        "change3": "管理面板现在显示3张精简卡片，取代原来的5张"
+      },
+      "homepageRedesign": {
+        "title": "全新首页设计",
+        "change1": "全站采用全新青色品牌风格",
+        "change2": "全新主图区域，展示球场照片和快速统计",
+        "change3": "改善手机布局和导航体验",
+        "change4": "全面支持英文、马来文和中文翻译"
+      },
+      "performanceUpdate": {
+        "title": "性能提升",
+        "change1": "全站页面加载速度更快",
+        "change2": "添加主图以提升视觉体验"
+      },
+      "receiptVerification": {
+        "title": "收据验证功能",
+        "change1": "预订球场时可以上传付款收据",
+        "change2": "管理员可直接在仪表板验证付款收据",
+        "change3": "修复预订页面时段显示顺序"
+      },
+      "duitnowPayment": {
+        "title": "支持DuitNow付款",
+        "change1": "新增DuitNow QR作为球场预订和穿线订单的付款方式",
+        "change2": "付款失败时显示更清晰的错误提示"
+      }
     }
   },
   "stringing": {

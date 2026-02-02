@@ -34,7 +34,8 @@
     "admin": "Admin",
     "myBookings": "Tempahan Saya",
     "myRacket": "Raket Saya",
-    "member": "Ahli"
+    "member": "Ahli",
+    "updates": "Kemas Kini"
   },
   "home": {
     "hero": {
@@ -462,6 +463,7 @@
     "lessons": "Kelas",
     "stringing": "Tali Raket",
     "myBookings": "Tempahan Saya",
+    "updates": "Kemas Kini",
     "login": "Log Masuk",
     "signUp": "Daftar",
     "copyright": "TZH Sports Centre. Hak cipta terpelihara."
@@ -968,6 +970,42 @@
     "stringing": {
       "title": "Pesanan Pasang Tali",
       "description": "Urus pesanan pasang tali raket"
+    }
+  },
+  "updates": {
+    "title": "Log Kemas Kini",
+    "description": "Lihat apa yang baru dan diperbaiki",
+    "back": "Kembali",
+    "entries": {
+      "adminPanelMerge": {
+        "title": "Reka Bentuk Semula Panel Admin",
+        "change1": "Gabungan Pengurusan Gelanggang dan Pengurusan Kelas ke dalam satu halaman \"Tempahan & Kelas\"",
+        "change2": "Gabungan Urus Ahli dan Akaun Berdaftar ke dalam satu halaman \"Ahli & Akaun\"",
+        "change3": "Papan pemuka admin kini menunjukkan 3 kad yang lebih kemas berbanding 5"
+      },
+      "homepageRedesign": {
+        "title": "Reka Bentuk Laman Utama Baru",
+        "change1": "Penjenamaan teal baharu di seluruh laman",
+        "change2": "Bahagian hero baru dengan gambar gelanggang dan statistik pantas",
+        "change3": "Susun atur mudah alih dan navigasi yang lebih baik",
+        "change4": "Sokongan terjemahan penuh untuk Bahasa Inggeris, Bahasa Malaysia, dan Bahasa Cina"
+      },
+      "performanceUpdate": {
+        "title": "Peningkatan Prestasi",
+        "change1": "Pemuatan halaman lebih pantas di seluruh laman",
+        "change2": "Tambahan imej hero untuk pengalaman visual yang lebih baik"
+      },
+      "receiptVerification": {
+        "title": "Pengesahan Resit",
+        "change1": "Anda kini boleh memuat naik resit pembayaran semasa menempah gelanggang",
+        "change2": "Admin boleh mengesahkan resit pembayaran terus dari papan pemuka",
+        "change3": "Susunan slot masa di halaman tempahan telah diperbetulkan"
+      },
+      "duitnowPayment": {
+        "title": "Sokongan Pembayaran DuitNow",
+        "change1": "DuitNow QR ditambah sebagai kaedah pembayaran untuk tempahan gelanggang dan pesanan pasang tali",
+        "change2": "Mesej ralat yang lebih baik apabila pembayaran gagal"
+      }
     }
   },
   "stringing": {

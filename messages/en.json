@@ -34,7 +34,8 @@
     "admin": "Admin",
     "myBookings": "My Bookings",
     "myRacket": "My Racket",
-    "member": "Member"
+    "member": "Member",
+    "updates": "Updates"
   },
   "home": {
     "hero": {
@@ -462,6 +463,7 @@
     "lessons": "Lessons",
     "stringing": "Racket Stringing",
     "myBookings": "My Bookings",
+    "updates": "Updates",
     "login": "Log In",
     "signUp": "Sign Up",
     "copyright": "TZH Sports Centre. All rights reserved."
@@ -969,6 +971,42 @@
     "stringing": {
       "title": "Stringing Orders",
       "description": "Manage racket stringing orders"
+    }
+  },
+  "updates": {
+    "title": "Update Log",
+    "description": "See what's new and improved",
+    "back": "Back",
+    "entries": {
+      "adminPanelMerge": {
+        "title": "Admin Panel Redesign",
+        "change1": "Combined Court Management and Lesson Management into a single \"Bookings & Lessons\" page",
+        "change2": "Combined Manage Members and Registered Accounts into a single \"Members & Accounts\" page",
+        "change3": "Admin dashboard now shows 3 streamlined cards instead of 5"
+      },
+      "homepageRedesign": {
+        "title": "New Homepage Design",
+        "change1": "Fresh teal branding across the entire site",
+        "change2": "New hero section with court photos and quick stats",
+        "change3": "Improved mobile layout and navigation",
+        "change4": "Full translation support for English, Bahasa Malaysia, and Chinese"
+      },
+      "performanceUpdate": {
+        "title": "Performance Improvements",
+        "change1": "Faster page loading across the site",
+        "change2": "Added hero images for a better visual experience"
+      },
+      "receiptVerification": {
+        "title": "Receipt Verification",
+        "change1": "You can now upload payment receipts when booking a court",
+        "change2": "Admins can verify payment receipts directly from the dashboard",
+        "change3": "Fixed time slot display order in the booking page"
+      },
+      "duitnowPayment": {
+        "title": "DuitNow Payment Support",
+        "change1": "Added DuitNow QR as a payment method for court bookings and stringing orders",
+        "change2": "Improved error messages when payments fail"
+      }
     }
   },
   "stringing": {
