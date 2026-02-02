@@ -46,7 +46,6 @@ export function WeeklyTimetable({ onSlotSelect, onAcceptSuggestion, onCounterSug
       if (!res.ok) {
         // Retry on server errors (database cold start)
         if (res.status >= 500 && retryCount < maxRetries) {
-          console.log(`Retrying fetch (attempt ${retryCount + 2}/${maxRetries + 1})...`)
           setTimeout(() => fetchWeeklyAvailability(weekStart, retryCount + 1), 1000)
           return
         }
@@ -60,7 +59,6 @@ export function WeeklyTimetable({ onSlotSelect, onAcceptSuggestion, onCounterSug
       console.error('Error fetching weekly availability:', err)
       // Retry on network errors
       if (retryCount < maxRetries) {
-        console.log(`Retrying fetch (attempt ${retryCount + 2}/${maxRetries + 1})...`)
         setTimeout(() => fetchWeeklyAvailability(weekStart, retryCount + 1), 1000)
         return
       }
