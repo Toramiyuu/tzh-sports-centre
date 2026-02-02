@@ -2,32 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { isAdmin } from '@/lib/admin'
-
-// Helper to count sessions in a month for a given day of week
-function countSessionsInMonth(year: number, month: number, dayOfWeek: number): number {
-  let count = 0
-  const date = new Date(year, month - 1, 1) // month is 0-indexed in Date
-
-  while (date.getMonth() === month - 1) {
-    if (date.getDay() === dayOfWeek) {
-      count++
-    }
-    date.setDate(date.getDate() + 1)
-  }
-
-  return count
-}
-
-// Helper to calculate hours from time range
-function calculateHours(startTime: string, endTime: string): number {
-  const [startHour, startMin] = startTime.split(':').map(Number)
-  const [endHour, endMin] = endTime.split(':').map(Number)
-
-  const startMinutes = startHour * 60 + startMin
-  const endMinutes = endHour * 60 + endMin
-
-  return (endMinutes - startMinutes) / 60
-}
+import { countSessionsInMonth, calculateHours } from '@/lib/recurring-booking-utils'
 
 // GET - Get payments for a recurring booking
 export async function GET(request: NextRequest) {

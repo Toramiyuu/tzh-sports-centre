@@ -3,43 +3,14 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from 'date-fns'
-
-// Peak hour pricing constants
-const BADMINTON_RATE = 15
-const BADMINTON_PEAK_RATE = 18
-const PICKLEBALL_RATE = 25
-const PEAK_START_TIME = '18:00'
-
-// Calculate booking amount with peak hour support
-function calculateBookingAmount(startTime: string, endTime: string, sport: string): number {
-  const [startHour, startMin] = startTime.split(':').map(Number)
-  const [endHour, endMin] = endTime.split(':').map(Number)
-  const startMinutes = startHour * 60 + startMin
-  const endMinutes = endHour * 60 + endMin
-  const hours = (endMinutes - startMinutes) / 60
-
-  if (sport.toLowerCase() === 'pickleball') {
-    return hours * PICKLEBALL_RATE
-  }
-
-  const peakMinutes = 18 * 60
-
-  if (endMinutes <= peakMinutes) {
-    return hours * BADMINTON_RATE
-  } else if (startMinutes >= peakMinutes) {
-    return hours * BADMINTON_PEAK_RATE
-  } else {
-    const hoursBeforePeak = (peakMinutes - startMinutes) / 60
-    const hoursAfterPeak = (endMinutes - peakMinutes) / 60
-    return (hoursBeforePeak * BADMINTON_RATE) + (hoursAfterPeak * BADMINTON_PEAK_RATE)
-  }
-}
-
-function calculateHours(startTime: string, endTime: string): number {
-  const [startHour, startMin] = startTime.split(':').map(Number)
-  const [endHour, endMin] = endTime.split(':').map(Number)
-  return ((endHour * 60 + endMin) - (startHour * 60 + startMin)) / 60
-}
+import {
+  calculateHours,
+  calculateBookingAmount,
+  countSessionsInMonth,
+  groupRecurringSlots,
+  ensurePaymentRecords,
+  getPaymentStatus,
+} from '@/lib/recurring-booking-utils'
 
 // GET: Get detailed user information
 export async function GET(
@@ -61,6 +32,8 @@ export async function GET(
     const monthEnd = endOfMonth(now)
     const yearStart = startOfYear(now)
     const yearEnd = endOfYear(now)
+    const currentMonth = now.getMonth() + 1
+    const currentYear = now.getFullYear()
 
     // Fetch user with all related data
     const user = await prisma.user.findUnique({
@@ -72,7 +45,10 @@ export async function GET(
           orderBy: { bookingDate: 'desc' },
         },
         recurringBookings: {
-          include: { court: true },
+          include: {
+            court: true,
+            payments: true,
+          },
         },
         monthlyPayments: {
           include: { transactions: true },
@@ -85,6 +61,25 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    // Auto-generate missing payment records for current month
+    const activeSlotIds = user.recurringBookings
+      .filter(rb => rb.isActive)
+      .map(rb => rb.id)
+
+    if (activeSlotIds.length > 0) {
+      await ensurePaymentRecords(prisma as any, activeSlotIds, currentMonth, currentYear)
+
+      // Re-fetch payments after generating
+      const freshPayments = await prisma.recurringBookingPayment.findMany({
+        where: { recurringBookingId: { in: user.recurringBookings.map(rb => rb.id) } },
+      })
+
+      // Update in-memory data with fresh payments
+      for (const rb of user.recurringBookings) {
+        rb.payments = freshPayments.filter(p => p.recurringBookingId === rb.id)
+      }
+    }
+
     // Fetch lesson sessions for this user
     const lessonSessions = await prisma.lessonSession.findMany({
       where: {
@@ -93,6 +88,9 @@ export async function GET(
       include: { court: true, students: true },
       orderBy: { lessonDate: 'desc' },
     })
+
+    // Group recurring booking slots into logical bookings
+    const groupedRecurring = groupRecurringSlots(user.recurringBookings as any)
 
     // Calculate booking summaries
     const bookingsThisWeek = user.bookings.filter(b => {
@@ -131,10 +129,6 @@ export async function GET(
     }).length
 
     // Calculate payment summary for current month
-    const currentMonth = now.getMonth() + 1
-    const currentYear = now.getFullYear()
-
-    // Calculate total due for current month
     let totalDueThisMonth = 0
     let totalHoursThisMonth = 0
 
@@ -149,17 +143,26 @@ export async function GET(
         totalHoursThisMonth += calculateHours(b.startTime, b.endTime)
       })
 
-    // Add recurring booking sessions for this month
-    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate()
-    for (const rb of user.recurringBookings.filter(rb => rb.isActive)) {
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(currentYear, currentMonth - 1, day)
-        if (date.getDay() === rb.dayOfWeek && date >= monthStart && date <= monthEnd) {
-          const amount = rb.hourlyRate
-            ? calculateHours(rb.startTime, rb.endTime) * rb.hourlyRate
-            : calculateBookingAmount(rb.startTime, rb.endTime, rb.sport)
-          totalDueThisMonth += amount
-          totalHoursThisMonth += calculateHours(rb.startTime, rb.endTime)
+    // Add recurring booking amounts for this month (using grouped bookings)
+    let recurringDueThisMonth = 0
+    let recurringPaidThisMonth = 0
+
+    for (const group of groupedRecurring) {
+      if (!group.isActive) continue
+
+      const sessionsCount = countSessionsInMonth(currentYear, currentMonth, group.dayOfWeek)
+      const monthlyAmount = sessionsCount * group.amountPerSession
+      recurringDueThisMonth += monthlyAmount
+      totalDueThisMonth += monthlyAmount
+      totalHoursThisMonth += sessionsCount * group.duration
+
+      // Sum paid amounts from slot payment records for current month
+      for (const slot of group.slots) {
+        const payment = slot.payments?.find(
+          (p: any) => p.month === currentMonth && p.year === currentYear && p.status === 'paid'
+        )
+        if (payment) {
+          recurringPaidThisMonth += payment.amount
         }
       }
     }
@@ -167,11 +170,22 @@ export async function GET(
     const currentMonthPayment = user.monthlyPayments.find(
       mp => mp.month === currentMonth && mp.year === currentYear
     )
-    const paidThisMonth = currentMonthPayment?.paidAmount || 0
+    const paidThisMonth = (currentMonthPayment?.paidAmount || 0) + recurringPaidThisMonth
     const unpaidThisMonth = totalDueThisMonth - paidThisMonth
 
-    // Calculate all-time totals
+    // Calculate all-time totals — only actually paid amounts
     const totalPaidAllTime = user.monthlyPayments.reduce((sum, mp) => sum + mp.paidAmount, 0)
+
+    // Sum all-time recurring payments that are marked as paid
+    const allRecurringPayments = user.recurringBookings.flatMap(rb => rb.payments || [])
+    const totalRecurringPaidAllTime = allRecurringPayments
+      .filter((p: any) => p.status === 'paid')
+      .reduce((sum: number, p: any) => sum + p.amount, 0)
+
+    // Calculate recurring outstanding (all unpaid/overdue recurring payments)
+    const recurringOutstanding = allRecurringPayments
+      .filter((p: any) => p.status !== 'paid')
+      .reduce((sum: number, p: any) => sum + p.amount, 0)
 
     // Format bookings for timeline
     const bookingsTimeline = user.bookings.slice(0, 50).map(b => ({
@@ -186,24 +200,94 @@ export async function GET(
       status: b.status,
     }))
 
-    // Format recurring bookings
-    const recurringBookings = user.recurringBookings.map(rb => {
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-      const amount = rb.hourlyRate
-        ? calculateHours(rb.startTime, rb.endTime) * rb.hourlyRate
-        : calculateBookingAmount(rb.startTime, rb.endTime, rb.sport)
+    // Format grouped recurring bookings with payment status
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const recurringBookings = groupedRecurring.map(group => {
+      // Gather payment data for current month from all slots in the group
+      const currentMonthPayments = group.slots
+        .map(slot => slot.payments?.find((p: any) => p.month === currentMonth && p.year === currentYear))
+        .filter(Boolean) as any[]
+
+      const sessionsCount = countSessionsInMonth(currentYear, currentMonth, group.dayOfWeek)
+      const monthlyAmount = sessionsCount * group.amountPerSession
+
+      // Determine overall payment status for this group's current month
+      const allPaid = currentMonthPayments.length > 0 && currentMonthPayments.every((p: any) => p.status === 'paid')
+      const somePaid = currentMonthPayments.some((p: any) => p.status === 'paid')
+
+      let currentMonthStatus: 'paid' | 'unpaid' | 'overdue' | 'partial'
+      if (allPaid) {
+        currentMonthStatus = 'paid'
+      } else if (somePaid) {
+        currentMonthStatus = 'partial'
+      } else if (currentMonthPayments.length > 0) {
+        currentMonthStatus = getPaymentStatus(currentMonthPayments[0].status, currentMonth, currentYear)
+      } else {
+        currentMonthStatus = 'unpaid'
+      }
+
+      // Gather payment history (all months)
+      const allPayments = group.slots.flatMap(slot =>
+        (slot.payments || []).map((p: any) => ({
+          id: p.id,
+          slotId: slot.id,
+          month: p.month,
+          year: p.year,
+          amount: p.amount,
+          sessionsCount: p.sessionsCount,
+          status: getPaymentStatus(p.status, p.month, p.year),
+          paidAt: p.paidAt?.toISOString() || null,
+          paymentMethod: p.paymentMethod,
+          notes: p.notes,
+        }))
+      )
+
+      // Group payments by month/year for summary
+      const paymentsByMonth = new Map<string, any[]>()
+      for (const p of allPayments) {
+        const key = `${p.year}-${p.month}`
+        if (!paymentsByMonth.has(key)) paymentsByMonth.set(key, [])
+        paymentsByMonth.get(key)!.push(p)
+      }
+
+      const paymentHistory = Array.from(paymentsByMonth.entries())
+        .map(([, payments]) => ({
+          month: payments[0].month,
+          year: payments[0].year,
+          totalAmount: payments.reduce((sum: number, p: any) => sum + p.amount, 0),
+          status: payments.every((p: any) => p.status === 'paid') ? 'paid' as const
+            : payments.some((p: any) => p.status === 'paid') ? 'partial' as const
+            : payments.some((p: any) => p.status === 'overdue') ? 'overdue' as const
+            : 'unpaid' as const,
+          paidAt: payments.find((p: any) => p.paidAt)?.paidAt || null,
+          paymentIds: payments.map((p: any) => p.id),
+        }))
+        .sort((a, b) => b.year - a.year || b.month - a.month)
+
       return {
-        id: rb.id,
-        schedule: `Every ${days[rb.dayOfWeek]}`,
-        time: `${rb.startTime} - ${rb.endTime}`,
-        duration: calculateHours(rb.startTime, rb.endTime),
-        sport: rb.sport,
-        court: rb.court.name,
-        label: rb.label,
-        isActive: rb.isActive,
-        startDate: rb.startDate.toISOString().split('T')[0],
-        endDate: rb.endDate?.toISOString().split('T')[0] || null,
-        amountPerSession: amount,
+        id: group.slotIds[0], // Use first slot ID as group identifier
+        slotIds: group.slotIds,
+        schedule: `Every ${days[group.dayOfWeek]}`,
+        time: `${group.startTime} - ${group.endTime}`,
+        duration: group.duration,
+        sport: group.sport,
+        court: group.courtName,
+        label: group.label,
+        isActive: group.isActive,
+        startDate: group.startDate.toISOString().split('T')[0],
+        endDate: group.endDate?.toISOString().split('T')[0] || null,
+        amountPerSession: group.amountPerSession,
+        payments: {
+          currentMonth: {
+            status: currentMonthStatus,
+            amount: monthlyAmount,
+            sessionsCount,
+            paidAt: currentMonthPayments.find((p: any) => p.paidAt)?.paidAt?.toISOString() || null,
+            paymentMethod: currentMonthPayments.find((p: any) => p.paymentMethod)?.paymentMethod || null,
+            paymentIds: currentMonthPayments.map((p: any) => p.id),
+          },
+          history: paymentHistory,
+        },
       }
     })
 
@@ -256,7 +340,7 @@ export async function GET(
         thisMonth: bookingsThisMonth,
         thisYear: bookingsThisYear,
         total: user.bookings.length,
-        recurring: user.recurringBookings.filter(rb => rb.isActive).length,
+        recurring: groupedRecurring.filter(g => g.isActive).length,
       },
       lessonsSummary: {
         thisWeek: lessonsThisWeek,
@@ -275,7 +359,12 @@ export async function GET(
           hours: totalHoursThisMonth,
         },
         allTime: {
-          totalPaid: totalPaidAllTime,
+          totalPaid: totalPaidAllTime + totalRecurringPaidAllTime,
+        },
+        recurring: {
+          totalDue: recurringDueThisMonth,
+          totalPaid: recurringPaidThisMonth,
+          outstanding: recurringOutstanding,
         },
       },
       bookingsTimeline,

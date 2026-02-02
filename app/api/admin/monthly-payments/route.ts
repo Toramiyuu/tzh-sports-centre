@@ -2,74 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
-
-// Sport-specific hourly rates (RM per hour)
-const BADMINTON_RATE = 15        // RM15/hr (RM7.50 per 30 mins) before 6 PM
-const BADMINTON_PEAK_RATE = 18   // RM18/hr (RM9.00 per 30 mins) 6 PM onwards
-const PICKLEBALL_RATE = 25       // RM25/hr (RM12.50 per 30 mins) all times
-const PEAK_START_TIME = '18:00'  // 6 PM
-
-// Helper: Calculate amount for a booking with peak hour support
-// Handles bookings that cross the 6 PM boundary
-function calculateBookingAmount(startTime: string, endTime: string, sport: string): number {
-  if (sport.toLowerCase() === 'pickleball') {
-    const hours = calculateHours(startTime, endTime)
-    return hours * PICKLEBALL_RATE
-  }
-
-  // Badminton: check if booking crosses 6 PM
-  const [startHour, startMin] = startTime.split(':').map(Number)
-  const [endHour, endMin] = endTime.split(':').map(Number)
-  const startMinutes = startHour * 60 + startMin
-  const endMinutes = endHour * 60 + endMin
-  const peakMinutes = 18 * 60 // 6 PM in minutes
-
-  let totalAmount = 0
-
-  if (endMinutes <= peakMinutes) {
-    // Entire booking is before 6 PM - regular rate
-    const hours = (endMinutes - startMinutes) / 60
-    totalAmount = hours * BADMINTON_RATE
-  } else if (startMinutes >= peakMinutes) {
-    // Entire booking is at or after 6 PM - peak rate
-    const hours = (endMinutes - startMinutes) / 60
-    totalAmount = hours * BADMINTON_PEAK_RATE
-  } else {
-    // Booking crosses 6 PM - split calculation
-    const hoursBeforePeak = (peakMinutes - startMinutes) / 60
-    const hoursAfterPeak = (endMinutes - peakMinutes) / 60
-    totalAmount = (hoursBeforePeak * BADMINTON_RATE) + (hoursAfterPeak * BADMINTON_PEAK_RATE)
-  }
-
-  return totalAmount
-}
-
-// Helper: Get hourly rate based on sport and time (for display purposes)
-function getSportRate(sport: string, startTime?: string): number {
-  if (sport.toLowerCase() === 'pickleball') return PICKLEBALL_RATE
-  if (startTime && startTime >= PEAK_START_TIME) return BADMINTON_PEAK_RATE
-  return BADMINTON_RATE
-}
-
-// Helper: Calculate hours from time range
-function calculateHours(startTime: string, endTime: string): number {
-  const [startHour, startMin] = startTime.split(':').map(Number)
-  const [endHour, endMin] = endTime.split(':').map(Number)
-  const startMinutes = startHour * 60 + startMin
-  const endMinutes = endHour * 60 + endMin
-  return (endMinutes - startMinutes) / 60
-}
-
-// Helper: Count occurrences of a day of week in a month
-function countDayOccurrences(year: number, month: number, dayOfWeek: number): number {
-  let count = 0
-  const date = new Date(year, month - 1, 1)
-  while (date.getMonth() === month - 1) {
-    if (date.getDay() === dayOfWeek) count++
-    date.setDate(date.getDate() + 1)
-  }
-  return count
-}
+import {
+  calculateHours,
+  calculateBookingAmount,
+  getSportRate,
+  countSessionsInMonth,
+} from '@/lib/recurring-booking-utils'
 
 // GET: List users with monthly payment summaries
 export async function GET(request: NextRequest) {
@@ -162,7 +100,7 @@ export async function GET(request: NextRequest) {
       let recurringSessionCount = 0
 
       for (const rb of user.recurringBookings) {
-        const sessions = countDayOccurrences(year, month, rb.dayOfWeek)
+        const sessions = countSessionsInMonth(year, month, rb.dayOfWeek)
         const hours = calculateHours(rb.startTime, rb.endTime)
         // Use peak hour pricing: calculate amount per session with split pricing
         const amountPerSession = rb.hourlyRate
@@ -428,7 +366,7 @@ export async function POST(request: NextRequest) {
     }
 
     for (const rb of user.recurringBookings) {
-      const sessions = countDayOccurrences(year, month, rb.dayOfWeek)
+      const sessions = countSessionsInMonth(year, month, rb.dayOfWeek)
       const hours = calculateHours(rb.startTime, rb.endTime)
       // Use peak hour pricing with split calculation
       const amountPerSession = rb.hourlyRate
@@ -565,10 +503,12 @@ export async function PATCH(request: NextRequest) {
         }
 
         for (const rb of user.recurringBookings) {
-          const sessions = countDayOccurrences(year, month, rb.dayOfWeek)
+          const sessions = countSessionsInMonth(year, month, rb.dayOfWeek)
           const hours = calculateHours(rb.startTime, rb.endTime)
-          const rate = rb.hourlyRate || getSportRate(rb.sport)
-          totalAmount += sessions * hours * rate
+          const amountPerSession = rb.hourlyRate
+            ? hours * rb.hourlyRate
+            : calculateBookingAmount(rb.startTime, rb.endTime, rb.sport)
+          totalAmount += sessions * amountPerSession
           totalHours += sessions * hours
           bookingsCount += sessions
         }

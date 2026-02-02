@@ -12,16 +12,18 @@ import {
   GraduationCap,
   Settings,
   Loader2,
-  CreditCard
+  CreditCard,
+  Repeat,
 } from 'lucide-react'
 import { PersonalInfoTab } from '@/components/profile/PersonalInfoTab'
 import { BookingsTab } from '@/components/profile/BookingsTab'
+import { RecurringTab } from '@/components/profile/RecurringTab'
 import { LessonsTab } from '@/components/profile/LessonsTab'
 import { SettingsTab } from '@/components/profile/SettingsTab'
 import { SkeletonProfile } from '@/components/ui/skeleton'
 import { useTranslations } from 'next-intl'
 
-type TabType = 'personal' | 'bookings' | 'lessons' | 'settings'
+type TabType = 'personal' | 'bookings' | 'recurring' | 'lessons' | 'settings'
 
 interface UserProfile {
   id: string
@@ -91,6 +93,7 @@ export default function ProfilePage() {
   const tabs = [
     { id: 'personal' as TabType, label: t('tabs.personal'), icon: User },
     { id: 'bookings' as TabType, label: t('tabs.bookings'), icon: CalendarDays },
+    { id: 'recurring' as TabType, label: t('tabs.recurring'), icon: Repeat },
     ...(profile?.isMember ? [{ id: 'lessons' as TabType, label: t('tabs.lessons'), icon: GraduationCap }] : []),
     { id: 'settings' as TabType, label: t('tabs.settings'), icon: Settings },
   ]
@@ -150,6 +153,9 @@ export default function ProfilePage() {
         )}
         {activeTab === 'bookings' && (
           <BookingsTab creditBalance={profile?.creditBalance || 0} onCreditUpdate={fetchProfile} />
+        )}
+        {activeTab === 'recurring' && (
+          <RecurringTab />
         )}
         {activeTab === 'lessons' && profile?.isMember && (
           <LessonsTab />

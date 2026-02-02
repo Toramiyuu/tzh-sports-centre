@@ -228,7 +228,18 @@
       "bookings": "Bookings",
       "lessons": "Lessons",
       "racket": "Racket",
+      "recurring": "Recurring",
       "settings": "Settings"
+    },
+    "recurring": {
+      "noBookings": "No recurring bookings",
+      "every": "Every",
+      "active": "Active",
+      "inactive": "Inactive Bookings",
+      "inactiveLabel": "Inactive",
+      "sessions": "sessions",
+      "perSession": "per session",
+      "paymentHistory": "Payment history"
     },
     "personal": {
       "name": "Name",
