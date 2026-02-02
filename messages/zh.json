@@ -228,7 +228,18 @@
       "bookings": "预订",
       "lessons": "课程",
       "racket": "球拍",
+      "recurring": "固定预订",
       "settings": "设置"
+    },
+    "recurring": {
+      "noBookings": "暂无固定预订",
+      "every": "每",
+      "active": "活跃",
+      "inactive": "已停用预订",
+      "inactiveLabel": "已停用",
+      "sessions": "场次",
+      "perSession": "每场",
+      "paymentHistory": "付款记录"
     },
     "personal": {
       "name": "姓名",

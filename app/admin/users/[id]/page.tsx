@@ -8,6 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import {
   ArrowLeft,
   Calendar,
@@ -28,10 +32,10 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  AlertTriangle,
   Eye,
   EyeOff,
 } from 'lucide-react'
-import { Input } from '@/components/ui/input'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
 
@@ -42,7 +46,7 @@ interface UserData {
   email: string
   phone: string
   isAdmin: boolean
-  isSuperAdmin: boolean
+  isSuperAdmin?: boolean
   isMember: boolean
   skillLevel: string | null
   createdAt: string
@@ -78,6 +82,11 @@ interface PaymentsSummary {
   allTime: {
     totalPaid: number
   }
+  recurring: {
+    totalDue: number
+    totalPaid: number
+    outstanding: number
+  }
 }
 
 interface BookingItem {
@@ -92,8 +101,28 @@ interface BookingItem {
   status: string
 }
 
+interface RecurringBookingPaymentInfo {
+  currentMonth: {
+    status: 'paid' | 'unpaid' | 'overdue' | 'partial'
+    amount: number
+    sessionsCount: number
+    paidAt: string | null
+    paymentMethod: string | null
+    paymentIds: string[]
+  }
+  history: Array<{
+    month: number
+    year: number
+    totalAmount: number
+    status: 'paid' | 'unpaid' | 'overdue' | 'partial'
+    paidAt: string | null
+    paymentIds: string[]
+  }>
+}
+
 interface RecurringBooking {
   id: string
+  slotIds: string[]
   schedule: string
   time: string
   duration: number
@@ -104,6 +133,7 @@ interface RecurringBooking {
   startDate: string
   endDate: string | null
   amountPerSession: number
+  payments: RecurringBookingPaymentInfo
 }
 
 interface LessonItem {
@@ -147,6 +177,21 @@ interface UserDetails {
   paymentHistory: PaymentHistoryItem[]
 }
 
+function PaymentStatusBadge({ status }: { status: string }) {
+  switch (status) {
+    case 'paid':
+      return <Badge className="bg-green-600">Paid</Badge>
+    case 'partial':
+      return <Badge className="bg-yellow-600">Partial</Badge>
+    case 'overdue':
+      return <Badge className="bg-red-600">Overdue</Badge>
+    case 'unpaid':
+      return <Badge className="bg-amber-500">Unpaid</Badge>
+    default:
+      return <Badge variant="outline">{status}</Badge>
+  }
+}
+
 export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
   const { data: session, status } = useSession()
@@ -161,6 +206,14 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+  // Mark as Paid dialog state
+  const [markPaidDialog, setMarkPaidDialog] = useState(false)
+  const [markPaidBooking, setMarkPaidBooking] = useState<RecurringBooking | null>(null)
+  const [markPaidMethod, setMarkPaidMethod] = useState('')
+  const [markPaidAmount, setMarkPaidAmount] = useState('')
+  const [markPaidNotes, setMarkPaidNotes] = useState('')
+  const [markPaidLoading, setMarkPaidLoading] = useState(false)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -248,6 +301,41 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       fetchData()
     }
   }, [session, resolvedParams.id])
+
+  const openMarkPaidDialog = (rb: RecurringBooking) => {
+    setMarkPaidBooking(rb)
+    setMarkPaidMethod('')
+    setMarkPaidAmount(rb.payments.currentMonth.amount.toFixed(2))
+    setMarkPaidNotes('')
+    setMarkPaidDialog(true)
+  }
+
+  const handleMarkPaid = async () => {
+    if (!markPaidBooking || !markPaidMethod) return
+    setMarkPaidLoading(true)
+    try {
+      // Mark each slot's payment as paid
+      const paymentIds = markPaidBooking.payments.currentMonth.paymentIds
+      for (const paymentId of paymentIds) {
+        await fetch('/api/admin/recurring-payments', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paymentId,
+            status: 'paid',
+            paymentMethod: markPaidMethod,
+            notes: markPaidNotes || undefined,
+          }),
+        })
+      }
+      setMarkPaidDialog(false)
+      fetchData()
+    } catch (error) {
+      console.error('Error marking as paid:', error)
+    } finally {
+      setMarkPaidLoading(false)
+    }
+  }
 
   if (status === 'loading' || loading) {
     return (
@@ -446,7 +534,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         {/* Bookings Card */}
         <Card>
           <CardContent className="pt-6">
@@ -510,26 +598,49 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           </CardContent>
         </Card>
 
-        {/* Payments Card */}
+        {/* Total Paid Card */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-gray-500">Total Paid</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold text-green-600">
+                    RM{paymentsSummary.allTime.totalPaid.toFixed(0)}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  RM{paymentsSummary.currentMonth.paid.toFixed(0)} this month
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Outstanding Card */}
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                paymentsSummary.currentMonth.unpaid > 0 ? 'bg-red-100' : 'bg-green-100'
+                paymentsSummary.recurring.outstanding > 0 ? 'bg-red-100' : 'bg-green-100'
               }`}>
-                <DollarSign className={`w-6 h-6 ${
-                  paymentsSummary.currentMonth.unpaid > 0 ? 'text-red-600' : 'text-green-600'
-                }`} />
+                {paymentsSummary.recurring.outstanding > 0 ? (
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                ) : (
+                  <DollarSign className="w-6 h-6 text-green-600" />
+                )}
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">This Month</p>
+                <p className="text-sm text-gray-500">Outstanding</p>
                 <div className="flex items-baseline gap-2">
                   <span className={`text-2xl font-bold ${
-                    paymentsSummary.currentMonth.unpaid > 0 ? 'text-red-600' : 'text-green-600'
+                    paymentsSummary.recurring.outstanding > 0 ? 'text-red-600' : 'text-green-600'
                   }`}>
-                    RM{paymentsSummary.currentMonth.unpaid.toFixed(0)}
+                    RM{paymentsSummary.recurring.outstanding.toFixed(0)}
                   </span>
-                  <span className="text-xs text-gray-400">unpaid</span>
                 </div>
                 <div className="text-xs text-gray-500 mt-1">
                   RM{paymentsSummary.currentMonth.paid.toFixed(0)} paid / RM{paymentsSummary.currentMonth.totalDue.toFixed(0)} due
@@ -605,7 +716,10 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                       <div key={rb.id} className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium">{rb.schedule}</div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{rb.schedule}</span>
+                              <PaymentStatusBadge status={rb.payments.currentMonth.status} />
+                            </div>
                             <div className="text-sm text-gray-600">
                               {rb.time} | {rb.court}
                             </div>
@@ -776,8 +890,8 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                       rb.isActive ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200 opacity-60'
                     }`}>
                       <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <span className="text-lg font-medium">{rb.schedule}</span>
                             {rb.isActive ? (
                               <Badge className="bg-green-600">Active</Badge>
@@ -785,6 +899,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                               <Badge variant="outline">Inactive</Badge>
                             )}
                             {rb.label && <Badge variant="outline">{rb.label}</Badge>}
+                            <PaymentStatusBadge status={rb.payments.currentMonth.status} />
                           </div>
                           <div className="text-gray-600 mt-1">
                             <Clock className="w-4 h-4 inline mr-1" />
@@ -797,10 +912,56 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                             Started: {format(new Date(rb.startDate), 'MMM d, yyyy')}
                             {rb.endDate && ` | Ends: ${format(new Date(rb.endDate), 'MMM d, yyyy')}`}
                           </div>
+
+                          {/* Monthly breakdown */}
+                          <div className="mt-3 p-2 bg-white/70 rounded text-sm">
+                            <span className="text-gray-600">
+                              {rb.payments.currentMonth.sessionsCount} sessions &times; RM{rb.amountPerSession.toFixed(2)} = <span className="font-semibold">RM{rb.payments.currentMonth.amount.toFixed(2)}</span>
+                            </span>
+                            {rb.payments.currentMonth.paymentMethod && (
+                              <span className="ml-2 text-gray-400">
+                                via {rb.payments.currentMonth.paymentMethod}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Payment history */}
+                          {rb.payments.history.length > 1 && (
+                            <details className="mt-2">
+                              <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700">
+                                Payment history ({rb.payments.history.length} months)
+                              </summary>
+                              <div className="mt-2 space-y-1">
+                                {rb.payments.history.map((h, i) => (
+                                  <div key={i} className="flex items-center gap-2 text-sm">
+                                    <span className="text-gray-600">{monthNames[h.month]} {h.year}</span>
+                                    <PaymentStatusBadge status={h.status} />
+                                    <span className="font-medium">RM{h.totalAmount.toFixed(2)}</span>
+                                    {h.paidAt && (
+                                      <span className="text-gray-400 text-xs">
+                                        paid {format(new Date(h.paidAt), 'MMM d')}
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </details>
+                          )}
                         </div>
-                        <div className="text-right">
+
+                        <div className="text-right ml-4">
                           <div className="text-2xl font-bold">RM{rb.amountPerSession.toFixed(2)}</div>
                           <div className="text-sm text-gray-500">per session</div>
+                          {rb.isActive && rb.payments.currentMonth.status !== 'paid' && (
+                            <Button
+                              size="sm"
+                              className="mt-3 bg-green-600 hover:bg-green-700"
+                              onClick={() => openMarkPaidDialog(rb)}
+                            >
+                              <CheckCircle className="w-4 h-4 mr-1" />
+                              Mark Paid
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -923,6 +1084,81 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Mark as Paid Dialog */}
+      <Dialog open={markPaidDialog} onOpenChange={setMarkPaidDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mark as Paid</DialogTitle>
+          </DialogHeader>
+          {markPaidBooking && (
+            <div className="space-y-4">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="font-medium">{markPaidBooking.schedule}</div>
+                <div className="text-sm text-gray-600">{markPaidBooking.time} | {markPaidBooking.court}</div>
+                <div className="text-sm text-gray-500 mt-1">
+                  {markPaidBooking.payments.currentMonth.sessionsCount} sessions &times; RM{markPaidBooking.amountPerSession.toFixed(2)}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+                <Select value={markPaidMethod} onValueChange={setMarkPaidMethod}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Cash">Cash</SelectItem>
+                    <SelectItem value="TNG">Touch &apos;n Go</SelectItem>
+                    <SelectItem value="DuitNow">DuitNow</SelectItem>
+                    <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Amount (RM)</label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={markPaidAmount}
+                  onChange={(e) => setMarkPaidAmount(e.target.value)}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Pre-filled with calculated total. Adjust for pro-rata or discounts.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+                <Textarea
+                  value={markPaidNotes}
+                  onChange={(e) => setMarkPaidNotes(e.target.value)}
+                  placeholder="e.g., Pro-rated for mid-month cancellation"
+                  rows={2}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMarkPaidDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-green-600 hover:bg-green-700"
+              onClick={handleMarkPaid}
+              disabled={!markPaidMethod || markPaidLoading}
+            >
+              {markPaidLoading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <CheckCircle className="w-4 h-4 mr-2" />
+              )}
+              Confirm Payment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

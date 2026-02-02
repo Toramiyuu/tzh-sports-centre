@@ -229,7 +229,18 @@
       "bookings": "Tempahan",
       "lessons": "Kelas",
       "racket": "Raket",
+      "recurring": "Berulang",
       "settings": "Tetapan"
+    },
+    "recurring": {
+      "noBookings": "Tiada tempahan berulang",
+      "every": "Setiap",
+      "active": "Aktif",
+      "inactive": "Tempahan Tidak Aktif",
+      "inactiveLabel": "Tidak Aktif",
+      "sessions": "sesi",
+      "perSession": "per sesi",
+      "paymentHistory": "Sejarah pembayaran"
     },
     "personal": {
       "name": "Nama",
