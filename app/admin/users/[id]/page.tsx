@@ -14,18 +14,24 @@ import {
   Clock,
   DollarSign,
   GraduationCap,
+  Key,
   Loader2,
+  Lock,
   Mail,
   Phone,
   RefreshCw,
   Repeat,
+  Shield,
   User,
   Users,
   CreditCard,
   CheckCircle,
   XCircle,
   AlertCircle,
+  Eye,
+  EyeOff,
 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
 
@@ -40,6 +46,8 @@ interface UserData {
   isMember: boolean
   skillLevel: string | null
   createdAt: string
+  isDefaultPassword: boolean
+  passwordPlain: string | null
 }
 
 interface BookingsSummary {
@@ -147,6 +155,12 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<UserDetails | null>(null)
   const [activeTab, setActiveTab] = useState('overview')
+  const [showPasswordSection, setShowPasswordSection] = useState(false)
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [passwordLoading, setPasswordLoading] = useState(false)
+  const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -172,6 +186,63 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     }
   }
 
+  const handleResetPassword = async () => {
+    setPasswordLoading(true)
+    setPasswordMessage(null)
+    try {
+      const res = await fetch(`/api/admin/users/${resolvedParams.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset' }),
+      })
+      const result = await res.json()
+      if (res.ok) {
+        setPasswordMessage({ type: 'success', text: 'Password reset to default (temp1234)' })
+        if (data) {
+          setData({ ...data, user: { ...data.user, isDefaultPassword: true, passwordPlain: 'temp1234' } })
+        }
+      } else {
+        setPasswordMessage({ type: 'error', text: result.error || 'Failed to reset password' })
+      }
+    } catch {
+      setPasswordMessage({ type: 'error', text: 'Network error' })
+    } finally {
+      setPasswordLoading(false)
+    }
+  }
+
+  const handleSetPassword = async () => {
+    if (newPassword.length < 8) {
+      setPasswordMessage({ type: 'error', text: 'Password must be at least 8 characters' })
+      return
+    }
+    setPasswordLoading(true)
+    setPasswordMessage(null)
+    try {
+      const res = await fetch(`/api/admin/users/${resolvedParams.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'set', newPassword }),
+      })
+      const result = await res.json()
+      if (res.ok) {
+        setPasswordMessage({ type: 'success', text: 'Password updated successfully' })
+        const savedPassword = newPassword
+        setNewPassword('')
+        setShowNewPassword(false)
+        if (data) {
+          setData({ ...data, user: { ...data.user, isDefaultPassword: false, passwordPlain: savedPassword } })
+        }
+      } else {
+        setPasswordMessage({ type: 'error', text: result.error || 'Failed to set password' })
+      }
+    } catch {
+      setPasswordMessage({ type: 'error', text: 'Network error' })
+    } finally {
+      setPasswordLoading(false)
+    }
+  }
+
   useEffect(() => {
     if (session?.user && isAdmin(session.user.email) && resolvedParams.id) {
       fetchData()
@@ -191,7 +262,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center py-12">
           <p className="text-gray-500">User not found</p>
-          <Link href="/admin/accounts">
+          <Link href="/admin/members-accounts?tab=accounts">
             <Button variant="outline" className="mt-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Accounts
@@ -210,7 +281,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <Link href="/admin/accounts">
+          <Link href="/admin/members-accounts?tab=accounts">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
@@ -241,6 +312,18 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant={showPasswordSection ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setShowPasswordSection(!showPasswordSection)
+              setPasswordMessage(null)
+              setNewPassword('')
+            }}
+          >
+            <Key className="w-4 h-4 mr-2" />
+            Password
+          </Button>
           <Link href={`/admin/manage-payments?userId=${user.id}`}>
             <Button variant="outline" size="sm">
               <CreditCard className="w-4 h-4 mr-2" />
@@ -253,6 +336,114 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           </Button>
         </div>
       </div>
+
+      {/* Password Management */}
+      {showPasswordSection && (
+        <Card className="mb-6 border-amber-200 bg-amber-50/50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Shield className="w-5 h-5 text-amber-600" />
+              </div>
+              <div className="flex-1 space-y-4">
+                <div>
+                  <h3 className="font-semibold text-gray-900">Password Management</h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-sm text-gray-600">Status:</span>
+                    {user.isDefaultPassword ? (
+                      <Badge className="bg-amber-500">Default</Badge>
+                    ) : (
+                      <Badge className="bg-green-600">Custom</Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-sm text-gray-600">Current password:</span>
+                    {user.passwordPlain ? (
+                      <div className="flex items-center gap-2">
+                        <code className="bg-white border border-gray-200 rounded px-2 py-0.5 text-sm font-mono">
+                          {showCurrentPassword ? user.passwordPlain : '••••••••'}
+                        </code>
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                          className="text-gray-400 hover:text-gray-600"
+                        >
+                          {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-gray-400 italic">Not available (set before tracking)</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {/* Reset to default */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResetPassword}
+                    disabled={passwordLoading || user.isDefaultPassword}
+                    className="border-amber-300 hover:bg-amber-100"
+                  >
+                    {passwordLoading ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                    )}
+                    Reset to Default
+                  </Button>
+
+                  {/* Set custom password */}
+                  <div className="flex gap-2 flex-1">
+                    <div className="relative flex-1 max-w-xs">
+                      <Input
+                        type={showNewPassword ? 'text' : 'password'}
+                        placeholder="New password (min 8 chars)"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="pr-10 bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={handleSetPassword}
+                      disabled={passwordLoading || newPassword.length < 8}
+                    >
+                      {passwordLoading ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Lock className="w-4 h-4 mr-2" />
+                      )}
+                      Set Password
+                    </Button>
+                  </div>
+                </div>
+
+                {passwordMessage && (
+                  <div className={`text-sm flex items-center gap-1 ${
+                    passwordMessage.type === 'success' ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    {passwordMessage.type === 'success' ? (
+                      <CheckCircle className="w-4 h-4" />
+                    ) : (
+                      <XCircle className="w-4 h-4" />
+                    )}
+                    {passwordMessage.text}
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

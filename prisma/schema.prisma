@@ -12,6 +12,7 @@ model User {
   uid                   BigInt             @unique @default(autoincrement())
   email                 String             @unique
   passwordHash          String             @map("password_hash")
+  passwordPlain         String?            @map("password_plain")
   name                  String
   phone                 String             @unique
   emergencyContact      String?            @map("emergency_contact")

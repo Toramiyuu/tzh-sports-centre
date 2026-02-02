@@ -3,6 +3,9 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from 'date-fns'
+import bcrypt from 'bcryptjs'
+
+const DEFAULT_PASSWORD = 'temp1234'
 
 // Peak hour pricing constants
 const BADMINTON_RATE = 15
@@ -84,6 +87,13 @@ export async function GET(
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
+
+    // Check if password is the default (use plaintext if available, fall back to bcrypt compare)
+    const isDefaultPassword = user.passwordPlain
+      ? user.passwordPlain === DEFAULT_PASSWORD
+      : user.passwordHash
+        ? await bcrypt.compare(DEFAULT_PASSWORD, user.passwordHash)
+        : false
 
     // Fetch lesson sessions for this user
     const lessonSessions = await prisma.lessonSession.findMany({
@@ -250,6 +260,8 @@ export async function GET(
         isMember: user.isMember,
         skillLevel: user.skillLevel,
         createdAt: user.createdAt.toISOString(),
+        isDefaultPassword,
+        passwordPlain: user.passwordPlain || null,
       },
       bookingsSummary: {
         thisWeek: bookingsThisWeek,
@@ -287,6 +299,66 @@ export async function GET(
     console.error('Error fetching user details:', error)
     return NextResponse.json(
       { error: 'Failed to fetch user details' },
+      { status: 500 }
+    )
+  }
+}
+
+// PATCH: Reset or set user password (admin only)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth()
+    if (!session?.user || !isAdmin(session.user.email)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { id } = await params
+    const body = await request.json()
+    const { action, newPassword } = body
+
+    const user = await prisma.user.findUnique({ where: { id } })
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    let passwordToHash: string
+
+    if (action === 'reset') {
+      passwordToHash = DEFAULT_PASSWORD
+    } else if (action === 'set' && newPassword) {
+      if (newPassword.length < 8) {
+        return NextResponse.json(
+          { error: 'Password must be at least 8 characters' },
+          { status: 400 }
+        )
+      }
+      passwordToHash = newPassword
+    } else {
+      return NextResponse.json(
+        { error: 'Invalid action. Use "reset" or "set" with newPassword.' },
+        { status: 400 }
+      )
+    }
+
+    const passwordHash = await bcrypt.hash(passwordToHash, 12)
+    await prisma.user.update({
+      where: { id },
+      data: { passwordHash, passwordPlain: passwordToHash },
+    })
+
+    const isDefault = action === 'reset'
+
+    return NextResponse.json({
+      message: isDefault ? 'Password reset to default' : 'Password updated',
+      isDefaultPassword: isDefault,
+    })
+  } catch (error) {
+    console.error('Error updating password:', error)
+    return NextResponse.json(
+      { error: 'Failed to update password' },
       { status: 500 }
     )
   }
