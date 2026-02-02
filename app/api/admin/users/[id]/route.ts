@@ -18,7 +18,9 @@ function calculateBookingAmount(startTime: string, endTime: string, sport: strin
   const [startHour, startMin] = startTime.split(':').map(Number)
   const [endHour, endMin] = endTime.split(':').map(Number)
   const startMinutes = startHour * 60 + startMin
-  const endMinutes = endHour * 60 + endMin
+  let endMinutes = endHour * 60 + endMin
+  // Handle midnight crossover (e.g., 21:00 - 00:00)
+  if (endMinutes <= startMinutes) endMinutes += 24 * 60
   const hours = (endMinutes - startMinutes) / 60
 
   if (sport.toLowerCase() === 'pickleball') {
@@ -41,7 +43,11 @@ function calculateBookingAmount(startTime: string, endTime: string, sport: strin
 function calculateHours(startTime: string, endTime: string): number {
   const [startHour, startMin] = startTime.split(':').map(Number)
   const [endHour, endMin] = endTime.split(':').map(Number)
-  return ((endHour * 60 + endMin) - (startHour * 60 + startMin)) / 60
+  let startMinutes = startHour * 60 + startMin
+  let endMinutes = endHour * 60 + endMin
+  // Handle midnight crossover (e.g., 21:00 - 00:00)
+  if (endMinutes <= startMinutes) endMinutes += 24 * 60
+  return (endMinutes - startMinutes) / 60
 }
 
 // GET: Get detailed user information

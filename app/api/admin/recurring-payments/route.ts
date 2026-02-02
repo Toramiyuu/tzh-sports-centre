@@ -24,7 +24,9 @@ function calculateHours(startTime: string, endTime: string): number {
   const [endHour, endMin] = endTime.split(':').map(Number)
 
   const startMinutes = startHour * 60 + startMin
-  const endMinutes = endHour * 60 + endMin
+  let endMinutes = endHour * 60 + endMin
+  // Handle midnight crossover (e.g., 21:00 - 00:00)
+  if (endMinutes <= startMinutes) endMinutes += 24 * 60
 
   return (endMinutes - startMinutes) / 60
 }
