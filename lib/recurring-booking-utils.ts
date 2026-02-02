@@ -215,9 +215,11 @@ export async function ensurePaymentRecords(
     if (!booking || !booking.isActive) continue
 
     const sessionsCount = countSessionsInMonth(year, month, booking.dayOfWeek)
-    const hours = calculateHours(booking.startTime, booking.endTime)
-    const hourlyRate = booking.hourlyRate || booking.court.hourlyRate
-    const amount = sessionsCount * hours * hourlyRate
+    // Use custom hourly rate if set, otherwise use peak-hour pricing
+    const amountPerSlotSession = booking.hourlyRate
+      ? calculateHours(booking.startTime, booking.endTime) * booking.hourlyRate
+      : calculateBookingAmount(booking.startTime, booking.endTime, booking.sport)
+    const amount = sessionsCount * amountPerSlotSession
 
     await prisma.recurringBookingPayment.upsert({
       where: {
@@ -227,7 +229,7 @@ export async function ensurePaymentRecords(
           year,
         },
       },
-      update: {}, // Don't overwrite existing records
+      update: {},
       create: {
         recurringBookingId,
         month,
@@ -236,6 +238,18 @@ export async function ensurePaymentRecords(
         sessionsCount,
         status: 'pending',
       },
+    })
+
+    // Fix pending records that have wrong amounts (e.g. from old flat-rate calculation)
+    await prisma.recurringBookingPayment.updateMany({
+      where: {
+        recurringBookingId,
+        month,
+        year,
+        status: 'pending',
+        amount: { not: amount },
+      },
+      data: { amount, sessionsCount },
     })
   }
 }
