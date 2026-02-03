@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getCachedTimeSlots } from '@/lib/cache'
 import { isAdmin } from '@/lib/admin'
+import { calculateBookingAmount } from '@/lib/recurring-booking-utils'
 
 // GET - Fetch user's bookings
 export async function GET() {
@@ -225,30 +226,54 @@ export async function POST(request: NextRequest) {
 
     // Create bookings for each slot sequentially (works with Neon pooler)
     const createdBookings = []
-    for (const slot of slots as { courtId: number; slotTime: string; slotRate: number }[]) {
-      const booking = await prisma.booking.create({
-        data: {
-          userId,
-          courtId: slot.courtId,
-          sport,
-          bookingDate,
-          startTime: slot.slotTime,
-          endTime: getEndTime(slot.slotTime),
-          totalAmount: slot.slotRate,
-          status: bookingStatus,
-          paymentStatus,
-          paymentMethod: paymentMethod || null,
-          paymentUserConfirmed: paymentUserConfirmed || false,
-          paymentScreenshotUrl: receiptUrl || null,
-          guestName: bookingGuestName,
-          guestPhone: bookingGuestPhone,
-          guestEmail: bookingGuestEmail,
-        },
-        include: {
-          court: true,
-        },
-      })
-      createdBookings.push(booking)
+    for (const slot of slots as { courtId: number; slotTime: string }[]) {
+      const endTime = getEndTime(slot.slotTime)
+      const totalAmount = calculateBookingAmount(slot.slotTime, endTime, sport)
+      try {
+        const booking = await prisma.booking.create({
+          data: {
+            userId,
+            courtId: slot.courtId,
+            sport,
+            bookingDate,
+            startTime: slot.slotTime,
+            endTime,
+            totalAmount,
+            status: bookingStatus,
+            paymentStatus,
+            paymentMethod: paymentMethod || null,
+            paymentUserConfirmed: paymentUserConfirmed || false,
+            paymentScreenshotUrl: receiptUrl || null,
+            guestName: bookingGuestName,
+            guestPhone: bookingGuestPhone,
+            guestEmail: bookingGuestEmail,
+          },
+          include: {
+            court: true,
+          },
+        })
+        createdBookings.push(booking)
+      } catch (error: unknown) {
+        // Handle unique constraint violation (race condition - slot just booked by someone else)
+        if (
+          error &&
+          typeof error === 'object' &&
+          'code' in error &&
+          error.code === 'P2002'
+        ) {
+          // Clean up any already-created bookings from this batch
+          if (createdBookings.length > 0) {
+            await prisma.booking.deleteMany({
+              where: { id: { in: createdBookings.map(b => b.id) } },
+            })
+          }
+          return NextResponse.json(
+            { error: 'This slot was just booked by someone else. Please select another time.' },
+            { status: 409 }
+          )
+        }
+        throw error
+      }
     }
 
     return NextResponse.json(
@@ -262,7 +287,6 @@ export async function POST(request: NextRequest) {
     )
   } catch (error) {
     console.error('Error creating booking:', error)
-    // Return more detailed error in development/for debugging
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
       { error: 'Failed to create booking', details: errorMessage },

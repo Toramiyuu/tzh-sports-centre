@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import { getCachedTimeSlots, getCachedCourts } from '@/lib/cache'
+import { calculateBookingAmount } from '@/lib/recurring-booking-utils'
 
 export async function GET(request: NextRequest) {
   try {
@@ -251,25 +252,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Court not found' }, { status: 404 })
     }
 
-    // Calculate slot rate based on court hourly rate (slots are 30 minutes)
-    const slotRate = court.hourlyRate / 2
+    const totalAmount = calculateBookingAmount(startTime, endTime, sport)
 
-    const booking = await prisma.booking.create({
-      data: {
-        courtId,
-        bookingDate: new Date(date),
-        startTime,
-        endTime,
-        sport,
-        totalAmount: slotRate,
-        status: 'confirmed',
-        paymentStatus: 'paid', // Admin-created bookings are confirmed/paid
-        guestName,
-        guestPhone,
-      },
-    })
+    try {
+      const booking = await prisma.booking.create({
+        data: {
+          courtId,
+          bookingDate: new Date(date),
+          startTime,
+          endTime,
+          sport,
+          totalAmount,
+          status: 'confirmed',
+          paymentStatus: 'paid', // Admin-created bookings are confirmed/paid
+          guestName,
+          guestPhone,
+        },
+      })
 
-    return NextResponse.json({ success: true, booking })
+      return NextResponse.json({ success: true, booking })
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'P2002'
+      ) {
+        return NextResponse.json(
+          { error: 'This slot was just booked by someone else.' },
+          { status: 409 }
+        )
+      }
+      throw error
+    }
   } catch (error) {
     console.error('Error creating booking:', error)
     return NextResponse.json(

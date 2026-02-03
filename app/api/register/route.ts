@@ -75,7 +75,6 @@ export async function POST(request: NextRequest) {
         name,
         email,
         passwordHash,
-        passwordPlain: password,
         phone,
         uid: newUid,
       },

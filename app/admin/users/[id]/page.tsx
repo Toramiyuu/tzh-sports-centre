@@ -51,7 +51,6 @@ interface UserData {
   skillLevel: string | null
   createdAt: string
   isDefaultPassword: boolean
-  passwordPlain: string | null
 }
 
 interface BookingsSummary {
@@ -201,7 +200,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
   const [data, setData] = useState<UserDetails | null>(null)
   const [activeTab, setActiveTab] = useState('overview')
   const [showPasswordSection, setShowPasswordSection] = useState(false)
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [newPassword, setNewPassword] = useState('')
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [passwordLoading, setPasswordLoading] = useState(false)
@@ -252,7 +250,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       if (res.ok) {
         setPasswordMessage({ type: 'success', text: 'Password reset to default (temp1234)' })
         if (data) {
-          setData({ ...data, user: { ...data.user, isDefaultPassword: true, passwordPlain: 'temp1234' } })
+          setData({ ...data, user: { ...data.user, isDefaultPassword: true } })
         }
       } else {
         setPasswordMessage({ type: 'error', text: result.error || 'Failed to reset password' })
@@ -280,11 +278,10 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       const result = await res.json()
       if (res.ok) {
         setPasswordMessage({ type: 'success', text: 'Password updated successfully' })
-        const savedPassword = newPassword
         setNewPassword('')
         setShowNewPassword(false)
         if (data) {
-          setData({ ...data, user: { ...data.user, isDefaultPassword: false, passwordPlain: savedPassword } })
+          setData({ ...data, user: { ...data.user, isDefaultPassword: false } })
         }
       } else {
         setPasswordMessage({ type: 'error', text: result.error || 'Failed to set password' })
@@ -442,25 +439,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                       <Badge className="bg-amber-500">Default</Badge>
                     ) : (
                       <Badge className="bg-green-600">Custom</Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-sm text-gray-600">Current password:</span>
-                    {user.passwordPlain ? (
-                      <div className="flex items-center gap-2">
-                        <code className="bg-white border border-gray-200 rounded px-2 py-0.5 text-sm font-mono">
-                          {showCurrentPassword ? user.passwordPlain : '••••••••'}
-                        </code>
-                        <button
-                          type="button"
-                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                          className="text-gray-400 hover:text-gray-600"
-                        >
-                          {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="text-sm text-gray-400 italic">Not available (set before tracking)</span>
                     )}
                   </div>
                 </div>

@@ -64,12 +64,10 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check if password is the default (use plaintext if available, fall back to bcrypt compare)
-    const isDefaultPassword = user.passwordPlain
-      ? user.passwordPlain === DEFAULT_PASSWORD
-      : user.passwordHash
-        ? await bcrypt.compare(DEFAULT_PASSWORD, user.passwordHash)
-        : false
+    // Check if password is the default
+    const isDefaultPassword = user.passwordHash
+      ? await bcrypt.compare(DEFAULT_PASSWORD, user.passwordHash)
+      : false
 
     // Auto-generate missing payment records for current month
     const activeSlotIds = user.recurringBookings
@@ -345,7 +343,6 @@ export async function GET(
         skillLevel: user.skillLevel,
         createdAt: user.createdAt.toISOString(),
         isDefaultPassword,
-        passwordPlain: user.passwordPlain || null,
       },
       bookingsSummary: {
         thisWeek: bookingsThisWeek,
@@ -435,7 +432,7 @@ export async function PATCH(
     const passwordHash = await bcrypt.hash(passwordToHash, 12)
     await prisma.user.update({
       where: { id },
-      data: { passwordHash, passwordPlain: passwordToHash },
+      data: { passwordHash },
     })
 
     const isDefault = action === 'reset'
