@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { getCachedTimeSlots } from '@/lib/cache'
 import { isAdmin } from '@/lib/admin'
 import { calculateBookingAmount } from '@/lib/recurring-booking-utils'
 
@@ -138,7 +137,7 @@ export async function POST(request: NextRequest) {
     const dayOfWeek = bookingDate.getDay()
 
     // Check all conflicts in parallel for performance
-    const [existingBookings, recurringConflicts, lessonSessions, timeSlots] = await Promise.all([
+    const [existingBookings, recurringConflicts, lessonSessions] = await Promise.all([
       prisma.booking.findMany({
         where: {
           bookingDate,
@@ -171,7 +170,6 @@ export async function POST(request: NextRequest) {
           endTime: true,
         },
       }),
-      getCachedTimeSlots(),
     ])
 
     if (existingBookings.length > 0) {
@@ -197,24 +195,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Build a set of all slots occupied by lessons
-    const lessonSlotSet = new Set<string>()
-    const allSlotTimes = timeSlots.map(s => s.slotTime)
-
-    lessonSessions.forEach((lesson) => {
-      const startIdx = allSlotTimes.indexOf(lesson.startTime)
-      const endIdx = allSlotTimes.indexOf(lesson.endTime)
-      if (startIdx !== -1) {
-        const endIndex = endIdx !== -1 ? endIdx : allSlotTimes.length
-        for (let i = startIdx; i < endIndex; i++) {
-          lessonSlotSet.add(`${lesson.courtId}-${allSlotTimes[i]}`)
-        }
-      }
-    })
-
+    // Check for lesson conflicts using time overlap (lessons may not align with 30-min slot grid)
     const hasLessonConflict = slots.some(
-      (slot: { courtId: number; slotTime: string }) =>
-        lessonSlotSet.has(`${slot.courtId}-${slot.slotTime}`)
+      (slot: { courtId: number; slotTime: string }) => {
+        const slotEnd = getEndTime(slot.slotTime)
+        return lessonSessions.some(
+          (lesson) =>
+            lesson.courtId === slot.courtId &&
+            timeToMinutes(slot.slotTime) < timeToMinutes(lesson.endTime) &&
+            timeToMinutes(slotEnd) > timeToMinutes(lesson.startTime)
+        )
+      }
     )
 
     if (hasLessonConflict) {
@@ -293,6 +284,11 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
+}
+
+function timeToMinutes(time: string): number {
+  const [hours, minutes] = time.split(':').map(Number)
+  return hours * 60 + minutes
 }
 
 // Helper to calculate end time (30 minutes after start)

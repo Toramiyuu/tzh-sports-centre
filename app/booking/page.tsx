@@ -341,8 +341,8 @@ function BookingPageContent() {
       // Removing a slot
       // Check if this would go below minimum
       if (courtSlotsCount <= minSlots) {
-        // Remove all slots for this court
-        setSelectedSlots(selectedSlots.filter(s => s.courtId !== court.id))
+        const minTime = sport === 'pickleball' ? '2 hours' : '1 hour'
+        toast.error(`Minimum ${minTime} booking required. Cannot remove this slot.`)
         return
       }
 
