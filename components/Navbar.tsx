@@ -26,7 +26,7 @@ export function Navbar() {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       scrolled
-        ? 'bg-black/95 backdrop-blur-md border-b border-zinc-800'
+        ? 'bg-slate-900/95 backdrop-blur-md border-b border-slate-700'
         : 'bg-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,7 +34,7 @@ export function Navbar() {
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
             <Link href="/" className="flex items-center gap-2 outline-none focus:outline-none">
-              <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">TZH</span>
               </div>
               <span className="text-xl font-bold text-white hidden sm:block">
@@ -87,7 +87,7 @@ export function Navbar() {
             {userIsAdmin && (
               <Link
                 href="/admin"
-                className="text-green-400 hover:text-green-300 flex items-center gap-2 transition-colors"
+                className="text-amber-400 hover:text-amber-300 flex items-center gap-2 transition-colors"
               >
                 <Shield className="w-4 h-4" />
                 {t('admin')}
@@ -107,7 +107,7 @@ export function Navbar() {
                 <Button variant="ghost" asChild className="text-white/70 hover:text-white hover:bg-white/10">
                   <Link href="/auth/login">{t('login')}</Link>
                 </Button>
-                <Button asChild className="bg-green-500 hover:bg-green-600 text-white">
+                <Button asChild className="bg-amber-500 hover:bg-amber-600 text-white">
                   <Link href="/auth/register">{t('signup')}</Link>
                 </Button>
               </>
@@ -132,25 +132,25 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-zinc-900 border-b border-zinc-800">
+        <div className="md:hidden bg-slate-900 border-b border-slate-700">
           <div className="px-4 py-3 space-y-3">
             <Link
               href="/booking"
-              className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-zinc-800"
+              className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-slate-800"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('booking')}
             </Link>
             <Link
               href="/lessons"
-              className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-zinc-800"
+              className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-slate-800"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('lessons')}
             </Link>
             <Link
               href="/stringing"
-              className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-zinc-800"
+              className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-slate-800"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('stringing')}
@@ -158,7 +158,7 @@ export function Navbar() {
             {session?.user && (
               <Link
                 href="/member"
-                className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-zinc-800"
+                className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-slate-800"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('member')}
@@ -167,7 +167,7 @@ export function Navbar() {
             {session?.user && (
               <Link
                 href="/updates"
-                className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-zinc-800"
+                className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-slate-800"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('updates')}
@@ -176,17 +176,17 @@ export function Navbar() {
             {userIsAdmin && (
               <Link
                 href="/admin"
-                className="block px-3 py-2 rounded-md text-green-400 hover:bg-green-950"
+                className="block px-3 py-2 rounded-md text-amber-400 hover:bg-amber-950"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('admin')}
               </Link>
             )}
-            <hr className="my-2 border-zinc-700" />
+            <hr className="my-2 border-slate-600" />
             <div className="px-3 py-2">
               <LanguageSwitcher />
             </div>
-            <hr className="my-2 border-zinc-700" />
+            <hr className="my-2 border-slate-600" />
             {session?.user ? (
               <>
                 <div className="px-3 py-2 text-sm text-zinc-400">
@@ -206,14 +206,14 @@ export function Navbar() {
               <>
                 <Link
                   href="/auth/login"
-                  className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-zinc-800"
+                  className="block px-3 py-2 rounded-md text-white/70 hover:text-white hover:bg-slate-800"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t('login')}
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block px-3 py-2 rounded-md bg-green-500 text-white text-center hover:bg-green-600"
+                  className="block px-3 py-2 rounded-md bg-amber-500 text-white text-center hover:bg-amber-600"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t('signup')}

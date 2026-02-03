@@ -10,13 +10,13 @@ export function Footer() {
   const t = useTranslations('footer')
 
   return (
-    <footer className="bg-black text-white">
+    <footer className="bg-slate-950 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* About */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xl">TZH</span>
               </div>
               <span className="text-2xl font-bold">TZH Sports Centre</span>
@@ -28,42 +28,42 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="font-semibold text-lg mb-6 text-green-400">{t('contact')}</h3>
+            <h3 className="font-semibold text-lg mb-6 text-amber-400">{t('contact')}</h3>
             <div className="space-y-4 text-zinc-400">
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-500" />
+                <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0 text-amber-500" />
                 <div>
                   <span>Jalan Sekolah La Salle, 11400 Ayer Itam, Penang</span>
                   <a
                     href="https://maps.app.goo.gl/6id7KLMbwohP7o9J6"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-green-400 hover:text-green-300 mt-1 transition-colors"
+                    className="block text-amber-400 hover:text-amber-300 mt-1 transition-colors"
                   >
                     {t('getDirections')} →
                   </a>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 flex-shrink-0 text-green-500" />
+                <Phone className="w-5 h-5 flex-shrink-0 text-amber-500" />
                 <div>
                   <div>{t('courtBookings')}: <a href="tel:+60116868508" className="hover:text-white transition-colors">011-6868 8508</a></div>
                   <div>{t('lessonsEnquiry')}: <a href="tel:+60117575508" className="hover:text-white transition-colors">011-7575 8508</a></div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <MessageCircle className="w-5 h-5 flex-shrink-0 text-green-500" />
+                <MessageCircle className="w-5 h-5 flex-shrink-0 text-amber-500" />
                 <a
                   href="https://wa.me/60116868508?text=Hi%2C%20I%27d%20like%20to%20enquire%20about%20court%20booking"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-green-400 hover:text-green-300 transition-colors"
+                  className="text-amber-400 hover:text-amber-300 transition-colors"
                 >
                   WhatsApp Us
                 </a>
               </div>
               <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-500" />
+                <Clock className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-500" />
                 <div>
                   <div>{t('weekdays')}</div>
                   <div>{t('weekends')}</div>
@@ -74,7 +74,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-lg mb-6 text-green-400">{t('quickLinks')}</h3>
+            <h3 className="font-semibold text-lg mb-6 text-amber-400">{t('quickLinks')}</h3>
             <div className="space-y-3">
               <Link
                 href="/booking"
