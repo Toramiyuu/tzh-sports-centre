@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
+import { fromZonedTime } from 'date-fns-tz'
 import {
   calculateHours,
   calculateBookingAmount,
   getSportRate,
   countSessionsInMonth,
 } from '@/lib/recurring-booking-utils'
+
+const TIMEZONE = 'Asia/Kuala_Lumpur'
 
 // GET: List users with monthly payment summaries
 export async function GET(request: NextRequest) {
@@ -27,9 +30,9 @@ export async function GET(request: NextRequest) {
       return getDetailedBreakdown(userId, month, year)
     }
 
-    // Calculate date range for the month (Malaysia timezone +08:00)
-    const startDate = new Date(Date.UTC(year, month - 1, 1, -8, 0, 0)) // Start of month in MYT
-    const endDate = new Date(Date.UTC(year, month, 1, -8, 0, 0)) // Start of next month in MYT
+    // Calculate date range for the month in Malaysia timezone (UTC+8)
+    const startDate = fromZonedTime(new Date(year, month - 1, 1), TIMEZONE)
+    const endDate = fromZonedTime(new Date(year, month, 1), TIMEZONE)
 
     // Get all users who have bookings or recurring bookings
     const usersWithBookings = await prisma.user.findMany({
@@ -176,8 +179,8 @@ export async function GET(request: NextRequest) {
 
 // Get detailed breakdown for a specific user
 async function getDetailedBreakdown(userId: string, month: number, year: number) {
-  const startDate = new Date(Date.UTC(year, month - 1, 1, -8, 0, 0))
-  const endDate = new Date(Date.UTC(year, month, 1, -8, 0, 0))
+  const startDate = fromZonedTime(new Date(year, month - 1, 1), TIMEZONE)
+  const endDate = fromZonedTime(new Date(year, month, 1), TIMEZONE)
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -310,7 +313,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { userId, month, year, amount, paymentMethod, reference, notes } = body
+    const { userId, month, year, amount, paymentMethod, reference, notes, idempotencyKey } = body
 
     if (!userId || !month || !year || !amount || !paymentMethod) {
       return NextResponse.json(
@@ -319,14 +322,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Idempotency check: if this request was already processed, return the existing result
+    if (idempotencyKey) {
+      const existingTransaction = await prisma.paymentTransaction.findUnique({
+        where: { idempotencyKey },
+        include: { monthlyPayment: true },
+      })
+      if (existingTransaction) {
+        return NextResponse.json({
+          success: true,
+          payment: existingTransaction.monthlyPayment,
+          transaction: existingTransaction,
+          duplicate: true,
+        })
+      }
+    }
+
     // Get or create monthly payment record
     let monthlyPayment = await prisma.monthlyPayment.findUnique({
       where: { userId_month_year: { userId, month, year } },
     })
 
     // Calculate total due for this user/month (we need to compute it)
-    const startDate = new Date(Date.UTC(year, month - 1, 1, -8, 0, 0))
-    const endDate = new Date(Date.UTC(year, month, 1, -8, 0, 0))
+    const startDate = fromZonedTime(new Date(year, month - 1, 1), TIMEZONE)
+    const endDate = fromZonedTime(new Date(year, month, 1), TIMEZONE)
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -416,6 +435,7 @@ export async function POST(request: NextRequest) {
         reference,
         notes,
         recordedBy: session.user!.email!,
+        idempotencyKey: idempotencyKey || undefined,
       },
     })
 
@@ -458,8 +478,8 @@ export async function PATCH(request: NextRequest) {
     }
 
     const results = []
-    const startDate = new Date(Date.UTC(year, month - 1, 1, -8, 0, 0))
-    const endDate = new Date(Date.UTC(year, month, 1, -8, 0, 0))
+    const startDate = fromZonedTime(new Date(year, month - 1, 1), TIMEZONE)
+    const endDate = fromZonedTime(new Date(year, month, 1), TIMEZONE)
 
     for (const userId of userIds) {
       try {

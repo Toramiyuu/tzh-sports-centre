@@ -206,6 +206,7 @@ model PaymentTransaction {
   notes            String?
   recordedBy       String         @map("recorded_by")
   recordedAt       DateTime       @default(now()) @map("recorded_at")
+  idempotencyKey   String?        @unique @map("idempotency_key")
   monthlyPayment   MonthlyPayment @relation(fields: [monthlyPaymentId], references: [id], onDelete: Cascade)
 
   @@map("payment_transactions")
