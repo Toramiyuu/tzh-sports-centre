@@ -201,6 +201,10 @@
       "email": "电子邮件（可选）",
       "payAtCounter": "柜台付款"
     },
+    "paymentMethods": {
+      "tng": "Touch 'n Go",
+      "duitnow": "DuitNow"
+    },
     "court": "球场 {number}",
     "available": "可用",
     "booked": "已预订",
@@ -254,6 +258,9 @@
       "past": "历史预订",
       "noBookings": "暂无预订记录",
       "cancelBooking": "取消预订",
+      "cancelConfirmTitle": "取消预订",
+      "cancelConfirmDescription": "您确定要取消此预订吗？金额将添加到您的积分余额中。",
+      "keepBooking": "保留预订",
       "cancelSuccess": "预订取消成功",
       "cancelError": "取消预订失败"
     },

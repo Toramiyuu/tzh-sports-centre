@@ -12,8 +12,17 @@ import {
   History,
   AlertTriangle,
   X,
-  CreditCard
+  CreditCard,
+  RefreshCw
 } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 interface Booking {
   id: string
@@ -37,6 +46,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
+  const [cancelDialogId, setCancelDialogId] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -46,13 +56,17 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
 
   const fetchBookings = async () => {
     try {
+      setError('')
       const res = await fetch('/api/profile/bookings')
       if (res.ok) {
         const data = await res.json()
         setBookings(data.bookings || [])
+      } else {
+        setError('Failed to load bookings')
       }
-    } catch (error) {
-      console.error('Failed to fetch bookings:', error)
+    } catch (err) {
+      console.error('Failed to fetch bookings:', err)
+      setError('Failed to load bookings')
     } finally {
       setLoading(false)
     }
@@ -65,10 +79,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
   }
 
   const handleCancel = async (bookingId: string) => {
-    if (!confirm('Are you sure you want to cancel this booking? The amount will be added to your credit balance.')) {
-      return
-    }
-
+    setCancelDialogId(null)
     setCancellingId(bookingId)
     setError('')
     setSuccess('')
@@ -131,8 +142,15 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
 
       {error && (
         <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4" />
-          {error}
+          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+          <span className="flex-1">{error}</span>
+          <button
+            onClick={() => { setError(''); setLoading(true); fetchBookings() }}
+            className="flex items-center gap-1 text-red-700 hover:text-red-800 font-medium"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Retry
+          </button>
         </div>
       )}
 
@@ -255,7 +273,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                         variant="outline"
                         size="sm"
                         className="text-red-600 border-red-200 hover:bg-red-50"
-                        onClick={() => handleCancel(booking.id)}
+                        onClick={() => setCancelDialogId(booking.id)}
                         disabled={cancellingId === booking.id}
                       >
                         {cancellingId === booking.id ? (
@@ -280,6 +298,29 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
           </CardContent>
         </Card>
       )}
+
+      {/* Cancel Confirmation Dialog */}
+      <Dialog open={!!cancelDialogId} onOpenChange={(open) => { if (!open) setCancelDialogId(null) }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cancel Booking</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to cancel this booking? The amount will be added to your credit balance.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCancelDialogId(null)}>
+              Keep Booking
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => cancelDialogId && handleCancel(cancelDialogId)}
+            >
+              Cancel Booking
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -10,7 +10,9 @@ import {
   CalendarDays,
   Loader2,
   History,
-  Users
+  Users,
+  AlertTriangle,
+  RefreshCw
 } from 'lucide-react'
 
 interface LessonSession {
@@ -43,6 +45,7 @@ export function LessonsTab() {
   const [sessions, setSessions] = useState<LessonSession[]>([])
   const [requests, setRequests] = useState<LessonRequest[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchLessons()
@@ -50,10 +53,16 @@ export function LessonsTab() {
 
   const fetchLessons = async () => {
     try {
+      setError(null)
       const [sessionsRes, requestsRes] = await Promise.all([
         fetch('/api/profile/lessons'),
         fetch('/api/profile/lesson-requests'),
       ])
+
+      if (!sessionsRes.ok && !requestsRes.ok) {
+        setError('Failed to load lessons')
+        return
+      }
 
       if (sessionsRes.ok) {
         const data = await sessionsRes.json()
@@ -64,8 +73,9 @@ export function LessonsTab() {
         const data = await requestsRes.json()
         setRequests(data.requests || [])
       }
-    } catch (error) {
-      console.error('Failed to fetch lessons:', error)
+    } catch (err) {
+      console.error('Failed to fetch lessons:', err)
+      setError('Failed to load lessons')
     } finally {
       setLoading(false)
     }
@@ -123,6 +133,20 @@ export function LessonsTab() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+          <span className="flex-1">{error}</span>
+          <button
+            onClick={() => { setError(null); setLoading(true); fetchLessons() }}
+            className="flex items-center gap-1 text-red-700 hover:text-red-800 font-medium"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* View Toggle */}
       <div className="flex gap-2">
         <button

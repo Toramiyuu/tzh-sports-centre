@@ -995,7 +995,7 @@ function BookingPageContent() {
                       disabled={booking}
                     >
                       <Smartphone className="mr-2 h-4 w-4" />
-                      {t('bookNow')} - Touch &apos;n Go
+                      {t('bookNow')} - {t('paymentMethods.tng')}
                     </Button>
 
                     {/* DuitNow payment button */}
@@ -1007,7 +1007,7 @@ function BookingPageContent() {
                       disabled={booking}
                     >
                       <CreditCard className="mr-2 h-4 w-4" />
-                      {t('bookNow')} - DuitNow
+                      {t('bookNow')} - {t('paymentMethods.duitnow')}
                     </Button>
 
                     {/* Stripe Pay Online button - Hidden for now, keeping code for future use
@@ -1088,7 +1088,7 @@ function BookingPageContent() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
               <Smartphone className="w-5 h-5 text-teal-600" />
-              Pay with Touch &apos;n Go
+              Pay with {t('paymentMethods.tng')}
             </DialogTitle>
           </DialogHeader>
 
@@ -1110,7 +1110,7 @@ function BookingPageContent() {
                   <div className="p-3 bg-white rounded-lg border-2 border-gray-200">
                     <img
                       src="/images/tng-qr.png"
-                      alt="Touch 'n Go QR Code"
+                      alt={`${t('paymentMethods.tng')} QR Code`}
                       className="w-48 h-48 sm:w-56 sm:h-56 object-contain"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
@@ -1141,8 +1141,8 @@ function BookingPageContent() {
                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                   <div className="w-7 h-7 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
                   <div>
-                    <p className="font-medium text-gray-900">Open Touch &apos;n Go App</p>
-                    <p className="text-sm text-gray-600">Open your Touch &apos;n Go eWallet app</p>
+                    <p className="font-medium text-gray-900">Open {t('paymentMethods.tng')} App</p>
+                    <p className="text-sm text-gray-600">Open your {t('paymentMethods.tng')} eWallet app</p>
                   </div>
                 </div>
 
@@ -1236,7 +1236,7 @@ function BookingPageContent() {
                   />
                 </div>
                 <p className="text-xs text-yellow-800">
-                  Only turn this on after you have successfully paid in Touch &apos;n Go
+                  Only turn this on after you have successfully paid in {t('paymentMethods.tng')}
                 </p>
               </div>
 
@@ -1288,7 +1288,7 @@ function BookingPageContent() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
               <CreditCard className="w-5 h-5 text-pink-600" />
-              Pay with DuitNow
+              Pay with {t('paymentMethods.duitnow')}
             </DialogTitle>
           </DialogHeader>
 
@@ -1310,7 +1310,7 @@ function BookingPageContent() {
                   <div className="p-3 bg-white rounded-lg border-2 border-gray-200">
                     <img
                       src="/images/duitnow-qr.png"
-                      alt="DuitNow QR Code"
+                      alt={`${t('paymentMethods.duitnow')} QR Code`}
                       className="w-48 h-48 sm:w-56 sm:h-56 object-contain"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
@@ -1351,7 +1351,7 @@ function BookingPageContent() {
                   <div className="w-7 h-7 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
                   <div>
                     <p className="font-medium text-gray-900">Scan from Gallery</p>
-                    <p className="text-sm text-gray-600">Tap &apos;Scan &amp; Pay&apos; or &apos;DuitNow QR&apos;, then select from gallery</p>
+                    <p className="text-sm text-gray-600">Tap &apos;Scan &amp; Pay&apos; or &apos;{t('paymentMethods.duitnow')} QR&apos;, then select from gallery</p>
                   </div>
                 </div>
 
@@ -1436,7 +1436,7 @@ function BookingPageContent() {
                   />
                 </div>
                 <p className="text-xs text-yellow-800">
-                  Only turn this on after you have successfully paid via DuitNow
+                  Only turn this on after you have successfully paid via {t('paymentMethods.duitnow')}
                 </p>
               </div>
 

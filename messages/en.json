@@ -202,6 +202,10 @@
       "email": "Email (optional)",
       "payAtCounter": "Pay at counter"
     },
+    "paymentMethods": {
+      "tng": "Touch 'n Go",
+      "duitnow": "DuitNow"
+    },
     "court": "Court {number}",
     "available": "Available",
     "booked": "Booked",
@@ -255,6 +259,9 @@
       "past": "Past Bookings",
       "noBookings": "No bookings found",
       "cancelBooking": "Cancel Booking",
+      "cancelConfirmTitle": "Cancel Booking",
+      "cancelConfirmDescription": "Are you sure you want to cancel this booking? The amount will be added to your credit balance.",
+      "keepBooking": "Keep Booking",
       "cancelSuccess": "Booking cancelled successfully",
       "cancelError": "Failed to cancel booking"
     },

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Loader2, Clock, Repeat } from 'lucide-react'
+import { Loader2, Clock, Repeat, AlertTriangle, RefreshCw } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 interface RecurringBookingData {
@@ -49,6 +49,7 @@ export function RecurringTab() {
   const t = useTranslations('profile.recurring')
   const [bookings, setBookings] = useState<RecurringBookingData[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchData()
@@ -56,13 +57,17 @@ export function RecurringTab() {
 
   const fetchData = async () => {
     try {
+      setError(null)
       const res = await fetch('/api/profile/recurring')
       if (res.ok) {
         const data = await res.json()
         setBookings(data.recurringBookings)
+      } else {
+        setError('Failed to load recurring bookings')
       }
-    } catch (error) {
-      console.error('Error fetching recurring bookings:', error)
+    } catch (err) {
+      console.error('Error fetching recurring bookings:', err)
+      setError('Failed to load recurring bookings')
     } finally {
       setLoading(false)
     }
@@ -90,6 +95,19 @@ export function RecurringTab() {
 
   return (
     <div className="space-y-4">
+      {error && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+          <span className="flex-1">{error}</span>
+          <button
+            onClick={() => { setError(null); setLoading(true); fetchData() }}
+            className="flex items-center gap-1 text-red-700 hover:text-red-800 font-medium"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Retry
+          </button>
+        </div>
+      )}
       {active.length > 0 && (
         <div className="space-y-3">
           {active.map((booking) => (

@@ -202,6 +202,10 @@
       "email": "Emel (pilihan)",
       "payAtCounter": "Bayar di kaunter"
     },
+    "paymentMethods": {
+      "tng": "Touch 'n Go",
+      "duitnow": "DuitNow"
+    },
     "court": "Gelanggang {number}",
     "available": "Tersedia",
     "booked": "Ditempah",
@@ -255,6 +259,9 @@
       "past": "Tempahan Lepas",
       "noBookings": "Tiada tempahan dijumpai",
       "cancelBooking": "Batal Tempahan",
+      "cancelConfirmTitle": "Batal Tempahan",
+      "cancelConfirmDescription": "Adakah anda pasti ingin membatalkan tempahan ini? Jumlah akan dikreditkan ke baki kredit anda.",
+      "keepBooking": "Kekalkan Tempahan",
       "cancelSuccess": "Tempahan berjaya dibatalkan",
       "cancelError": "Gagal membatalkan tempahan"
     },
