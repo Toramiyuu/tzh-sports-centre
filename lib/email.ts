@@ -23,8 +23,7 @@ interface SendEmailOptions {
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
   // If Gmail is not configured, log and return
   if (!transporter) {
-    console.log(`[Email] Would send to ${to}: ${subject}`)
-    console.log('[Email] Gmail not configured - set GMAIL_USER and GMAIL_APP_PASSWORD')
+    console.warn(`[Email] Gmail not configured - would send to ${to}: ${subject}`)
     return { success: true, data: null, skipped: true }
   }
 
@@ -36,7 +35,6 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
       html,
     })
 
-    console.log(`[Email] Sent to ${to}: ${subject} (${info.messageId})`)
     return { success: true, data: info }
   } catch (error) {
     console.error('Error sending email:', error)

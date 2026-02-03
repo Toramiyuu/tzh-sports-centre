@@ -14,7 +14,7 @@ export default async function AdminPage() {
     redirect('/auth/login?callbackUrl=/admin')
   }
 
-  if (!isAdmin(session.user.email)) {
+  if (!isAdmin(session.user.email, session.user.isAdmin)) {
     redirect('/')
   }
 

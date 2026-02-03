@@ -215,7 +215,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
   useEffect(() => {
     if (status === 'loading') return
-    if (!session?.user || !isAdmin(session.user.email)) {
+    if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
       router.push('/')
     }
   }, [session, status, router])
@@ -294,7 +294,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   useEffect(() => {
-    if (session?.user && isAdmin(session.user.email) && resolvedParams.id) {
+    if (session?.user && isAdmin(session.user.email, session.user.isAdmin) && resolvedParams.id) {
       fetchData()
     }
   }, [session, resolvedParams.id])

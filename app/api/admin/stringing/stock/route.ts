@@ -7,7 +7,7 @@ import { isAdmin } from '@/lib/admin'
 export async function GET() {
   try {
     const session = await auth()
-    if (!session?.user?.email || !isAdmin(session.user.email)) {
+    if (!session?.user?.email || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Authentication failed' }, { status: 500 })
   }
 
-  if (!session?.user?.email || !isAdmin(session.user.email)) {
+  if (!session?.user?.email || !isAdmin(session.user.email, session.user.isAdmin)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

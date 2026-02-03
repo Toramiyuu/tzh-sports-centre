@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
           { status: 401 }
         )
       }
-      if (!session.user.email || !isAdmin(session.user.email)) {
+      if (!session.user.email || !isAdmin(session.user.email, session.user.isAdmin)) {
         return NextResponse.json(
           { error: 'Only admins can create test bookings' },
           { status: 403 }

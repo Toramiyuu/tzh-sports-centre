@@ -7,7 +7,7 @@ import { isAdmin } from '@/lib/admin'
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
-    if (!session?.user?.email || !isAdmin(session.user.email)) {
+    if (!session?.user?.email || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

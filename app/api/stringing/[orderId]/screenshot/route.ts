@@ -82,7 +82,7 @@ export async function GET(
 ) {
   try {
     const session = await auth()
-    if (!session?.user?.email || !isAdmin(session.user.email)) {
+    if (!session?.user?.email || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json(
         { message: 'Unauthorized' },
         { status: 401 }

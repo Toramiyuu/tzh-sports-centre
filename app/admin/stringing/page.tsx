@@ -102,7 +102,7 @@ export default function AdminStringingPage() {
   const [savingJobUid, setSavingJobUid] = useState(false)
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
 
-  const userIsAdmin = isAdmin(session?.user?.email)
+  const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin)
 
   useEffect(() => {
     if (sessionStatus === 'loading') return

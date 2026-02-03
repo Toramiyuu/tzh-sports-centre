@@ -103,7 +103,7 @@ function BookingPageContent() {
   const { data: session } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const userIsAdmin = isAdmin(session?.user?.email)
+  const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin)
   const t = useTranslations('booking')
   const tCommon = useTranslations('common')
   const tHome = useTranslations('home')
@@ -1009,27 +1009,6 @@ function BookingPageContent() {
                       <CreditCard className="mr-2 h-4 w-4" />
                       {t('bookNow')} - {t('paymentMethods.duitnow')}
                     </Button>
-
-                    {/* Stripe Pay Online button - Hidden for now, keeping code for future use
-                    <Button
-                      className={`w-full mb-2 ${sport === 'pickleball' ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                      size="lg"
-                      onClick={handleOnlinePayment}
-                      disabled={booking}
-                    >
-                      {booking ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {tCommon('loading')}
-                        </>
-                      ) : (
-                        <>
-                          <CreditCard className="mr-2 h-4 w-4" />
-                          {t('bookNow')} - Pay Online
-                        </>
-                      )}
-                    </Button>
-                    */}
 
                     {/* Admin test booking button */}
                     {userIsAdmin && (

@@ -138,7 +138,7 @@ export default function AdminStockPage() {
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
   const [bulkDeleting, setBulkDeleting] = useState(false)
 
-  const userIsAdmin = isAdmin(session?.user?.email)
+  const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin)
 
   useEffect(() => {
     if (sessionStatus === 'loading') return

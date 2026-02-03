@@ -153,7 +153,7 @@ export default function PaymentsContent() {
   }, [selectedMonth, selectedYear])
 
   useEffect(() => {
-    if (session?.user && isAdmin(session.user.email)) {
+    if (session?.user && isAdmin(session.user.email, session.user.isAdmin)) {
       fetchData()
     }
   }, [session, fetchData])

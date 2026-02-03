@@ -15,7 +15,7 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    if (!session.user.email || !isAdmin(session.user.email)) {
+    if (!session.user.email || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json(
         { error: 'Only admins can confirm payments' },
         { status: 403 }

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user || !isAdmin(session.user.email)) {
+    if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -155,7 +155,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user || !isAdmin(session.user.email)) {
+    if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user || !isAdmin(session.user.email)) {
+    if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -299,7 +299,7 @@ export async function PATCH(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user || !isAdmin(session.user.email)) {
+    if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

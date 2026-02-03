@@ -13,7 +13,7 @@ import { useTranslations } from 'next-intl'
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { data: session, status } = useSession()
-  const userIsAdmin = isAdmin(session?.user?.email)
+  const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin)
   const t = useTranslations('nav')
 
   return (

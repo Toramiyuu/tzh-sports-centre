@@ -13,6 +13,18 @@ import {
   getPaymentStatus,
 } from '@/lib/recurring-booking-utils'
 
+interface PaymentRecord {
+  id: string
+  month: number
+  year: number
+  amount: number
+  sessionsCount: number
+  status: string
+  paidAt: Date | null
+  paymentMethod: string | null
+  notes: string | null
+}
+
 const DEFAULT_PASSWORD = 'temp1234'
 
 // GET: Get detailed user information
@@ -22,7 +34,7 @@ export async function GET(
 ) {
   try {
     const session = await auth()
-    if (!session?.user || !isAdmin(session.user.email)) {
+    if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -167,7 +179,7 @@ export async function GET(
       // Sum paid amounts from slot payment records for current month
       for (const slot of group.slots) {
         const payment = slot.payments?.find(
-          (p: any) => p.month === currentMonth && p.year === currentYear && p.status === 'paid'
+          (p: PaymentRecord) => p.month === currentMonth && p.year === currentYear && p.status === 'paid'
         )
         if (payment) {
           recurringPaidThisMonth += payment.amount
@@ -185,15 +197,15 @@ export async function GET(
     const totalPaidAllTime = user.monthlyPayments.reduce((sum, mp) => sum + mp.paidAmount, 0)
 
     // Sum all-time recurring payments that are marked as paid
-    const allRecurringPayments = user.recurringBookings.flatMap(rb => rb.payments || [])
+    const allRecurringPayments = user.recurringBookings.flatMap(rb => rb.payments || []) as PaymentRecord[]
     const totalRecurringPaidAllTime = allRecurringPayments
-      .filter((p: any) => p.status === 'paid')
-      .reduce((sum: number, p: any) => sum + p.amount, 0)
+      .filter(p => p.status === 'paid')
+      .reduce((sum, p) => sum + p.amount, 0)
 
     // Calculate recurring outstanding (all unpaid/overdue recurring payments)
     const recurringOutstanding = allRecurringPayments
-      .filter((p: any) => p.status !== 'paid')
-      .reduce((sum: number, p: any) => sum + p.amount, 0)
+      .filter(p => p.status !== 'paid')
+      .reduce((sum, p) => sum + p.amount, 0)
 
     // Format bookings for timeline
     const bookingsTimeline = user.bookings.slice(0, 50).map(b => ({
@@ -213,15 +225,15 @@ export async function GET(
     const recurringBookings = groupedRecurring.map(group => {
       // Gather payment data for current month from all slots in the group
       const currentMonthPayments = group.slots
-        .map(slot => slot.payments?.find((p: any) => p.month === currentMonth && p.year === currentYear))
-        .filter(Boolean) as any[]
+        .map(slot => slot.payments?.find((p: PaymentRecord) => p.month === currentMonth && p.year === currentYear))
+        .filter(Boolean) as PaymentRecord[]
 
       const sessionsCount = countSessionsInMonth(currentYear, currentMonth, group.dayOfWeek)
       const monthlyAmount = sessionsCount * group.amountPerSession
 
       // Determine overall payment status for this group's current month
-      const allPaid = currentMonthPayments.length > 0 && currentMonthPayments.every((p: any) => p.status === 'paid')
-      const somePaid = currentMonthPayments.some((p: any) => p.status === 'paid')
+      const allPaid = currentMonthPayments.length > 0 && currentMonthPayments.every(p => p.status === 'paid')
+      const somePaid = currentMonthPayments.some(p => p.status === 'paid')
 
       let currentMonthStatus: 'paid' | 'unpaid' | 'overdue' | 'partial'
       if (allPaid) {
@@ -236,7 +248,7 @@ export async function GET(
 
       // Gather payment history (all months)
       const allPayments = group.slots.flatMap(slot =>
-        (slot.payments || []).map((p: any) => ({
+        (slot.payments || []).map((p: PaymentRecord) => ({
           id: p.id,
           slotId: slot.id,
           month: p.month,
@@ -251,7 +263,8 @@ export async function GET(
       )
 
       // Group payments by month/year for summary
-      const paymentsByMonth = new Map<string, any[]>()
+      type ProcessedPayment = typeof allPayments[number]
+      const paymentsByMonth = new Map<string, ProcessedPayment[]>()
       for (const p of allPayments) {
         const key = `${p.year}-${p.month}`
         if (!paymentsByMonth.has(key)) paymentsByMonth.set(key, [])
@@ -262,13 +275,13 @@ export async function GET(
         .map(([, payments]) => ({
           month: payments[0].month,
           year: payments[0].year,
-          totalAmount: payments.reduce((sum: number, p: any) => sum + p.amount, 0),
-          status: payments.every((p: any) => p.status === 'paid') ? 'paid' as const
-            : payments.some((p: any) => p.status === 'paid') ? 'partial' as const
-            : payments.some((p: any) => p.status === 'overdue') ? 'overdue' as const
+          totalAmount: payments.reduce((sum, p) => sum + p.amount, 0),
+          status: payments.every(p => p.status === 'paid') ? 'paid' as const
+            : payments.some(p => p.status === 'paid') ? 'partial' as const
+            : payments.some(p => p.status === 'overdue') ? 'overdue' as const
             : 'unpaid' as const,
-          paidAt: payments.find((p: any) => p.paidAt)?.paidAt || null,
-          paymentIds: payments.map((p: any) => p.id),
+          paidAt: payments.find(p => p.paidAt)?.paidAt || null,
+          paymentIds: payments.map(p => p.id),
         }))
         .sort((a, b) => b.year - a.year || b.month - a.month)
 
@@ -290,9 +303,9 @@ export async function GET(
             status: currentMonthStatus,
             amount: monthlyAmount,
             sessionsCount,
-            paidAt: currentMonthPayments.find((p: any) => p.paidAt)?.paidAt?.toISOString() || null,
-            paymentMethod: currentMonthPayments.find((p: any) => p.paymentMethod)?.paymentMethod || null,
-            paymentIds: currentMonthPayments.map((p: any) => p.id),
+            paidAt: currentMonthPayments.find(p => p.paidAt)?.paidAt?.toISOString() || null,
+            paymentMethod: currentMonthPayments.find(p => p.paymentMethod)?.paymentMethod || null,
+            paymentIds: currentMonthPayments.map(p => p.id),
           },
           history: paymentHistory,
         },
@@ -397,7 +410,7 @@ export async function PATCH(
 ) {
   try {
     const session = await auth()
-    if (!session?.user || !isAdmin(session.user.email)) {
+    if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

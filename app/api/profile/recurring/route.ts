@@ -8,6 +8,16 @@ import {
   ensurePaymentRecords,
 } from '@/lib/recurring-booking-utils'
 
+interface PaymentRecord {
+  id: string
+  month: number
+  year: number
+  amount: number
+  status: string
+  paidAt: Date | null
+  paymentMethod: string | null
+}
+
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
@@ -51,10 +61,10 @@ export async function GET(request: NextRequest) {
 
       // Current month payment status
       const currentMonthPayments = group.slots
-        .map(slot => slot.payments?.find((p: any) => p.month === currentMonth && p.year === currentYear))
-        .filter(Boolean) as any[]
+        .map(slot => slot.payments?.find((p: PaymentRecord) => p.month === currentMonth && p.year === currentYear))
+        .filter(Boolean) as PaymentRecord[]
 
-      const allPaid = currentMonthPayments.length > 0 && currentMonthPayments.every((p: any) => p.status === 'paid')
+      const allPaid = currentMonthPayments.length > 0 && currentMonthPayments.every((p: PaymentRecord) => p.status === 'paid')
 
       let currentMonthStatus: string
       if (allPaid) {
@@ -67,7 +77,7 @@ export async function GET(request: NextRequest) {
 
       // Payment history
       const allPayments = group.slots.flatMap(slot =>
-        (slot.payments || []).map((p: any) => ({
+        (slot.payments || []).map((p: PaymentRecord) => ({
           month: p.month,
           year: p.year,
           amount: p.amount,
@@ -78,7 +88,8 @@ export async function GET(request: NextRequest) {
       )
 
       // Group by month
-      const byMonth = new Map<string, any[]>()
+      type ProcessedPayment = typeof allPayments[number]
+      const byMonth = new Map<string, ProcessedPayment[]>()
       for (const p of allPayments) {
         const key = `${p.year}-${p.month}`
         if (!byMonth.has(key)) byMonth.set(key, [])
@@ -90,12 +101,12 @@ export async function GET(request: NextRequest) {
           month: payments[0].month,
           year: payments[0].year,
           monthLabel: `${monthNames[payments[0].month]} ${payments[0].year}`,
-          totalAmount: payments.reduce((s: number, p: any) => s + p.amount, 0),
-          status: payments.every((p: any) => p.status === 'paid') ? 'paid'
-            : payments.some((p: any) => p.status === 'overdue') ? 'overdue'
+          totalAmount: payments.reduce((s, p) => s + p.amount, 0),
+          status: payments.every(p => p.status === 'paid') ? 'paid'
+            : payments.some(p => p.status === 'overdue') ? 'overdue'
             : 'unpaid',
-          paidAt: payments.find((p: any) => p.paidAt)?.paidAt || null,
-          paymentMethod: payments.find((p: any) => p.paymentMethod)?.paymentMethod || null,
+          paidAt: payments.find(p => p.paidAt)?.paidAt || null,
+          paymentMethod: payments.find(p => p.paymentMethod)?.paymentMethod || null,
         }))
         .sort((a, b) => b.year - a.year || b.month - a.month)
 

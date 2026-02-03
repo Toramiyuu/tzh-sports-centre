@@ -39,7 +39,7 @@ function MembersAccountsContent() {
 
   useEffect(() => {
     if (status === 'loading') return
-    if (!session?.user || !isAdmin(session.user.email)) {
+    if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
       router.push('/')
     }
   }, [session, status, router])

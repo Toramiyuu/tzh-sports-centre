@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (!session.user.email || !isAdmin(session.user.email)) {
+    if (!session.user.email || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (!session.user.email || !isAdmin(session.user.email)) {
+    if (!session.user.email || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
@@ -140,7 +140,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (!session.user.email || !isAdmin(session.user.email)) {
+    if (!session.user.email || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
@@ -196,7 +196,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (!session.user.email || !isAdmin(session.user.email)) {
+    if (!session.user.email || !isAdmin(session.user.email, session.user.isAdmin)) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 

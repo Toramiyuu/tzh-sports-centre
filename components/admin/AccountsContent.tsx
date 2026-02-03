@@ -143,7 +143,7 @@ export default function AccountsContent() {
   }
 
   useEffect(() => {
-    if (session?.user && isAdmin(session.user.email)) {
+    if (session?.user && isAdmin(session.user.email, session.user.isAdmin)) {
       fetchUsers()
     }
   }, [session])

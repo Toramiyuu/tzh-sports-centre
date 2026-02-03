@@ -87,6 +87,9 @@ model Booking {
   court                      Court     @relation(fields: [courtId], references: [id])
   user                       User?     @relation(fields: [userId], references: [id])
 
+  @@index([bookingDate])
+  @@index([userId])
+  @@index([status])
   @@map("bookings")
 }
 
@@ -120,6 +123,9 @@ model RecurringBooking {
   court      Court                     @relation(fields: [courtId], references: [id])
   user       User?                     @relation(fields: [userId], references: [id])
 
+  @@index([dayOfWeek])
+  @@index([userId])
+  @@index([isActive])
   @@map("recurring_bookings")
 }
 
@@ -139,6 +145,8 @@ model RecurringBookingPayment {
   recurringBooking   RecurringBooking @relation(fields: [recurringBookingId], references: [id], onDelete: Cascade)
 
   @@unique([recurringBookingId, month, year])
+  @@index([month, year])
+  @@index([status])
   @@map("recurring_booking_payments")
 }
 
@@ -240,6 +248,7 @@ model Notification {
   createdAt DateTime @default(now()) @map("created_at")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("notifications")
 }
 
