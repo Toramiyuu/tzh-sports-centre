@@ -81,7 +81,7 @@ function ReceiptContent() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-teal-600 mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-neutral-900 mx-auto mb-4" />
           <p className="text-gray-600">Loading receipt...</p>
         </div>
       </div>
@@ -135,7 +135,7 @@ function ReceiptContent() {
         <Card className="print:shadow-none print:border-none">
           <CardHeader className="text-center border-b">
             <div className="mx-auto mb-4">
-              <div className="w-16 h-16 bg-teal-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl mx-auto">
+              <div className="w-16 h-16 bg-neutral-900 rounded-xl flex items-center justify-center text-white font-bold text-2xl mx-auto">
                 TZH
               </div>
             </div>
@@ -183,7 +183,7 @@ function ReceiptContent() {
                   key={booking.id}
                   className={`p-4 rounded-lg border ${
                     booking.sport === 'badminton'
-                      ? 'bg-teal-50 border-teal-100'
+                      ? 'bg-neutral-50 border-neutral-200'
                       : 'bg-green-50 border-green-100'
                   }`}
                 >
@@ -196,7 +196,7 @@ function ReceiptContent() {
                           variant="outline"
                           className={
                             booking.sport === 'badminton'
-                              ? 'bg-teal-100 text-teal-700 border-0'
+                              ? 'bg-neutral-100 text-neutral-700 border-0'
                               : 'bg-green-100 text-green-700 border-0'
                           }
                         >
@@ -269,7 +269,7 @@ export default function ReceiptPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <Loader2 className="w-12 h-12 animate-spin text-teal-600" />
+          <Loader2 className="w-12 h-12 animate-spin text-neutral-900" />
         </div>
       }
     >

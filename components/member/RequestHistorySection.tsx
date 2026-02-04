@@ -57,7 +57,7 @@ export function RequestHistorySection({ requests }: RequestHistorySectionProps) 
         )
       case 'changed':
         return (
-          <Badge className="bg-blue-100 text-blue-700 border-0">
+          <Badge className="bg-neutral-100 text-neutral-700 border-0">
             <ArrowRight className="w-3 h-3 mr-1" />
             {t('status.timeChanged')}
           </Badge>
@@ -71,14 +71,14 @@ export function RequestHistorySection({ requests }: RequestHistorySectionProps) 
   const historyRequests = requests.filter(r => r.status !== 'pending' && r.status !== 'changed')
 
   return (
-    <Card>
+    <Card className="border border-neutral-200 rounded-2xl">
       <CardHeader>
-        <CardTitle className="text-lg">{t('requestHistory')}</CardTitle>
-        <CardDescription>{t('requestHistoryDescription')}</CardDescription>
+        <CardTitle className="text-lg text-neutral-900">{t('requestHistory')}</CardTitle>
+        <CardDescription className="text-neutral-500">{t('requestHistoryDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
         {historyRequests.length === 0 ? (
-          <p className="text-center py-8 text-gray-500">
+          <p className="text-center py-8 text-neutral-500">
             {t('noRequestHistory')}
           </p>
         ) : (
@@ -86,21 +86,21 @@ export function RequestHistorySection({ requests }: RequestHistorySectionProps) 
             {historyRequests.map((request) => (
               <div
                 key={request.id}
-                className="p-4 bg-gray-50 rounded-lg border"
+                className="p-4 bg-neutral-50 rounded-xl border border-neutral-200"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-neutral-900">
                       {format(new Date(request.requestedDate), 'MMMM d, yyyy')}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-neutral-600">
                       {formatTime(request.requestedTime)} - {request.lessonType.replace(/-/g, ' ')} {t('lesson')}
                     </p>
                     {request.adminNotes && (
-                      <p className="text-sm text-gray-500 mt-1">{t('coach')}: {request.adminNotes}</p>
+                      <p className="text-sm text-neutral-500 mt-1">{t('coach')}: {request.adminNotes}</p>
                     )}
                     {request.suggestedTime && (
-                      <p className="text-sm text-blue-600 mt-1">{t('suggested')}: {formatTime(request.suggestedTime)}</p>
+                      <p className="text-sm text-neutral-700 mt-1">{t('suggested')}: {formatTime(request.suggestedTime)}</p>
                     )}
                   </div>
                   {getStatusBadge(request.status)}

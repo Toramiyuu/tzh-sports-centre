@@ -99,22 +99,22 @@ export default function ProfilePage() {
   ]
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl font-bold">
+          <div className="w-16 h-16 rounded-full bg-neutral-900 flex items-center justify-center text-white text-2xl font-bold">
             {profile?.name?.charAt(0).toUpperCase() || 'U'}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{profile?.name}</h1>
-            <p className="text-gray-600">{profile?.email}</p>
+            <h1 className="text-2xl font-semibold text-neutral-900">{profile?.name}</h1>
+            <p className="text-neutral-500">{profile?.email}</p>
           </div>
         </div>
 
         {/* Credit Balance */}
         {profile && profile.creditBalance > 0 && (
-          <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg">
+          <div className="inline-flex items-center gap-2 bg-neutral-100 text-neutral-700 px-4 py-2 rounded-full">
             <CreditCard className="w-4 h-4" />
             <span className="font-medium">{t('credits.balance')}: RM{profile.creditBalance.toFixed(2)}</span>
           </div>
@@ -122,7 +122,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200 overflow-x-auto">
+      <div className="flex gap-2 mb-6 border-b border-neutral-200 overflow-x-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon
           return (
@@ -131,8 +131,8 @@ export default function ProfilePage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-3 font-medium whitespace-nowrap border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
+                  ? 'border-neutral-900 text-neutral-900'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-900'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -148,7 +148,7 @@ export default function ProfilePage() {
           profile ? (
             <PersonalInfoTab profile={profile} onUpdate={fetchProfile} />
           ) : (
-            <div className="text-center py-8 text-gray-500">{t('loadingProfile')}</div>
+            <div className="text-center py-8 text-neutral-500">{t('loadingProfile')}</div>
           )
         )}
         {activeTab === 'bookings' && (
@@ -164,14 +164,14 @@ export default function ProfilePage() {
           profile ? (
             <SettingsTab profile={profile} onUpdate={fetchProfile} />
           ) : (
-            <div className="text-center py-8 text-gray-500">{t('loadingSettings')}</div>
+            <div className="text-center py-8 text-neutral-500">{t('loadingSettings')}</div>
           )
         )}
       </div>
 
       {/* UID Display - Bottom Right */}
       {profile?.uid && (
-        <div className="fixed bottom-4 right-4 bg-gray-800 text-gray-400 px-3 py-1.5 rounded-lg text-sm font-mono border border-gray-700">
+        <div className="fixed bottom-4 right-4 bg-neutral-900 text-neutral-400 px-3 py-1.5 rounded-lg text-sm font-mono border border-neutral-700">
           UID: {profile.uid}
         </div>
       )}

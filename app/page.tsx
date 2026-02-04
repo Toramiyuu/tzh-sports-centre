@@ -16,13 +16,13 @@ function HeroSection() {
     <section className="pt-32 pb-20 md:pt-40 md:pb-32">
       <div className="max-w-7xl mx-auto px-6">
         <div className="max-w-3xl">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-neutral-900 leading-[1.1] mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-neutral-900 leading-[1.1] mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-forwards">
             {t("hero.headline")}
           </h1>
-          <p className="text-xl md:text-2xl text-neutral-500 font-normal leading-relaxed mb-10 max-w-2xl">
+          <p className="text-xl md:text-2xl text-neutral-500 font-normal leading-relaxed mb-10 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-forwards">
             {t("hero.subheadline")}
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
             <Link href="/booking">
               <Button className="h-12 px-6 text-base font-medium bg-neutral-900 hover:bg-neutral-800 text-white rounded-full">
                 {t("hero.bookCourt")}
@@ -42,7 +42,7 @@ function HeroSection() {
       </div>
 
       {/* Hero Image - full width, no overlay */}
-      <div className="mt-16 md:mt-24">
+      <div className="mt-16 md:mt-24 animate-in fade-in zoom-in-95 duration-1000 delay-500 fill-mode-forwards">
         <div className="max-w-7xl mx-auto px-6">
           {/* TODO: Replace with real TZH facility photo */}
           <div className="relative aspect-[21/9] rounded-2xl overflow-hidden bg-neutral-100">
@@ -50,7 +50,7 @@ function HeroSection() {
               src="/images/hero-bg.jpg"
               alt="TZH Sports Centre"
               fill
-              className="object-cover"
+              className="object-cover hover:scale-105 transition-transform duration-700"
               priority
             />
           </div>
@@ -78,7 +78,11 @@ function StatsSection() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           {stats.map((stat, i) => (
-            <div key={i}>
+            <div
+              key={i}
+              className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards"
+              style={{ animationDelay: `${i * 100}ms` }}
+            >
               <div className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-1">
                 {stat.value}
               </div>
@@ -102,7 +106,7 @@ function SportsSection() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Badminton */}
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center mb-24 md:mb-32">
-          <div className="order-2 md:order-1">
+          <div className="order-2 md:order-1 animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
             <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-4">
               {t("badminton.courts")}
             </p>
@@ -125,14 +129,14 @@ function SportsSection() {
               </Button>
             </Link>
           </div>
-          <div className="order-1 md:order-2">
+          <div className="order-1 md:order-2 animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
             {/* TODO: Replace with real TZH badminton photo */}
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-100">
               <Image
                 src="/images/badminton-action.jpg"
                 alt="Badminton court"
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>
           </div>
@@ -140,18 +144,18 @@ function SportsSection() {
 
         {/* Pickleball */}
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div>
+          <div className="animate-in fade-in slide-in-from-left-8 duration-700 delay-200 fill-mode-forwards">
             {/* TODO: Replace with real TZH pickleball photo */}
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-100">
               <Image
                 src="/images/pickleball.jpg"
                 alt="Pickleball court"
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>
           </div>
-          <div>
+          <div className="animate-in fade-in slide-in-from-right-8 duration-700 delay-200 fill-mode-forwards">
             <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-4">
               {t("pickleball.courts")}
             </p>
@@ -200,7 +204,7 @@ function PricingSection() {
 
         <div className="grid md:grid-cols-3 gap-8">
           {/* Badminton */}
-          <div className="bg-white rounded-2xl p-8 border border-neutral-200">
+          <div className="bg-white rounded-2xl p-8 border border-neutral-200 hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
             <h3 className="text-lg font-semibold text-neutral-900 mb-6">
               {t("badminton.title")}
             </h3>
@@ -220,7 +224,7 @@ function PricingSection() {
           </div>
 
           {/* Pickleball */}
-          <div className="bg-white rounded-2xl p-8 border border-neutral-200">
+          <div className="bg-white rounded-2xl p-8 border border-neutral-200 hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 fill-mode-forwards">
             <h3 className="text-lg font-semibold text-neutral-900 mb-6">
               {t("pickleball.title")}
             </h3>
@@ -237,7 +241,7 @@ function PricingSection() {
           </div>
 
           {/* Coaching */}
-          <div className="bg-white rounded-2xl p-8 border border-neutral-200">
+          <div className="bg-white rounded-2xl p-8 border border-neutral-200 hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-forwards">
             <h3 className="text-lg font-semibold text-neutral-900 mb-6">
               {t("coaching.title")}
             </h3>
@@ -286,7 +290,7 @@ function FeaturesSection() {
     <section className="py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 md:gap-24">
-          <div>
+          <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
             <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4">
               {t("title")}
             </h2>
@@ -301,7 +305,11 @@ function FeaturesSection() {
           </div>
           <div className="space-y-10">
             {features.map((feature, i) => (
-              <div key={i}>
+              <div
+                key={i}
+                className="animate-in fade-in slide-in-from-right-4 duration-500 fill-mode-forwards"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
                 <h3 className="text-lg font-semibold text-neutral-900 mb-2">
                   {feature.title}
                 </h3>
@@ -326,7 +334,7 @@ function ReviewsSection() {
   return (
     <section className="py-24 md:py-32 bg-neutral-50">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto text-center animate-in fade-in duration-1000 fill-mode-forwards">
           <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-6">
             {t("subtitle")}
           </p>
@@ -340,7 +348,7 @@ function ReviewsSection() {
           </div>
         </div>
 
-        <div className="mt-16 text-center">
+        <div className="mt-16 text-center animate-in fade-in duration-700 delay-300 fill-mode-forwards">
           <a
             href="https://maps.app.goo.gl/6id7KLMbwohP7o9J6"
             target="_blank"
@@ -366,18 +374,18 @@ function StringingSection() {
     <section className="py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div>
+          <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
             {/* TODO: Replace with real TZH stringing photo */}
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-100">
               <Image
                 src="/images/strings-bg.jpg"
                 alt="Racket stringing"
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>
           </div>
-          <div>
+          <div className="animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
             <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-4">
               Professional service
             </p>
@@ -413,7 +421,7 @@ function LocationSection() {
     <section className="py-24 md:py-32 bg-neutral-900 text-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-12 md:gap-20">
-          <div>
+          <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
             <h2 className="text-3xl md:text-4xl font-semibold mb-8">
               {t("title")}
             </h2>
@@ -462,7 +470,7 @@ function LocationSection() {
             </div>
           </div>
 
-          <div className="rounded-2xl overflow-hidden h-80 md:h-auto">
+          <div className="rounded-2xl overflow-hidden h-80 md:h-auto animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1986.0259229585!2d100.29758!3d5.4090748!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x304ac300162c75fd%3A0x65461617c304bf30!2sTZH%20Badminton%20Academy!5e0!3m2!1sen!2smy!4v1705000000000"
               width="100%"

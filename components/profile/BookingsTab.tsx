@@ -122,7 +122,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     )
   }
@@ -131,17 +131,17 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
     <div className="space-y-6">
       {/* Credit Balance Display */}
       {creditBalance > 0 && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
-          <CreditCard className="w-5 h-5 text-green-600" />
+        <div className="bg-neutral-100 border border-neutral-200 rounded-xl p-4 flex items-center gap-3">
+          <CreditCard className="w-5 h-5 text-neutral-600" />
           <div>
-            <p className="font-medium text-green-800">Credit Balance: RM{creditBalance.toFixed(2)}</p>
-            <p className="text-sm text-green-600">Available to use on your next booking</p>
+            <p className="font-medium text-neutral-900">Credit Balance: RM{creditBalance.toFixed(2)}</p>
+            <p className="text-sm text-neutral-500">Available to use on your next booking</p>
           </div>
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm flex items-center gap-2">
+        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span className="flex-1">{error}</span>
           <button
@@ -155,7 +155,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
       )}
 
       {success && (
-        <div className="bg-green-50 text-green-600 p-3 rounded-md text-sm">
+        <div className="bg-green-50 text-green-600 p-3 rounded-lg text-sm">
           {success}
         </div>
       )}
@@ -164,17 +164,17 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
       <div className="flex gap-2">
         <button
           onClick={() => setActiveView('upcoming')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'upcoming'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-neutral-900 text-white'
+              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
           }`}
         >
           <CalendarDays className="w-4 h-4" />
           Upcoming
           {upcomingBookings.length > 0 && (
             <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-              activeView === 'upcoming' ? 'bg-white/20' : 'bg-gray-300'
+              activeView === 'upcoming' ? 'bg-white/20' : 'bg-neutral-300'
             }`}>
               {upcomingBookings.length}
             </span>
@@ -182,17 +182,17 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
         </button>
         <button
           onClick={() => setActiveView('past')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'past'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-neutral-900 text-white'
+              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
           }`}
         >
           <History className="w-4 h-4" />
           Past
           {pastBookings.length > 0 && (
             <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-              activeView === 'past' ? 'bg-white/20' : 'bg-gray-300'
+              activeView === 'past' ? 'bg-white/20' : 'bg-neutral-300'
             }`}>
               {pastBookings.length}
             </span>
@@ -202,41 +202,41 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
 
       {/* Bookings List */}
       {displayedBookings.length === 0 ? (
-        <Card>
+        <Card className="border border-neutral-200 rounded-2xl">
           <CardContent className="py-12 text-center">
             {activeView === 'upcoming' ? (
               <>
-                <CalendarDays className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No upcoming bookings</h3>
-                <p className="text-gray-600">You don&apos;t have any upcoming court bookings.</p>
+                <CalendarDays className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-neutral-900 mb-2">No upcoming bookings</h3>
+                <p className="text-neutral-500">You don&apos;t have any upcoming court bookings.</p>
               </>
             ) : (
               <>
-                <History className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No past bookings</h3>
-                <p className="text-gray-600">You don&apos;t have any past court bookings.</p>
+                <History className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-neutral-900 mb-2">No past bookings</h3>
+                <p className="text-neutral-500">You don&apos;t have any past court bookings.</p>
               </>
             )}
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="border border-neutral-200 rounded-2xl">
           <CardContent className="p-4">
             <div className="space-y-3">
               {displayedBookings.map((booking) => (
                 <div
                   key={booking.id}
-                  className={`flex items-center justify-between p-4 bg-gray-50 rounded-lg ${
+                  className={`flex items-center justify-between p-4 bg-neutral-50 rounded-xl ${
                     booking.status === 'cancelled' ? 'opacity-60' : ''
                   }`}
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{booking.court.name}</span>
+                      <span className="font-medium text-neutral-900">{booking.court.name}</span>
                       <Badge className={
                         booking.sport === 'badminton'
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'bg-orange-100 text-orange-700'
+                          ? 'bg-neutral-100 text-neutral-700'
+                          : 'bg-neutral-200 text-neutral-700'
                       }>
                         {booking.sport === 'badminton' ? 'Badminton' : 'Pickleball'}
                       </Badge>
@@ -250,7 +250,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                         {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-neutral-500">
                       <span className="flex items-center gap-1">
                         <CalendarDays className="w-4 h-4" />
                         {format(new Date(booking.bookingDate), 'EEE, MMM d, yyyy')}
@@ -263,8 +263,8 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                   </div>
                   <div className="text-right flex items-center gap-4">
                     <div>
-                      <p className="font-semibold">RM{booking.totalAmount.toFixed(2)}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="font-semibold text-neutral-900">RM{booking.totalAmount.toFixed(2)}</p>
+                      <p className="text-xs text-neutral-400">
                         Booked {format(new Date(booking.createdAt), 'MMM d')}
                       </p>
                     </div>
@@ -272,7 +272,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                       <Button
                         variant="outline"
                         size="sm"
-                        className="text-red-600 border-red-200 hover:bg-red-50"
+                        className="text-red-600 border-red-200 hover:bg-red-50 rounded-full"
                         onClick={() => setCancelDialogId(booking.id)}
                         disabled={cancellingId === booking.id}
                       >
@@ -287,7 +287,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                       </Button>
                     )}
                     {activeView === 'upcoming' && !canCancel(booking) && booking.status === 'confirmed' && (
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-neutral-400">
                         Cannot cancel within 24hrs
                       </span>
                     )}
@@ -303,18 +303,19 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
       <Dialog open={!!cancelDialogId} onOpenChange={(open) => { if (!open) setCancelDialogId(null) }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel Booking</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-neutral-900">Cancel Booking</DialogTitle>
+            <DialogDescription className="text-neutral-500">
               Are you sure you want to cancel this booking? The amount will be added to your credit balance.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCancelDialogId(null)}>
+            <Button variant="outline" onClick={() => setCancelDialogId(null)} className="rounded-full">
               Keep Booking
             </Button>
             <Button
               variant="destructive"
               onClick={() => cancelDialogId && handleCancel(cancelDialogId)}
+              className="rounded-full"
             >
               Cancel Booking
             </Button>

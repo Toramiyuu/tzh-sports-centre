@@ -57,7 +57,7 @@ function CancelContent() {
           {/* Help text */}
           <p className="mt-6 text-sm text-gray-500">
             Need help? Contact us at{' '}
-            <a href="tel:01168688508" className="text-blue-600 hover:underline">
+            <a href="tel:01168688508" className="text-neutral-900 hover:underline">
               011-6868 8508
             </a>
           </p>
@@ -72,7 +72,7 @@ export default function BookingCancelPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+          <Loader2 className="w-12 h-12 animate-spin text-neutral-900" />
         </div>
       }
     >

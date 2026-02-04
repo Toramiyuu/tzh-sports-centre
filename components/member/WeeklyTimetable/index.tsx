@@ -93,7 +93,7 @@ export function WeeklyTimetable({ onSlotSelect, onAcceptSuggestion, onCounterSug
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <CalendarDays className="w-5 h-5 text-blue-600" />
+          <CalendarDays className="w-5 h-5 text-neutral-900" />
           {t('title')}
         </CardTitle>
       </CardHeader>
@@ -107,7 +107,7 @@ export function WeeklyTimetable({ onSlotSelect, onAcceptSuggestion, onCounterSug
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+            <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
           </div>
         ) : error ? (
           <div className="text-center py-20 text-red-500">
@@ -123,7 +123,7 @@ export function WeeklyTimetable({ onSlotSelect, onAcceptSuggestion, onCounterSug
           />
         )}
 
-        <p className="text-xs text-gray-500 mt-3 text-center">
+        <p className="text-xs text-neutral-500 mt-3 text-center">
           {t('clickToBook')}
         </p>
       </CardContent>

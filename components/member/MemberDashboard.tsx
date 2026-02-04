@@ -276,7 +276,7 @@ export function MemberDashboard() {
   if (status === 'loading' || loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     )
   }
@@ -291,27 +291,27 @@ export function MemberDashboard() {
     ]
 
     return (
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <GraduationCap className="w-8 h-8 text-teal-600" />
+          <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <GraduationCap className="w-8 h-8 text-neutral-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('membersOnly.title')}</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl font-semibold text-neutral-900 mb-2">{t('membersOnly.title')}</h2>
+          <p className="text-neutral-500">
             {t('membersOnly.description')}
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           {benefits.map((benefit, i) => (
-            <Card key={i}>
+            <Card key={i} className="border border-neutral-200 rounded-2xl">
               <CardContent className="p-5 flex items-start gap-4">
-                <div className="w-10 h-10 bg-teal-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <benefit.icon className="w-5 h-5 text-teal-600" />
+                <div className="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <benefit.icon className="w-5 h-5 text-neutral-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-sm">{benefit.title}</h3>
-                  <p className="text-gray-500 text-sm mt-1">{benefit.desc}</p>
+                  <h3 className="font-semibold text-neutral-900 text-sm">{benefit.title}</h3>
+                  <p className="text-neutral-500 text-sm mt-1">{benefit.desc}</p>
                 </div>
               </CardContent>
             </Card>
@@ -323,13 +323,13 @@ export function MemberDashboard() {
             href="https://wa.me/60117575508?text=Hi%2C%20I%27m%20interested%20in%20becoming%20a%20training%20member"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            className="inline-flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 text-white px-6 py-3 rounded-full font-semibold transition-colors"
           >
             <MessageCircle className="w-5 h-5" />
             {t('membersOnly.enquire')}
           </a>
           <div>
-            <Button onClick={() => router.push('/')} variant="outline" className="mt-2">
+            <Button onClick={() => router.push('/')} variant="outline" className="mt-2 rounded-full">
               {t('membersOnly.backToHome')}
             </Button>
           </div>
@@ -339,16 +339,16 @@ export function MemberDashboard() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-            <GraduationCap className="w-5 h-5 text-teal-600" />
+          <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center">
+            <GraduationCap className="w-5 h-5 text-neutral-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-            <p className="text-gray-600">{t('welcome', { name: session?.user?.name || '' })}</p>
+            <h1 className="text-2xl font-semibold text-neutral-900">{t('title')}</h1>
+            <p className="text-neutral-500">{t('welcome', { name: session?.user?.name || '' })}</p>
           </div>
         </div>
       </div>
@@ -408,11 +408,11 @@ export function MemberDashboard() {
       <Dialog open={counterDialogOpen} onOpenChange={setCounterDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-purple-600" />
+            <DialogTitle className="flex items-center gap-2 text-neutral-900">
+              <Clock className="w-5 h-5 text-neutral-600" />
               {t('counterPropose.title') || 'Suggest Different Time'}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-neutral-500">
               {t('counterPropose.description') || 'Suggest an alternative date and time for your lesson.'}
             </DialogDescription>
           </DialogHeader>
@@ -420,8 +420,8 @@ export function MemberDashboard() {
           <div className="space-y-4 py-4">
             {/* Date Picker */}
             <div className="space-y-2">
-              <Label>{t('counterPropose.date') || 'Date'}</Label>
-              <div className="border rounded-lg p-3">
+              <Label className="text-neutral-700">{t('counterPropose.date') || 'Date'}</Label>
+              <div className="border border-neutral-200 rounded-xl p-3">
                 <Calendar
                   mode="single"
                   selected={counterDate}
@@ -434,9 +434,9 @@ export function MemberDashboard() {
 
             {/* Time Picker */}
             <div className="space-y-2">
-              <Label>{t('counterPropose.time') || 'Time'}</Label>
+              <Label className="text-neutral-700">{t('counterPropose.time') || 'Time'}</Label>
               <Select value={counterTime} onValueChange={setCounterTime}>
-                <SelectTrigger>
+                <SelectTrigger className="border-neutral-200 rounded-lg">
                   <SelectValue placeholder={t('counterPropose.selectTime') || 'Select time'} />
                 </SelectTrigger>
                 <SelectContent>
@@ -451,9 +451,9 @@ export function MemberDashboard() {
 
             {/* Preview */}
             {counterDate && counterTime && (
-              <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
-                <p className="text-sm text-purple-600 mb-1">{t('counterPropose.yourSuggestion') || 'Your suggestion'}:</p>
-                <p className="font-medium text-purple-700">
+              <div className="p-3 bg-neutral-100 rounded-xl border border-neutral-200">
+                <p className="text-sm text-neutral-600 mb-1">{t('counterPropose.yourSuggestion') || 'Your suggestion'}:</p>
+                <p className="font-medium text-neutral-900">
                   {format(counterDate, 'EEEE, MMMM d, yyyy')} at{' '}
                   {TIME_SLOTS.find(s => s.slotTime === counterTime)?.displayName || counterTime}
                 </p>
@@ -462,13 +462,13 @@ export function MemberDashboard() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCounterDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setCounterDialogOpen(false)} className="rounded-full">
               {t('dialog.cancel') || 'Cancel'}
             </Button>
             <Button
               onClick={submitCounterProposal}
               disabled={submitting || !counterDate || !counterTime}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-neutral-900 hover:bg-neutral-800 rounded-full"
             >
               {submitting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
               {t('counterPropose.submit') || 'Send Suggestion'}

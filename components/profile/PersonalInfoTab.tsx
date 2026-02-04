@@ -78,14 +78,14 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
   }
 
   return (
-    <Card>
+    <Card className="border border-neutral-200 rounded-2xl">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-neutral-900">
           <User className="w-5 h-5" />
           Personal Information
         </CardTitle>
         {!editing && (
-          <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+          <Button variant="outline" size="sm" onClick={() => setEditing(true)} className="rounded-full">
             <Pencil className="w-4 h-4 mr-2" />
             Edit
           </Button>
@@ -95,8 +95,8 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
         <div className="grid gap-6 md:grid-cols-2">
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="flex items-center gap-2">
-              <User className="w-4 h-4 text-gray-400" />
+            <Label htmlFor="name" className="flex items-center gap-2 text-neutral-700">
+              <User className="w-4 h-4 text-neutral-400" />
               Display Name
             </Label>
             {editing ? (
@@ -105,16 +105,17 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Your name"
+                className="rounded-lg border-neutral-200"
               />
             ) : (
-              <p className="text-gray-900 py-2">{profile.name}</p>
+              <p className="text-neutral-900 py-2">{profile.name}</p>
             )}
           </div>
 
           {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-gray-400" />
+            <Label htmlFor="email" className="flex items-center gap-2 text-neutral-700">
+              <Mail className="w-4 h-4 text-neutral-400" />
               Email Address
             </Label>
             {editing ? (
@@ -125,6 +126,7 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="your@email.com"
+                  className="rounded-lg border-neutral-200"
                 />
                 {formData.email !== profile.email && (
                   <p className="text-xs text-amber-600 mt-1">
@@ -133,14 +135,14 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
                 )}
               </div>
             ) : (
-              <p className="text-gray-900 py-2">{profile.email}</p>
+              <p className="text-neutral-900 py-2">{profile.email}</p>
             )}
           </div>
 
           {/* Phone */}
           <div className="space-y-2">
-            <Label htmlFor="phone" className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-gray-400" />
+            <Label htmlFor="phone" className="flex items-center gap-2 text-neutral-700">
+              <Phone className="w-4 h-4 text-neutral-400" />
               Phone Number
             </Label>
             {editing ? (
@@ -150,14 +152,14 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
                 onChange={(value) => setFormData({ ...formData, phone: value })}
               />
             ) : (
-              <p className="text-gray-900 py-2">{profile.phone}</p>
+              <p className="text-neutral-900 py-2">{profile.phone}</p>
             )}
           </div>
 
           {/* Emergency Contact */}
           <div className="space-y-2">
-            <Label htmlFor="emergencyContact" className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-gray-400" />
+            <Label htmlFor="emergencyContact" className="flex items-center gap-2 text-neutral-700">
+              <AlertTriangle className="w-4 h-4 text-neutral-400" />
               Emergency Contact
             </Label>
             {editing ? (
@@ -166,18 +168,19 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
                 value={formData.emergencyContact}
                 onChange={(e) => setFormData({ ...formData, emergencyContact: e.target.value })}
                 placeholder="Name & phone number"
+                className="rounded-lg border-neutral-200"
               />
             ) : (
-              <p className="text-gray-900 py-2">
-                {profile.emergencyContact || <span className="text-gray-400">Not set</span>}
+              <p className="text-neutral-900 py-2">
+                {profile.emergencyContact || <span className="text-neutral-400">Not set</span>}
               </p>
             )}
           </div>
         </div>
 
         {/* Member Since */}
-        <div className="pt-4 border-t">
-          <p className="text-sm text-gray-500">
+        <div className="pt-4 border-t border-neutral-200">
+          <p className="text-sm text-neutral-500">
             Member since {new Date(profile.createdAt).toLocaleDateString('en-MY', {
               year: 'numeric',
               month: 'long',
@@ -189,7 +192,7 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
         {/* Action Buttons */}
         {editing && (
           <div className="flex gap-3 pt-4">
-            <Button onClick={handleSave} disabled={saving}>
+            <Button onClick={handleSave} disabled={saving} className="bg-neutral-900 hover:bg-neutral-800 rounded-full">
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -202,7 +205,7 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
                 </>
               )}
             </Button>
-            <Button variant="outline" onClick={handleCancel} disabled={saving}>
+            <Button variant="outline" onClick={handleCancel} disabled={saving} className="rounded-full">
               <X className="w-4 h-4 mr-2" />
               Cancel
             </Button>

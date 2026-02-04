@@ -154,47 +154,48 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
   return (
     <div className="space-y-6">
       {/* Password Change */}
-      <Card>
+      <Card className="border border-neutral-200 rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-neutral-900">
             <Lock className="w-5 h-5" />
             Password
           </CardTitle>
-          <CardDescription>Change your account password</CardDescription>
+          <CardDescription className="text-neutral-500">Change your account password</CardDescription>
         </CardHeader>
         <CardContent>
           {passwordSuccess && (
-            <div className="mb-4 bg-green-50 text-green-600 p-3 rounded-md text-sm flex items-center gap-2">
+            <div className="mb-4 bg-green-50 text-green-600 p-3 rounded-lg text-sm flex items-center gap-2">
               <Check className="w-4 h-4" />
               {passwordSuccess}
             </div>
           )}
 
           {!showPasswordForm ? (
-            <Button variant="outline" onClick={() => setShowPasswordForm(true)}>
+            <Button variant="outline" onClick={() => setShowPasswordForm(true)} className="rounded-full">
               Change Password
             </Button>
           ) : (
             <div className="space-y-4">
               {passwordError && (
-                <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm flex items-center gap-2">
+                <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4" />
                   {passwordError}
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="currentPassword">Current Password</Label>
+                <Label htmlFor="currentPassword" className="text-neutral-700">Current Password</Label>
                 <div className="relative">
                   <Input
                     id="currentPassword"
                     type={showPasswords ? 'text' : 'password'}
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="rounded-lg border-neutral-200"
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400"
                     onClick={() => setShowPasswords(!showPasswords)}
                   >
                     {showPasswords ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -203,28 +204,30 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
+                <Label htmlFor="newPassword" className="text-neutral-700">New Password</Label>
                 <Input
                   id="newPassword"
                   type={showPasswords ? 'text' : 'password'}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="At least 8 characters"
+                  className="rounded-lg border-neutral-200"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Label htmlFor="confirmPassword" className="text-neutral-700">Confirm New Password</Label>
                 <Input
                   id="confirmPassword"
                   type={showPasswords ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="rounded-lg border-neutral-200"
                 />
               </div>
 
               <div className="flex gap-3">
-                <Button onClick={handlePasswordChange} disabled={passwordLoading}>
+                <Button onClick={handlePasswordChange} disabled={passwordLoading} className="bg-neutral-900 hover:bg-neutral-800 rounded-full">
                   {passwordLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -236,6 +239,7 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                 </Button>
                 <Button
                   variant="outline"
+                  className="rounded-full"
                   onClick={() => {
                     setShowPasswordForm(false)
                     setPasswordError('')
@@ -253,19 +257,19 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
       </Card>
 
       {/* Notification Preferences */}
-      <Card>
+      <Card className="border border-neutral-200 rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-neutral-900">
             <Bell className="w-5 h-5" />
             Email Notifications
           </CardTitle>
-          <CardDescription>Choose what emails you want to receive</CardDescription>
+          <CardDescription className="text-neutral-500">Choose what emails you want to receive</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">Booking Confirmations</p>
-              <p className="text-sm text-gray-500">Receive email when a booking is made</p>
+              <p className="font-medium text-neutral-900">Booking Confirmations</p>
+              <p className="text-sm text-neutral-500">Receive email when a booking is made</p>
             </div>
             <Switch
               checked={notifications.bookingConfirm}
@@ -276,8 +280,8 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
 
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">Booking Reminders</p>
-              <p className="text-sm text-gray-500">Get reminded before your booking</p>
+              <p className="font-medium text-neutral-900">Booking Reminders</p>
+              <p className="text-sm text-neutral-500">Get reminded before your booking</p>
             </div>
             <Switch
               checked={notifications.bookingReminder}
@@ -288,8 +292,8 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
 
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">Cancellation Notices</p>
-              <p className="text-sm text-gray-500">Email when a booking is cancelled</p>
+              <p className="font-medium text-neutral-900">Cancellation Notices</p>
+              <p className="text-sm text-neutral-500">Email when a booking is cancelled</p>
             </div>
             <Switch
               checked={notifications.cancellation}
@@ -300,8 +304,8 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
 
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">Lesson Updates</p>
-              <p className="text-sm text-gray-500">Updates about your training sessions</p>
+              <p className="font-medium text-neutral-900">Lesson Updates</p>
+              <p className="text-sm text-neutral-500">Updates about your training sessions</p>
             </div>
             <Switch
               checked={notifications.lessonUpdates}
@@ -313,13 +317,13 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
       </Card>
 
       {/* Delete Account */}
-      <Card className="border-red-200">
+      <Card className="border border-red-200 rounded-2xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-red-600">
             <Trash2 className="w-5 h-5" />
             Delete Account
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-neutral-500">
             Permanently delete your account. Your booking history will be kept but anonymized.
           </CardDescription>
         </CardHeader>
@@ -327,32 +331,33 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
           {!showDeleteConfirm ? (
             <Button
               variant="outline"
-              className="text-red-600 border-red-200 hover:bg-red-50"
+              className="text-red-600 border-red-200 hover:bg-red-50 rounded-full"
               onClick={() => setShowDeleteConfirm(true)}
             >
               Delete My Account
             </Button>
           ) : (
-            <div className="space-y-4 p-4 bg-red-50 rounded-lg">
+            <div className="space-y-4 p-4 bg-red-50 rounded-xl">
               <p className="text-sm text-red-800">
                 <strong>Warning:</strong> This action cannot be undone. Your account will be permanently deleted.
               </p>
 
               {deleteError && (
-                <div className="bg-red-100 text-red-600 p-3 rounded-md text-sm flex items-center gap-2">
+                <div className="bg-red-100 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4" />
                   {deleteError}
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="deletePassword">Enter your password to confirm</Label>
+                <Label htmlFor="deletePassword" className="text-neutral-700">Enter your password to confirm</Label>
                 <Input
                   id="deletePassword"
                   type="password"
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
                   placeholder="Your password"
+                  className="rounded-lg border-neutral-200"
                 />
               </div>
 
@@ -361,6 +366,7 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                   variant="destructive"
                   onClick={handleDeleteAccount}
                   disabled={deleteLoading}
+                  className="rounded-full"
                 >
                   {deleteLoading ? (
                     <>
@@ -373,6 +379,7 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                 </Button>
                 <Button
                   variant="outline"
+                  className="rounded-full"
                   onClick={() => {
                     setShowDeleteConfirm(false)
                     setDeletePassword('')

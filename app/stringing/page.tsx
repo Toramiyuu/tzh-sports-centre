@@ -82,7 +82,7 @@ function StringCard({
     >
       <CardContent className="p-0">
         {/* Image Container - shows front or back based on hover */}
-        <div className="h-40 relative bg-gray-50 rounded-t-lg overflow-hidden">
+        <div className="h-40 relative bg-neutral-50 rounded-t-lg overflow-hidden">
           {!isHovered ? (
             // Front - Product Image
             string.image ? (
@@ -109,7 +109,7 @@ function StringCard({
             )
           ) : (
             // Back - Stats/Specifications
-            <div className="h-full w-full bg-gray-100 flex items-center justify-center">
+            <div className="h-full w-full bg-neutral-100 flex items-center justify-center">
               {string.backImage ? (
                 <img
                   src={string.backImage}
@@ -120,18 +120,18 @@ function StringCard({
                     target.style.display = 'none'
                     target.parentElement!.innerHTML = `
                       <div class="text-center p-4">
-                        <p class="text-sm font-semibold text-gray-700">${string.fullName}</p>
-                        <p class="text-xs text-gray-500 mt-1">${string.gauge || ''}</p>
-                        <p class="text-xs text-gray-500">${string.type || ''}</p>
+                        <p class="text-sm font-semibold text-neutral-700">${string.fullName}</p>
+                        <p class="text-xs text-neutral-500 mt-1">${string.gauge || ''}</p>
+                        <p class="text-xs text-neutral-500">${string.type || ''}</p>
                       </div>
                     `
                   }}
                 />
               ) : (
                 <div className="text-center p-4">
-                  <p className="text-sm font-semibold text-gray-700">{string.fullName}</p>
-                  <p className="text-xs text-gray-500 mt-1">{string.gauge}</p>
-                  <p className="text-xs text-gray-500 capitalize">{string.type}</p>
+                  <p className="text-sm font-semibold text-neutral-700">{string.fullName}</p>
+                  <p className="text-xs text-neutral-500 mt-1">{string.gauge}</p>
+                  <p className="text-xs text-neutral-500 capitalize">{string.type}</p>
                 </div>
               )}
             </div>
@@ -141,7 +141,7 @@ function StringCard({
         <div className="p-4">
           <div className="flex items-start justify-between mb-2">
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
+              <p className="text-xs text-neutral-500 uppercase tracking-wide">
                 {string.brand}
               </p>
               <h3 className="font-semibold text-lg">{string.name}</h3>
@@ -154,7 +154,7 @@ function StringCard({
           </div>
 
           {string.description && (
-            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+            <p className="text-sm text-neutral-600 mb-3 line-clamp-2">
               {string.description}
             </p>
           )}
@@ -172,7 +172,7 @@ function StringCard({
                   />
                 ))}
               </div>
-              <span className="text-xs text-gray-500 ml-1">
+              <span className="text-xs text-neutral-500 ml-1">
                 {availableColors.length} {colorsAvailableLabel}
               </span>
             </div>
@@ -180,19 +180,19 @@ function StringCard({
 
           <div className="flex items-center justify-between">
             <div>
-              <span className={`text-2xl font-bold ${isInStock ? 'text-teal-600' : 'text-gray-400'}`}>
+              <span className={`text-2xl font-bold ${isInStock ? 'text-neutral-900' : 'text-neutral-400'}`}>
                 RM{string.price}
               </span>
-              <span className="text-sm text-gray-500 ml-1">
+              <span className="text-sm text-neutral-500 ml-1">
                 {perRacketLabel}
               </span>
             </div>
             {isInStock ? (
-              <Button size="sm">
+              <Button size="sm" className="bg-neutral-900 hover:bg-neutral-800 rounded-full">
                 {selectLabel}
               </Button>
             ) : (
-              <Badge className="bg-red-100 text-red-700 px-3 py-1">
+              <Badge className="bg-neutral-100 text-neutral-500 px-3 py-1">
                 {soldOutLabel}
               </Badge>
             )}
@@ -305,7 +305,7 @@ export default function StringingPage() {
       <div className="space-y-2">
         <Label>{t('catalog.search')}</Label>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
           <Input
             placeholder={t('catalog.search')}
             value={search}
@@ -353,7 +353,7 @@ export default function StringingPage() {
             step={1}
             className="w-full"
           />
-          <div className="flex justify-between mt-2 text-sm text-gray-600">
+          <div className="flex justify-between mt-2 text-sm text-neutral-600">
             <span>RM{priceRange[0]}</span>
             <span>RM{priceRange[1]}</span>
           </div>
@@ -377,37 +377,27 @@ export default function StringingPage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-teal-900 text-white overflow-hidden">
-        {/* Background Image */}
-        <Image
-          src="https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=1600&q=80"
-          alt="Badminton racket stringing"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-teal-900/85 via-teal-900/70 to-teal-900/40" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          <div className="max-w-2xl">
-            <Badge className="bg-white/20 text-white mb-4 backdrop-blur-sm">
-              <Wrench className="w-4 h-4 mr-1" />
+      <section className="pt-32 pb-12 md:pt-40 md:pb-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
               Professional Service
-            </Badge>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 drop-shadow-lg">
+            </p>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 tracking-tight leading-[1.1] mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
               {t('title')}
             </h1>
-            <p className="text-lg text-teal-100 mb-6 drop-shadow">
+            <p className="text-lg text-neutral-500 mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">
               {t('subtitle')}
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
               <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="bg-white text-teal-600 hover:bg-teal-50 shadow-lg">
+                <Button size="lg" className="bg-neutral-900 text-white hover:bg-neutral-800 rounded-full h-12 px-6">
                   <Phone className="w-5 h-5 mr-2" />
                   WhatsApp
                 </Button>
               </a>
               <Link href="/stringing/track">
-                <Button size="lg" className="bg-white/20 text-white border border-white/50 hover:bg-white/30 backdrop-blur-sm shadow-lg">
+                <Button size="lg" variant="outline" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50 rounded-full h-12 px-6">
                   <PackageSearch className="w-5 h-5 mr-2" />
                   Track Order
                 </Button>
@@ -418,13 +408,13 @@ export default function StringingPage() {
       </section>
 
       {/* Main Content */}
-      <div className="relative bg-gray-50 -mt-4 rounded-t-2xl pt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="bg-neutral-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex gap-8">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="sticky top-20 bg-white rounded-lg border p-6">
-              <h2 className="font-semibold text-lg mb-4">{t('catalog.filters')}</h2>
+            <div className="sticky top-24 bg-white rounded-2xl border border-neutral-200 p-6">
+              <h2 className="font-semibold text-lg text-neutral-900 mb-4">{t('catalog.filters')}</h2>
               {filtersContent}
             </div>
           </aside>
@@ -457,14 +447,14 @@ export default function StringingPage() {
             </div>
 
             {/* Results Count */}
-            <div className="mb-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm text-neutral-600">
               {t('catalog.showingResults', { count: filteredStrings.length })}
             </div>
 
             {/* String Grid */}
             {filteredStrings.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-500">{t('catalog.noResults')}</p>
+                <p className="text-neutral-500">{t('catalog.noResults')}</p>
                 <Button
                   variant="link"
                   onClick={clearFilters}
@@ -474,10 +464,14 @@ export default function StringingPage() {
                 </Button>
               </div>
             ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredStrings.map((string) => (
-                  <StringCard
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-500 fill-mode-forwards">
+                {filteredStrings.map((string, index) => (
+                  <div
                     key={string.id}
+                    className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards"
+                    style={{ animationDelay: `${Math.min(index * 50, 300)}ms` }}
+                  >
+                  <StringCard
                     string={string}
                     onSelect={handleSelectString}
                     selectLabel={t('selectString')}
@@ -486,6 +480,7 @@ export default function StringingPage() {
                     soldOutLabel={t('catalog.soldOut')}
                     colorsAvailableLabel={t('catalog.colorsAvailable')}
                   />
+                  </div>
                 ))}
               </div>
             )}
@@ -513,20 +508,20 @@ export default function StringingPage() {
                 <button
                   key={colorOption.color}
                   onClick={() => setSelectedColor(colorOption.color)}
-                  className={`relative flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                  className={`relative flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
                     selectedColor === colorOption.color
-                      ? 'border-teal-500 bg-teal-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-neutral-900 bg-neutral-50'
+                      : 'border-neutral-200 hover:border-neutral-300'
                   }`}
                 >
                   <div
-                    className="w-10 h-10 rounded-full border-2 border-gray-200 shadow-sm"
+                    className="w-10 h-10 rounded-full border-2 border-neutral-200 shadow-sm"
                     style={{ backgroundColor: colorOption.color.toLowerCase() }}
                   />
-                  <span className="text-sm font-medium">{colorOption.color}</span>
+                  <span className="text-sm font-medium text-neutral-700">{colorOption.color}</span>
                   {selectedColor === colorOption.color && (
                     <div className="absolute top-1 right-1">
-                      <Check className="w-4 h-4 text-teal-500" />
+                      <Check className="w-4 h-4 text-neutral-900" />
                     </div>
                   )}
                 </button>

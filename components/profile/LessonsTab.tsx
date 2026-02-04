@@ -84,7 +84,7 @@ export function LessonsTab() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'scheduled':
-        return <Badge className="bg-blue-100 text-blue-700">Scheduled</Badge>
+        return <Badge className="bg-neutral-100 text-neutral-700">Scheduled</Badge>
       case 'completed':
         return <Badge className="bg-green-100 text-green-700">Completed</Badge>
       case 'cancelled':
@@ -96,7 +96,7 @@ export function LessonsTab() {
       case 'rejected':
         return <Badge className="bg-red-100 text-red-700">Rejected</Badge>
       case 'changed':
-        return <Badge className="bg-purple-100 text-purple-700">Time Changed</Badge>
+        return <Badge className="bg-neutral-200 text-neutral-700">Time Changed</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
     }
@@ -104,7 +104,7 @@ export function LessonsTab() {
 
   const getLessonTypeBadge = (lessonType: string) => {
     return (
-      <Badge variant="outline" className="flex items-center gap-1">
+      <Badge variant="outline" className="flex items-center gap-1 border-neutral-200">
         <Users className="w-3 h-3" />
         {lessonType}
       </Badge>
@@ -114,7 +114,7 @@ export function LessonsTab() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     )
   }
@@ -134,7 +134,7 @@ export function LessonsTab() {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm flex items-center gap-2">
+        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span className="flex-1">{error}</span>
           <button
@@ -151,17 +151,17 @@ export function LessonsTab() {
       <div className="flex gap-2">
         <button
           onClick={() => setActiveView('sessions')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'sessions'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-neutral-900 text-white'
+              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
           }`}
         >
           <GraduationCap className="w-4 h-4" />
           Training Sessions
           {sessions.length > 0 && (
             <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-              activeView === 'sessions' ? 'bg-white/20' : 'bg-gray-300'
+              activeView === 'sessions' ? 'bg-white/20' : 'bg-neutral-300'
             }`}>
               {sessions.length}
             </span>
@@ -169,10 +169,10 @@ export function LessonsTab() {
         </button>
         <button
           onClick={() => setActiveView('requests')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'requests'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-neutral-900 text-white'
+              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
           }`}
         >
           <History className="w-4 h-4" />
@@ -190,24 +190,24 @@ export function LessonsTab() {
         <div className="space-y-6">
           {/* Upcoming Sessions */}
           {upcomingSessions.length > 0 && (
-            <Card>
+            <Card className="border border-neutral-200 rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2 text-neutral-900">
                   <CalendarDays className="w-5 h-5" />
                   Upcoming Sessions
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {upcomingSessions.map((session) => (
-                  <div key={session.id} className="p-4 bg-blue-50 rounded-lg">
+                  <div key={session.id} className="p-4 bg-neutral-50 rounded-xl">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         {getLessonTypeBadge(session.lessonType)}
                         {getStatusBadge(session.status)}
                       </div>
-                      <span className="font-semibold">RM{session.price.toFixed(2)}</span>
+                      <span className="font-semibold text-neutral-900">RM{session.price.toFixed(2)}</span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-neutral-500">
                       <span className="flex items-center gap-1">
                         <CalendarDays className="w-4 h-4" />
                         {format(new Date(session.lessonDate), 'EEE, MMM d, yyyy')}
@@ -217,7 +217,7 @@ export function LessonsTab() {
                         {session.startTime} - {session.endTime}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">{session.court.name}</p>
+                    <p className="text-sm text-neutral-500 mt-1">{session.court.name}</p>
                   </div>
                 ))}
               </CardContent>
@@ -226,24 +226,24 @@ export function LessonsTab() {
 
           {/* Past Sessions */}
           {pastSessions.length > 0 && (
-            <Card>
+            <Card className="border border-neutral-200 rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2 text-neutral-900">
                   <History className="w-5 h-5" />
                   Past Sessions
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {pastSessions.map((session) => (
-                  <div key={session.id} className="p-4 bg-gray-50 rounded-lg opacity-75">
+                  <div key={session.id} className="p-4 bg-neutral-50 rounded-xl opacity-75">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         {getLessonTypeBadge(session.lessonType)}
                         {getStatusBadge(session.status)}
                       </div>
-                      <span className="font-semibold">RM{session.price.toFixed(2)}</span>
+                      <span className="font-semibold text-neutral-900">RM{session.price.toFixed(2)}</span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-neutral-500">
                       <span className="flex items-center gap-1">
                         <CalendarDays className="w-4 h-4" />
                         {format(new Date(session.lessonDate), 'EEE, MMM d, yyyy')}
@@ -254,7 +254,7 @@ export function LessonsTab() {
                       </span>
                     </div>
                     {session.notes && (
-                      <p className="text-sm text-gray-600 mt-2 italic">&quot;{session.notes}&quot;</p>
+                      <p className="text-sm text-neutral-500 mt-2 italic">&quot;{session.notes}&quot;</p>
                     )}
                   </div>
                 ))}
@@ -263,11 +263,11 @@ export function LessonsTab() {
           )}
 
           {sessions.length === 0 && (
-            <Card>
+            <Card className="border border-neutral-200 rounded-2xl">
               <CardContent className="py-12 text-center">
-                <GraduationCap className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No training sessions</h3>
-                <p className="text-gray-600">You haven&apos;t had any training sessions yet.</p>
+                <GraduationCap className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-neutral-900 mb-2">No training sessions</h3>
+                <p className="text-neutral-500">You haven&apos;t had any training sessions yet.</p>
               </CardContent>
             </Card>
           )}
@@ -279,20 +279,20 @@ export function LessonsTab() {
         <div className="space-y-6">
           {/* Pending Requests */}
           {pendingRequests.length > 0 && (
-            <Card>
+            <Card className="border border-neutral-200 rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-lg">Pending Requests</CardTitle>
+                <CardTitle className="text-lg text-neutral-900">Pending Requests</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {pendingRequests.map((request) => (
-                  <div key={request.id} className="p-4 bg-yellow-50 rounded-lg">
+                  <div key={request.id} className="p-4 bg-neutral-50 rounded-xl">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         {getLessonTypeBadge(request.lessonType)}
                         {getStatusBadge(request.status)}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-neutral-500">
                       <span className="flex items-center gap-1">
                         <CalendarDays className="w-4 h-4" />
                         {format(new Date(request.requestedDate), 'EEE, MMM d, yyyy')}
@@ -303,9 +303,9 @@ export function LessonsTab() {
                       </span>
                     </div>
                     {request.status === 'changed' && request.suggestedTime && (
-                      <div className="mt-2 p-2 bg-purple-100 rounded text-sm">
-                        <p className="font-medium text-purple-800">Coach suggested: {request.suggestedTime}</p>
-                        {request.adminNotes && <p className="text-purple-600">{request.adminNotes}</p>}
+                      <div className="mt-2 p-2 bg-neutral-100 rounded-lg text-sm">
+                        <p className="font-medium text-neutral-900">Coach suggested: {request.suggestedTime}</p>
+                        {request.adminNotes && <p className="text-neutral-600">{request.adminNotes}</p>}
                       </div>
                     )}
                   </div>
@@ -316,29 +316,29 @@ export function LessonsTab() {
 
           {/* Processed Requests */}
           {processedRequests.length > 0 && (
-            <Card>
+            <Card className="border border-neutral-200 rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-lg">Request History</CardTitle>
+                <CardTitle className="text-lg text-neutral-900">Request History</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {processedRequests.map((request) => (
-                  <div key={request.id} className="p-4 bg-gray-50 rounded-lg">
+                  <div key={request.id} className="p-4 bg-neutral-50 rounded-xl">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         {getLessonTypeBadge(request.lessonType)}
                         {getStatusBadge(request.status)}
                       </div>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-neutral-500">
                         {format(new Date(request.createdAt), 'MMM d, yyyy')}
                       </span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-neutral-500">
                       <span>
                         {format(new Date(request.requestedDate), 'MMM d')} at {request.requestedTime}
                       </span>
                     </div>
                     {request.adminNotes && (
-                      <p className="text-sm text-gray-600 mt-2 italic">&quot;{request.adminNotes}&quot;</p>
+                      <p className="text-sm text-neutral-500 mt-2 italic">&quot;{request.adminNotes}&quot;</p>
                     )}
                   </div>
                 ))}
@@ -347,11 +347,11 @@ export function LessonsTab() {
           )}
 
           {requests.length === 0 && (
-            <Card>
+            <Card className="border border-neutral-200 rounded-2xl">
               <CardContent className="py-12 text-center">
-                <History className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No lesson requests</h3>
-                <p className="text-gray-600">You haven&apos;t made any lesson requests yet.</p>
+                <History className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-neutral-900 mb-2">No lesson requests</h3>
+                <p className="text-neutral-500">You haven&apos;t made any lesson requests yet.</p>
               </CardContent>
             </Card>
           )}

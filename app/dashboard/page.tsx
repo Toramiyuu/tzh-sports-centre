@@ -63,7 +63,7 @@ export default function DashboardPage() {
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     )
   }
@@ -96,21 +96,21 @@ export default function DashboardPage() {
 
   const getSportBadge = (sport: string) => {
     return sport === 'badminton' ? (
-      <Badge className="bg-teal-100 text-teal-700">Badminton</Badge>
+      <Badge className="bg-neutral-100 text-neutral-700">Badminton</Badge>
     ) : (
-      <Badge className="bg-green-100 text-green-700">Pickleball</Badge>
+      <Badge className="bg-neutral-200 text-neutral-700">Pickleball</Badge>
     )
   }
 
   const BookingCard = ({ booking }: { booking: Booking }) => (
-    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+    <div className="flex items-center justify-between p-4 bg-neutral-50 rounded-xl">
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className="font-medium">{booking.court.name}</span>
+          <span className="font-medium text-neutral-900">{booking.court.name}</span>
           {getSportBadge(booking.sport)}
           {getStatusBadge(booking.status)}
         </div>
-        <div className="flex items-center gap-4 text-sm text-gray-600">
+        <div className="flex items-center gap-4 text-sm text-neutral-500">
           <span className="flex items-center gap-1">
             <CalendarDays className="w-4 h-4" />
             {format(new Date(booking.bookingDate), 'EEE, MMM d, yyyy')}
@@ -122,8 +122,8 @@ export default function DashboardPage() {
         </div>
       </div>
       <div className="text-right">
-        <p className="font-semibold">RM{booking.totalAmount.toFixed(2)}</p>
-        <p className="text-xs text-gray-500">
+        <p className="font-semibold text-neutral-900">RM{booking.totalAmount.toFixed(2)}</p>
+        <p className="text-xs text-neutral-400">
           Booked {format(new Date(booking.createdAt), 'MMM d')}
         </p>
       </div>
@@ -131,42 +131,42 @@ export default function DashboardPage() {
   )
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Bookings</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl font-semibold text-neutral-900 mb-2">My Bookings</h1>
+        <p className="text-neutral-500">
           Welcome back, {session.user?.name}! Here are your court bookings.
         </p>
       </div>
 
       {bookings.length === 0 ? (
-        <Card>
+        <Card className="border border-neutral-200 rounded-2xl">
           <CardContent className="py-12 text-center">
-            <CalendarDays className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No bookings yet</h3>
-            <p className="text-gray-600 mb-4">
+            <CalendarDays className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-neutral-900 mb-2">No bookings yet</h3>
+            <p className="text-neutral-500 mb-4">
               You haven&apos;t made any court bookings. Book your first session now!
             </p>
             <Link href="/booking">
-              <Button>Book a Court</Button>
+              <Button className="bg-neutral-900 hover:bg-neutral-800 rounded-full">Book a Court</Button>
             </Link>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-8">
           {/* Upcoming Bookings */}
-          <Card>
+          <Card className="border border-neutral-200 rounded-2xl">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-neutral-900">
                 <CalendarDays className="w-5 h-5" />
                 Upcoming Bookings ({upcomingBookings.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
               {upcomingBookings.length === 0 ? (
-                <div className="text-center py-6 text-gray-500">
+                <div className="text-center py-6 text-neutral-500">
                   <p>No upcoming bookings</p>
-                  <Link href="/booking" className="text-teal-600 hover:underline text-sm">
+                  <Link href="/booking" className="text-neutral-900 font-medium hover:underline text-sm">
                     Book a court
                   </Link>
                 </div>
@@ -182,9 +182,9 @@ export default function DashboardPage() {
 
           {/* Past Bookings */}
           {pastBookings.length > 0 && (
-            <Card>
+            <Card className="border border-neutral-200 rounded-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-gray-600">
+                <CardTitle className="flex items-center gap-2 text-neutral-500">
                   <Clock className="w-5 h-5" />
                   Past Bookings ({pastBookings.length})
                 </CardTitle>

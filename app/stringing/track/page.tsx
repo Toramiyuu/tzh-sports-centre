@@ -116,13 +116,13 @@ export default function TrackOrderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-3xl mx-auto px-4 py-4">
           <Link
             href="/stringing"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900"
+            className="inline-flex items-center text-neutral-600 hover:text-neutral-900"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {tCommon('back')}
@@ -132,10 +132,10 @@ export default function TrackOrderPage() {
 
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-neutral-900 mb-2">
             {t('track.title')}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-neutral-600">
             {t('track.subtitle')}
           </p>
         </div>
@@ -218,16 +218,16 @@ export default function TrackOrderPage() {
               </CardHeader>
               <CardContent>
                 <div className="mb-4">
-                  <span className="text-sm text-gray-500">{t('track.jobUidLabel')}</span>
-                  <p className="text-xl font-bold text-blue-600">{order.jobUid}</p>
+                  <span className="text-sm text-neutral-500">{t('track.jobUidLabel')}</span>
+                  <p className="text-xl font-bold text-neutral-900">{order.jobUid}</p>
                 </div>
 
                 {/* Progress Steps */}
                 <div className="relative">
                   {/* Progress Line */}
-                  <div className="absolute top-5 left-5 right-5 h-0.5 bg-gray-200 hidden sm:block" />
+                  <div className="absolute top-5 left-5 right-5 h-0.5 bg-neutral-200 hidden sm:block" />
                   <div
-                    className="absolute top-5 left-5 h-0.5 bg-blue-600 hidden sm:block transition-all duration-500"
+                    className="absolute top-5 left-5 h-0.5 bg-neutral-900 hidden sm:block transition-all duration-500"
                     style={{
                       width: `${(getCurrentStepIndex(order.status) / (STATUS_STEPS.length - 1)) * 100}%`,
                       maxWidth: 'calc(100% - 40px)',
@@ -255,8 +255,8 @@ export default function TrackOrderPage() {
                             className={cn(
                               'w-10 h-10 rounded-full flex items-center justify-center transition-colors',
                               isCompleted
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-200 text-gray-400',
+                                ? 'bg-neutral-900 text-white'
+                                : 'bg-neutral-200 text-neutral-400',
                               isCurrent && 'ring-4 ring-blue-200'
                             )}
                           >
@@ -266,13 +266,13 @@ export default function TrackOrderPage() {
                             <p
                               className={cn(
                                 'font-medium text-sm',
-                                isCompleted ? 'text-blue-600' : 'text-gray-400'
+                                isCompleted ? 'text-neutral-900' : 'text-neutral-400'
                               )}
                             >
                               {step.label}
                             </p>
                             {timestamp && (
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-neutral-500">
                                 {format(new Date(timestamp), 'dd/MM HH:mm')}
                               </p>
                             )}
@@ -296,41 +296,41 @@ export default function TrackOrderPage() {
               <CardContent>
                 <div className="grid sm:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-500">{t('track.string')}</p>
+                    <p className="text-neutral-500">{t('track.string')}</p>
                     <p className="font-medium">{order.stringName}</p>
                     {order.stringColor && (
-                      <p className="text-gray-600">{order.stringColor}</p>
+                      <p className="text-neutral-600">{order.stringColor}</p>
                     )}
                   </div>
                   <div>
-                    <p className="text-gray-500">{t('track.price')}</p>
-                    <p className="font-medium text-blue-600">RM{order.price}</p>
+                    <p className="text-neutral-500">{t('track.price')}</p>
+                    <p className="font-medium text-neutral-900">RM{order.price}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">{t('track.racket')}</p>
+                    <p className="text-neutral-500">{t('track.racket')}</p>
                     <p className="font-medium">
                       {order.racketModelCustom || order.racketModel}
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-500">{t('track.tension')}</p>
+                    <p className="text-neutral-500">{t('track.tension')}</p>
                     <p className="font-medium">
                       {order.tensionMain} / {order.tensionCross} lbs
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-500">{t('track.pickupDate')}</p>
+                    <p className="text-neutral-500">{t('track.pickupDate')}</p>
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-400" />
+                      <Calendar className="w-4 h-4 text-neutral-400" />
                       <p className="font-medium">
                         {format(new Date(order.pickupDate), 'PPP')}
                       </p>
                     </div>
                   </div>
                   <div>
-                    <p className="text-gray-500">{t('track.orderDate')}</p>
+                    <p className="text-neutral-500">{t('track.orderDate')}</p>
                     <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gray-400" />
+                      <Clock className="w-4 h-4 text-neutral-400" />
                       <p className="font-medium">
                         {format(new Date(order.createdAt), 'PPP')}
                       </p>
@@ -340,8 +340,8 @@ export default function TrackOrderPage() {
 
                 {order.notes && (
                   <div className="mt-4 pt-4 border-t">
-                    <p className="text-gray-500 text-sm">{t('track.notes')}</p>
-                    <p className="text-sm mt-1 bg-gray-50 p-3 rounded-lg">
+                    <p className="text-neutral-500 text-sm">{t('track.notes')}</p>
+                    <p className="text-sm mt-1 bg-neutral-50 p-3 rounded-lg">
                       {order.notes}
                     </p>
                   </div>

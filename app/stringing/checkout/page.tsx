@@ -341,7 +341,7 @@ function CheckoutContent() {
   if (!selectedString) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-900" />
       </div>
     )
   }
@@ -349,13 +349,13 @@ function CheckoutContent() {
   const total = selectedString.price
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-3xl mx-auto px-4 py-4">
           <Link
             href="/stringing"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900"
+            className="inline-flex items-center text-neutral-600 hover:text-neutral-900"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {tCommon('back')}
@@ -364,7 +364,7 @@ function CheckoutContent() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
+        <h1 className="text-2xl font-bold text-neutral-900 mb-6">
           {t('checkout.title')}
         </h1>
 
@@ -383,10 +383,10 @@ function CheckoutContent() {
                   <Wrench className="w-8 h-8 text-white opacity-50" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500">{selectedString.brand}</p>
+                  <p className="text-sm text-neutral-500">{selectedString.brand}</p>
                   <p className="font-semibold text-lg">{selectedString.name}</p>
                   {selectedString.gauge && (
-                    <p className="text-sm text-gray-500">{selectedString.gauge}</p>
+                    <p className="text-sm text-neutral-500">{selectedString.gauge}</p>
                   )}
                   {selectedColor && (
                     <div className="flex items-center gap-2 mt-1">
@@ -394,13 +394,13 @@ function CheckoutContent() {
                         className="w-4 h-4 rounded-full border border-gray-300"
                         style={{ backgroundColor: selectedColor.toLowerCase() }}
                       />
-                      <span className="text-sm text-gray-600">{selectedColor}</span>
+                      <span className="text-sm text-neutral-600">{selectedColor}</span>
                     </div>
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-blue-600">RM{selectedString.price}</p>
-                  <Link href="/stringing" className="text-sm text-blue-600 hover:underline">
+                  <p className="text-2xl font-bold text-neutral-900">RM{selectedString.price}</p>
+                  <Link href="/stringing" className="text-sm text-neutral-900 hover:underline">
                     {t('checkout.changeString')}
                   </Link>
                 </div>
@@ -461,7 +461,7 @@ function CheckoutContent() {
                     size="sm"
                     onClick={applyRacketProfile}
                     disabled={loadingProfile}
-                    className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                    className="text-neutral-900 border-neutral-900 hover:bg-neutral-50"
                   >
                     <User className="w-4 h-4 mr-2" />
                     {t('checkout.useSavedRacket')}
@@ -469,7 +469,7 @@ function CheckoutContent() {
                 )}
               </div>
               {savedRacketProfile && (
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-neutral-500 mt-1">
                   {t('checkout.savedRacketInfo', {
                     brand: savedRacketProfile.brand,
                     model: savedRacketProfile.model,
@@ -523,7 +523,7 @@ function CheckoutContent() {
                 <Label>{t('checkout.tension')} *</Label>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <Label htmlFor="tensionMain" className="text-sm text-gray-500">
+                    <Label htmlFor="tensionMain" className="text-sm text-neutral-500">
                       {t('checkout.tensionMain')}
                     </Label>
                     <Input
@@ -536,7 +536,7 @@ function CheckoutContent() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label htmlFor="tensionCross" className="text-sm text-gray-500">
+                    <Label htmlFor="tensionCross" className="text-sm text-neutral-500">
                       {t('checkout.tensionCross')}
                     </Label>
                     <Input
@@ -549,7 +549,7 @@ function CheckoutContent() {
                     />
                   </div>
                 </div>
-                <p className="text-xs text-gray-500">{t('checkout.tensionHelp')}</p>
+                <p className="text-xs text-neutral-500">{t('checkout.tensionHelp')}</p>
               </div>
 
               {/* Pickup Date */}
@@ -578,7 +578,7 @@ function CheckoutContent() {
                     />
                   </PopoverContent>
                 </Popover>
-                <p className="text-xs text-gray-500">{t('checkout.pickupDateHelp')}</p>
+                <p className="text-xs text-neutral-500">{t('checkout.pickupDateHelp')}</p>
               </div>
 
               {/* Notes */}
@@ -602,16 +602,16 @@ function CheckoutContent() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Total */}
-              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg">
                 <span className="font-medium">{t('checkout.total')}</span>
-                <span className="text-2xl font-bold text-blue-600">RM{total}</span>
+                <span className="text-2xl font-bold text-neutral-900">RM{total}</span>
               </div>
 
               {/* Payment Buttons */}
               <div className="grid sm:grid-cols-2 gap-3">
                 <Button
                   variant="outline"
-                  className="h-14 text-base border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+                  className="h-14 text-base border-2 border-neutral-900 text-neutral-900 hover:bg-neutral-50"
                   onClick={() => setShowTngModal(true)}
                   disabled={!isFormValid()}
                 >
@@ -620,7 +620,7 @@ function CheckoutContent() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="h-14 text-base border-2 border-pink-600 text-pink-600 hover:bg-pink-50"
+                  className="h-14 text-base border-2 border-neutral-900 text-neutral-900 hover:bg-neutral-50"
                   onClick={() => setShowDuitNowModal(true)}
                   disabled={!isFormValid()}
                 >
@@ -644,23 +644,23 @@ function CheckoutContent() {
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
-              <Smartphone className="w-5 h-5 text-blue-600" />
+              <Smartphone className="w-5 h-5 text-neutral-900" />
               {t('payment.tng')}
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             {/* Amount Banner */}
-            <div className="bg-blue-600 text-white rounded-xl p-4 text-center">
+            <div className="bg-neutral-900 text-white rounded-xl p-4 text-center">
               <p className="text-sm opacity-90">{t('payment.amount')}</p>
               <p className="text-3xl font-bold">RM{total.toFixed(2)}</p>
             </div>
 
             {/* Step 1: Save QR Code */}
-            <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+            <div className="bg-neutral-50 rounded-xl p-4 space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
-                <h4 className="font-semibold text-gray-900">Save the QR Code</h4>
+                <div className="w-8 h-8 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                <h4 className="font-semibold text-neutral-900">Save the QR Code</h4>
               </div>
               <div className="flex justify-center">
                 <div className="p-3 bg-white rounded-lg border-2 border-gray-200">
@@ -677,7 +677,7 @@ function CheckoutContent() {
               </div>
               <Button
                 variant="outline"
-                className="w-full h-12 text-base border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+                className="w-full h-12 text-base border-2 border-neutral-900 text-neutral-900 hover:bg-neutral-50"
                 onClick={() => downloadQrCode('tng')}
               >
                 <Download className="mr-2 h-5 w-5" />
@@ -687,34 +687,34 @@ function CheckoutContent() {
 
             {/* Instructions */}
             <div className="space-y-3">
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+              <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
+                <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
                 <div>
-                  <p className="font-medium text-gray-900">Open Touch &apos;n Go App</p>
-                  <p className="text-sm text-gray-600">Open your Touch &apos;n Go eWallet app</p>
+                  <p className="font-medium text-neutral-900">Open Touch &apos;n Go App</p>
+                  <p className="text-sm text-neutral-600">Open your Touch &apos;n Go eWallet app</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+              <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
+                <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
                 <div>
-                  <p className="font-medium text-gray-900">Scan from Gallery</p>
-                  <p className="text-sm text-gray-600">Tap &apos;Scan&apos;, then select the QR code from your gallery</p>
+                  <p className="font-medium text-neutral-900">Scan from Gallery</p>
+                  <p className="text-sm text-neutral-600">Tap &apos;Scan&apos;, then select the QR code from your gallery</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
+              <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
+                <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
                 <div>
-                  <p className="font-medium text-gray-900">Enter Amount</p>
-                  <p className="text-sm text-gray-600">Enter exactly <strong className="text-blue-600">RM{total.toFixed(2)}</strong></p>
+                  <p className="font-medium text-neutral-900">Enter Amount</p>
+                  <p className="text-sm text-neutral-600">Enter exactly <strong className="text-neutral-900">RM{total.toFixed(2)}</strong></p>
                 </div>
               </div>
               {/* Step 5: Upload Receipt */}
-              <div className="bg-blue-50 rounded-xl p-4 space-y-3 border border-blue-200">
+              <div className="bg-neutral-50 rounded-xl p-4 space-y-3 border border-blue-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">5</div>
+                  <div className="w-8 h-8 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-sm">5</div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">{t('checkout.uploadReceipt')}</h4>
-                    <p className="text-sm text-gray-600">{t('checkout.uploadReceiptDesc')}</p>
+                    <h4 className="font-semibold text-neutral-900">{t('checkout.uploadReceipt')}</h4>
+                    <p className="text-sm text-neutral-600">{t('checkout.uploadReceiptDesc')}</p>
                   </div>
                 </div>
 
@@ -738,10 +738,10 @@ function CheckoutContent() {
                   </div>
                 ) : (
                   <label className="block cursor-pointer">
-                    <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-500 hover:bg-blue-50/50 transition-colors">
-                      <ImagePlus className="w-10 h-10 mx-auto text-blue-400 mb-2" />
-                      <p className="text-sm font-medium text-gray-700">{t('checkout.tapToUpload')}</p>
-                      <p className="text-xs text-gray-500 mt-1">{t('checkout.maxFileSize')}</p>
+                    <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-500 hover:bg-neutral-50/50 transition-colors">
+                      <ImagePlus className="w-10 h-10 mx-auto text-neutral-400 mb-2" />
+                      <p className="text-sm font-medium text-neutral-700">{t('checkout.tapToUpload')}</p>
+                      <p className="text-xs text-neutral-500 mt-1">{t('checkout.maxFileSize')}</p>
                     </div>
                     <input
                       type="file"
@@ -759,7 +759,7 @@ function CheckoutContent() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {tngHasPaid && <CheckCircle2 className="w-5 h-5 text-green-600" />}
-                  <Label htmlFor="tng-paid-toggle" className="text-base font-semibold text-gray-900 cursor-pointer">
+                  <Label htmlFor="tng-paid-toggle" className="text-base font-semibold text-neutral-900 cursor-pointer">
                     {t('checkout.iHavePaid')}
                   </Label>
                 </div>
@@ -777,7 +777,7 @@ function CheckoutContent() {
 
             {/* Confirm Button */}
             <Button
-              className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed'}`}
+              className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-neutral-900 hover:bg-neutral-800' : 'bg-neutral-300 cursor-not-allowed'}`}
               size="lg"
               onClick={() => handleSubmitOrder('tng', tngHasPaid, tngReceiptFile)}
               disabled={!tngHasPaid || submitting || uploadingReceipt}
@@ -800,23 +800,23 @@ function CheckoutContent() {
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
-              <Smartphone className="w-5 h-5 text-pink-600" />
+              <Smartphone className="w-5 h-5 text-neutral-900" />
               {t('payment.duitnow')}
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             {/* Amount Banner */}
-            <div className="bg-pink-600 text-white rounded-xl p-4 text-center">
+            <div className="bg-neutral-900 text-white rounded-xl p-4 text-center">
               <p className="text-sm opacity-90">{t('payment.amount')}</p>
               <p className="text-3xl font-bold">RM{total.toFixed(2)}</p>
             </div>
 
             {/* Step 1: Save QR Code */}
-            <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+            <div className="bg-neutral-50 rounded-xl p-4 space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
-                <h4 className="font-semibold text-gray-900">Save the QR Code</h4>
+                <div className="w-8 h-8 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                <h4 className="font-semibold text-neutral-900">Save the QR Code</h4>
               </div>
               <div className="flex justify-center">
                 <div className="p-3 bg-white rounded-lg border-2 border-gray-200">
@@ -833,7 +833,7 @@ function CheckoutContent() {
               </div>
               <Button
                 variant="outline"
-                className="w-full h-12 text-base border-2 border-pink-600 text-pink-600 hover:bg-pink-50"
+                className="w-full h-12 text-base border-2 border-neutral-900 text-neutral-900 hover:bg-neutral-50"
                 onClick={() => downloadQrCode('duitnow')}
               >
                 <Download className="mr-2 h-5 w-5" />
@@ -843,34 +843,34 @@ function CheckoutContent() {
 
             {/* Instructions */}
             <div className="space-y-3">
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="w-7 h-7 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+              <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
+                <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
                 <div>
-                  <p className="font-medium text-gray-900">Open Banking App</p>
-                  <p className="text-sm text-gray-600">Open your banking app that supports DuitNow</p>
+                  <p className="font-medium text-neutral-900">Open Banking App</p>
+                  <p className="text-sm text-neutral-600">Open your banking app that supports DuitNow</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="w-7 h-7 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+              <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
+                <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
                 <div>
-                  <p className="font-medium text-gray-900">Scan QR Code</p>
-                  <p className="text-sm text-gray-600">Select DuitNow QR and scan from gallery</p>
+                  <p className="font-medium text-neutral-900">Scan QR Code</p>
+                  <p className="text-sm text-neutral-600">Select DuitNow QR and scan from gallery</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="w-7 h-7 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
+              <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
+                <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
                 <div>
-                  <p className="font-medium text-gray-900">Enter Amount</p>
-                  <p className="text-sm text-gray-600">Enter exactly <strong className="text-pink-600">RM{total.toFixed(2)}</strong></p>
+                  <p className="font-medium text-neutral-900">Enter Amount</p>
+                  <p className="text-sm text-neutral-600">Enter exactly <strong className="text-neutral-900">RM{total.toFixed(2)}</strong></p>
                 </div>
               </div>
               {/* Step 5: Upload Receipt */}
-              <div className="bg-pink-50 rounded-xl p-4 space-y-3 border border-pink-200">
+              <div className="bg-neutral-50 rounded-xl p-4 space-y-3 border border-pink-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-sm">5</div>
+                  <div className="w-8 h-8 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-sm">5</div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">{t('checkout.uploadReceipt')}</h4>
-                    <p className="text-sm text-gray-600">{t('checkout.uploadReceiptDesc')}</p>
+                    <h4 className="font-semibold text-neutral-900">{t('checkout.uploadReceipt')}</h4>
+                    <p className="text-sm text-neutral-600">{t('checkout.uploadReceiptDesc')}</p>
                   </div>
                 </div>
 
@@ -894,10 +894,10 @@ function CheckoutContent() {
                   </div>
                 ) : (
                   <label className="block cursor-pointer">
-                    <div className="border-2 border-dashed border-pink-300 rounded-lg p-6 text-center hover:border-pink-500 hover:bg-pink-50/50 transition-colors">
-                      <ImagePlus className="w-10 h-10 mx-auto text-pink-400 mb-2" />
-                      <p className="text-sm font-medium text-gray-700">{t('checkout.tapToUpload')}</p>
-                      <p className="text-xs text-gray-500 mt-1">{t('checkout.maxFileSize')}</p>
+                    <div className="border-2 border-dashed border-pink-300 rounded-lg p-6 text-center hover:border-pink-500 hover:bg-neutral-50/50 transition-colors">
+                      <ImagePlus className="w-10 h-10 mx-auto text-neutral-400 mb-2" />
+                      <p className="text-sm font-medium text-neutral-700">{t('checkout.tapToUpload')}</p>
+                      <p className="text-xs text-neutral-500 mt-1">{t('checkout.maxFileSize')}</p>
                     </div>
                     <input
                       type="file"
@@ -915,7 +915,7 @@ function CheckoutContent() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {duitNowHasPaid && <CheckCircle2 className="w-5 h-5 text-green-600" />}
-                  <Label htmlFor="duitnow-paid-toggle" className="text-base font-semibold text-gray-900 cursor-pointer">
+                  <Label htmlFor="duitnow-paid-toggle" className="text-base font-semibold text-neutral-900 cursor-pointer">
                     {t('checkout.iHavePaid')}
                   </Label>
                 </div>
@@ -933,7 +933,7 @@ function CheckoutContent() {
 
             {/* Confirm Button */}
             <Button
-              className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? 'bg-pink-600 hover:bg-pink-700' : 'bg-gray-300 cursor-not-allowed'}`}
+              className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? 'bg-neutral-900 hover:bg-neutral-800' : 'bg-neutral-300 cursor-not-allowed'}`}
               size="lg"
               onClick={() => handleSubmitOrder('duitnow', duitNowHasPaid, duitNowReceiptFile)}
               disabled={!duitNowHasPaid || submitting || uploadingReceipt}
@@ -959,7 +959,7 @@ export default function StringingCheckoutPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <Loader2 className="w-8 h-8 animate-spin text-neutral-900" />
         </div>
       }
     >
