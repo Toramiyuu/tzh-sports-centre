@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { isAdmin } from '@/lib/admin'
 import { calculateBookingAmount } from '@/lib/recurring-booking-utils'
+import { validateMalaysianPhone, validateEmail, validateSport, validateFutureDate } from '@/lib/validation'
 
 // GET - Fetch user's bookings
 export async function GET() {
@@ -61,6 +62,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate sport type
+    const validatedSport = validateSport(sport)
+    if (!validatedSport) {
+      return NextResponse.json(
+        { error: 'Invalid sport type. Must be badminton or pickleball.' },
+        { status: 400 }
+      )
+    }
+
+    // Validate booking date is not in the past
+    const validatedDate = validateFutureDate(date)
+    if (!validatedDate) {
+      return NextResponse.json(
+        { error: 'Booking date cannot be in the past' },
+        { status: 400 }
+      )
+    }
+
     // Determine booking type and validate accordingly
     let userId: string | null = null
     let bookingGuestName: string | null = null
@@ -87,9 +106,33 @@ export async function POST(request: NextRequest) {
         )
       }
 
+      // Validate phone number format if provided
+      if (phone) {
+        const validatedPhone = validateMalaysianPhone(phone)
+        if (!validatedPhone) {
+          return NextResponse.json(
+            { error: 'Invalid phone number format. Please use a valid Malaysian phone number.' },
+            { status: 400 }
+          )
+        }
+        bookingGuestPhone = validatedPhone
+      }
+
+      // Validate email format if provided
+      if (guestEmail?.trim()) {
+        const validatedEmail = validateEmail(guestEmail)
+        if (!validatedEmail) {
+          return NextResponse.json(
+            { error: 'Invalid email address format' },
+            { status: 400 }
+          )
+        }
+        bookingGuestEmail = validatedEmail
+      } else {
+        bookingGuestEmail = session?.user?.email || null
+      }
+
       bookingGuestName = guestName?.trim() || session?.user?.name || null
-      bookingGuestPhone = phone
-      bookingGuestEmail = guestEmail?.trim() || session?.user?.email || null
 
       // Set userId if logged in
       if (session?.user?.id) {
@@ -219,13 +262,13 @@ export async function POST(request: NextRequest) {
     const createdBookings = []
     for (const slot of slots as { courtId: number; slotTime: string }[]) {
       const endTime = getEndTime(slot.slotTime)
-      const totalAmount = calculateBookingAmount(slot.slotTime, endTime, sport)
+      const totalAmount = calculateBookingAmount(slot.slotTime, endTime, validatedSport)
       try {
         const booking = await prisma.booking.create({
           data: {
             userId,
             courtId: slot.courtId,
-            sport,
+            sport: validatedSport,
             bookingDate,
             startTime: slot.slotTime,
             endTime,
@@ -278,9 +321,8 @@ export async function POST(request: NextRequest) {
     )
   } catch (error) {
     console.error('Error creating booking:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to create booking', details: errorMessage },
+      { error: 'Something went wrong. Please try again.' },
       { status: 500 }
     )
   }

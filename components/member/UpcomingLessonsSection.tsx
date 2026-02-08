@@ -41,7 +41,7 @@ export function UpcomingLessonsSection({
   const getLessonStatusBadge = (lessonStatus: string) => {
     switch (lessonStatus) {
       case 'scheduled':
-        return <Badge className="bg-neutral-100 text-neutral-700 border-0">{t('status.scheduled')}</Badge>
+        return <Badge className="bg-secondary text-foreground border-0">{t('status.scheduled')}</Badge>
       case 'completed':
         return <Badge className="bg-green-100 text-green-700 border-0">{t('status.completed')}</Badge>
       case 'cancelled':
@@ -52,16 +52,16 @@ export function UpcomingLessonsSection({
   }
 
   return (
-    <Card className="mb-6 border border-neutral-200 rounded-2xl">
+    <Card className="mb-6 border border-border rounded-2xl">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg text-neutral-900">
-          <Calendar className="w-5 h-5 text-neutral-600" />
+        <CardTitle className="flex items-center gap-2 text-lg text-foreground">
+          <Calendar className="w-5 h-5 text-muted-foreground" />
           {t('upcomingLessons')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         {lessons.length === 0 ? (
-          <p className="text-center py-8 text-neutral-500">
+          <p className="text-center py-8 text-muted-foreground">
             {t('noUpcomingLessons')}
           </p>
         ) : (
@@ -69,32 +69,32 @@ export function UpcomingLessonsSection({
             {lessons.map((lesson) => (
               <div
                 key={lesson.id}
-                className="p-4 bg-neutral-50 rounded-xl border border-neutral-200"
+                className="p-4 bg-background rounded-xl border border-border"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-medium text-neutral-900">
+                    <p className="font-medium text-foreground">
                       {format(new Date(lesson.lessonDate), 'EEEE, MMMM d, yyyy')}
                     </p>
-                    <p className="text-sm text-neutral-600 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       {formatTime(lesson.startTime)} - {formatTime(lesson.endTime)} ({lesson.duration}h)
                     </p>
-                    <p className="text-sm text-neutral-600">
+                    <p className="text-sm text-muted-foreground">
                       {lesson.court.name} - {lesson.lessonType.replace(/-/g, ' ')} {t('lesson')}
                     </p>
                     {lesson.students.length > 1 && (
-                      <p className="text-sm text-neutral-500 mt-1">
+                      <p className="text-sm text-muted-foreground mt-1">
                         {t('with')}: {lesson.students.filter(s => s.name !== currentUserName).map(s => s.name).join(', ')}
                       </p>
                     )}
                   </div>
                   <div className="text-right">
                     {getLessonStatusBadge(lesson.status)}
-                    <p className="text-sm font-medium text-neutral-900 mt-2">RM{lesson.price}</p>
+                    <p className="text-sm font-medium text-foreground mt-2">RM{lesson.price}</p>
                   </div>
                 </div>
                 {lesson.notes && (
-                  <p className="text-sm text-neutral-500 mt-2 italic">{t('note')}: {lesson.notes}</p>
+                  <p className="text-sm text-muted-foreground mt-2 italic">{t('note')}: {lesson.notes}</p>
                 )}
               </div>
             ))}

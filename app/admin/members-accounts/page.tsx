@@ -59,7 +59,7 @@ function MembersAccountsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -71,20 +71,20 @@ function MembersAccountsContent() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{t('membersAccounts.title')}</h1>
-              <p className="text-gray-600">{t('membersAccounts.description')}</p>
+              <h1 className="text-2xl font-bold text-foreground">{t('membersAccounts.title')}</h1>
+              <p className="text-muted-foreground">{t('membersAccounts.description')}</p>
             </div>
           </div>
         </div>
 
         {/* Main Tabs */}
-        <div className="flex gap-2 mb-6 border-b">
+        <div className="flex gap-2 mb-6 border-b border-border">
           <Button
             variant="ghost"
             className={`rounded-none border-b-2 ${
               activeTab === 'members'
-                ? 'border-teal-600 text-teal-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-teal-500 text-teal-500'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
             onClick={() => handleTabChange('members')}
           >
@@ -95,8 +95,8 @@ function MembersAccountsContent() {
             variant="ghost"
             className={`rounded-none border-b-2 ${
               activeTab === 'accounts'
-                ? 'border-teal-600 text-teal-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-teal-500 text-teal-500'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
             onClick={() => handleTabChange('accounts')}
           >

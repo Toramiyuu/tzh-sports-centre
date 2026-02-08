@@ -13,7 +13,7 @@ function CancelContent() {
   const sessionId = searchParams.get('session_id')
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="max-w-md w-full">
         <CardContent className="pt-8 pb-6 text-center">
           {/* Icon */}
@@ -22,12 +22,12 @@ function CancelContent() {
           </div>
 
           {/* Title */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-foreground mb-2">
             Payment Cancelled
           </h1>
 
           {/* Message */}
-          <p className="text-gray-600 mb-8">
+          <p className="text-muted-foreground mb-8">
             Your payment was cancelled. Don&apos;t worry - no charges were made.
             Your selected time slots may still be available.
           </p>
@@ -55,9 +55,9 @@ function CancelContent() {
           </div>
 
           {/* Help text */}
-          <p className="mt-6 text-sm text-gray-500">
+          <p className="mt-6 text-sm text-muted-foreground">
             Need help? Contact us at{' '}
-            <a href="tel:01168688508" className="text-neutral-900 hover:underline">
+            <a href="tel:01168688508" className="text-foreground hover:underline">
               011-6868 8508
             </a>
           </p>
@@ -71,8 +71,8 @@ export default function BookingCancelPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <Loader2 className="w-12 h-12 animate-spin text-neutral-900" />
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-foreground" />
         </div>
       }
     >

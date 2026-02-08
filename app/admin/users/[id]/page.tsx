@@ -346,7 +346,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center py-12">
-          <p className="text-gray-500">User not found</p>
+          <p className="text-muted-foreground">User not found</p>
           <Link href="/admin/members-accounts?tab=accounts">
             <Button variant="outline" className="mt-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -362,6 +362,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
   const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
   return (
+    <div className="min-h-screen bg-background">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -374,13 +375,13 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
+              <h1 className="text-2xl font-bold text-foreground">{user.name}</h1>
               <Badge variant="outline" className="font-mono">#{user.uid}</Badge>
               {user.isSuperAdmin && <Badge className="bg-purple-600">Super Admin</Badge>}
               {user.isAdmin && !user.isSuperAdmin && <Badge className="bg-green-600">Admin</Badge>}
-              {user.isMember && <Badge className="bg-blue-600">Member</Badge>}
+              {user.isMember && <Badge className="bg-teal-600">Member</Badge>}
             </div>
-            <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
               <span className="flex items-center gap-1">
                 <Mail className="w-4 h-4" />
                 {user.email}
@@ -424,17 +425,17 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Password Management */}
       {showPasswordSection && (
-        <Card className="mb-6 border-amber-200 bg-amber-50/50">
+        <Card className="mb-6 border-amber-800 bg-amber-900/20">
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Shield className="w-5 h-5 text-amber-600" />
+              <div className="w-10 h-10 bg-amber-900/50 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Shield className="w-5 h-5 text-amber-400" />
               </div>
               <div className="flex-1 space-y-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Password Management</h3>
+                  <h3 className="font-semibold text-foreground">Password Management</h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm text-gray-600">Status:</span>
+                    <span className="text-sm text-muted-foreground">Status:</span>
                     {user.isDefaultPassword ? (
                       <Badge className="bg-amber-500">Default</Badge>
                     ) : (
@@ -450,7 +451,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                     size="sm"
                     onClick={handleResetPassword}
                     disabled={passwordLoading || user.isDefaultPassword}
-                    className="border-amber-300 hover:bg-amber-100"
+                    className="border-amber-700 hover:bg-amber-900/30"
                   >
                     {passwordLoading ? (
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -468,12 +469,12 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                         placeholder="New password (min 8 chars)"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="pr-10 bg-white"
+                        className="pr-10 bg-card"
                       />
                       <button
                         type="button"
                         onClick={() => setShowNewPassword(!showNewPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-muted-foreground"
                       >
                         {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -517,16 +518,16 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-teal-900/50 rounded-lg flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-teal-400" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">Bookings</p>
+                <p className="text-sm text-muted-foreground">Bookings</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-gray-900">{bookingsSummary.total}</span>
-                  <span className="text-xs text-gray-400">total</span>
+                  <span className="text-2xl font-bold text-foreground">{bookingsSummary.total}</span>
+                  <span className="text-xs text-muted-foreground/70">total</span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   {bookingsSummary.thisWeek} this week | {bookingsSummary.thisMonth} this month
                 </div>
               </div>
@@ -538,16 +539,16 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <Repeat className="w-6 h-6 text-orange-600" />
+              <div className="w-12 h-12 bg-orange-900/50 rounded-lg flex items-center justify-center">
+                <Repeat className="w-6 h-6 text-orange-400" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">Recurring</p>
+                <p className="text-sm text-muted-foreground">Recurring</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-gray-900">{bookingsSummary.recurring}</span>
-                  <span className="text-xs text-gray-400">active</span>
+                  <span className="text-2xl font-bold text-foreground">{bookingsSummary.recurring}</span>
+                  <span className="text-xs text-muted-foreground/70">active</span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   {recurringBookings.filter(rb => !rb.isActive).length} inactive
                 </div>
               </div>
@@ -559,16 +560,16 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-purple-900/50 rounded-lg flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-purple-400" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">Lessons</p>
+                <p className="text-sm text-muted-foreground">Lessons</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-gray-900">{lessonsSummary.completed}</span>
-                  <span className="text-sm text-gray-400">/ {lessonsSummary.scheduled + lessonsSummary.completed}</span>
+                  <span className="text-2xl font-bold text-foreground">{lessonsSummary.completed}</span>
+                  <span className="text-sm text-muted-foreground/70">/ {lessonsSummary.scheduled + lessonsSummary.completed}</span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   {lessonsSummary.thisMonth} this month | {lessonsSummary.scheduled} scheduled
                 </div>
               </div>
@@ -580,17 +581,17 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-green-900/50 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-green-400" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">Total Paid</p>
+                <p className="text-sm text-muted-foreground">Total Paid</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-bold text-green-600">
                     RM{paymentsSummary.allTime.totalPaid.toFixed(0)}
                   </span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   RM{paymentsSummary.currentMonth.paid.toFixed(0)} this month
                 </div>
               </div>
@@ -603,16 +604,16 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                paymentsSummary.recurring.outstanding > 0 ? 'bg-red-100' : 'bg-green-100'
+                paymentsSummary.recurring.outstanding > 0 ? 'bg-red-900/50' : 'bg-green-900/50'
               }`}>
                 {paymentsSummary.recurring.outstanding > 0 ? (
-                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                  <AlertTriangle className="w-6 h-6 text-red-400" />
                 ) : (
-                  <DollarSign className="w-6 h-6 text-green-600" />
+                  <DollarSign className="w-6 h-6 text-green-400" />
                 )}
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">Outstanding</p>
+                <p className="text-sm text-muted-foreground">Outstanding</p>
                 <div className="flex items-baseline gap-2">
                   <span className={`text-2xl font-bold ${
                     paymentsSummary.recurring.outstanding > 0 ? 'text-red-600' : 'text-green-600'
@@ -620,7 +621,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                     RM{paymentsSummary.recurring.outstanding.toFixed(0)}
                   </span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   RM{paymentsSummary.currentMonth.paid.toFixed(0)} paid / RM{paymentsSummary.currentMonth.totalDue.toFixed(0)} due
                 </div>
               </div>
@@ -652,23 +653,23 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               </CardHeader>
               <CardContent>
                 {bookingsTimeline.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No bookings yet</p>
+                  <p className="text-muted-foreground text-center py-4">No bookings yet</p>
                 ) : (
                   <div className="space-y-3">
                     {bookingsTimeline.slice(0, 5).map((booking) => (
-                      <div key={booking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={booking.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{format(new Date(booking.date), 'MMM d')}</span>
                             <Badge variant="outline" className="capitalize">{booking.sport}</Badge>
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-muted-foreground">
                             {booking.time} | {booking.court}
                           </div>
                         </div>
                         <div className="text-right">
                           <div className="font-medium">RM{booking.amount.toFixed(2)}</div>
-                          <div className="text-xs text-gray-500">{booking.duration}hr</div>
+                          <div className="text-xs text-muted-foreground">{booking.duration}hr</div>
                         </div>
                       </div>
                     ))}
@@ -687,18 +688,18 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               </CardHeader>
               <CardContent>
                 {recurringBookings.filter(rb => rb.isActive).length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No active recurring bookings</p>
+                  <p className="text-muted-foreground text-center py-4">No active recurring bookings</p>
                 ) : (
                   <div className="space-y-3">
                     {recurringBookings.filter(rb => rb.isActive).map((rb) => (
-                      <div key={rb.id} className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                      <div key={rb.id} className="p-3 bg-orange-900/20 border border-orange-800 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="font-medium">{rb.schedule}</span>
                               <PaymentStatusBadge status={rb.payments.currentMonth.status} />
                             </div>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-muted-foreground">
                               {rb.time} | {rb.court}
                             </div>
                             {rb.label && (
@@ -707,7 +708,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                           </div>
                           <div className="text-right">
                             <div className="font-medium">RM{rb.amountPerSession.toFixed(2)}</div>
-                            <div className="text-xs text-gray-500 capitalize">{rb.sport} | {rb.duration}hr</div>
+                            <div className="text-xs text-muted-foreground capitalize">{rb.sport} | {rb.duration}hr</div>
                           </div>
                         </div>
                       </div>
@@ -727,14 +728,14 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               </CardHeader>
               <CardContent>
                 {lessonsTimeline.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No lessons yet</p>
+                  <p className="text-muted-foreground text-center py-4">No lessons yet</p>
                 ) : (
                   <div className="space-y-3">
                     {lessonsTimeline.slice(0, 5).map((lesson) => (
                       <div key={lesson.id} className={`p-3 rounded-lg ${
-                        lesson.status === 'completed' ? 'bg-green-50 border border-green-200' :
-                        lesson.status === 'scheduled' ? 'bg-purple-50 border border-purple-200' :
-                        'bg-gray-50 border border-gray-200'
+                        lesson.status === 'completed' ? 'bg-green-900/20 border border-green-800' :
+                        lesson.status === 'scheduled' ? 'bg-purple-900/20 border border-purple-800' :
+                        'bg-secondary border border-border'
                       }`}>
                         <div className="flex items-center justify-between">
                           <div>
@@ -745,13 +746,13 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                                 <CheckCircle className="w-4 h-4 text-green-600" />
                               )}
                             </div>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-muted-foreground">
                               {lesson.time} | {lesson.court}
                             </div>
                           </div>
                           <div className="text-right">
                             <div className="font-medium">RM{lesson.pricePerStudent.toFixed(0)}</div>
-                            <div className="text-xs text-gray-500">{lesson.duration}hr</div>
+                            <div className="text-xs text-muted-foreground">{lesson.duration}hr</div>
                           </div>
                         </div>
                       </div>
@@ -771,14 +772,14 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               </CardHeader>
               <CardContent>
                 {paymentHistory.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No payment history</p>
+                  <p className="text-muted-foreground text-center py-4">No payment history</p>
                 ) : (
                   <div className="space-y-3">
                     {paymentHistory.slice(0, 5).map((payment) => (
                       <div key={payment.id} className={`p-3 rounded-lg ${
-                        payment.status === 'paid' ? 'bg-green-50' :
-                        payment.status === 'partial' ? 'bg-yellow-50' :
-                        'bg-red-50'
+                        payment.status === 'paid' ? 'bg-green-900/20' :
+                        payment.status === 'partial' ? 'bg-yellow-900/20' :
+                        'bg-red-900/20'
                       }`}>
                         <div className="flex items-center justify-between">
                           <div>
@@ -817,30 +818,30 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
             </CardHeader>
             <CardContent>
               {bookingsTimeline.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No bookings found</p>
+                <p className="text-muted-foreground text-center py-8">No bookings found</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-gray-100">
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Date</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Time</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Court</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Sport</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Duration</th>
-                        <th className="px-4 py-2 text-right text-sm font-medium text-gray-700">Amount</th>
+                      <tr className="bg-secondary">
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Date</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Time</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Court</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Sport</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Duration</th>
+                        <th className="px-4 py-2 text-right text-sm font-medium text-muted-foreground">Amount</th>
                       </tr>
                     </thead>
                     <tbody>
                       {bookingsTimeline.map((booking) => (
-                        <tr key={booking.id} className="border-b hover:bg-gray-50">
+                        <tr key={booking.id} className="border-b border-border hover:bg-card">
                           <td className="px-4 py-3">{format(new Date(booking.date), 'MMM d, yyyy')}</td>
-                          <td className="px-4 py-3 text-gray-600">{booking.time}</td>
+                          <td className="px-4 py-3 text-muted-foreground">{booking.time}</td>
                           <td className="px-4 py-3">{booking.court}</td>
                           <td className="px-4 py-3">
                             <Badge variant="outline" className="capitalize">{booking.sport}</Badge>
                           </td>
-                          <td className="px-4 py-3 text-gray-600">{booking.duration}hr</td>
+                          <td className="px-4 py-3 text-muted-foreground">{booking.duration}hr</td>
                           <td className="px-4 py-3 text-right font-medium">RM{booking.amount.toFixed(2)}</td>
                         </tr>
                       ))}
@@ -860,12 +861,12 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
             </CardHeader>
             <CardContent>
               {recurringBookings.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No recurring bookings</p>
+                <p className="text-muted-foreground text-center py-8">No recurring bookings</p>
               ) : (
                 <div className="space-y-4">
                   {recurringBookings.map((rb) => (
                     <div key={rb.id} className={`p-4 rounded-lg border ${
-                      rb.isActive ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200 opacity-60'
+                      rb.isActive ? 'bg-orange-900/20 border-orange-800' : 'bg-secondary border-border opacity-60'
                     }`}>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -879,25 +880,25 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                             {rb.label && <Badge variant="outline">{rb.label}</Badge>}
                             <PaymentStatusBadge status={rb.payments.currentMonth.status} />
                           </div>
-                          <div className="text-gray-600 mt-1">
+                          <div className="text-muted-foreground mt-1">
                             <Clock className="w-4 h-4 inline mr-1" />
                             {rb.time} ({rb.duration}hr)
                           </div>
-                          <div className="text-gray-600">
+                          <div className="text-muted-foreground">
                             {rb.court} | <span className="capitalize">{rb.sport}</span>
                           </div>
-                          <div className="text-sm text-gray-500 mt-2">
+                          <div className="text-sm text-muted-foreground mt-2">
                             Started: {format(new Date(rb.startDate), 'MMM d, yyyy')}
                             {rb.endDate && ` | Ends: ${format(new Date(rb.endDate), 'MMM d, yyyy')}`}
                           </div>
 
                           {/* Monthly breakdown */}
-                          <div className="mt-3 p-2 bg-white/70 rounded text-sm">
-                            <span className="text-gray-600">
+                          <div className="mt-3 p-2 bg-card/70 rounded text-sm">
+                            <span className="text-muted-foreground">
                               {rb.payments.currentMonth.sessionsCount} sessions &times; RM{rb.amountPerSession.toFixed(2)} = <span className="font-semibold">RM{rb.payments.currentMonth.amount.toFixed(2)}</span>
                             </span>
                             {rb.payments.currentMonth.paymentMethod && (
-                              <span className="ml-2 text-gray-400">
+                              <span className="ml-2 text-muted-foreground/70">
                                 via {rb.payments.currentMonth.paymentMethod}
                               </span>
                             )}
@@ -906,17 +907,17 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                           {/* Payment history */}
                           {rb.payments.history.length > 1 && (
                             <details className="mt-2">
-                              <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700">
+                              <summary className="text-sm text-muted-foreground cursor-pointer hover:text-foreground">
                                 Payment history ({rb.payments.history.length} months)
                               </summary>
                               <div className="mt-2 space-y-1">
                                 {rb.payments.history.map((h, i) => (
                                   <div key={i} className="flex items-center gap-2 text-sm">
-                                    <span className="text-gray-600">{monthNames[h.month]} {h.year}</span>
+                                    <span className="text-muted-foreground">{monthNames[h.month]} {h.year}</span>
                                     <PaymentStatusBadge status={h.status} />
                                     <span className="font-medium">RM{h.totalAmount.toFixed(2)}</span>
                                     {h.paidAt && (
-                                      <span className="text-gray-400 text-xs">
+                                      <span className="text-muted-foreground/70 text-xs">
                                         paid {format(new Date(h.paidAt), 'MMM d')}
                                       </span>
                                     )}
@@ -929,7 +930,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
                         <div className="text-right ml-4">
                           <div className="text-2xl font-bold">RM{rb.amountPerSession.toFixed(2)}</div>
-                          <div className="text-sm text-gray-500">per session</div>
+                          <div className="text-sm text-muted-foreground">per session</div>
                           {rb.isActive && rb.payments.currentMonth.status !== 'paid' && (
                             <Button
                               size="sm"
@@ -958,31 +959,31 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
             </CardHeader>
             <CardContent>
               {lessonsTimeline.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No lessons found</p>
+                <p className="text-muted-foreground text-center py-8">No lessons found</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-gray-100">
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Date</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Time</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Type</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Court</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Duration</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Status</th>
-                        <th className="px-4 py-2 text-right text-sm font-medium text-gray-700">Price</th>
+                      <tr className="bg-secondary">
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Date</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Time</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Type</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Court</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Duration</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-muted-foreground">Status</th>
+                        <th className="px-4 py-2 text-right text-sm font-medium text-muted-foreground">Price</th>
                       </tr>
                     </thead>
                     <tbody>
                       {lessonsTimeline.map((lesson) => (
-                        <tr key={lesson.id} className="border-b hover:bg-gray-50">
+                        <tr key={lesson.id} className="border-b border-border hover:bg-card">
                           <td className="px-4 py-3">{format(new Date(lesson.date), 'MMM d, yyyy')}</td>
-                          <td className="px-4 py-3 text-gray-600">{lesson.time}</td>
+                          <td className="px-4 py-3 text-muted-foreground">{lesson.time}</td>
                           <td className="px-4 py-3">
                             <Badge variant="outline">{lesson.type.replace('-', ' ')}</Badge>
                           </td>
                           <td className="px-4 py-3">{lesson.court}</td>
-                          <td className="px-4 py-3 text-gray-600">{lesson.duration}hr</td>
+                          <td className="px-4 py-3 text-muted-foreground">{lesson.duration}hr</td>
                           <td className="px-4 py-3">
                             {lesson.status === 'completed' && (
                               <Badge className="bg-green-600">Completed</Badge>
@@ -1013,14 +1014,14 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
             </CardHeader>
             <CardContent>
               {paymentHistory.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No payment history</p>
+                <p className="text-muted-foreground text-center py-8">No payment history</p>
               ) : (
                 <div className="space-y-4">
                   {paymentHistory.map((payment) => (
                     <div key={payment.id} className={`p-4 rounded-lg border ${
-                      payment.status === 'paid' ? 'bg-green-50 border-green-200' :
-                      payment.status === 'partial' ? 'bg-yellow-50 border-yellow-200' :
-                      'bg-red-50 border-red-200'
+                      payment.status === 'paid' ? 'bg-green-900/20 border-green-800' :
+                      payment.status === 'partial' ? 'bg-yellow-900/20 border-yellow-800' :
+                      'bg-red-900/20 border-red-800'
                     }`}>
                       <div className="flex items-start justify-between">
                         <div>
@@ -1037,9 +1038,9 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                           {payment.transactions.length > 0 && (
                             <div className="mt-2 space-y-1">
                               {payment.transactions.map((t) => (
-                                <div key={t.id} className="text-sm text-gray-600">
+                                <div key={t.id} className="text-sm text-muted-foreground">
                                   {format(new Date(t.date), 'MMM d')} - RM{t.amount.toFixed(0)} via {t.method}
-                                  {t.reference && <span className="text-gray-400"> ({t.reference})</span>}
+                                  {t.reference && <span className="text-muted-foreground/70"> ({t.reference})</span>}
                                 </div>
                               ))}
                             </div>
@@ -1071,16 +1072,16 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           </DialogHeader>
           {markPaidBooking && (
             <div className="space-y-4">
-              <div className="p-3 bg-gray-50 rounded-lg">
+              <div className="p-3 bg-secondary rounded-lg">
                 <div className="font-medium">{markPaidBooking.schedule}</div>
-                <div className="text-sm text-gray-600">{markPaidBooking.time} | {markPaidBooking.court}</div>
-                <div className="text-sm text-gray-500 mt-1">
+                <div className="text-sm text-muted-foreground">{markPaidBooking.time} | {markPaidBooking.court}</div>
+                <div className="text-sm text-muted-foreground mt-1">
                   {markPaidBooking.payments.currentMonth.sessionsCount} sessions &times; RM{markPaidBooking.amountPerSession.toFixed(2)}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Payment Method</label>
                 <Select value={markPaidMethod} onValueChange={setMarkPaidMethod}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select payment method" />
@@ -1095,20 +1096,20 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Amount (RM)</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Amount (RM)</label>
                 <Input
                   type="number"
                   step="0.01"
                   value={markPaidAmount}
                   onChange={(e) => setMarkPaidAmount(e.target.value)}
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Pre-filled with calculated total. Adjust for pro-rata or discounts.
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Notes (optional)</label>
                 <Textarea
                   value={markPaidNotes}
                   onChange={(e) => setMarkPaidNotes(e.target.value)}
@@ -1137,6 +1138,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
     </div>
   )
 }

@@ -842,7 +842,7 @@ export default function BookingsContent() {
   if (status === 'loading' || !mounted) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
       </div>
     )
   }
@@ -913,7 +913,7 @@ export default function BookingsContent() {
 
               {/* Sport Filter */}
               <div className="mt-4">
-                <Label className="text-xs text-gray-500">{t('filterBySport')}</Label>
+                <Label className="text-xs text-muted-foreground">{t('filterBySport')}</Label>
                 <div className="flex gap-1 mt-1">
                   {(['all', 'badminton', 'pickleball'] as Sport[]).map((s) => (
                     <Button
@@ -958,21 +958,21 @@ export default function BookingsContent() {
               </div>
 
               {/* Operating Hours */}
-              <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="mt-4 pt-4 border-t border-border">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4 text-blue-600" />
                     <div>
-                      <p className="font-medium text-gray-900">{t('operatingHours')}</p>
-                      <p className="text-gray-500">{t('weekdays')}</p>
-                      <p className="text-gray-500">{t('weekends')}</p>
+                      <p className="font-medium text-foreground">{t('operatingHours')}</p>
+                      <p className="text-muted-foreground">{t('weekdays')}</p>
+                      <p className="text-muted-foreground">{t('weekends')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Phone className="w-4 h-4 text-blue-600" />
                     <div>
-                      <p className="font-medium text-gray-900">{t('contact')}</p>
-                      <p className="text-gray-500">011-6868 8508</p>
+                      <p className="font-medium text-foreground">{t('contact')}</p>
+                      <p className="text-muted-foreground">011-6868 8508</p>
                     </div>
                   </div>
                 </div>
@@ -997,21 +997,21 @@ export default function BookingsContent() {
             <CardContent>
               {loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+                  <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
                 </div>
               ) : viewMode === 'grid' ? (
                 /* Grid View */
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-gray-100">
-                        <th className="p-2 text-left text-sm font-medium text-gray-700 border-b">
+                      <tr className="bg-secondary">
+                        <th className="p-2 text-left text-sm font-medium text-muted-foreground border-b">
                           {t('time')}
                         </th>
                         {courts.map((court) => (
                           <th
                             key={court.id}
-                            className="p-2 text-center text-sm font-medium text-gray-700 border-b min-w-[150px]"
+                            className="p-2 text-center text-sm font-medium text-muted-foreground border-b min-w-[150px]"
                           >
                             {court.name}
                           </th>
@@ -1020,8 +1020,8 @@ export default function BookingsContent() {
                     </thead>
                     <tbody>
                       {timeSlots.map((slot, idx) => (
-                        <tr key={slot.id} className={idx % 2 === 0 ? 'bg-gray-50' : ''}>
-                          <td className="p-2 text-sm font-medium text-gray-700 border-b whitespace-nowrap">
+                        <tr key={slot.id} className={idx % 2 === 0 ? 'bg-secondary' : ''}>
+                          <td className="p-2 text-sm font-medium text-muted-foreground border-b whitespace-nowrap">
                             {formatTimeRange(slot.displayName)}
                           </td>
                           {courts.map((court) => {
@@ -1064,7 +1064,7 @@ export default function BookingsContent() {
                                     {/* Selection checkbox indicator */}
                                     {selectionMode && (
                                       <div className={`absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center ${
-                                        isSelected ? 'bg-red-500' : 'bg-gray-300'
+                                        isSelected ? 'bg-red-500' : 'bg-accent'
                                       }`}>
                                         {isSelected && <Check className="w-3 h-3 text-white" />}
                                       </div>
@@ -1090,7 +1090,7 @@ export default function BookingsContent() {
                                       )}
                                     </div>
                                     {booking.phone && (
-                                      <div className="flex items-center gap-1 text-gray-600 mt-1">
+                                      <div className="flex items-center gap-1 text-muted-foreground mt-1">
                                         <Phone className="w-3 h-3" />
                                         {booking.phone}
                                       </div>
@@ -1131,7 +1131,7 @@ export default function BookingsContent() {
                                           </>
                                         ) : (
                                           <>
-                                            <Badge className="text-[10px] px-1 py-0 bg-gray-100 text-gray-600 border-0">
+                                            <Badge className="text-[10px] px-1 py-0 bg-secondary text-muted-foreground border-0">
                                               <Banknote className="w-2.5 h-2.5 mr-0.5" />
                                               No Receipt
                                             </Badge>
@@ -1185,7 +1185,7 @@ export default function BookingsContent() {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="w-full h-16 border-dashed text-gray-400 hover:text-gray-600"
+                                    className="w-full h-16 border-dashed text-muted-foreground/70 hover:text-muted-foreground"
                                     onClick={() => openAddDialog(court.id, slot.slotTime)}
                                   >
                                     <Plus className="w-4 h-4" />
@@ -1195,7 +1195,7 @@ export default function BookingsContent() {
                             } else {
                               return (
                                 <td key={court.id} className="p-2 border-b">
-                                  <div className="h-16 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400">
+                                  <div className="h-16 bg-secondary rounded flex items-center justify-center text-xs text-muted-foreground/70">
                                     {t('filtered')}
                                   </div>
                                 </td>
@@ -1211,7 +1211,7 @@ export default function BookingsContent() {
                 /* List View */
                 <div className="space-y-3">
                   {totalBookingsForDay === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
+                    <div className="text-center py-12 text-muted-foreground">
                       {t('noBookings')}
                     </div>
                   ) : (
@@ -1243,19 +1243,19 @@ export default function BookingsContent() {
                                 {rb.sport}
                               </Badge>
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">
+                            <div className="text-sm text-muted-foreground mt-1">
                               <span className="flex items-center gap-1">
                                 <User className="w-3 h-3" />
                                 {rb.user?.name || rb.guestName || 'N/A'}
                               </span>
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">
+                            <div className="text-sm text-muted-foreground mt-1">
                               <span className="flex items-center gap-1">
                                 <Phone className="w-3 h-3" />
                                 {rb.user?.phone || rb.guestPhone || 'N/A'}
                               </span>
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">
+                            <div className="text-sm text-muted-foreground mt-1">
                               <span className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 {rb.court.name} | {rb.startTime} - {rb.endTime}
@@ -1306,13 +1306,13 @@ export default function BookingsContent() {
                                 </Badge>
                               )}
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">
+                            <div className="text-sm text-muted-foreground mt-1">
                               <span className="flex items-center gap-1">
                                 <Phone className="w-3 h-3" />
                                 {booking.guestPhone || booking.user?.phone || 'N/A'}
                               </span>
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">
+                            <div className="text-sm text-muted-foreground mt-1">
                               <span className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 {booking.court.name} | {booking.startTime} - {booking.endTime}
@@ -1365,7 +1365,7 @@ export default function BookingsContent() {
                                 </>
                               ) : (
                                 <>
-                                  <Badge className="bg-gray-100 text-gray-600 border-0 text-xs">
+                                  <Badge className="bg-secondary text-muted-foreground border-0 text-xs">
                                     <Banknote className="w-3 h-3 mr-1" />
                                     No Receipt
                                   </Badge>
@@ -1560,7 +1560,7 @@ export default function BookingsContent() {
               </div>
               {t('recurringTitle')}
             </DialogTitle>
-            <DialogDescription className="text-gray-500">
+            <DialogDescription className="text-muted-foreground">
               {t('recurringDescription')}
             </DialogDescription>
           </DialogHeader>
@@ -1570,7 +1570,7 @@ export default function BookingsContent() {
             {recurringBookings.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-semibold text-gray-900">{t('activeBookings')}</h4>
+                  <h4 className="text-sm font-semibold text-foreground">{t('activeBookings')}</h4>
                   <Badge variant="secondary" className="text-xs">
                     {recurringBookings.length} {t('active')}
                   </Badge>
@@ -1592,7 +1592,7 @@ export default function BookingsContent() {
                         }`} />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-gray-900">{rb.label || rb.sport}</span>
+                            <span className="font-medium text-foreground">{rb.label || rb.sport}</span>
                             {rb.user && (
                               <Badge className="bg-purple-100 text-purple-700 border-0 text-xs">
                                 #{rb.user.uid}
@@ -1604,25 +1604,25 @@ export default function BookingsContent() {
                               </Badge>
                             )}
                           </div>
-                          <div className="text-xs text-gray-500 flex items-center gap-2 mt-0.5">
+                          <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
                             <span>{DAYS_OF_WEEK[rb.dayOfWeek]}</span>
-                            <span className="text-gray-300">|</span>
+                            <span className="text-muted-foreground/70">|</span>
                             <span>{rb.court.name}</span>
-                            <span className="text-gray-300">|</span>
+                            <span className="text-muted-foreground/70">|</span>
                             <span>{rb.startTime} - {rb.endTime}</span>
                             {rb.user && (
                               <>
-                                <span className="text-gray-300">|</span>
+                                <span className="text-muted-foreground/70">|</span>
                                 <span className="text-purple-600">{rb.user.name}</span>
                               </>
                             )}
                             {!rb.user && rb.guestName && (
                               <>
-                                <span className="text-gray-300">|</span>
+                                <span className="text-muted-foreground/70">|</span>
                                 <span className="text-orange-600">{rb.guestName}</span>
                                 {rb.guestPhone && (
                                   <>
-                                    <span className="text-gray-300">|</span>
+                                    <span className="text-muted-foreground/70">|</span>
                                     <span className="text-orange-500">{rb.guestPhone}</span>
                                   </>
                                 )}
@@ -1635,7 +1635,7 @@ export default function BookingsContent() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+                          className="text-muted-foreground/70 hover:text-blue-600 hover:bg-blue-50"
                           onClick={() => openEditDialog(rb)}
                         >
                           <Pencil className="w-4 h-4" />
@@ -1643,7 +1643,7 @@ export default function BookingsContent() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-400 hover:text-red-600 hover:bg-red-50"
+                          className="text-muted-foreground/70 hover:text-red-600 hover:bg-red-50"
                           onClick={() => handleDeleteRecurring(rb.id)}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1656,8 +1656,8 @@ export default function BookingsContent() {
             )}
 
             {/* Add New Recurring Booking Form */}
-            <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
-              <h4 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="bg-secondary rounded-xl p-5 border border-border">
+              <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
                 <Plus className="w-4 h-4 text-blue-600" />
                 {t('addNewRecurring')}
               </h4>
@@ -1666,7 +1666,7 @@ export default function BookingsContent() {
                 {/* Label and Sport Row */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('bookingName')}</Label>
+                    <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('bookingName')}</Label>
                     <Input
                       value={recurringLabel}
                       onChange={(e) => setRecurringLabel(e.target.value)}
@@ -1675,7 +1675,7 @@ export default function BookingsContent() {
                     />
                   </div>
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('sportType')}</Label>
+                    <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('sportType')}</Label>
                     <div className="flex gap-2">
                       <Button
                         type="button"
@@ -1714,7 +1714,7 @@ export default function BookingsContent() {
                 {/* Days Selection */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <Label className="text-xs font-medium text-gray-700">{t('daysOfWeek')}</Label>
+                    <Label className="text-xs font-medium text-muted-foreground">{t('daysOfWeek')}</Label>
                     <div className="flex gap-1">
                       <Button
                         type="button"
@@ -1748,7 +1748,7 @@ export default function BookingsContent() {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="h-6 px-2 text-xs text-gray-400 hover:text-gray-600"
+                          className="h-6 px-2 text-xs text-muted-foreground/70 hover:text-muted-foreground"
                           onClick={() => setRecurringDays([])}
                         >
                           {t('clear')}
@@ -1771,7 +1771,7 @@ export default function BookingsContent() {
                         className={`py-2.5 px-1 rounded-lg text-xs font-medium transition-all ${
                           recurringDays.includes(idx)
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'bg-white border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                            : 'bg-white border border-border text-muted-foreground hover:border-blue-300 hover:text-blue-600'
                         }`}
                       >
                         {day.slice(0, 3)}
@@ -1783,7 +1783,7 @@ export default function BookingsContent() {
                 {/* Courts Selection */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <Label className="text-xs font-medium text-gray-700">{t('courts')}</Label>
+                    <Label className="text-xs font-medium text-muted-foreground">{t('courts')}</Label>
                     <div className="flex gap-1">
                       <Button
                         type="button"
@@ -1799,7 +1799,7 @@ export default function BookingsContent() {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="h-6 px-2 text-xs text-gray-400 hover:text-gray-600"
+                          className="h-6 px-2 text-xs text-muted-foreground/70 hover:text-muted-foreground"
                           onClick={() => setRecurringCourtIds([])}
                         >
                           {t('clear')}
@@ -1822,7 +1822,7 @@ export default function BookingsContent() {
                         className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                           recurringCourtIds.includes(court.id)
                             ? 'bg-blue-600 text-white shadow-sm'
-                            : 'bg-white border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                            : 'bg-white border border-border text-muted-foreground hover:border-blue-300 hover:text-blue-600'
                         }`}
                       >
                         {court.name}
@@ -1834,7 +1834,7 @@ export default function BookingsContent() {
                 {/* Time Selection Row */}
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('startTime')}</Label>
+                    <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('startTime')}</Label>
                     <Select value={recurringStartTime} onValueChange={(val) => {
                       setRecurringStartTime(val)
                       if (recurringEndTime && recurringEndTime <= val) {
@@ -1855,7 +1855,7 @@ export default function BookingsContent() {
                   </div>
 
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">
+                    <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">
                       {t('endTime')} {recurringSport === 'pickleball' && <span className="text-green-600 font-normal">({t('minHours')})</span>}
                     </Label>
                     <Select value={recurringEndTime} onValueChange={setRecurringEndTime} disabled={!recurringStartTime}>
@@ -1892,7 +1892,7 @@ export default function BookingsContent() {
                   </div>
 
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('endDate')} <span className="text-gray-400 font-normal">({t('optional')})</span></Label>
+                    <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('endDate')} <span className="text-muted-foreground/70 font-normal">({t('optional')})</span></Label>
                     <Input
                       type="date"
                       value={recurringEndDate}
@@ -1904,8 +1904,8 @@ export default function BookingsContent() {
 
                 {/* Link to User by UID (optional) */}
                 <div>
-                  <Label className="text-xs font-medium text-gray-700 mb-1.5 block">
-                    {t('linkToUser')} <span className="text-gray-400 font-normal">({t('optional')})</span>
+                  <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                    {t('linkToUser')} <span className="text-muted-foreground/70 font-normal">({t('optional')})</span>
                   </Label>
                   <div className="flex gap-2">
                     <Input
@@ -1936,7 +1936,7 @@ export default function BookingsContent() {
                           setRecurringUser(null)
                           setRecurringUserUid('')
                         }}
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-muted-foreground/70 hover:text-muted-foreground"
                       >
                         <X className="w-4 h-4" />
                       </Button>
@@ -1961,13 +1961,13 @@ export default function BookingsContent() {
 
                 {/* Guest Info (for non-registered users) */}
                 {!recurringUser && (
-                  <div className="border-t border-gray-200 pt-4">
-                    <Label className="text-xs font-medium text-gray-700 mb-3 block">
+                  <div className="border-t border-border pt-4">
+                    <Label className="text-xs font-medium text-muted-foreground mb-3 block">
                       {t('orEnterGuest')}
                     </Label>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestName')}</Label>
+                        <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('guestName')}</Label>
                         <Input
                           value={recurringGuestName}
                           onChange={(e) => setRecurringGuestName(e.target.value)}
@@ -1976,7 +1976,7 @@ export default function BookingsContent() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestPhone')}</Label>
+                        <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('guestPhone')}</Label>
                         <PhoneInput
                           value={recurringGuestPhone}
                           onChange={(value) => {
@@ -2066,7 +2066,7 @@ export default function BookingsContent() {
               </div>
               {t('editRecurring')}
             </DialogTitle>
-            <DialogDescription className="text-gray-500">
+            <DialogDescription className="text-muted-foreground">
               {t('editRecurringDescription')}
             </DialogDescription>
           </DialogHeader>
@@ -2075,7 +2075,7 @@ export default function BookingsContent() {
             {/* Label and Sport Row */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('bookingName')}</Label>
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('bookingName')}</Label>
                 <Input
                   value={recurringLabel}
                   onChange={(e) => setRecurringLabel(e.target.value)}
@@ -2083,7 +2083,7 @@ export default function BookingsContent() {
                 />
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('sportType')}</Label>
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('sportType')}</Label>
                 <div className="flex gap-2">
                   <Button
                     type="button"
@@ -2109,7 +2109,7 @@ export default function BookingsContent() {
 
             {/* Day Selection (single day for edit) */}
             <div>
-              <Label className="text-xs font-medium text-gray-700 mb-2 block">{t('dayOfWeek')}</Label>
+              <Label className="text-xs font-medium text-muted-foreground mb-2 block">{t('dayOfWeek')}</Label>
               <div className="grid grid-cols-7 gap-2">
                 {DAYS_OF_WEEK.map((day, idx) => (
                   <button
@@ -2119,7 +2119,7 @@ export default function BookingsContent() {
                     className={`py-2.5 px-1 rounded-lg text-xs font-medium transition-all ${
                       recurringDays.includes(idx)
                         ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-gray-100 border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                        : 'bg-secondary border border-border text-muted-foreground hover:border-blue-300 hover:text-blue-600'
                     }`}
                   >
                     {day.slice(0, 3)}
@@ -2130,7 +2130,7 @@ export default function BookingsContent() {
 
             {/* Court Selection (single court for edit) */}
             <div>
-              <Label className="text-xs font-medium text-gray-700 mb-2 block">{t('court')}</Label>
+              <Label className="text-xs font-medium text-muted-foreground mb-2 block">{t('court')}</Label>
               <div className="grid grid-cols-4 gap-2">
                 {courts.map((court) => (
                   <button
@@ -2140,7 +2140,7 @@ export default function BookingsContent() {
                     className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                       recurringCourtIds.includes(court.id)
                         ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-gray-100 border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                        : 'bg-secondary border border-border text-muted-foreground hover:border-blue-300 hover:text-blue-600'
                     }`}
                   >
                     {court.name}
@@ -2152,7 +2152,7 @@ export default function BookingsContent() {
             {/* Time Selection */}
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('startTime')}</Label>
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('startTime')}</Label>
                 <Select value={recurringStartTime} onValueChange={(val) => {
                   setRecurringStartTime(val)
                   if (recurringEndTime && recurringEndTime <= val) {
@@ -2173,7 +2173,7 @@ export default function BookingsContent() {
               </div>
 
               <div>
-                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('endTime')}</Label>
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('endTime')}</Label>
                 <Select value={recurringEndTime} onValueChange={setRecurringEndTime} disabled={!recurringStartTime}>
                   <SelectTrigger>
                     <SelectValue placeholder={t('selectEnd')} />
@@ -2204,7 +2204,7 @@ export default function BookingsContent() {
               </div>
 
               <div>
-                <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('endDate')} <span className="text-gray-400 font-normal">({t('optional')})</span></Label>
+                <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('endDate')} <span className="text-muted-foreground/70 font-normal">({t('optional')})</span></Label>
                 <Input
                   type="date"
                   value={recurringEndDate}
@@ -2215,8 +2215,8 @@ export default function BookingsContent() {
 
             {/* Link to User by UID */}
             <div>
-              <Label className="text-xs font-medium text-gray-700 mb-1.5 block">
-                {t('linkToUser')} <span className="text-gray-400 font-normal">({t('optional')})</span>
+              <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                {t('linkToUser')} <span className="text-muted-foreground/70 font-normal">({t('optional')})</span>
               </Label>
               <div className="flex gap-2">
                 <Input
@@ -2247,7 +2247,7 @@ export default function BookingsContent() {
                       setRecurringUser(null)
                       setRecurringUserUid('')
                     }}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-muted-foreground/70 hover:text-muted-foreground"
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -2272,13 +2272,13 @@ export default function BookingsContent() {
 
             {/* Guest Info (for non-registered users) */}
             {!recurringUser && (
-              <div className="border-t border-gray-200 pt-4">
-                <Label className="text-xs font-medium text-gray-700 mb-3 block">
+              <div className="border-t border-border pt-4">
+                <Label className="text-xs font-medium text-muted-foreground mb-3 block">
                   {t('orEnterGuest')}
                 </Label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestName')}</Label>
+                    <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('guestName')}</Label>
                     <Input
                       value={recurringGuestName}
                       onChange={(e) => setRecurringGuestName(e.target.value)}
@@ -2286,7 +2286,7 @@ export default function BookingsContent() {
                     />
                   </div>
                   <div>
-                    <Label className="text-xs font-medium text-gray-700 mb-1.5 block">{t('guestPhone')}</Label>
+                    <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('guestPhone')}</Label>
                     <PhoneInput
                       value={recurringGuestPhone}
                       onChange={(value) => {
@@ -2386,7 +2386,7 @@ export default function BookingsContent() {
             variant="ghost"
             size="sm"
             onClick={clearSelections}
-            className="text-gray-300 hover:text-white hover:bg-gray-800"
+            className="text-muted-foreground/70 hover:text-white hover:bg-gray-800"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -2465,26 +2465,26 @@ export default function BookingsContent() {
               {/* Booking Details */}
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <span className="text-gray-500">Name:</span>
+                  <span className="text-muted-foreground">Name:</span>
                   <span className="ml-2 font-medium">{bookingToConfirmPayment.name}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Phone:</span>
+                  <span className="text-muted-foreground">Phone:</span>
                   <span className="ml-2 font-medium">{bookingToConfirmPayment.phone || 'N/A'}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Sport:</span>
+                  <span className="text-muted-foreground">Sport:</span>
                   <span className="ml-2 font-medium capitalize">{bookingToConfirmPayment.sport}</span>
                 </div>
                 {bookingToConfirmPayment.paymentMethod && (
                   <div>
-                    <span className="text-gray-500">Method:</span>
+                    <span className="text-muted-foreground">Method:</span>
                     <span className="ml-2 font-medium">{bookingToConfirmPayment.paymentMethod.toUpperCase()}</span>
                   </div>
                 )}
                 {bookingToConfirmPayment.totalAmount != null && (
                   <div>
-                    <span className="text-gray-500">Amount:</span>
+                    <span className="text-muted-foreground">Amount:</span>
                     <span className="ml-2 font-bold text-green-600">RM {bookingToConfirmPayment.totalAmount.toFixed(2)}</span>
                   </div>
                 )}
@@ -2495,7 +2495,7 @@ export default function BookingsContent() {
                 <div>
                   <p className="text-sm font-medium mb-2 flex items-center gap-2">
                     Payment Receipt
-                    <span className="text-xs text-gray-400">(Click to zoom)</span>
+                    <span className="text-xs text-muted-foreground/70">(Click to zoom)</span>
                   </p>
                   <div
                     className="relative cursor-zoom-in group"
@@ -2507,7 +2507,7 @@ export default function BookingsContent() {
                     <img
                       src={bookingToConfirmPayment.paymentScreenshotUrl}
                       alt="Payment receipt"
-                      className="max-w-full max-h-48 rounded-lg border border-gray-200 object-contain"
+                      className="max-w-full max-h-48 rounded-lg border border-border object-contain"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-lg flex items-center justify-center">
                       <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
@@ -2515,8 +2515,8 @@ export default function BookingsContent() {
                   </div>
                 </div>
               ) : (
-                <div className="p-4 bg-gray-50 rounded-lg text-center text-gray-500">
-                  <AlertCircle className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                <div className="p-4 bg-secondary rounded-lg text-center text-muted-foreground">
+                  <AlertCircle className="w-8 h-8 mx-auto mb-2 text-muted-foreground/70" />
                   No receipt uploaded
                 </div>
               )}
@@ -2595,7 +2595,7 @@ export default function BookingsContent() {
             </DialogTitle>
           </DialogHeader>
           {zoomedImageUrl && (
-            <div className="flex items-center justify-center bg-gray-100 rounded-lg p-4">
+            <div className="flex items-center justify-center bg-secondary rounded-lg p-4">
               <img
                 src={zoomedImageUrl}
                 alt="Payment receipt (zoomed)"
@@ -2686,7 +2686,7 @@ export default function BookingsContent() {
                 <div className="mt-2 p-2 bg-blue-50 rounded-lg flex items-center justify-between">
                   <div className="text-sm">
                     <p className="font-medium">{bulkEditUser.name}</p>
-                    <p className="text-gray-500">{bulkEditUser.phone}</p>
+                    <p className="text-muted-foreground">{bulkEditUser.phone}</p>
                   </div>
                   <Button
                     variant="ghost"
@@ -2705,7 +2705,7 @@ export default function BookingsContent() {
             {/* OR Guest Info */}
             {!bulkEditUser && (
               <>
-                <div className="flex items-center gap-2 text-gray-400 text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground/70 text-sm">
                   <div className="flex-1 h-px bg-gray-200" />
                   {t('or')}
                   <div className="flex-1 h-px bg-gray-200" />

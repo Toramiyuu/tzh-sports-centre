@@ -2,93 +2,140 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { MapPin, Phone, Clock, ArrowRight } from "lucide-react";
+import { MapPin, Phone, Clock, ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 // ============================================
-// HERO — Editorial, image-forward
+// HERO — Full-viewport background image, centered (Lucky Hole style)
 // ============================================
 function HeroSection() {
   const t = useTranslations("home");
 
   return (
-    <section className="pt-32 pb-20 md:pt-40 md:pb-32">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-3xl">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-neutral-900 leading-[1.1] mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-forwards">
-            {t("hero.headline")}
-          </h1>
-          <p className="text-xl md:text-2xl text-neutral-500 font-normal leading-relaxed mb-10 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-forwards">
-            {t("hero.subheadline")}
-          </p>
-          <div className="flex flex-wrap gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
-            <Link href="/booking">
-              <Button className="h-12 px-6 text-base font-medium bg-neutral-900 hover:bg-neutral-800 text-white rounded-full">
-                {t("hero.bookCourt")}
-              </Button>
-            </Link>
-            <Link href="/lessons">
-              <Button
-                variant="ghost"
-                className="h-12 px-6 text-base font-medium text-neutral-900 hover:bg-neutral-100 rounded-full"
-              >
-                {t("hero.viewLessons")}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
+    <section className="relative min-h-screen flex items-center justify-center">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/hero-bg.jpg"
+          alt="TZH Sports Centre"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+
+      {/* Content — centered */}
+      <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
+        {/* Status badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-background/80 backdrop-blur-sm mb-8 animate-in fade-in duration-700 fill-mode-forwards">
+          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          <span className="text-sm text-muted-foreground">Open now until 12:00 AM</span>
+        </div>
+
+        <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-6 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
+          Ayer Itam, Penang
+        </p>
+
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight leading-[0.95] mb-6 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
+          {t("hero.headline")}
+        </h1>
+
+        <p className="text-lg md:text-xl text-muted-foreground uppercase tracking-[0.15em] mb-4 animate-in fade-in duration-700 delay-300 fill-mode-forwards">
+          Badminton &amp; Pickleball
+        </p>
+
+        <p className="text-base text-muted-foreground mb-10 max-w-lg mx-auto animate-in fade-in duration-700 delay-400 fill-mode-forwards">
+          {t("hero.subheadline")}
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-4 animate-in fade-in duration-700 delay-500 fill-mode-forwards">
+          <Link href="/booking">
+            <Button className="h-12 px-8 text-sm font-medium uppercase tracking-wider bg-teal-500 hover:bg-teal-400 text-white rounded-sm">
+              {t("hero.bookCourt")}
+            </Button>
+          </Link>
+          <Link href="/lessons">
+            <Button
+              variant="outline"
+              className="h-12 px-8 text-sm font-medium uppercase tracking-wider border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white rounded-sm"
+            >
+              {t("hero.viewLessons")}
+            </Button>
+          </Link>
         </div>
       </div>
 
-      {/* Hero Image - full width, no overlay */}
-      <div className="mt-16 md:mt-24 animate-in fade-in zoom-in-95 duration-1000 delay-500 fill-mode-forwards">
-        <div className="max-w-7xl mx-auto px-6">
-          {/* TODO: Replace with real TZH facility photo */}
-          <div className="relative aspect-[21/9] rounded-2xl overflow-hidden bg-neutral-100">
-            <Image
-              src="/images/hero-bg.jpg"
-              alt="TZH Sports Centre"
-              fill
-              className="object-cover hover:scale-105 transition-transform duration-700"
-              priority
-            />
-          </div>
-        </div>
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-in fade-in duration-700 delay-700 fill-mode-forwards">
+        <span className="text-xs text-muted-foreground uppercase tracking-[0.2em]">Scroll</span>
+        <div className="w-px h-8 bg-teal-500/50" />
       </div>
     </section>
   );
 }
 
 // ============================================
-// STATS — Simple row of numbers
+// ABOUT — Image left + text right + stats row (Lucky Hole style)
 // ============================================
-function StatsSection() {
+function AboutSection() {
   const t = useTranslations("home");
 
-  const stats = [
-    { value: "4", label: t("hero.stat.courts") },
-    { value: "RM15", label: "Starting price per hour" },
-    { value: "4.7", label: "Google rating" },
-    { value: "12AM", label: "Open until" },
-  ];
-
   return (
-    <section className="py-16 border-t border-neutral-200">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-          {stats.map((stat, i) => (
-            <div
-              key={i}
-              className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards"
-              style={{ animationDelay: `${i * 100}ms` }}
-            >
-              <div className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-1">
-                {stat.value}
-              </div>
-              <div className="text-sm text-neutral-500">{stat.label}</div>
+    <section className="py-28 md:py-32 bg-background">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
+          {/* Image */}
+          <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
+            <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-card">
+              <Image
+                src="/images/badminton-action.jpg"
+                alt="Badminton at TZH"
+                fill
+                className="object-cover"
+              />
             </div>
-          ))}
+          </div>
+
+          {/* Content */}
+          <div className="animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
+            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+              Our Courts
+            </p>
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6">
+              Built for Players
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              TZH Sports Centre is Ayer Itam&apos;s home for badminton and pickleball — 4 professional courts with quality vinyl flooring and side-mounted lighting with zero glare.
+            </p>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              Whether you&apos;re here for a casual hit or serious training, we keep our courts clean between sessions and offer on-site racket stringing with 18+ string options.
+            </p>
+            <p className="text-muted-foreground leading-relaxed mb-10">
+              Book instantly online — no WhatsApp back-and-forth needed. Professional coaching from BAM-certified coaches also available.
+            </p>
+
+            {/* Stats row — like Lucky Hole highlights */}
+            <div className="border-t border-border pt-8 grid grid-cols-4 gap-6">
+              <div>
+                <div className="text-2xl font-semibold text-teal-500">4</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">{t("hero.stat.courts")}</div>
+              </div>
+              <div>
+                <div className="text-2xl font-semibold text-teal-500">4.7</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">Google (100+ reviews)</div>
+              </div>
+              <div>
+                <div className="text-2xl font-semibold text-teal-500">RM15</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">Starting price</div>
+              </div>
+              <div>
+                <div className="text-2xl font-semibold text-teal-500">12AM</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">Open until</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -96,42 +143,50 @@ function StatsSection() {
 }
 
 // ============================================
-// SPORTS — Asymmetric two-column
+// SPORTS — Two sport cards (image + text, alternating)
 // ============================================
 function SportsSection() {
   const t = useTranslations("home.availableSports");
 
   return (
-    <section className="py-24 md:py-32">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-28 md:py-32 bg-secondary">
+      <div className="max-w-[1200px] mx-auto px-6">
+        {/* Section header — centered, Lucky Hole style */}
+        <div className="text-center mb-16 md:mb-20">
+          <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+            What We Offer
+          </p>
+          <h2 className="text-3xl md:text-4xl font-semibold text-foreground">
+            Two Sports, One Venue
+          </h2>
+        </div>
+
         {/* Badminton */}
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center mb-24 md:mb-32">
           <div className="order-2 md:order-1 animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-4">
+            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.15em] mb-3">
               {t("badminton.courts")}
             </p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4">
+            <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
               {t("badminton.name")}
-            </h2>
-            <p className="text-lg text-neutral-500 leading-relaxed mb-6">
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-6">
               Professional courts with quality flooring and lighting. Perfect for casual games or serious training.
             </p>
-            <p className="text-2xl font-semibold text-neutral-900 mb-8">
+            <p className="text-xl font-semibold text-foreground mb-8">
               {t("badminton.price")}
             </p>
             <Link href="/booking">
               <Button
                 variant="outline"
-                className="h-11 px-6 text-sm font-medium rounded-full border-neutral-300 hover:border-neutral-900 hover:bg-transparent"
+                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white bg-transparent"
               >
-                Book badminton court
-                <ArrowRight className="ml-2 h-4 w-4" />
+                Book Court <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
           <div className="order-1 md:order-2 animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
-            {/* TODO: Replace with real TZH badminton photo */}
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-100">
+            <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-card">
               <Image
                 src="/images/badminton-action.jpg"
                 alt="Badminton court"
@@ -144,9 +199,8 @@ function SportsSection() {
 
         {/* Pickleball */}
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div className="animate-in fade-in slide-in-from-left-8 duration-700 delay-200 fill-mode-forwards">
-            {/* TODO: Replace with real TZH pickleball photo */}
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-100">
+          <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
+            <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-card">
               <Image
                 src="/images/pickleball.jpg"
                 alt="Pickleball court"
@@ -155,26 +209,25 @@ function SportsSection() {
               />
             </div>
           </div>
-          <div className="animate-in fade-in slide-in-from-right-8 duration-700 delay-200 fill-mode-forwards">
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-4">
+          <div className="animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
+            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.15em] mb-3">
               {t("pickleball.courts")}
             </p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4">
+            <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
               {t("pickleball.name")}
-            </h2>
-            <p className="text-lg text-neutral-500 leading-relaxed mb-6">
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-6">
               The fastest-growing sport in the world, now in Ayer Itam. Paddles and balls available for rent.
             </p>
-            <p className="text-2xl font-semibold text-neutral-900 mb-8">
+            <p className="text-xl font-semibold text-foreground mb-8">
               {t("pickleball.price")}
             </p>
             <Link href="/booking?sport=pickleball">
               <Button
                 variant="outline"
-                className="h-11 px-6 text-sm font-medium rounded-full border-neutral-300 hover:border-neutral-900 hover:bg-transparent"
+                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white bg-transparent"
               >
-                Book pickleball court
-                <ArrowRight className="ml-2 h-4 w-4" />
+                Book Court <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -185,80 +238,84 @@ function SportsSection() {
 }
 
 // ============================================
-// PRICING — Clean table layout
+// PRICING — Lucky Hole card style (sharp corners, olive bg)
 // ============================================
 function PricingSection() {
   const t = useTranslations("home.pricing");
 
   return (
-    <section className="py-24 md:py-32 bg-neutral-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-2xl mb-16">
-          <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4">
-            Simple, transparent pricing
+    <section className="py-28 md:py-32 bg-background">
+      <div className="max-w-[1200px] mx-auto px-6">
+        {/* Section header — centered */}
+        <div className="text-center mb-16 md:mb-20">
+          <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+            Pricing
+          </p>
+          <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
+            Simple, Transparent Rates
           </h2>
-          <p className="text-lg text-neutral-500">
+          <p className="text-muted-foreground max-w-lg mx-auto">
             {t("noHiddenFees")}
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-6">
           {/* Badminton */}
-          <div className="bg-white rounded-2xl p-8 border border-neutral-200 hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-6">
+          <div className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-teal-500 hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
+            <h3 className="text-lg font-semibold text-foreground mb-6">
               {t("badminton.title")}
             </h3>
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-baseline">
-                <span className="text-neutral-500">{t("badminton.offPeak")}</span>
-                <span className="text-2xl font-semibold text-neutral-900">RM15<span className="text-base font-normal text-neutral-400">/hr</span></span>
+                <span className="text-muted-foreground">{t("badminton.offPeak")}</span>
+                <span className="text-2xl font-semibold text-foreground">RM15<span className="text-sm font-normal text-muted-foreground">/hr</span></span>
               </div>
               <div className="flex justify-between items-baseline">
-                <span className="text-neutral-500">{t("badminton.peak")}</span>
-                <span className="text-2xl font-semibold text-neutral-900">RM18<span className="text-base font-normal text-neutral-400">/hr</span></span>
+                <span className="text-muted-foreground">{t("badminton.peak")}</span>
+                <span className="text-2xl font-semibold text-foreground">RM18<span className="text-sm font-normal text-muted-foreground">/hr</span></span>
               </div>
             </div>
-            <Link href="/booking" className="text-sm font-medium text-neutral-900 hover:text-neutral-600 inline-flex items-center">
+            <Link href="/booking" className="text-sm font-medium text-teal-500 hover:text-teal-400 uppercase tracking-wider inline-flex items-center">
               Book now <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
 
           {/* Pickleball */}
-          <div className="bg-white rounded-2xl p-8 border border-neutral-200 hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 fill-mode-forwards">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-6">
+          <div className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-teal-500 hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 fill-mode-forwards">
+            <h3 className="text-lg font-semibold text-foreground mb-6">
               {t("pickleball.title")}
             </h3>
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-baseline">
-                <span className="text-neutral-500">{t("pickleball.rate")}</span>
-                <span className="text-2xl font-semibold text-neutral-900">RM25<span className="text-base font-normal text-neutral-400">/hr</span></span>
+                <span className="text-muted-foreground">{t("pickleball.rate")}</span>
+                <span className="text-2xl font-semibold text-foreground">RM25<span className="text-sm font-normal text-muted-foreground">/hr</span></span>
               </div>
-              <p className="text-sm text-neutral-400">{t("pickleball.minimum")}</p>
+              <p className="text-sm text-muted-foreground">{t("pickleball.minimum")}</p>
             </div>
-            <Link href="/booking?sport=pickleball" className="text-sm font-medium text-neutral-900 hover:text-neutral-600 inline-flex items-center">
+            <Link href="/booking?sport=pickleball" className="text-sm font-medium text-teal-500 hover:text-teal-400 uppercase tracking-wider inline-flex items-center">
               Book now <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
 
           {/* Coaching */}
-          <div className="bg-white rounded-2xl p-8 border border-neutral-200 hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-forwards">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-6">
+          <div className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-teal-500 hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-forwards">
+            <h3 className="text-lg font-semibold text-foreground mb-6">
               {t("coaching.title")}
             </h3>
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-baseline">
-                <span className="text-neutral-500">{t("coaching.from")}</span>
-                <span className="text-2xl font-semibold text-neutral-900">RM130</span>
+                <span className="text-muted-foreground">{t("coaching.from")}</span>
+                <span className="text-2xl font-semibold text-foreground">RM130</span>
               </div>
-              <p className="text-sm text-neutral-400">{t("coaching.note")}</p>
+              <p className="text-sm text-muted-foreground">{t("coaching.note")}</p>
             </div>
-            <Link href="/lessons" className="text-sm font-medium text-neutral-900 hover:text-neutral-600 inline-flex items-center">
+            <Link href="/lessons" className="text-sm font-medium text-teal-500 hover:text-teal-400 uppercase tracking-wider inline-flex items-center">
               View lessons <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
         </div>
 
-        <div className="mt-12 flex flex-wrap gap-8 text-sm text-neutral-500">
+        <div className="mt-12 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
             <span>{t("hours.weekdays")}</span>
@@ -274,89 +331,98 @@ function PricingSection() {
 }
 
 // ============================================
-// FEATURES — Simple list, no cards
-// ============================================
-function FeaturesSection() {
-  const t = useTranslations("home.whyChooseUs");
-
-  const features = [
-    { title: t("dualSport.title"), desc: t("dualSport.desc") },
-    { title: t("bookOnline.title"), desc: t("bookOnline.desc") },
-    { title: t("playerServices.title"), desc: t("playerServices.desc") },
-    { title: t("facilities.title"), desc: t("facilities.desc") },
-  ];
-
-  return (
-    <section className="py-24 md:py-32">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-16 md:gap-24">
-          <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
-            <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4">
-              {t("title")}
-            </h2>
-            <p className="text-lg text-neutral-500 mb-8">
-              {t("subtitle")}
-            </p>
-            <Link href="/booking">
-              <Button className="h-11 px-6 text-sm font-medium bg-neutral-900 hover:bg-neutral-800 text-white rounded-full">
-                {t("cta")}
-              </Button>
-            </Link>
-          </div>
-          <div className="space-y-10">
-            {features.map((feature, i) => (
-              <div
-                key={i}
-                className="animate-in fade-in slide-in-from-right-4 duration-500 fill-mode-forwards"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-neutral-500 leading-relaxed">
-                  {feature.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
-// REVIEWS — Minimal, quote-focused
+// REVIEWS — 4 review cards grid (Lucky Hole testimonials style)
 // ============================================
 function ReviewsSection() {
   const t = useTranslations("home.googleReviews");
 
+  const reviews = [
+    {
+      text: "So hot but fun as hell! The courts are well-maintained and the booking system is super convenient. Love that it's open till midnight.",
+      author: "Ying Jie Teoh",
+      time: t("review1Time"),
+      stars: 5,
+    },
+    {
+      text: "Best badminton courts in Ayer Itam. Clean courts, good lighting with no glare, and the prices are very reasonable. Will come back!",
+      author: "Wei Liang C.",
+      time: "3 weeks ago",
+      stars: 5,
+    },
+    {
+      text: "Tried pickleball here for the first time — great experience. Paddles available for rent and the staff are friendly. Easy online booking too.",
+      author: "Sarah L.",
+      time: "a month ago",
+      stars: 5,
+    },
+    {
+      text: "Good facility with quality flooring. The coaching sessions are worth it — Coach is patient and knowledgeable. Racket stringing service is a nice bonus.",
+      author: "Marcus T.",
+      time: "2 months ago",
+      stars: 4,
+    },
+  ];
+
   return (
-    <section className="py-24 md:py-32 bg-neutral-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-3xl mx-auto text-center animate-in fade-in duration-1000 fill-mode-forwards">
-          <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-6">
+    <section className="py-28 md:py-32 bg-secondary">
+      <div className="max-w-[1200px] mx-auto px-6">
+        {/* Section header */}
+        <div className="text-center mb-16 md:mb-20 animate-in fade-in duration-700 fill-mode-forwards">
+          <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
             {t("subtitle")}
           </p>
-          <blockquote className="text-2xl md:text-3xl font-medium text-neutral-900 leading-relaxed mb-8">
-            "{t("review1")}"
-          </blockquote>
-          <div className="text-neutral-500">
-            <span className="font-medium text-neutral-900">Ying Jie Teoh</span>
-            <span className="mx-2">·</span>
-            <span>{t("review1Time")}</span>
-          </div>
+          <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-3">
+            Guest Reviews
+          </h2>
+          <p className="text-muted-foreground">
+            Rated <span className="text-teal-500 font-semibold">4.7</span> on Google &middot; 100+ reviews
+          </p>
         </div>
 
-        <div className="mt-16 text-center animate-in fade-in duration-700 delay-300 fill-mode-forwards">
+        {/* Review cards grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {reviews.map((review, i) => (
+            <div
+              key={i}
+              className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-teal-500 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards"
+              style={{ animationDelay: `${i * 100}ms` }}
+            >
+              {/* Stars */}
+              <div className="flex gap-1 mb-4">
+                {Array.from({ length: 5 }).map((_, j) => (
+                  <Star
+                    key={j}
+                    className={`h-4 w-4 ${j < review.stars ? "fill-teal-500 text-teal-500" : "fill-[#353828] text-[#353828]"}`}
+                  />
+                ))}
+              </div>
+
+              {/* Quote */}
+              <p className="text-foreground text-sm italic leading-relaxed mb-6">
+                &ldquo;{review.text}&rdquo;
+              </p>
+
+              {/* Author */}
+              <div>
+                <span className="text-foreground text-sm font-medium">{review.author}</span>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[10px] font-medium bg-teal-500/15 text-teal-400 px-2 py-0.5 rounded-sm uppercase tracking-wider">Google</span>
+                  <span className="text-muted-foreground text-xs">{review.time}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* View all link */}
+        <div className="mt-12 text-center animate-in fade-in duration-700 delay-300 fill-mode-forwards">
           <a
             href="https://maps.app.goo.gl/6id7KLMbwohP7o9J6"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-neutral-900 hover:text-neutral-600 inline-flex items-center"
+            className="text-sm font-medium text-teal-500 hover:text-teal-400 uppercase tracking-wider inline-flex items-center"
           >
-            {t("viewOnGoogle")}
-            <ArrowRight className="ml-1 h-4 w-4" />
+            {t("viewOnGoogle")} <ArrowRight className="ml-1 h-4 w-4" />
           </a>
         </div>
       </div>
@@ -371,12 +437,11 @@ function StringingSection() {
   const t = useTranslations("home.stringingPromo");
 
   return (
-    <section className="py-24 md:py-32">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-28 md:py-32 bg-background">
+      <div className="max-w-[1200px] mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
-            {/* TODO: Replace with real TZH stringing photo */}
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-100">
+            <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-card">
               <Image
                 src="/images/strings-bg.jpg"
                 alt="Racket stringing"
@@ -386,22 +451,21 @@ function StringingSection() {
             </div>
           </div>
           <div className="animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-4">
-              Professional service
+            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+              Professional Service
             </p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
               {t("title")}
             </h2>
-            <p className="text-lg text-neutral-500 leading-relaxed mb-8">
+            <p className="text-muted-foreground leading-relaxed mb-8">
               {t("description")}
             </p>
             <Link href="/stringing">
               <Button
                 variant="outline"
-                className="h-11 px-6 text-sm font-medium rounded-full border-neutral-300 hover:border-neutral-900 hover:bg-transparent"
+                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white bg-transparent"
               >
-                {t("cta")}
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {t("cta")} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -412,27 +476,30 @@ function StringingSection() {
 }
 
 // ============================================
-// LOCATION — Clean two-column
+// LOCATION — Two column with map
 // ============================================
 function LocationSection() {
   const t = useTranslations("home.location");
 
   return (
-    <section className="py-24 md:py-32 bg-neutral-900 text-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-28 md:py-32 bg-secondary">
+      <div className="max-w-[1200px] mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-12 md:gap-20">
           <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
-            <h2 className="text-3xl md:text-4xl font-semibold mb-8">
+            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+              Find Us
+            </p>
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-10">
               {t("title")}
             </h2>
 
             <div className="space-y-8">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <MapPin className="h-5 w-5 text-neutral-400" />
-                  <h3 className="font-medium">{t("address.title")}</h3>
+                  <MapPin className="h-5 w-5 text-teal-500" />
+                  <h3 className="font-medium text-foreground">{t("address.title")}</h3>
                 </div>
-                <p className="text-neutral-400 ml-8">
+                <p className="text-muted-foreground ml-8">
                   {t("address.line1")}<br />
                   {t("address.line2")}
                 </p>
@@ -440,7 +507,7 @@ function LocationSection() {
                   href="https://maps.app.goo.gl/xmtbgwLbfGoEUDWA9"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium text-white hover:text-neutral-300 ml-8 mt-2 inline-flex items-center"
+                  className="text-sm font-medium text-teal-500 hover:text-teal-400 ml-8 mt-2 inline-flex items-center"
                 >
                   {t("address.directions")} <ArrowRight className="ml-1 h-4 w-4" />
                 </a>
@@ -448,10 +515,10 @@ function LocationSection() {
 
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <Clock className="h-5 w-5 text-neutral-400" />
-                  <h3 className="font-medium">{t("hours.title")}</h3>
+                  <Clock className="h-5 w-5 text-teal-500" />
+                  <h3 className="font-medium text-foreground">{t("hours.title")}</h3>
                 </div>
-                <p className="text-neutral-400 ml-8">
+                <p className="text-muted-foreground ml-8">
                   {t("hours.weekdays")}<br />
                   {t("hours.weekends")}
                 </p>
@@ -459,18 +526,18 @@ function LocationSection() {
 
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <Phone className="h-5 w-5 text-neutral-400" />
-                  <h3 className="font-medium">{t("contact.title")}</h3>
+                  <Phone className="h-5 w-5 text-teal-500" />
+                  <h3 className="font-medium text-foreground">{t("contact.title")}</h3>
                 </div>
-                <p className="text-neutral-400 ml-8">
-                  {t("contact.bookingsLabel")} <a href="tel:+60116868508" className="text-white hover:text-neutral-300">011-6868 8508</a><br />
-                  {t("contact.lessonsLabel")} <a href="tel:+60117575508" className="text-white hover:text-neutral-300">011-7575 8508</a>
+                <p className="text-muted-foreground ml-8">
+                  {t("contact.bookingsLabel")} <a href="tel:+60116868508" className="text-foreground hover:text-teal-500 transition-colors">011-6868 8508</a><br />
+                  {t("contact.lessonsLabel")} <a href="tel:+60117575508" className="text-foreground hover:text-teal-500 transition-colors">011-7575 8508</a>
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-2xl overflow-hidden h-80 md:h-auto animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
+          <div className="rounded-sm overflow-hidden h-80 md:h-auto animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1986.0259229585!2d100.29758!3d5.4090748!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x304ac300162c75fd%3A0x65461617c304bf30!2sTZH%20Badminton%20Academy!5e0!3m2!1sen!2smy!4v1705000000000"
               width="100%"
@@ -492,12 +559,11 @@ function LocationSection() {
 // ============================================
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <HeroSection />
-      <StatsSection />
+      <AboutSection />
       <SportsSection />
       <PricingSection />
-      <FeaturesSection />
       <ReviewsSection />
       <StringingSection />
       <LocationSection />

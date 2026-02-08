@@ -82,7 +82,7 @@ function StringCard({
     >
       <CardContent className="p-0">
         {/* Image Container - shows front or back based on hover */}
-        <div className="h-40 relative bg-neutral-50 rounded-t-lg overflow-hidden">
+        <div className="h-40 relative bg-secondary rounded-t-lg overflow-hidden">
           {!isHovered ? (
             // Front - Product Image
             string.image ? (
@@ -109,7 +109,7 @@ function StringCard({
             )
           ) : (
             // Back - Stats/Specifications
-            <div className="h-full w-full bg-neutral-100 flex items-center justify-center">
+            <div className="h-full w-full bg-card flex items-center justify-center">
               {string.backImage ? (
                 <img
                   src={string.backImage}
@@ -120,18 +120,18 @@ function StringCard({
                     target.style.display = 'none'
                     target.parentElement!.innerHTML = `
                       <div class="text-center p-4">
-                        <p class="text-sm font-semibold text-neutral-700">${string.fullName}</p>
-                        <p class="text-xs text-neutral-500 mt-1">${string.gauge || ''}</p>
-                        <p class="text-xs text-neutral-500">${string.type || ''}</p>
+                        <p class="text-sm font-semibold text-foreground">${string.fullName}</p>
+                        <p class="text-xs text-muted-foreground mt-1">${string.gauge || ''}</p>
+                        <p class="text-xs text-muted-foreground">${string.type || ''}</p>
                       </div>
                     `
                   }}
                 />
               ) : (
                 <div className="text-center p-4">
-                  <p className="text-sm font-semibold text-neutral-700">{string.fullName}</p>
-                  <p className="text-xs text-neutral-500 mt-1">{string.gauge}</p>
-                  <p className="text-xs text-neutral-500 capitalize">{string.type}</p>
+                  <p className="text-sm font-semibold text-foreground">{string.fullName}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{string.gauge}</p>
+                  <p className="text-xs text-muted-foreground capitalize">{string.type}</p>
                 </div>
               )}
             </div>
@@ -141,7 +141,7 @@ function StringCard({
         <div className="p-4">
           <div className="flex items-start justify-between mb-2">
             <div>
-              <p className="text-xs text-neutral-500 uppercase tracking-wide">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">
                 {string.brand}
               </p>
               <h3 className="font-semibold text-lg">{string.name}</h3>
@@ -154,7 +154,7 @@ function StringCard({
           </div>
 
           {string.description && (
-            <p className="text-sm text-neutral-600 mb-3 line-clamp-2">
+            <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
               {string.description}
             </p>
           )}
@@ -172,7 +172,7 @@ function StringCard({
                   />
                 ))}
               </div>
-              <span className="text-xs text-neutral-500 ml-1">
+              <span className="text-xs text-muted-foreground ml-1">
                 {availableColors.length} {colorsAvailableLabel}
               </span>
             </div>
@@ -180,19 +180,19 @@ function StringCard({
 
           <div className="flex items-center justify-between">
             <div>
-              <span className={`text-2xl font-bold ${isInStock ? 'text-neutral-900' : 'text-neutral-400'}`}>
+              <span className={`text-2xl font-bold ${isInStock ? 'text-foreground' : 'text-muted-foreground'}`}>
                 RM{string.price}
               </span>
-              <span className="text-sm text-neutral-500 ml-1">
+              <span className="text-sm text-muted-foreground ml-1">
                 {perRacketLabel}
               </span>
             </div>
             {isInStock ? (
-              <Button size="sm" className="bg-neutral-900 hover:bg-neutral-800 rounded-full">
+              <Button size="sm" className="bg-teal-500 hover:bg-teal-400 rounded-full">
                 {selectLabel}
               </Button>
             ) : (
-              <Badge className="bg-neutral-100 text-neutral-500 px-3 py-1">
+              <Badge className="bg-card text-muted-foreground px-3 py-1">
                 {soldOutLabel}
               </Badge>
             )}
@@ -303,21 +303,21 @@ export default function StringingPage() {
     <div className="space-y-6">
       {/* Search */}
       <div className="space-y-2">
-        <Label>{t('catalog.search')}</Label>
+        <Label className="text-muted-foreground">{t('catalog.search')}</Label>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder={t('catalog.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10"
+            className="pl-10 bg-secondary border-border text-foreground placeholder:text-muted-foreground/50"
           />
         </div>
       </div>
 
       {/* Brand Filter */}
       <div className="space-y-3">
-        <Label>{t('catalog.brand')}</Label>
+        <Label className="text-muted-foreground">{t('catalog.brand')}</Label>
         <div className="space-y-2">
           {brands.map((brand) => (
             <div key={brand} className="flex items-center space-x-2">
@@ -325,10 +325,11 @@ export default function StringingPage() {
                 id={`brand-${brand}`}
                 checked={selectedBrands.includes(brand)}
                 onCheckedChange={() => handleBrandToggle(brand)}
+                className="border-border data-[state=checked]:bg-teal-500 data-[state=checked]:border-teal-500"
               />
               <label
                 htmlFor={`brand-${brand}`}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 text-foreground"
               >
                 <div
                   className="w-3 h-3 rounded-full"
@@ -343,7 +344,7 @@ export default function StringingPage() {
 
       {/* Price Range */}
       <div className="space-y-3">
-        <Label>{t('catalog.priceRange')}</Label>
+        <Label className="text-muted-foreground">{t('catalog.priceRange')}</Label>
         <div className="px-2">
           <Slider
             value={priceRange}
@@ -353,7 +354,7 @@ export default function StringingPage() {
             step={1}
             className="w-full"
           />
-          <div className="flex justify-between mt-2 text-sm text-neutral-600">
+          <div className="flex justify-between mt-2 text-sm text-muted-foreground">
             <span>RM{priceRange[0]}</span>
             <span>RM{priceRange[1]}</span>
           </div>
@@ -365,7 +366,7 @@ export default function StringingPage() {
         <Button
           variant="outline"
           onClick={clearFilters}
-          className="w-full"
+          className="w-full border-border text-foreground hover:bg-secondary"
         >
           <X className="w-4 h-4 mr-2" />
           {t('catalog.clearFilters')}
@@ -377,27 +378,27 @@ export default function StringingPage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="pt-32 pb-12 md:pt-40 md:pb-16 bg-white">
+      <section className="pt-32 pb-12 md:pt-40 md:pb-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
+            <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
               Professional Service
             </p>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 tracking-tight leading-[1.1] mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight leading-[1.1] mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
               {t('title')}
             </h1>
-            <p className="text-lg text-neutral-500 mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">
+            <p className="text-lg text-muted-foreground mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">
               {t('subtitle')}
             </p>
             <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
               <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="bg-neutral-900 text-white hover:bg-neutral-800 rounded-full h-12 px-6">
+                <Button size="lg" className="bg-teal-500 text-white hover:bg-teal-400 rounded-full h-12 px-6">
                   <Phone className="w-5 h-5 mr-2" />
                   WhatsApp
                 </Button>
               </a>
               <Link href="/stringing/track">
-                <Button size="lg" variant="outline" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50 rounded-full h-12 px-6">
+                <Button size="lg" variant="outline" className="border-border text-foreground hover:bg-secondary rounded-full h-12 px-6">
                   <PackageSearch className="w-5 h-5 mr-2" />
                   Track Order
                 </Button>
@@ -408,13 +409,13 @@ export default function StringingPage() {
       </section>
 
       {/* Main Content */}
-      <div className="bg-neutral-50 py-8">
+      <div className="bg-secondary py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex gap-8">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="sticky top-24 bg-white rounded-2xl border border-neutral-200 p-6">
-              <h2 className="font-semibold text-lg text-neutral-900 mb-4">{t('catalog.filters')}</h2>
+            <div className="sticky top-24 bg-background rounded-2xl border border-border p-6">
+              <h2 className="font-semibold text-lg text-foreground mb-4">{t('catalog.filters')}</h2>
               {filtersContent}
             </div>
           </aside>
@@ -425,19 +426,19 @@ export default function StringingPage() {
             <div className="lg:hidden mb-4">
               <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full border-border text-foreground hover:bg-card">
                     <Filter className="w-4 h-4 mr-2" />
                     {t('catalog.filters')}
                     {(selectedBrands.length > 0 || search) && (
-                      <Badge variant="secondary" className="ml-2">
+                      <Badge variant="secondary" className="ml-2 bg-teal-500 text-white">
                         {selectedBrands.length + (search ? 1 : 0)}
                       </Badge>
                     )}
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-80">
+                <SheetContent side="left" className="w-80 bg-background border-border">
                   <SheetHeader>
-                    <SheetTitle>{t('catalog.filters')}</SheetTitle>
+                    <SheetTitle className="text-foreground">{t('catalog.filters')}</SheetTitle>
                   </SheetHeader>
                   <div className="mt-6">
                     {filtersContent}
@@ -447,14 +448,14 @@ export default function StringingPage() {
             </div>
 
             {/* Results Count */}
-            <div className="mb-4 text-sm text-neutral-600">
+            <div className="mb-4 text-sm text-muted-foreground">
               {t('catalog.showingResults', { count: filteredStrings.length })}
             </div>
 
             {/* String Grid */}
             {filteredStrings.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-neutral-500">{t('catalog.noResults')}</p>
+                <p className="text-muted-foreground">{t('catalog.noResults')}</p>
                 <Button
                   variant="link"
                   onClick={clearFilters}
@@ -510,18 +511,18 @@ export default function StringingPage() {
                   onClick={() => setSelectedColor(colorOption.color)}
                   className={`relative flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
                     selectedColor === colorOption.color
-                      ? 'border-neutral-900 bg-neutral-50'
-                      : 'border-neutral-200 hover:border-neutral-300'
+                      ? 'border-teal-500 bg-secondary'
+                      : 'border-border hover:border-border'
                   }`}
                 >
                   <div
-                    className="w-10 h-10 rounded-full border-2 border-neutral-200 shadow-sm"
+                    className="w-10 h-10 rounded-full border-2 border-border shadow-sm"
                     style={{ backgroundColor: colorOption.color.toLowerCase() }}
                   />
-                  <span className="text-sm font-medium text-neutral-700">{colorOption.color}</span>
+                  <span className="text-sm font-medium text-foreground">{colorOption.color}</span>
                   {selectedColor === colorOption.color && (
                     <div className="absolute top-1 right-1">
-                      <Check className="w-4 h-4 text-neutral-900" />
+                      <Check className="w-4 h-4 text-foreground" />
                     </div>
                   )}
                 </button>

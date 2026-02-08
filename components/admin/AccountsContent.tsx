@@ -373,7 +373,7 @@ export default function AccountsContent() {
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
       </div>
     )
   }
@@ -421,12 +421,12 @@ export default function AccountsContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-teal-900/50 rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-teal-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{users.length}</p>
-                <p className="text-sm text-gray-500">{t('totalUsers')}</p>
+                <p className="text-2xl font-bold text-teal-400">{users.length}</p>
+                <p className="text-sm text-muted-foreground">{t('totalUsers')}</p>
               </div>
             </div>
           </CardContent>
@@ -434,14 +434,14 @@ export default function AccountsContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-green-600" />
+              <div className="w-10 h-10 bg-green-900/50 rounded-lg flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-green-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-green-400">
                   {users.reduce((sum, u) => sum + u.totalBookings, 0)}
                 </p>
-                <p className="text-sm text-gray-500">{t('totalBookings')}</p>
+                <p className="text-sm text-muted-foreground">{t('totalBookings')}</p>
               </div>
             </div>
           </CardContent>
@@ -449,18 +449,18 @@ export default function AccountsContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-purple-600" />
+              <div className="w-10 h-10 bg-purple-900/50 rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-purple-400">
                   {users.filter(
                     (u) =>
                       new Date(u.createdAt) >
                       new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
                   ).length}
                 </p>
-                <p className="text-sm text-gray-500">{t('newThisWeek')}</p>
+                <p className="text-sm text-muted-foreground">{t('newThisWeek')}</p>
               </div>
             </div>
           </CardContent>
@@ -471,7 +471,7 @@ export default function AccountsContent() {
       <Card className="mb-6">
         <CardContent className="pt-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
             <Input
               placeholder={t('search')}
               value={searchQuery}
@@ -496,10 +496,10 @@ export default function AccountsContent() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
             </div>
           ) : filteredUsers.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               {searchQuery ? t('noUsersMatch') : t('noUsersYet')}
             </div>
           ) : (
@@ -515,10 +515,10 @@ export default function AccountsContent() {
                     key={user.id}
                     className={`rounded-lg border transition-all relative ${
                       isSelected
-                        ? 'ring-2 ring-red-500 bg-red-50'
+                        ? 'ring-2 ring-red-500 bg-red-900/30'
                         : isExpanded
-                        ? 'bg-white ring-2 ring-blue-500'
-                        : 'bg-gray-50 hover:bg-gray-100'
+                        ? 'bg-card ring-2 ring-teal-500'
+                        : 'bg-secondary border-border hover:bg-card'
                     }`}
                   >
                     {/* Selection checkbox indicator */}
@@ -530,8 +530,8 @@ export default function AccountsContent() {
                       </div>
                     )}
                     {selectionMode && !canSelect && (
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-gray-200">
-                        <ShieldCheck className="w-3 h-3 text-gray-500" />
+                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-accent">
+                        <ShieldCheck className="w-3 h-3 text-muted-foreground" />
                       </div>
                     )}
 
@@ -552,42 +552,42 @@ export default function AccountsContent() {
                             <Badge variant="outline" className="font-mono text-xs">
                               #{user.uid}
                             </Badge>
-                            <span className="font-medium text-gray-900">{user.name}</span>
+                            <span className="font-medium text-foreground">{user.name}</span>
                             {!selectionMode && (
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   openEditUid(user)
                                 }}
-                                className="text-xs font-mono text-gray-400 hover:text-blue-600 hover:bg-blue-50 px-1.5 py-0.5 rounded transition-colors flex items-center gap-1"
+                                className="text-xs font-mono text-muted-foreground/70 hover:text-teal-400 hover:bg-teal-900/30 px-1.5 py-0.5 rounded transition-colors flex items-center gap-1"
                               >
                                 #{user.uid}
                                 <Pencil className="w-3 h-3" />
                               </button>
                             )}
                             {user.isSuperAdmin && (
-                              <Badge className="bg-purple-100 text-purple-700 border-0">
+                              <Badge className="bg-purple-900/50 text-purple-400 border-0">
                                 <ShieldCheck className="w-3 h-3 mr-1" />
                                 {t('superAdmin')}
                               </Badge>
                             )}
                             {user.isAdmin && !user.isSuperAdmin && (
-                              <Badge className="bg-green-100 text-green-700 border-0">
+                              <Badge className="bg-green-900/50 text-green-400 border-0">
                                 <Shield className="w-3 h-3 mr-1" />
                                 {t('admin')}
                               </Badge>
                             )}
                           </div>
                           <div className="mt-2 space-y-1">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Mail className="w-4 h-4" />
                               {user.email}
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Phone className="w-4 h-4" />
                               {user.phone}
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground/70">
                               <Calendar className="w-4 h-4" />
                               {t('registered')} {format(new Date(user.createdAt), 'MMM d, yyyy')}
                             </div>
@@ -595,17 +595,17 @@ export default function AccountsContent() {
                         </div>
                         <div className="text-right space-y-2">
                           <div className="flex gap-2 justify-end items-center">
-                            <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                            <Badge variant="outline" className="bg-teal-900/30 text-teal-400 border-teal-800">
                               {user.totalBookings} {t('bookings')}
                             </Badge>
-                            <Badge variant="outline" className="bg-green-50 text-green-700">
+                            <Badge variant="outline" className="bg-green-900/30 text-green-400 border-green-800">
                               RM {user.totalSpent.toFixed(2)}
                             </Badge>
                             {!selectionMode && (
                               isExpanded ? (
-                                <ChevronUp className="w-5 h-5 text-gray-400" />
+                                <ChevronUp className="w-5 h-5 text-muted-foreground/70" />
                               ) : (
-                                <ChevronDown className="w-5 h-5 text-gray-400" />
+                                <ChevronDown className="w-5 h-5 text-muted-foreground/70" />
                               )
                             )}
                           </div>
@@ -659,70 +659,70 @@ export default function AccountsContent() {
 
                     {/* Expanded details */}
                     {isExpanded && !selectionMode && (
-                      <div className="border-t px-4 pb-4 space-y-4">
+                      <div className="border-t border-border px-4 pb-4 space-y-4">
                         {/* Stats summary */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
-                          <div className="bg-blue-50 rounded-lg p-3 text-center">
-                            <div className="flex items-center justify-center gap-1 text-blue-600 mb-1">
+                          <div className="bg-teal-900/30 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-teal-400 mb-1">
                               <Calendar className="w-4 h-4" />
                               <span className="text-xs font-medium">{t('totalBookings')}</span>
                             </div>
-                            <p className="text-xl font-bold text-blue-700">{user.totalBookings}</p>
+                            <p className="text-xl font-bold text-teal-300">{user.totalBookings}</p>
                           </div>
-                          <div className="bg-green-50 rounded-lg p-3 text-center">
-                            <div className="flex items-center justify-center gap-1 text-green-600 mb-1">
+                          <div className="bg-green-900/30 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-green-400 mb-1">
                               <DollarSign className="w-4 h-4" />
                               <span className="text-xs font-medium">{t('totalSpent')}</span>
                             </div>
-                            <p className="text-xl font-bold text-green-700">RM {user.totalSpent.toFixed(2)}</p>
+                            <p className="text-xl font-bold text-green-300">RM {user.totalSpent.toFixed(2)}</p>
                           </div>
-                          <div className="bg-purple-50 rounded-lg p-3 text-center">
-                            <div className="flex items-center justify-center gap-1 text-purple-600 mb-1">
+                          <div className="bg-purple-900/30 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-purple-400 mb-1">
                               <Clock className="w-4 h-4" />
                               <span className="text-xs font-medium">{t('regularBookings')}</span>
                             </div>
-                            <p className="text-xl font-bold text-purple-700">{user.regularBookings}</p>
+                            <p className="text-xl font-bold text-purple-300">{user.regularBookings}</p>
                           </div>
-                          <div className="bg-orange-50 rounded-lg p-3 text-center">
-                            <div className="flex items-center justify-center gap-1 text-orange-600 mb-1">
+                          <div className="bg-orange-900/30 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-orange-400 mb-1">
                               <Repeat className="w-4 h-4" />
                               <span className="text-xs font-medium">{t('recurringBookings')}</span>
                             </div>
-                            <p className="text-xl font-bold text-orange-700">{user.recurringBookingsCount}</p>
+                            <p className="text-xl font-bold text-orange-300">{user.recurringBookingsCount}</p>
                           </div>
                         </div>
 
                         {/* Recent bookings */}
                         {user.recentBookings && user.recentBookings.length > 0 && (
                           <div>
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">{t('recentBookings')}</h4>
-                            <div className="bg-gray-50 rounded-lg overflow-hidden">
+                            <h4 className="text-sm font-medium text-foreground mb-2">{t('recentBookings')}</h4>
+                            <div className="bg-secondary rounded-lg overflow-hidden border border-border">
                               <table className="w-full text-sm">
-                                <thead className="bg-gray-100">
+                                <thead className="bg-background">
                                   <tr>
-                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('date')}</th>
-                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('time')}</th>
-                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('court')}</th>
-                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('sport')}</th>
-                                    <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">{t('amount')}</th>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t('date')}</th>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t('time')}</th>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t('court')}</th>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t('sport')}</th>
+                                    <th className="px-3 py-2 text-right text-xs font-medium text-muted-foreground">{t('amount')}</th>
                                   </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-[#353828]">
                                   {user.recentBookings.map((booking) => (
-                                    <tr key={booking.id} className="hover:bg-gray-100">
-                                      <td className="px-3 py-2 text-gray-900">
+                                    <tr key={booking.id} className="hover:bg-card">
+                                      <td className="px-3 py-2 text-foreground">
                                         {format(new Date(booking.bookingDate), 'MMM d, yyyy')}
                                       </td>
-                                      <td className="px-3 py-2 text-gray-600">
+                                      <td className="px-3 py-2 text-muted-foreground">
                                         {booking.startTime} - {booking.endTime}
                                       </td>
-                                      <td className="px-3 py-2 text-gray-600">{booking.courtName}</td>
+                                      <td className="px-3 py-2 text-muted-foreground">{booking.courtName}</td>
                                       <td className="px-3 py-2">
                                         <Badge variant="outline" className="text-xs capitalize">
                                           {booking.sport}
                                         </Badge>
                                       </td>
-                                      <td className="px-3 py-2 text-right font-medium text-gray-900">
+                                      <td className="px-3 py-2 text-right font-medium text-foreground">
                                         RM {booking.totalAmount.toFixed(2)}
                                       </td>
                                     </tr>
@@ -736,15 +736,15 @@ export default function AccountsContent() {
                         {/* Recurring bookings */}
                         {user.recurringBookings && user.recurringBookings.length > 0 && (
                           <div>
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">{t('activeRecurring')}</h4>
+                            <h4 className="text-sm font-medium text-foreground mb-2">{t('activeRecurring')}</h4>
                             <div className="grid gap-2">
                               {user.recurringBookings.filter(rb => rb.isActive).map((rb) => (
-                                <div key={rb.id} className="bg-orange-50 border border-orange-200 rounded-lg p-3 flex items-center justify-between">
+                                <div key={rb.id} className="bg-orange-900/30 border border-orange-800 rounded-lg p-3 flex items-center justify-between">
                                   <div>
-                                    <span className="font-medium text-gray-900">
+                                    <span className="font-medium text-foreground">
                                       {dayNames[rb.dayOfWeek]}s
                                     </span>
-                                    <span className="text-gray-600 ml-2">
+                                    <span className="text-muted-foreground ml-2">
                                       {rb.startTime} - {rb.endTime}
                                     </span>
                                     {rb.label && (
@@ -753,7 +753,7 @@ export default function AccountsContent() {
                                       </Badge>
                                     )}
                                   </div>
-                                  <div className="text-sm text-gray-500">
+                                  <div className="text-sm text-muted-foreground">
                                     {rb.courtName} • {rb.sport}
                                   </div>
                                 </div>
@@ -763,7 +763,7 @@ export default function AccountsContent() {
                         )}
 
                         {/* Action buttons in expanded view */}
-                        <div className="flex gap-2 justify-end pt-2 border-t">
+                        <div className="flex gap-2 justify-end pt-2 border-t border-border">
                           <Link href={`/admin/users/${user.id}`} onClick={(e) => e.stopPropagation()}>
                             <Button
                               variant="default"
@@ -830,7 +830,7 @@ export default function AccountsContent() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Pencil className="w-5 h-5 text-blue-600" />
+              <Pencil className="w-5 h-5 text-teal-400" />
               {t('editUid')}
             </DialogTitle>
             <DialogDescription>
@@ -840,8 +840,8 @@ export default function AccountsContent() {
           {editingUser && (
             <div className="space-y-4 py-4">
               <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="font-medium text-gray-900">{editingUser.name}</p>
-                <p className="text-sm text-gray-500">{editingUser.email}</p>
+                <p className="font-medium text-foreground">{editingUser.name}</p>
+                <p className="text-sm text-muted-foreground">{editingUser.email}</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="newUid">{t('newUid')}</Label>
@@ -858,7 +858,7 @@ export default function AccountsContent() {
                 {uidError && (
                   <p className="text-sm text-red-600">{uidError}</p>
                 )}
-                <p className="text-xs text-gray-500">{t('uidHelp')}</p>
+                <p className="text-xs text-muted-foreground">{t('uidHelp')}</p>
               </div>
             </div>
           )}
@@ -887,7 +887,7 @@ export default function AccountsContent() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-blue-600" />
+              <UserPlus className="w-5 h-5 text-teal-400" />
               {t('createAccount')}
             </DialogTitle>
             <DialogDescription>
@@ -901,12 +901,12 @@ export default function AccountsContent() {
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                 <p className="font-medium text-green-800 mb-2">{t('accountCreated')}</p>
                 <div className="space-y-2 text-sm">
-                  <p><span className="text-gray-600">{t('name')}:</span> <span className="font-medium">{createdUser.name}</span></p>
-                  <p><span className="text-gray-600">{t('phone')}:</span> <span className="font-mono font-medium">{createdUser.phone}</span></p>
-                  <p><span className="text-gray-600">{t('defaultPassword')}:</span> <span className="font-mono font-medium text-blue-600">{createdUser.password}</span></p>
+                  <p><span className="text-muted-foreground">{t('name')}:</span> <span className="font-medium">{createdUser.name}</span></p>
+                  <p><span className="text-muted-foreground">{t('phone')}:</span> <span className="font-mono font-medium">{createdUser.phone}</span></p>
+                  <p><span className="text-muted-foreground">{t('defaultPassword')}:</span> <span className="font-mono font-medium text-teal-400">{createdUser.password}</span></p>
                 </div>
               </div>
-              <p className="text-xs text-gray-500">{t('shareCredentials')}</p>
+              <p className="text-xs text-muted-foreground">{t('shareCredentials')}</p>
               <DialogFooter>
                 <Button variant="outline" onClick={copyCredentials}>
                   <Copy className="w-4 h-4 mr-2" />
@@ -953,7 +953,7 @@ export default function AccountsContent() {
                     placeholder="user@example.com"
                   />
                 </div>
-                <p className="text-xs text-gray-500 bg-blue-50 p-2 rounded">
+                <p className="text-xs text-muted-foreground bg-teal-900/30 p-2 rounded">
                   {t('defaultPasswordNote')}
                 </p>
               </div>
@@ -994,10 +994,10 @@ export default function AccountsContent() {
           {deletingUser && (
             <div className="py-4">
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="font-medium text-gray-900">{deletingUser.name}</p>
-                <p className="text-sm text-gray-500">{deletingUser.email}</p>
-                <p className="text-sm text-gray-500">{deletingUser.phone}</p>
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="font-medium text-foreground">{deletingUser.name}</p>
+                <p className="text-sm text-muted-foreground">{deletingUser.email}</p>
+                <p className="text-sm text-muted-foreground">{deletingUser.phone}</p>
+                <p className="text-xs text-muted-foreground/70 mt-2">
                   {deletingUser.totalBookings} {t('bookings')}
                 </p>
               </div>
@@ -1042,7 +1042,7 @@ export default function AccountsContent() {
             variant="ghost"
             size="sm"
             onClick={clearSelections}
-            className="text-gray-300 hover:text-white hover:bg-gray-800"
+            className="text-muted-foreground/70 hover:text-foreground hover:bg-accent"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -1066,8 +1066,8 @@ export default function AccountsContent() {
               {selectedUsers.map((user) => (
                 <div key={user.id} className="flex items-center justify-between py-1 border-b border-red-100 last:border-0">
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">{user.name}</p>
-                    <p className="text-xs text-gray-500">{user.phone}</p>
+                    <p className="font-medium text-foreground text-sm">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">{user.phone}</p>
                   </div>
                   <Badge variant="outline" className="text-xs">
                     {user.totalBookings} {t('bookings')}

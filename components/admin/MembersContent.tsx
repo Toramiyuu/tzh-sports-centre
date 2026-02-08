@@ -47,9 +47,9 @@ export default function MembersContent() {
   const tAdmin = useTranslations('admin')
 
   const SKILL_LEVELS = [
-    { value: 'beginner', label: t('beginner'), color: 'bg-green-100 text-green-700' },
-    { value: 'intermediate', label: t('intermediate'), color: 'bg-blue-100 text-blue-700' },
-    { value: 'advanced', label: t('advanced'), color: 'bg-purple-100 text-purple-700' },
+    { value: 'beginner', label: t('beginner'), color: 'bg-green-900/50 text-green-400' },
+    { value: 'intermediate', label: t('intermediate'), color: 'bg-blue-900/50 text-blue-400' },
+    { value: 'advanced', label: t('advanced'), color: 'bg-purple-900/50 text-purple-400' },
   ]
 
   const [members, setMembers] = useState<User[]>([])
@@ -164,12 +164,12 @@ export default function MembersContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-teal-900/50 rounded-lg flex items-center justify-center">
+                <GraduationCap className="w-5 h-5 text-teal-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{members.length}</p>
-                <p className="text-sm text-gray-500">{t('activeMembers')}</p>
+                <p className="text-2xl font-bold text-teal-400">{members.length}</p>
+                <p className="text-sm text-muted-foreground">{t('activeMembers')}</p>
               </div>
             </div>
           </CardContent>
@@ -177,14 +177,14 @@ export default function MembersContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <Star className="w-5 h-5 text-green-600" />
+              <div className="w-10 h-10 bg-green-900/50 rounded-lg flex items-center justify-center">
+                <Star className="w-5 h-5 text-green-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-green-400">
                   {members.reduce((sum, m) => sum + m._count.lessonSessions, 0)}
                 </p>
-                <p className="text-sm text-gray-500">{t('totalLessons')}</p>
+                <p className="text-sm text-muted-foreground">{t('totalLessons')}</p>
               </div>
             </div>
           </CardContent>
@@ -192,12 +192,12 @@ export default function MembersContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-purple-600" />
+              <div className="w-10 h-10 bg-purple-900/50 rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{allUsers.length}</p>
-                <p className="text-sm text-gray-500">{t('totalRegisteredUsers')}</p>
+                <p className="text-2xl font-bold text-purple-400">{allUsers.length}</p>
+                <p className="text-sm text-muted-foreground">{t('totalRegisteredUsers')}</p>
               </div>
             </div>
           </CardContent>
@@ -258,7 +258,7 @@ export default function MembersContent() {
               <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
             </div>
           ) : filteredUsers.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               {searchQuery
                 ? t('noUsersMatch')
                 : activeTab === 'members'
@@ -272,8 +272,8 @@ export default function MembersContent() {
                   key={user.id}
                   className={`p-4 rounded-lg border transition-colors ${
                     user.isMember
-                      ? 'bg-blue-50 border-blue-200'
-                      : 'bg-gray-50 border-gray-200'
+                      ? 'bg-teal-900/20 border-teal-800'
+                      : 'bg-secondary border-border'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -282,26 +282,26 @@ export default function MembersContent() {
                         <Badge variant="outline" className="font-mono text-xs">
                           #{user.uid}
                         </Badge>
-                        <span className="font-medium text-gray-900">{user.name}</span>
-                        <span className="text-xs font-mono text-gray-400">#{user.uid}</span>
+                        <span className="font-medium text-foreground">{user.name}</span>
+                        <span className="text-xs font-mono text-muted-foreground/70">#{user.uid}</span>
                         {user.isMember && (
-                          <Badge className="bg-blue-600 text-white border-0">
+                          <Badge className="bg-teal-600 text-white border-0">
                             {t('membersTab')}
                           </Badge>
                         )}
                         {user.isMember && getSkillBadge(user.skillLevel)}
                       </div>
                       <div className="mt-2 space-y-1">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Mail className="w-4 h-4 flex-shrink-0" />
                           <span className="truncate">{user.email}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Phone className="w-4 h-4 flex-shrink-0" />
                           {user.phone}
                         </div>
                         {user.isMember && (
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <GraduationCap className="w-4 h-4 flex-shrink-0" />
                             {user._count.lessonSessions} {t('lessonsCompleted')}
                           </div>
@@ -316,7 +316,7 @@ export default function MembersContent() {
                           onValueChange={(value) => updateSkillLevel(user.id, value)}
                           disabled={updating === user.id}
                         >
-                          <SelectTrigger className="w-[140px] bg-white">
+                          <SelectTrigger className="w-[140px] bg-card border-border">
                             <SelectValue placeholder={t('skillLevel')} />
                           </SelectTrigger>
                           <SelectContent>
@@ -335,8 +335,8 @@ export default function MembersContent() {
                         onClick={() => toggleMember(user.id, user.isMember)}
                         disabled={updating === user.id}
                         className={user.isMember
-                          ? 'text-red-600 border-red-200 hover:bg-red-50'
-                          : 'bg-blue-600 hover:bg-blue-700'
+                          ? 'text-red-400 border-red-800 hover:bg-red-900/30'
+                          : 'bg-teal-600 hover:bg-teal-700'
                         }
                       >
                         {updating === user.id ? (

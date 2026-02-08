@@ -7,6 +7,7 @@ import { SessionProvider } from '@/components/SessionProvider'
 import { I18nProvider } from '@/components/I18nProvider'
 import { Toaster } from 'sonner'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
+import { LoadingScreen } from '@/components/LoadingScreen'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -112,6 +113,7 @@ export default function RootLayout({
       >
         <I18nProvider>
           <SessionProvider>
+            <LoadingScreen />
             <Toaster
               position="top-right"
               richColors

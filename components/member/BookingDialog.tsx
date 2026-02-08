@@ -119,15 +119,15 @@ export function BookingDialog({
         <div className="space-y-4 py-4">
           {/* Selected Date & Time Display */}
           {selectedDate && selectedTime && (
-            <div className="p-3 bg-neutral-50 rounded-xl border border-neutral-200">
+            <div className="p-3 bg-background rounded-xl border border-border">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 text-neutral-700">
+                <div className="flex items-center gap-2 text-foreground">
                   <Calendar className="w-4 h-4" />
                   <span className="font-medium">
                     {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-neutral-700">
+                <div className="flex items-center gap-2 text-foreground">
                   <Clock className="w-4 h-4" />
                   <span className="font-medium">{formatTime(selectedTime)}</span>
                 </div>
@@ -177,13 +177,13 @@ export function BookingDialog({
 
           {/* Price Summary */}
           {lessonType && selectedTypeConfig && (
-            <div className="p-3 bg-neutral-100 rounded-xl border border-neutral-200">
+            <div className="p-3 bg-secondary rounded-xl border border-border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-neutral-600">
+                  <p className="text-sm text-muted-foreground">
                     {tLessons(lessonType)} - {duration} {t('hours', { count: duration })}
                   </p>
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-xs text-muted-foreground">
                     Max {selectedTypeConfig.maxStudents} student(s)
                   </p>
                 </div>
@@ -193,17 +193,17 @@ export function BookingDialog({
                     if (perPersonPrice && selectedTypeConfig.maxStudents > 1) {
                       return (
                         <>
-                          <p className="text-lg font-bold text-neutral-900">
+                          <p className="text-lg font-bold text-foreground">
                             RM{perPersonPrice} / person
                           </p>
-                          <p className="text-xs text-neutral-500">
+                          <p className="text-xs text-muted-foreground">
                             (Total: RM{price})
                           </p>
                         </>
                       )
                     }
                     return (
-                      <p className="text-lg font-bold text-neutral-900">
+                      <p className="text-lg font-bold text-foreground">
                         RM{price}
                       </p>
                     )
@@ -221,7 +221,7 @@ export function BookingDialog({
           <Button
             onClick={handleSubmit}
             disabled={!lessonType || submitting}
-            className="bg-neutral-900 hover:bg-neutral-800 rounded-full"
+            className="bg-foreground hover:bg-foreground/90 rounded-full"
           >
             {submitting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
             {t('submit')}

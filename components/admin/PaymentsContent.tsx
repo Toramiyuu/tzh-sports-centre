@@ -326,11 +326,11 @@ export default function PaymentsContent() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
-        return <Badge className="bg-green-100 text-green-700 border-0"><Check className="w-3 h-3 mr-1" />Paid</Badge>
+        return <Badge className="bg-green-900/50 text-green-400 border-0"><Check className="w-3 h-3 mr-1" />Paid</Badge>
       case 'partial':
-        return <Badge className="bg-yellow-100 text-yellow-700 border-0"><Banknote className="w-3 h-3 mr-1" />Partial</Badge>
+        return <Badge className="bg-yellow-900/50 text-yellow-400 border-0"><Banknote className="w-3 h-3 mr-1" />Partial</Badge>
       case 'unpaid':
-        return <Badge className="bg-red-100 text-red-700 border-0"><Clock className="w-3 h-3 mr-1" />Unpaid</Badge>
+        return <Badge className="bg-red-900/50 text-red-400 border-0"><Clock className="w-3 h-3 mr-1" />Unpaid</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
     }
@@ -339,7 +339,7 @@ export default function PaymentsContent() {
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
       </div>
     )
   }
@@ -410,11 +410,11 @@ export default function PaymentsContent() {
           <Card>
             <CardContent className="py-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <User className="w-5 h-5 text-blue-600" />
+                <div className="p-2 bg-teal-900/30 rounded-lg">
+                  <User className="w-5 h-5 text-teal-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Customers</p>
+                  <p className="text-sm text-muted-foreground">Customers</p>
                   <p className="text-xl font-bold">{totals.usersCount}</p>
                 </div>
               </div>
@@ -423,12 +423,12 @@ export default function PaymentsContent() {
           <Card>
             <CardContent className="py-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Check className="w-5 h-5 text-green-600" />
+                <div className="p-2 bg-green-900/50 rounded-lg">
+                  <Check className="w-5 h-5 text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Paid</p>
-                  <p className="text-xl font-bold text-green-600">{totals.paidCount}</p>
+                  <p className="text-sm text-muted-foreground">Paid</p>
+                  <p className="text-xl font-bold text-green-400">{totals.paidCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -436,12 +436,12 @@ export default function PaymentsContent() {
           <Card>
             <CardContent className="py-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <Clock className="w-5 h-5 text-red-600" />
+                <div className="p-2 bg-red-900/50 rounded-lg">
+                  <Clock className="w-5 h-5 text-red-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Unpaid</p>
-                  <p className="text-xl font-bold text-red-600">{totals.unpaidCount + totals.partialCount}</p>
+                  <p className="text-sm text-muted-foreground">Unpaid</p>
+                  <p className="text-xl font-bold text-red-400">{totals.unpaidCount + totals.partialCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -449,14 +449,14 @@ export default function PaymentsContent() {
           <Card>
             <CardContent className="py-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <DollarSign className="w-5 h-5 text-purple-600" />
+                <div className="p-2 bg-purple-900/50 rounded-lg">
+                  <DollarSign className="w-5 h-5 text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Collected</p>
+                  <p className="text-sm text-muted-foreground">Collected</p>
                   <p className="text-xl font-bold">
                     RM{totals.totalPaid.toFixed(0)}
-                    <span className="text-sm text-gray-400">/{totals.totalDue.toFixed(0)}</span>
+                    <span className="text-sm text-muted-foreground/70">/{totals.totalDue.toFixed(0)}</span>
                   </p>
                 </div>
               </div>
@@ -467,10 +467,10 @@ export default function PaymentsContent() {
 
       {/* Bulk Actions */}
       {selectedUserIds.size > 0 && (
-        <Card className="bg-blue-50 border-blue-200">
+        <Card className="bg-teal-900/30 border-border">
           <CardContent className="py-3">
             <div className="flex items-center justify-between">
-              <span className="font-medium text-blue-800">
+              <span className="font-medium text-teal-400">
                 {selectedUserIds.size} customer(s) selected
               </span>
               <div className="flex gap-2">
@@ -507,10 +507,10 @@ export default function PaymentsContent() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
             </div>
           ) : users.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               No bookings found for this month
             </div>
           ) : (
@@ -520,10 +520,10 @@ export default function PaymentsContent() {
                   key={user.userId}
                   className={`p-4 rounded-lg border ${
                     user.status === 'paid'
-                      ? 'bg-green-50 border-green-200'
+                      ? 'bg-green-900/20 border-green-800/50'
                       : user.status === 'partial'
-                      ? 'bg-yellow-50 border-yellow-200'
-                      : 'bg-red-50 border-red-200'
+                      ? 'bg-yellow-900/20 border-yellow-800/50'
+                      : 'bg-red-900/20 border-red-800/50'
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -546,7 +546,7 @@ export default function PaymentsContent() {
                         {getStatusBadge(user.status)}
                       </div>
 
-                      <div className="text-sm text-gray-600 mt-2 space-y-1">
+                      <div className="text-sm text-muted-foreground mt-2 space-y-1">
                         <div className="flex items-center gap-4 flex-wrap">
                           <span className="flex items-center gap-1">
                             <Mail className="w-3 h-3" />
@@ -572,26 +572,26 @@ export default function PaymentsContent() {
                       {/* Payment info */}
                       <div className="mt-3 flex items-center gap-6">
                         <div>
-                          <span className="text-sm text-gray-500">Total Due: </span>
+                          <span className="text-sm text-muted-foreground">Total Due: </span>
                           <span className="font-bold">RM{user.totalAmount.toFixed(2)}</span>
                         </div>
                         {user.paidAmount > 0 && (
                           <div>
-                            <span className="text-sm text-gray-500">Paid: </span>
-                            <span className="font-bold text-green-600">RM{user.paidAmount.toFixed(2)}</span>
+                            <span className="text-sm text-muted-foreground">Paid: </span>
+                            <span className="font-bold text-green-400">RM{user.paidAmount.toFixed(2)}</span>
                           </div>
                         )}
                         {user.unpaidAmount > 0 && (
                           <div>
-                            <span className="text-sm text-gray-500">Unpaid: </span>
-                            <span className="font-bold text-red-600">RM{user.unpaidAmount.toFixed(2)}</span>
+                            <span className="text-sm text-muted-foreground">Unpaid: </span>
+                            <span className="font-bold text-red-400">RM{user.unpaidAmount.toFixed(2)}</span>
                           </div>
                         )}
                       </div>
 
                       {/* Recent transactions */}
                       {user.transactions.length > 0 && (
-                        <div className="mt-2 text-xs text-gray-500">
+                        <div className="mt-2 text-xs text-muted-foreground">
                           Last payment: RM{user.transactions[user.transactions.length - 1].amount.toFixed(2)} via{' '}
                           {user.transactions[user.transactions.length - 1].paymentMethod} on{' '}
                           {format(new Date(user.transactions[user.transactions.length - 1].recordedAt), 'dd MMM yyyy')}
@@ -650,11 +650,11 @@ export default function PaymentsContent() {
 
           {selectedUser && (
             <div className="py-4 space-y-4">
-              <div className="p-3 bg-gray-50 rounded-lg space-y-1">
+              <div className="p-3 bg-secondary rounded-lg space-y-1">
                 <p><strong>Customer:</strong> {selectedUser.name} (UID: {selectedUser.uid})</p>
                 <p><strong>Total Due:</strong> RM{selectedUser.totalAmount.toFixed(2)}</p>
                 <p><strong>Already Paid:</strong> RM{selectedUser.paidAmount.toFixed(2)}</p>
-                <p className="text-lg font-bold text-red-600">
+                <p className="text-lg font-bold text-red-400">
                   <strong>Remaining:</strong> RM{selectedUser.unpaidAmount.toFixed(2)}
                 </p>
               </div>
@@ -669,7 +669,7 @@ export default function PaymentsContent() {
                   placeholder={selectedUser.unpaidAmount.toFixed(2)}
                   className="mt-1"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Leave empty or enter full amount for complete payment
                 </p>
               </div>
@@ -750,30 +750,30 @@ export default function PaymentsContent() {
 
           {breakdownLoading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
             </div>
           ) : (
             <div className="space-y-4">
               {/* Summary */}
-              <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+              <div className="grid grid-cols-3 gap-4 p-4 bg-secondary rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-500">Total Bookings</p>
+                  <p className="text-sm text-muted-foreground">Total Bookings</p>
                   <p className="text-xl font-bold">{breakdown.length}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Total Hours</p>
+                  <p className="text-sm text-muted-foreground">Total Hours</p>
                   <p className="text-xl font-bold">{breakdown.reduce((s, b) => s + b.hours, 0).toFixed(1)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Total Amount</p>
+                  <p className="text-sm text-muted-foreground">Total Amount</p>
                   <p className="text-xl font-bold">RM{breakdown.reduce((s, b) => s + b.amount, 0).toFixed(2)}</p>
                 </div>
               </div>
 
               {/* Breakdown table */}
-              <div className="border rounded-lg overflow-hidden">
+              <div className="border border-border rounded-lg overflow-hidden">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-100">
+                  <thead className="bg-secondary">
                     <tr>
                       <th className="px-3 py-2 text-left">Date</th>
                       <th className="px-3 py-2 text-left">Type</th>
@@ -786,11 +786,11 @@ export default function PaymentsContent() {
                   </thead>
                   <tbody>
                     {breakdown.map((item, idx) => (
-                      <tr key={idx} className="border-t">
+                      <tr key={idx} className="border-t border-border">
                         <td className="px-3 py-2">{format(new Date(item.date), 'dd MMM')}</td>
                         <td className="px-3 py-2">
                           <Badge variant="outline" className={
-                            item.type === 'recurring' ? 'bg-purple-50 text-purple-700' : 'bg-blue-50 text-blue-700'
+                            item.type === 'recurring' ? 'bg-purple-900/30 text-purple-400' : 'bg-teal-900/30 text-teal-400'
                           }>
                             {item.type === 'recurring' ? 'Recurring' : 'One-time'}
                           </Badge>
@@ -803,7 +803,7 @@ export default function PaymentsContent() {
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="bg-gray-50 font-bold">
+                  <tfoot className="bg-secondary font-bold">
                     <tr>
                       <td colSpan={4} className="px-3 py-2">Total</td>
                       <td className="px-3 py-2 text-right">{breakdown.reduce((s, b) => s + b.hours, 0).toFixed(1)}</td>
@@ -832,9 +832,9 @@ export default function PaymentsContent() {
           </DialogHeader>
 
           <div className="py-4 space-y-4">
-            <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="p-3 bg-teal-900/30 rounded-lg">
               <p className="font-medium">Selected Customers:</p>
-              <ul className="text-sm text-gray-600 mt-2 space-y-1">
+              <ul className="text-sm text-muted-foreground mt-2 space-y-1">
                 {users
                   .filter((u) => selectedUserIds.has(u.userId))
                   .map((u) => (

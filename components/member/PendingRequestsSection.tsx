@@ -42,10 +42,10 @@ export function PendingRequestsSection({
   }
 
   return (
-    <Card className="mb-6 border border-neutral-200 rounded-2xl">
+    <Card className="mb-6 border border-border rounded-2xl">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg text-neutral-900">
-          <AlertCircle className="w-5 h-5 text-neutral-500" />
+        <CardTitle className="flex items-center gap-2 text-lg text-foreground">
+          <AlertCircle className="w-5 h-5 text-muted-foreground" />
           {t('pendingRequests')}
         </CardTitle>
       </CardHeader>
@@ -54,18 +54,18 @@ export function PendingRequestsSection({
           {requests.map((request) => (
             <div
               key={request.id}
-              className="p-4 bg-neutral-50 rounded-xl border border-neutral-200 flex items-center justify-between"
+              className="p-4 bg-background rounded-xl border border-border flex items-center justify-between"
             >
               <div>
-                <p className="font-medium text-neutral-900">
+                <p className="font-medium text-foreground">
                   {format(new Date(request.requestedDate), 'EEEE, MMMM d, yyyy')}
                 </p>
-                <p className="text-sm text-neutral-600">
+                <p className="text-sm text-muted-foreground">
                   {formatTime(request.requestedTime)} - {request.lessonType.replace(/-/g, ' ')} {t('lesson')} ({request.requestedDuration}hr)
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-neutral-900 mb-2">
+                <p className="text-sm font-medium text-foreground mb-2">
                   RM{getLessonPrice(request.lessonType, request.requestedDuration)}
                 </p>
                 <Button

@@ -79,10 +79,10 @@ function ReceiptContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-neutral-900 mx-auto mb-4" />
-          <p className="text-gray-600">Loading receipt...</p>
+          <Loader2 className="w-12 h-12 animate-spin text-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading receipt...</p>
         </div>
       </div>
     )
@@ -90,14 +90,14 @@ function ReceiptContent() {
 
   if (error || bookings.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">!</span>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Receipt Not Found</h2>
-            <p className="text-gray-600 mb-6">{error || 'Unable to load receipt'}</p>
+            <h2 className="text-xl font-bold text-foreground mb-2">Receipt Not Found</h2>
+            <p className="text-muted-foreground mb-6">{error || 'Unable to load receipt'}</p>
             <Button asChild>
               <Link href="/booking">
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -115,7 +115,7 @@ function ReceiptContent() {
   const isPaid = firstBooking.paymentStatus === 'paid'
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header with actions - hide when printing */}
         <div className="flex items-center justify-between mb-6 print:hidden">
@@ -135,12 +135,12 @@ function ReceiptContent() {
         <Card className="print:shadow-none print:border-none">
           <CardHeader className="text-center border-b">
             <div className="mx-auto mb-4">
-              <div className="w-16 h-16 bg-neutral-900 rounded-xl flex items-center justify-center text-white font-bold text-2xl mx-auto">
+              <div className="w-16 h-16 bg-foreground rounded-xl flex items-center justify-center text-white font-bold text-2xl mx-auto">
                 TZH
               </div>
             </div>
             <CardTitle className="text-2xl">TZH Sports Centre</CardTitle>
-            <p className="text-gray-500 text-sm">Booking Receipt</p>
+            <p className="text-muted-foreground text-sm">Booking Receipt</p>
           </CardHeader>
 
           <CardContent className="pt-6">
@@ -153,22 +153,22 @@ function ReceiptContent() {
             </div>
 
             {/* Customer Info */}
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <h3 className="font-medium text-gray-700 mb-3">Customer Details</h3>
+            <div className="bg-secondary rounded-lg p-4 mb-6">
+              <h3 className="font-medium text-foreground mb-3">Customer Details</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-gray-400" />
+                  <User className="w-4 h-4 text-muted-foreground" />
                   <span>{firstBooking.name}</span>
                 </div>
                 {firstBooking.email && (
                   <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-gray-400" />
+                    <Mail className="w-4 h-4 text-muted-foreground" />
                     <span>{firstBooking.email}</span>
                   </div>
                 )}
                 {firstBooking.phone && (
                   <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-gray-400" />
+                    <Phone className="w-4 h-4 text-muted-foreground" />
                     <span>{firstBooking.phone}</span>
                   </div>
                 )}
@@ -177,39 +177,39 @@ function ReceiptContent() {
 
             {/* Booking Details */}
             <div className="space-y-4 mb-6">
-              <h3 className="font-medium text-gray-700">Booking Details</h3>
+              <h3 className="font-medium text-foreground">Booking Details</h3>
               {bookings.map((booking, index) => (
                 <div
                   key={booking.id}
                   className={`p-4 rounded-lg border ${
                     booking.sport === 'badminton'
-                      ? 'bg-neutral-50 border-neutral-200'
+                      ? 'bg-background border-border'
                       : 'bg-green-50 border-green-100'
                   }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-gray-500" />
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
                         <span className="font-medium">{booking.court}</span>
                         <Badge
                           variant="outline"
                           className={
                             booking.sport === 'badminton'
-                              ? 'bg-neutral-100 text-neutral-700 border-0'
+                              ? 'bg-secondary text-foreground border-0'
                               : 'bg-green-100 text-green-700 border-0'
                           }
                         >
                           {booking.sport.charAt(0).toUpperCase() + booking.sport.slice(1)}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-2 text-gray-600 text-sm">
+                      <div className="flex items-center gap-2 text-muted-foreground text-sm">
                         <Calendar className="w-4 h-4" />
                         <span>
                           {format(new Date(booking.bookingDate), 'EEEE, MMMM d, yyyy')}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 text-gray-600 text-sm">
+                      <div className="flex items-center gap-2 text-muted-foreground text-sm">
                         <Clock className="w-4 h-4" />
                         <span>{booking.startTime} - {booking.endTime}</span>
                       </div>
@@ -231,7 +231,7 @@ function ReceiptContent() {
             </div>
 
             {/* Receipt Footer */}
-            <div className="mt-8 pt-6 border-t text-center text-sm text-gray-500">
+            <div className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground">
               <p>Receipt ID: {firstBooking.stripeSessionId?.slice(-12) || firstBooking.id.slice(-12)}</p>
               <p className="mt-1">
                 Generated on {format(new Date(), 'MMMM d, yyyy h:mm a')}
@@ -268,8 +268,8 @@ export default function ReceiptPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <Loader2 className="w-12 h-12 animate-spin text-neutral-900" />
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-foreground" />
         </div>
       }
     >

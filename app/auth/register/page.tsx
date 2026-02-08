@@ -75,23 +75,23 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 pt-20 pb-12 bg-neutral-50">
-      <Card className="w-full max-w-md bg-white border border-neutral-200 rounded-2xl">
+    <div className="min-h-screen flex items-center justify-center px-4 pt-20 pb-12 bg-background">
+      <Card className="w-full max-w-md bg-card border border-border rounded-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-semibold text-neutral-900">{t('title')}</CardTitle>
-          <CardDescription className="text-neutral-500">
+          <CardTitle className="text-2xl font-semibold text-foreground">{t('title')}</CardTitle>
+          <CardDescription className="text-muted-foreground">
             {t('subtitle')}
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm">
+              <div className="bg-red-900/30 text-red-400 p-3 rounded-xl text-sm">
                 {error}
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-neutral-700">{t('name')}</Label>
+              <Label htmlFor="name" className="text-muted-foreground">{t('name')}</Label>
               <Input
                 id="name"
                 type="text"
@@ -100,11 +100,11 @@ export default function RegisterPage() {
                 onChange={(e) => setName(e.target.value)}
                 required
                 disabled={loading}
-                className="rounded-lg border-neutral-200"
+                className="rounded-lg border-border bg-background text-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-neutral-700">{t('email')}</Label>
+              <Label htmlFor="email" className="text-muted-foreground">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -113,11 +113,11 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
-                className="rounded-lg border-neutral-200"
+                className="rounded-lg border-border bg-background text-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone" className="text-neutral-700">{t('phone')}</Label>
+              <Label htmlFor="phone" className="text-muted-foreground">{t('phone')}</Label>
               <PhoneInput
                 id="phone"
                 value={phone}
@@ -126,7 +126,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-neutral-700">{t('password')}</Label>
+              <Label htmlFor="password" className="text-muted-foreground">{t('password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -135,11 +135,11 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                className="rounded-lg border-neutral-200"
+                className="rounded-lg border-border bg-background text-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-neutral-700">{t('confirmPassword')}</Label>
+              <Label htmlFor="confirmPassword" className="text-muted-foreground">{t('confirmPassword')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -148,12 +148,12 @@ export default function RegisterPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
-                className="rounded-lg border-neutral-200"
+                className="rounded-lg border-border bg-background text-foreground"
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full bg-neutral-900 hover:bg-neutral-800 rounded-full h-11" disabled={loading}>
+            <Button type="submit" className="w-full bg-teal-500 hover:bg-teal-400 text-white rounded-full h-11" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -163,9 +163,9 @@ export default function RegisterPage() {
                 t('title')
               )}
             </Button>
-            <p className="text-sm text-neutral-500 text-center">
+            <p className="text-sm text-muted-foreground text-center">
               {t('hasAccount')}{' '}
-              <Link href="/auth/login" className="text-neutral-900 font-medium hover:underline">
+              <Link href="/auth/login" className="text-teal-400 font-medium hover:underline">
                 {t('signIn')}
               </Link>
             </p>

@@ -71,9 +71,9 @@ export function TimetableGrid({
       <div className="overflow-x-auto">
         <div className="min-w-[800px]">
           {/* Header row */}
-          <div className="grid grid-cols-8 border-b bg-neutral-50">
+          <div className="grid grid-cols-8 border-b bg-background">
             {/* Time column header */}
-            <div className="sticky left-0 z-20 bg-neutral-50 border-r p-2 text-center text-sm font-medium text-neutral-500">
+            <div className="sticky left-0 z-20 bg-background border-r p-2 text-center text-sm font-medium text-muted-foreground">
               {t('time') || 'Time'}
             </div>
             {/* Day headers */}
@@ -82,18 +82,18 @@ export function TimetableGrid({
                 key={day.dateString}
                 className={cn(
                   'p-2 text-center border-r last:border-r-0',
-                  day.isToday && 'bg-neutral-50'
+                  day.isToday && 'bg-background'
                 )}
               >
                 <div className={cn(
                   'font-medium text-sm',
-                  day.isToday ? 'text-neutral-700' : 'text-neutral-900'
+                  day.isToday ? 'text-foreground' : 'text-foreground'
                 )}>
                   {tDays(day.dayName.toLowerCase())}
                 </div>
                 <div className={cn(
                   'text-xs',
-                  day.isToday ? 'text-neutral-900' : 'text-neutral-500'
+                  day.isToday ? 'text-foreground' : 'text-muted-foreground'
                 )}>
                   {day.date.getDate()}/{day.date.getMonth() + 1}
                 </div>
@@ -106,7 +106,7 @@ export function TimetableGrid({
             {timeSlots.map((slot) => (
               <Fragment key={slot.time}>
                 {/* Time column */}
-                <div className="sticky left-0 z-10 bg-white border-r border-b p-1 text-xs text-neutral-500 text-right pr-2 flex items-center justify-end min-h-[40px]">
+                <div className="sticky left-0 z-10 bg-white border-r border-b p-1 text-xs text-muted-foreground text-right pr-2 flex items-center justify-end min-h-[40px]">
                   {slot.displayName}
                 </div>
                 {/* Day columns */}
@@ -166,30 +166,30 @@ export function TimetableGrid({
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 p-3 border-t bg-neutral-50 text-xs">
+      <div className="flex flex-wrap items-center gap-4 p-3 border-t bg-background text-xs">
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4 rounded bg-green-50 border border-green-200" />
-          <span className="text-neutral-600">{t('available')}</span>
+          <span className="text-muted-foreground">{t('available')}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded bg-neutral-100 border border-neutral-200" />
-          <span className="text-neutral-600">{t('booked')}</span>
+          <div className="w-4 h-4 rounded bg-secondary border border-border" />
+          <span className="text-muted-foreground">{t('booked')}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded bg-neutral-100 border border-neutral-300" />
-          <span className="text-neutral-600">{t('myLesson')}</span>
+          <div className="w-4 h-4 rounded bg-secondary border border-border" />
+          <span className="text-muted-foreground">{t('myLesson')}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4 rounded bg-yellow-100 border border-yellow-300" />
-          <span className="text-neutral-600">{t('myPending')}</span>
+          <span className="text-muted-foreground">{t('myPending')}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4 rounded bg-purple-100 border border-purple-300" />
-          <span className="text-neutral-600">{t('coachSuggested') || 'Coach Suggested'}</span>
+          <span className="text-muted-foreground">{t('coachSuggested') || 'Coach Suggested'}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded bg-neutral-50 border border-neutral-100" />
-          <span className="text-neutral-600">{t('unavailable')}</span>
+          <div className="w-4 h-4 rounded bg-background border border-border" />
+          <span className="text-muted-foreground">{t('unavailable')}</span>
         </div>
       </div>
 
@@ -210,9 +210,9 @@ export function TimetableGrid({
             <div className="space-y-4 py-2">
               {/* Original vs Suggested comparison */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-neutral-50 rounded-lg border">
-                  <p className="text-xs text-neutral-500 mb-1">{t('suggestionDialog.yourRequest') || 'Your request'}</p>
-                  <p className="font-medium text-neutral-400 line-through">
+                <div className="p-3 bg-background rounded-lg border">
+                  <p className="text-xs text-muted-foreground mb-1">{t('suggestionDialog.yourRequest') || 'Your request'}</p>
+                  <p className="font-medium text-muted-foreground line-through">
                     {formatTime(selectedSuggestion.originalTime)}
                   </p>
                 </div>
@@ -225,8 +225,8 @@ export function TimetableGrid({
               </div>
 
               {/* Lesson details */}
-              <div className="p-3 bg-neutral-50 rounded-lg">
-                <p className="text-sm text-neutral-600">
+              <div className="p-3 bg-background rounded-lg">
+                <p className="text-sm text-muted-foreground">
                   <span className="font-medium">{formatLessonType(selectedSuggestion.lessonType)}</span>
                   <span className="mx-2">•</span>
                   <span>{selectedSuggestion.requestedDuration} hour(s)</span>
@@ -235,8 +235,8 @@ export function TimetableGrid({
 
               {/* Coach notes if any */}
               {selectedSuggestion.adminNotes && (
-                <div className="p-3 bg-neutral-50 rounded-lg border border-blue-200">
-                  <p className="text-xs text-neutral-900 mb-1">{t('suggestionDialog.coachNote') || 'Note from coach'}</p>
+                <div className="p-3 bg-background rounded-lg border border-blue-200">
+                  <p className="text-xs text-foreground mb-1">{t('suggestionDialog.coachNote') || 'Note from coach'}</p>
                   <p className="text-sm text-blue-800">{selectedSuggestion.adminNotes}</p>
                 </div>
               )}

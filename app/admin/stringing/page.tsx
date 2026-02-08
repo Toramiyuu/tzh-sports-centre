@@ -73,10 +73,10 @@ interface StringingOrder {
 }
 
 const ORDER_STATUSES = [
-  { key: 'RECEIVED', label: 'Received', color: 'bg-blue-100 text-blue-700' },
-  { key: 'IN_PROGRESS', label: 'In Progress', color: 'bg-yellow-100 text-yellow-700' },
-  { key: 'READY', label: 'Ready', color: 'bg-green-100 text-green-700' },
-  { key: 'COLLECTED', label: 'Collected', color: 'bg-gray-100 text-gray-700' },
+  { key: 'RECEIVED', label: 'Received', color: 'bg-blue-900/50 text-blue-400' },
+  { key: 'IN_PROGRESS', label: 'In Progress', color: 'bg-yellow-900/50 text-yellow-400' },
+  { key: 'READY', label: 'Ready', color: 'bg-green-900/50 text-green-400' },
+  { key: 'COLLECTED', label: 'Collected', color: 'bg-accent text-muted-foreground' },
 ]
 
 interface Stats {
@@ -218,16 +218,16 @@ export default function AdminStringingPage() {
 
   const getStatusBadge = (order: StringingOrder) => {
     if (order.paymentStatus === 'paid') {
-      return <Badge className="bg-green-100 text-green-700">{t('status.paid')}</Badge>
+      return <Badge className="bg-green-900/50 text-green-400">{t('status.paid')}</Badge>
     }
     if (order.paymentUserConfirmed) {
       return (
-        <Badge className="bg-yellow-100 text-yellow-700">
+        <Badge className="bg-yellow-900/50 text-yellow-400">
           {t('admin.paymentConfirmed')}
         </Badge>
       )
     }
-    return <Badge className="bg-gray-100 text-gray-700">{t('status.pending')}</Badge>
+    return <Badge className="bg-accent text-muted-foreground">{t('status.pending')}</Badge>
   }
 
   const formatWhatsAppLink = (phone: string) => {
@@ -245,9 +245,9 @@ export default function AdminStringingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b">
+      <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -258,8 +258,8 @@ export default function AdminStringingPage() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{t('admin.title')}</h1>
-                <p className="text-sm text-gray-500">{t('admin.description')}</p>
+                <h1 className="text-2xl font-bold text-foreground">{t('admin.title')}</h1>
+                <p className="text-sm text-muted-foreground">{t('admin.description')}</p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -285,10 +285,10 @@ export default function AdminStringingPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">{t('admin.totalOrders')}</p>
-                  <p className="text-3xl font-bold">{stats.totalOrders}</p>
+                  <p className="text-sm text-muted-foreground">{t('admin.totalOrders')}</p>
+                  <p className="text-3xl font-bold text-teal-400">{stats.totalOrders}</p>
                 </div>
-                <Package className="w-10 h-10 text-blue-500 opacity-50" />
+                <Package className="w-10 h-10 text-teal-500 opacity-50" />
               </div>
             </CardContent>
           </Card>
@@ -296,8 +296,8 @@ export default function AdminStringingPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">{t('admin.pendingPayments')}</p>
-                  <p className="text-3xl font-bold text-yellow-600">{stats.pendingOrders}</p>
+                  <p className="text-sm text-muted-foreground">{t('admin.pendingPayments')}</p>
+                  <p className="text-3xl font-bold text-yellow-400">{stats.pendingOrders}</p>
                 </div>
                 <Clock className="w-10 h-10 text-yellow-500 opacity-50" />
               </div>
@@ -307,8 +307,8 @@ export default function AdminStringingPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">{t('admin.completedOrders')}</p>
-                  <p className="text-3xl font-bold text-green-600">{stats.paidOrders}</p>
+                  <p className="text-sm text-muted-foreground">{t('admin.completedOrders')}</p>
+                  <p className="text-3xl font-bold text-green-400">{stats.paidOrders}</p>
                 </div>
                 <CheckCircle2 className="w-10 h-10 text-green-500 opacity-50" />
               </div>
@@ -326,7 +326,7 @@ export default function AdminStringingPage() {
             </TabsList>
 
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-gray-500" />
+              <Calendar className="w-4 h-4 text-muted-foreground" />
               <Select value={timeFilter} onValueChange={setTimeFilter}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue placeholder={t('admin.timeFilter.allTime')} />
@@ -345,8 +345,8 @@ export default function AdminStringingPage() {
             {orders.length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <Wrench className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500">{t('admin.noOrders')}</p>
+                  <Wrench className="w-12 h-12 mx-auto text-muted-foreground/70 mb-4" />
+                  <p className="text-muted-foreground">{t('admin.noOrders')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -364,11 +364,11 @@ export default function AdminStringingPage() {
                           </div>
 
                           {/* Tracking Number Section */}
-                          <div className="bg-gray-50 p-3 rounded-lg">
+                          <div className="bg-secondary p-3 rounded-lg border border-border">
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-2">
-                                <Tag className="w-4 h-4 text-gray-500" />
-                                <span className="text-sm text-gray-500">Tracking #:</span>
+                                <Tag className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm text-muted-foreground">Tracking #:</span>
                                 {order.jobUid ? (
                                   <span className="font-mono font-bold text-blue-600">{order.jobUid}</span>
                                 ) : editingJobUid === order.id ? (
@@ -435,57 +435,57 @@ export default function AdminStringingPage() {
                           <div className="grid sm:grid-cols-2 gap-4 text-sm">
                             {/* Contact */}
                             <div>
-                              <p className="text-gray-500">{t('admin.customer')}</p>
+                              <p className="text-muted-foreground">{t('admin.customer')}</p>
                               <div className="flex items-center gap-2">
-                                <Phone className="w-4 h-4 text-gray-400" />
-                                <span>{order.customerPhone}</span>
+                                <Phone className="w-4 h-4 text-muted-foreground/70" />
+                                <span className="text-foreground">{order.customerPhone}</span>
                               </div>
                               {order.customerEmail && (
-                                <p className="text-gray-600">{order.customerEmail}</p>
+                                <p className="text-muted-foreground">{order.customerEmail}</p>
                               )}
                             </div>
 
                             {/* String */}
                             <div>
-                              <p className="text-gray-500">{t('admin.string')}</p>
-                              <p className="font-medium">{order.stringName}</p>
-                              <p className="text-blue-600 font-semibold">RM{order.price}</p>
+                              <p className="text-muted-foreground">{t('admin.string')}</p>
+                              <p className="font-medium text-foreground">{order.stringName}</p>
+                              <p className="text-teal-400 font-semibold">RM{order.price}</p>
                             </div>
 
                             {/* Racket */}
                             <div>
-                              <p className="text-gray-500">{t('admin.racket')}</p>
-                              <p className="font-medium">{order.racketModel}</p>
+                              <p className="text-muted-foreground">{t('admin.racket')}</p>
+                              <p className="font-medium text-foreground">{order.racketModel}</p>
                             </div>
 
                             {/* Tension */}
                             <div>
-                              <p className="text-gray-500">{t('admin.tension')}</p>
-                              <p className="font-medium">
+                              <p className="text-muted-foreground">{t('admin.tension')}</p>
+                              <p className="font-medium text-foreground">
                                 {order.tensionMain} / {order.tensionCross} lbs
                               </p>
                             </div>
 
                             {/* Pickup */}
                             <div>
-                              <p className="text-gray-500">{t('admin.pickup')}</p>
-                              <p className="font-medium">
+                              <p className="text-muted-foreground">{t('admin.pickup')}</p>
+                              <p className="font-medium text-foreground">
                                 {format(new Date(order.pickupDate), 'PPP')}
                               </p>
                             </div>
 
                             {/* Created */}
                             <div>
-                              <p className="text-gray-500">{t('admin.createdAt')}</p>
-                              <p className="font-medium">
+                              <p className="text-muted-foreground">{t('admin.createdAt')}</p>
+                              <p className="font-medium text-foreground">
                                 {format(new Date(order.createdAt), 'PPp')}
                               </p>
                             </div>
                           </div>
 
                           {order.notes && (
-                            <div className="bg-gray-50 p-3 rounded-lg">
-                              <p className="text-sm text-gray-600">{order.notes}</p>
+                            <div className="bg-secondary p-3 rounded-lg border border-border">
+                              <p className="text-sm text-muted-foreground">{order.notes}</p>
                             </div>
                           )}
                         </div>
@@ -512,7 +512,7 @@ export default function AdminStringingPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              <Button variant="outline" className="w-full bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100">
+                              <Button variant="outline" className="w-full bg-teal-900/30 border-teal-800 text-teal-400 hover:bg-teal-900/50">
                                 <Image className="w-4 h-4 mr-2" />
                                 View Receipt
                               </Button>

@@ -158,9 +158,9 @@ export function RacketTab() {
 
   if (loading) {
     return (
-      <Card className="border border-neutral-200 rounded-2xl">
+      <Card className="border border-border rounded-2xl">
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     )
@@ -169,16 +169,16 @@ export function RacketTab() {
   // If no profile exists and not editing, show setup prompt
   if (!profile && !editing) {
     return (
-      <Card className="border border-neutral-200 rounded-2xl">
+      <Card className="border border-border rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-neutral-900">
+          <CardTitle className="flex items-center gap-2 text-foreground">
             <CircleDot className="w-5 h-5" />
             {t('title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center py-8">
-          <p className="text-neutral-500 mb-4">{t('noProfile')}</p>
-          <Button onClick={() => setEditing(true)} className="bg-neutral-900 hover:bg-neutral-800 rounded-full">
+          <p className="text-muted-foreground mb-4">{t('noProfile')}</p>
+          <Button onClick={() => setEditing(true)} className="bg-foreground hover:bg-foreground/90 rounded-full">
             {t('addRacket')}
           </Button>
         </CardContent>
@@ -187,9 +187,9 @@ export function RacketTab() {
   }
 
   return (
-    <Card className="border border-neutral-200 rounded-2xl">
+    <Card className="border border-border rounded-2xl">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2 text-neutral-900">
+        <CardTitle className="flex items-center gap-2 text-foreground">
           <CircleDot className="w-5 h-5" />
           {t('title')}
         </CardTitle>
@@ -214,9 +214,9 @@ export function RacketTab() {
         <div className="grid gap-6 md:grid-cols-2">
           {/* Racket Brand */}
           <div className="space-y-2">
-            <Label htmlFor="brand" className="flex items-center justify-between text-neutral-700">
+            <Label htmlFor="brand" className="flex items-center justify-between text-foreground">
               {t('brand')}
-              <span className="text-xs text-neutral-500">{t('required')}</span>
+              <span className="text-xs text-muted-foreground">{t('required')}</span>
             </Label>
             {editing ? (
               <Input
@@ -224,18 +224,18 @@ export function RacketTab() {
                 value={formData.brand}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                 placeholder={t('brandPlaceholder')}
-                className="rounded-lg border-neutral-200"
+                className="rounded-lg border-border"
               />
             ) : (
-              <p className="text-neutral-900 py-2">{profile?.brand}</p>
+              <p className="text-foreground py-2">{profile?.brand}</p>
             )}
           </div>
 
           {/* Racket Model */}
           <div className="space-y-2">
-            <Label htmlFor="model" className="flex items-center justify-between text-neutral-700">
+            <Label htmlFor="model" className="flex items-center justify-between text-foreground">
               {t('model')}
-              <span className="text-xs text-neutral-500">{t('required')}</span>
+              <span className="text-xs text-muted-foreground">{t('required')}</span>
             </Label>
             {editing ? (
               <Input
@@ -243,25 +243,25 @@ export function RacketTab() {
                 value={formData.model}
                 onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                 placeholder={t('modelPlaceholder')}
-                className="rounded-lg border-neutral-200"
+                className="rounded-lg border-border"
               />
             ) : (
-              <p className="text-neutral-900 py-2">{profile?.model}</p>
+              <p className="text-foreground py-2">{profile?.model}</p>
             )}
           </div>
 
           {/* Racket Weight */}
           <div className="space-y-2">
-            <Label htmlFor="weight" className="flex items-center justify-between text-neutral-700">
+            <Label htmlFor="weight" className="flex items-center justify-between text-foreground">
               {t('weight')}
-              <span className="text-xs text-neutral-500">{t('required')}</span>
+              <span className="text-xs text-muted-foreground">{t('required')}</span>
             </Label>
             {editing ? (
               <Select
                 value={formData.weight}
                 onValueChange={(value) => setFormData({ ...formData, weight: value })}
               >
-                <SelectTrigger className="rounded-lg border-neutral-200">
+                <SelectTrigger className="rounded-lg border-border">
                   <SelectValue placeholder={t('weightPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -273,7 +273,7 @@ export function RacketTab() {
                 </SelectContent>
               </Select>
             ) : (
-              <p className="text-neutral-900 py-2">
+              <p className="text-foreground py-2">
                 {profile?.weight} ({getWeightGrams(profile?.weight || '')})
               </p>
             )}
@@ -281,7 +281,7 @@ export function RacketTab() {
 
           {/* Shaft Number */}
           <div className="space-y-2">
-            <Label htmlFor="shaftNumber" className="text-neutral-700">
+            <Label htmlFor="shaftNumber" className="text-foreground">
               {t('shaftNumber')}
             </Label>
             {editing ? (
@@ -290,18 +290,18 @@ export function RacketTab() {
                 value={formData.shaftNumber}
                 onChange={(e) => setFormData({ ...formData, shaftNumber: e.target.value })}
                 placeholder={t('shaftNumberPlaceholder')}
-                className="rounded-lg border-neutral-200"
+                className="rounded-lg border-border"
               />
             ) : (
-              <p className="text-neutral-900 py-2">
-                {profile?.shaftNumber || <span className="text-neutral-400">{t('notSet')}</span>}
+              <p className="text-foreground py-2">
+                {profile?.shaftNumber || <span className="text-muted-foreground">{t('notSet')}</span>}
               </p>
             )}
           </div>
 
           {/* Tension (Main x Cross) */}
           <div className="space-y-2 md:col-span-2">
-            <Label className="text-neutral-700">{t('tension')}</Label>
+            <Label className="text-foreground">{t('tension')}</Label>
             {editing ? (
               <div className="flex items-center gap-2">
                 <Input
@@ -312,9 +312,9 @@ export function RacketTab() {
                   value={formData.tensionMain}
                   onChange={(e) => setFormData({ ...formData, tensionMain: e.target.value })}
                   placeholder={t('tensionMainPlaceholder')}
-                  className="w-24 rounded-lg border-neutral-200"
+                  className="w-24 rounded-lg border-border"
                 />
-                <span className="text-neutral-500 font-medium">x</span>
+                <span className="text-muted-foreground font-medium">x</span>
                 <Input
                   id="tensionCross"
                   type="number"
@@ -323,27 +323,27 @@ export function RacketTab() {
                   value={formData.tensionCross}
                   onChange={(e) => setFormData({ ...formData, tensionCross: e.target.value })}
                   placeholder={t('tensionCrossPlaceholder')}
-                  className="w-24 rounded-lg border-neutral-200"
+                  className="w-24 rounded-lg border-border"
                 />
-                <span className="text-neutral-500">lbs</span>
+                <span className="text-muted-foreground">lbs</span>
               </div>
             ) : (
-              <p className="text-neutral-900 py-2">
+              <p className="text-foreground py-2">
                 {profile?.tensionMain && profile?.tensionCross ? (
                   `${profile.tensionMain} x ${profile.tensionCross} lbs`
                 ) : (
-                  <span className="text-neutral-400">{t('notSet')}</span>
+                  <span className="text-muted-foreground">{t('notSet')}</span>
                 )}
               </p>
             )}
-            <p className="text-xs text-neutral-500">{t('tensionHint')}</p>
+            <p className="text-xs text-muted-foreground">{t('tensionHint')}</p>
           </div>
         </div>
 
         {/* Action Buttons */}
         {editing && (
           <div className="flex gap-3 pt-4">
-            <Button onClick={handleSave} disabled={saving} className="bg-neutral-900 hover:bg-neutral-800 rounded-full">
+            <Button onClick={handleSave} disabled={saving} className="bg-foreground hover:bg-foreground/90 rounded-full">
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

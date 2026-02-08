@@ -49,22 +49,22 @@ function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md bg-white border border-neutral-200 rounded-2xl">
+    <Card className="w-full max-w-md bg-card border border-border rounded-2xl">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-semibold text-neutral-900">{t('title')}</CardTitle>
-        <CardDescription className="text-neutral-500">
+        <CardTitle className="text-2xl font-semibold text-foreground">{t('title')}</CardTitle>
+        <CardDescription className="text-muted-foreground">
           {t('subtitle')}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm">
+            <div className="bg-red-900/30 text-red-400 p-3 rounded-xl text-sm">
               {error}
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="identifier" className="text-neutral-700">{t('emailOrPhone')}</Label>
+            <Label htmlFor="identifier" className="text-muted-foreground">{t('emailOrPhone')}</Label>
             <Input
               id="identifier"
               type="text"
@@ -73,11 +73,11 @@ function LoginForm() {
               onChange={(e) => setIdentifier(e.target.value)}
               required
               disabled={loading}
-              className="rounded-lg border-neutral-200"
+              className="rounded-lg border-border bg-background text-foreground"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-neutral-700">{t('password')}</Label>
+            <Label htmlFor="password" className="text-muted-foreground">{t('password')}</Label>
             <Input
               id="password"
               type="password"
@@ -86,12 +86,12 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={loading}
-              className="rounded-lg border-neutral-200"
+              className="rounded-lg border-border bg-background text-foreground"
             />
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full bg-neutral-900 hover:bg-neutral-800 rounded-full h-11" disabled={loading}>
+          <Button type="submit" className="w-full bg-teal-500 hover:bg-teal-400 text-white rounded-full h-11" disabled={loading}>
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -101,9 +101,9 @@ function LoginForm() {
               t('signIn')
             )}
           </Button>
-          <p className="text-sm text-neutral-500 text-center">
+          <p className="text-sm text-muted-foreground text-center">
             {t('noAccount')}{' '}
-            <Link href="/auth/register" className="text-neutral-900 font-medium hover:underline">
+            <Link href="/auth/register" className="text-teal-400 font-medium hover:underline">
               {t('signUp')}
             </Link>
           </p>
@@ -118,12 +118,12 @@ export default function LoginPage() {
   const tCommon = useTranslations('common')
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 pt-20 pb-12 bg-neutral-50">
+    <div className="min-h-screen flex items-center justify-center px-4 pt-20 pb-12 bg-background">
       <Suspense fallback={
-        <Card className="w-full max-w-md bg-white border border-neutral-200 rounded-2xl">
+        <Card className="w-full max-w-md bg-card border border-border rounded-2xl">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-semibold text-neutral-900">{t('title')}</CardTitle>
-            <CardDescription className="text-neutral-500">{tCommon('loading')}</CardDescription>
+            <CardTitle className="text-2xl font-semibold text-foreground">{t('title')}</CardTitle>
+            <CardDescription className="text-muted-foreground">{tCommon('loading')}</CardDescription>
           </CardHeader>
         </Card>
       }>

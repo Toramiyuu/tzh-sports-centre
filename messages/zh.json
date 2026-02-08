@@ -27,6 +27,18 @@
     "booking": "预订球场",
     "lessons": "课程",
     "stringing": "穿线服务",
+    "shop": "商店",
+    "shopAll": "所有产品",
+    "shopCategories": {
+      "stringing": "穿线服务",
+      "rackets": "球拍",
+      "shoes": "球鞋",
+      "bags": "球包",
+      "clothing": "服装",
+      "grips": "手胶",
+      "accessories": "配件",
+      "pickleball": "匹克球"
+    },
     "profile": "个人资料",
     "login": "登录",
     "signup": "注册",
@@ -1163,6 +1175,48 @@
         "accept": "接受此时间",
         "suggestDifferent": "建议其他时间"
       }
+    }
+  },
+  "shop": {
+    "hero": {
+      "badge": "专业商店",
+      "title": "TZH 专业商店",
+      "subtitle": "适合各级别球员的优质羽毛球和匹克球装备"
+    },
+    "categories": {
+      "all": "全部",
+      "rackets": "球拍",
+      "shoes": "球鞋",
+      "bags": "球包",
+      "clothing": "服装",
+      "grips": "手胶",
+      "accessories": "配件",
+      "pickleball": "匹克球"
+    },
+    "filters": {
+      "searchPlaceholder": "搜索产品...",
+      "filters": "筛选",
+      "brand": "品牌",
+      "priceRange": "价格范围",
+      "clearAll": "清除筛选"
+    },
+    "results": {
+      "product": "个产品",
+      "products": "个产品",
+      "in": "在",
+      "noProducts": "没有找到符合条件的产品。"
+    },
+    "product": {
+      "featured": "精选",
+      "outOfStock": "缺货",
+      "quickView": "快速查看",
+      "color": "种颜色",
+      "colors": "种颜色",
+      "whatsappOrder": "WhatsApp 下单",
+      "whatsappHint": "点击在 WhatsApp 上与我们联系",
+      "availableColors": "可选颜色",
+      "availableSizes": "可选尺码",
+      "specifications": "规格参数"
     }
   }
 }

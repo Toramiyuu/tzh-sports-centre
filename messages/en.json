@@ -27,6 +27,18 @@
     "booking": "Book Court",
     "lessons": "Lessons",
     "stringing": "Stringing",
+    "shop": "Shop",
+    "shopAll": "All Products",
+    "shopCategories": {
+      "stringing": "Stringing Service",
+      "rackets": "Rackets",
+      "shoes": "Shoes",
+      "bags": "Bags",
+      "clothing": "Clothing",
+      "grips": "Grips",
+      "accessories": "Accessories",
+      "pickleball": "Pickleball"
+    },
     "profile": "Profile",
     "login": "Login",
     "signup": "Sign Up",
@@ -1161,6 +1173,48 @@
       "pickupDate": "Pickup Date",
       "orderDate": "Order Date",
       "notes": "Notes"
+    }
+  },
+  "shop": {
+    "hero": {
+      "badge": "Pro Shop",
+      "title": "TZH Pro Shop",
+      "subtitle": "Quality badminton & pickleball gear for players of all levels"
+    },
+    "categories": {
+      "all": "All",
+      "rackets": "Rackets",
+      "shoes": "Shoes",
+      "bags": "Bags",
+      "clothing": "Clothing",
+      "grips": "Grips",
+      "accessories": "Accessories",
+      "pickleball": "Pickleball"
+    },
+    "filters": {
+      "searchPlaceholder": "Search products...",
+      "filters": "Filters",
+      "brand": "Brand",
+      "priceRange": "Price Range",
+      "clearAll": "Clear filters"
+    },
+    "results": {
+      "product": "product",
+      "products": "products",
+      "in": "in",
+      "noProducts": "No products found matching your filters."
+    },
+    "product": {
+      "featured": "Featured",
+      "outOfStock": "Out of Stock",
+      "quickView": "Quick View",
+      "color": "color",
+      "colors": "colors",
+      "whatsappOrder": "WhatsApp to Order",
+      "whatsappHint": "Click to chat with us on WhatsApp",
+      "availableColors": "Available Colors",
+      "availableSizes": "Available Sizes",
+      "specifications": "Specifications"
     }
   }
 }

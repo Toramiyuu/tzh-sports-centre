@@ -647,24 +647,24 @@ function BookingPageContent() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24 bg-background min-h-screen">
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-2">{t('title')}</h1>
-        <p className="text-neutral-500">
+        <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-2">{t('title')}</h1>
+        <p className="text-muted-foreground">
           {t('selectSport')}, {t('selectDate')}, {t('selectTime')}
         </p>
       </div>
 
       {/* Sport Tabs */}
       <div className="mb-6">
-        <div className="border-b border-neutral-200">
+        <div className="border-b border-border">
           <nav className="-mb-px flex space-x-8">
             <button
               onClick={() => setSport('badminton')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 sport === 'badminton'
-                  ? 'border-neutral-900 text-neutral-900'
-                  : 'border-transparent text-neutral-400 hover:text-neutral-600 hover:border-neutral-300'
+                  ? 'border-teal-500 text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
             >
               {tHome('sports.badminton')}
@@ -673,8 +673,8 @@ function BookingPageContent() {
               onClick={() => setSport('pickleball')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 sport === 'pickleball'
-                  ? 'border-neutral-900 text-neutral-900'
-                  : 'border-transparent text-neutral-400 hover:text-neutral-600 hover:border-neutral-300'
+                  ? 'border-teal-500 text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
             >
               {tHome('sports.pickleball')}
@@ -683,23 +683,23 @@ function BookingPageContent() {
         </div>
 
         {/* Pricing & Minimum Booking Info Banner */}
-        <div className="mt-4 p-4 rounded-2xl border border-neutral-200 bg-white">
+        <div className="mt-4 p-4 rounded-2xl border border-border bg-card">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-neutral-100">
-                <Clock className="w-5 h-5 text-neutral-600" />
+              <div className="p-2 rounded-full bg-card">
+                <Clock className="w-5 h-5 text-muted-foreground" />
               </div>
               <div>
-                <p className="font-semibold text-lg text-neutral-900">
+                <p className="font-semibold text-lg text-foreground">
                   {sport === 'badminton' ? (
-                    <>RM15/hr before 6PM <span className="text-neutral-400">•</span> RM18/hr after 6PM</>
+                    <>RM15/hr before 6PM <span className="text-muted-foreground">•</span> RM18/hr after 6PM</>
                   ) : (
                     <>RM25/hr all day</>
                   )}
                 </p>
               </div>
             </div>
-            <div className="px-4 py-2 rounded-full bg-neutral-900 text-white">
+            <div className="px-4 py-2 rounded-full bg-teal-500 text-white">
               <p className="font-medium">
                 {sport === 'badminton'
                   ? 'Min: 1 Hour'
@@ -731,11 +731,11 @@ function BookingPageContent() {
                     isBefore(date, startOfDay(new Date())) ||
                     isBefore(addDays(new Date(), 30), date)
                   }
-                  className="rounded-md border"
+                  className="rounded-md border border-border"
                 />
               ) : (
                 <div className="h-[300px] flex items-center justify-center">
-                  <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+                  <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
                 </div>
               )}
             </CardContent>
@@ -749,7 +749,7 @@ function BookingPageContent() {
                 {t('selectTime')} - {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                 <Badge
                   variant="outline"
-                  className="ml-2 bg-neutral-50"
+                  className="ml-2 bg-secondary"
                 >
                   {sport === 'badminton' ? tHome('sports.badminton') : tHome('sports.pickleball')}
                 </Badge>
@@ -757,11 +757,11 @@ function BookingPageContent() {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-neutral-500">
+                <div className="text-center py-8 text-muted-foreground">
                   {tCommon('loading')}
                 </div>
               ) : availability.length === 0 ? (
-                <div className="text-center py-8 text-neutral-500">
+                <div className="text-center py-8 text-muted-foreground">
                   {t('noSlots')}
                 </div>
               ) : (
@@ -769,13 +769,13 @@ function BookingPageContent() {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr>
-                        <th className="p-2 text-left text-sm font-medium text-neutral-600 border-b">
+                        <th className="p-2 text-left text-sm font-medium text-muted-foreground border-b border-border">
                           Time
                         </th>
                         {availability.map((ca) => (
                           <th
                             key={ca.court.id}
-                            className="p-2 text-center text-sm font-medium text-neutral-600 border-b"
+                            className="p-2 text-center text-sm font-medium text-muted-foreground border-b border-border"
                           >
                             {ca.court.name}
                           </th>
@@ -784,26 +784,26 @@ function BookingPageContent() {
                     </thead>
                     <tbody>
                       {availability[0]?.slots.map((slot, idx) => (
-                        <tr key={slot.id} className={idx % 2 === 0 ? 'bg-neutral-50' : ''}>
-                          <td className="p-2 text-sm font-medium text-neutral-700 border-b whitespace-nowrap">
+                        <tr key={slot.id} className={idx % 2 === 0 ? 'bg-secondary' : ''}>
+                          <td className="p-2 text-sm font-medium text-foreground border-b border-border whitespace-nowrap">
                             {formatTimeRange(slot.displayName)}
                           </td>
                           {availability.map((ca) => {
                             const courtSlot = ca.slots[idx]
                             const selected = isSlotSelected(ca.court.id, courtSlot.slotTime)
                             return (
-                              <td key={ca.court.id} className="p-2 text-center border-b">
+                              <td key={ca.court.id} className="p-2 text-center border-b border-border">
                                 <button
                                   onClick={() => toggleSlot(ca.court, courtSlot)}
                                   disabled={!courtSlot.available}
                                   className={`w-full py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                                     !courtSlot.available
                                       ? courtSlot.isPast
-                                        ? 'bg-neutral-50 text-neutral-400 cursor-not-allowed line-through'
-                                        : 'bg-red-50 text-red-400 cursor-not-allowed'
+                                        ? 'bg-secondary text-muted-foreground/70 cursor-not-allowed line-through'
+                                        : 'bg-[#2a2520] text-[#6b5c4a] cursor-not-allowed'
                                       : selected
-                                      ? 'bg-neutral-900 text-white scale-[1.02]'
-                                      : 'bg-white border-2 border-neutral-300 text-neutral-900 hover:border-neutral-900 hover:scale-[1.02]'
+                                      ? 'bg-teal-500 text-white scale-[1.02]'
+                                      : 'bg-card border border-border text-foreground hover:border-teal-500 hover:scale-[1.02]'
                                   }`}
                                 >
                                   {!courtSlot.available
@@ -838,29 +838,29 @@ function BookingPageContent() {
             </CardHeader>
             <CardContent>
               {selectedSlots.length === 0 ? (
-                <p className="text-neutral-500 text-sm">
+                <p className="text-muted-foreground text-sm">
                   {t('selectAtLeast')}
                 </p>
               ) : (
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-neutral-600 mb-1">
+                    <p className="text-sm text-muted-foreground mb-1">
                       <strong>{t('selectSport')}:</strong>{' '}
-                      <span className="text-neutral-900 font-medium">
+                      <span className="text-foreground font-medium">
                         {sport === 'badminton' ? tHome('sports.badminton') : tHome('sports.pickleball')}
                       </span>
                     </p>
-                    <p className="text-sm text-neutral-600">
+                    <p className="text-sm text-muted-foreground">
                       <strong>{t('selectDate')}:</strong> {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-neutral-700">{t('selectedSlots')}:</p>
+                    <p className="text-sm font-medium text-foreground">{t('selectedSlots')}:</p>
                     {selectedSlots.map((slot, idx) => (
                       <div
                         key={idx}
-                        className="flex justify-between items-center p-2 bg-neutral-50 rounded"
+                        className="flex justify-between items-center p-2 bg-secondary rounded"
                       >
                         <div>
                           <Badge variant="outline" className="mr-2">
@@ -883,8 +883,8 @@ function BookingPageContent() {
 
                     {/* Guest Booking Form */}
                     {!session && (
-                      <div className="space-y-3 mb-4 p-3 bg-neutral-50 rounded-lg">
-                        <div className="flex items-center gap-2 text-sm font-medium text-neutral-700">
+                      <div className="space-y-3 mb-4 p-3 bg-secondary rounded-lg">
+                        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                           <User className="w-4 h-4" />
                           {t('guest.title')}
                         </div>
@@ -925,7 +925,7 @@ function BookingPageContent() {
 
                     {/* Touch 'n Go payment button */}
                     <Button
-                      className="w-full mb-2 bg-neutral-900 hover:bg-neutral-800 rounded-full"
+                      className="w-full mb-2 bg-teal-500 hover:bg-teal-400 rounded-full"
                       size="lg"
                       onClick={handleTngPayment}
                       disabled={booking}
@@ -937,7 +937,7 @@ function BookingPageContent() {
                     {/* DuitNow payment button */}
                     <Button
                       variant="outline"
-                      className="w-full mb-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50 rounded-full"
+                      className="w-full mb-2 border-border text-foreground hover:bg-secondary hover:border-teal-500 rounded-full"
                       size="lg"
                       onClick={handleDuitNowPayment}
                       disabled={booking}
@@ -973,21 +973,21 @@ function BookingPageContent() {
               )}
 
               {/* Operating Hours - inside the sticky card */}
-              <div className="mt-6 pt-4 border-t border-neutral-200">
+              <div className="mt-6 pt-4 border-t border-border">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <Clock className="w-4 h-4 text-neutral-400" />
+                    <Clock className="w-4 h-4 text-muted-foreground" />
                     <div>
-                      <p className="font-medium text-neutral-900">{tHome('info.hours.title')}</p>
-                      <p className="text-neutral-500">{tHome('info.hours.weekdays')}</p>
-                      <p className="text-neutral-500">{tHome('info.hours.weekends')}</p>
+                      <p className="font-medium text-foreground">{tHome('info.hours.title')}</p>
+                      <p className="text-muted-foreground">{tHome('info.hours.weekdays')}</p>
+                      <p className="text-muted-foreground">{tHome('info.hours.weekends')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <User className="w-4 h-4 text-neutral-400" />
+                    <User className="w-4 h-4 text-muted-foreground" />
                     <div>
-                      <p className="font-medium text-neutral-900">{tHome('info.contact.title')}</p>
-                      <p className="text-neutral-500"><a href="tel:+60116868508" className="hover:text-neutral-900 transition-colors">011-6868 8508</a></p>
+                      <p className="font-medium text-foreground">{tHome('info.contact.title')}</p>
+                      <p className="text-muted-foreground"><a href="tel:+60116868508" className="hover:text-foreground transition-colors">011-6868 8508</a></p>
                     </div>
                   </div>
                 </div>
@@ -1002,7 +1002,7 @@ function BookingPageContent() {
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
-              <Smartphone className="w-5 h-5 text-neutral-900" />
+              <Smartphone className="w-5 h-5 text-foreground" />
               Pay with {t('paymentMethods.tng')}
             </DialogTitle>
           </DialogHeader>
@@ -1010,19 +1010,19 @@ function BookingPageContent() {
           {!tngBookingCreated ? (
             <div className="space-y-4">
               {/* Amount Banner */}
-              <div className="bg-neutral-900 text-white rounded-xl p-4 text-center">
+              <div className="bg-teal-500 text-white rounded-xl p-4 text-center">
                 <p className="text-sm opacity-90">Amount to pay</p>
                 <p className="text-3xl font-bold">RM{total.toFixed(2)}</p>
               </div>
 
               {/* Step 1: Save QR Code */}
-              <div className="bg-neutral-50 rounded-xl p-4 space-y-3">
+              <div className="bg-secondary rounded-xl p-4 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
-                  <h4 className="font-semibold text-neutral-900">Save the QR Code</h4>
+                  <div className="w-8 h-8 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                  <h4 className="font-semibold text-foreground">Save the QR Code</h4>
                 </div>
                 <div className="flex justify-center">
-                  <div className="p-3 bg-white rounded-lg border-2 border-neutral-200">
+                  <div className="p-3 bg-card rounded-lg border-2 border-border">
                     <img
                       src="/images/tng-qr.png"
                       alt={`${t('paymentMethods.tng')} QR Code`}
@@ -1031,8 +1031,8 @@ function BookingPageContent() {
                         const target = e.target as HTMLImageElement
                         target.style.display = 'none'
                         target.parentElement!.innerHTML = `
-                          <div class="w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center bg-neutral-100 rounded-lg text-center p-4">
-                            <p class="text-sm text-neutral-500">QR Code placeholder</p>
+                          <div class="w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center bg-card rounded-lg text-center p-4">
+                            <p class="text-sm text-muted-foreground">QR Code placeholder</p>
                           </div>
                         `
                       }}
@@ -1041,60 +1041,60 @@ function BookingPageContent() {
                 </div>
                 <Button
                   variant="outline"
-                  className="w-full h-12 text-base border-2 border-neutral-900 text-neutral-900 hover:bg-neutral-50"
+                  className="w-full h-12 text-base border-2 border-border text-foreground hover:bg-secondary"
                   onClick={() => downloadQrCode('tng')}
                 >
                   <Download className="mr-2 h-5 w-5" />
                   Save QR Code to Gallery
                 </Button>
-                <p className="text-xs text-center text-neutral-500">Tap to save this QR code to your phone</p>
+                <p className="text-xs text-center text-muted-foreground">Tap to save this QR code to your phone</p>
               </div>
 
               {/* Step 2-5: Instructions */}
               <div className="space-y-3">
                 {/* Step 2 */}
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                  <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
+                  <div className="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
                   <div>
-                    <p className="font-medium text-neutral-900">Open {t('paymentMethods.tng')} App</p>
-                    <p className="text-sm text-neutral-600">Open your {t('paymentMethods.tng')} eWallet app</p>
+                    <p className="font-medium text-foreground">Open {t('paymentMethods.tng')} App</p>
+                    <p className="text-sm text-muted-foreground">Open your {t('paymentMethods.tng')} eWallet app</p>
                   </div>
                 </div>
 
                 {/* Step 3 */}
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                  <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
+                  <div className="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
                   <div>
-                    <p className="font-medium text-neutral-900">Scan from Gallery</p>
-                    <p className="text-sm text-neutral-600">Tap &apos;Scan&apos;, then select the QR code from your gallery</p>
+                    <p className="font-medium text-foreground">Scan from Gallery</p>
+                    <p className="text-sm text-muted-foreground">Tap &apos;Scan&apos;, then select the QR code from your gallery</p>
                   </div>
                 </div>
 
                 {/* Step 4 */}
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                  <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
+                <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
+                  <div className="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
                   <div>
-                    <p className="font-medium text-neutral-900">Enter Amount</p>
-                    <p className="text-sm text-neutral-600">Enter exactly <strong className="text-neutral-900">RM{total.toFixed(2)}</strong></p>
+                    <p className="font-medium text-foreground">Enter Amount</p>
+                    <p className="text-sm text-muted-foreground">Enter exactly <strong className="text-foreground">RM{total.toFixed(2)}</strong></p>
                   </div>
                 </div>
 
                 {/* Step 5 */}
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                  <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
+                <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
+                  <div className="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
                   <div>
-                    <p className="font-medium text-neutral-900">Complete Payment</p>
-                    <p className="text-sm text-neutral-600">Confirm and complete the payment in your app</p>
+                    <p className="font-medium text-foreground">Complete Payment</p>
+                    <p className="text-sm text-muted-foreground">Confirm and complete the payment in your app</p>
                   </div>
                 </div>
 
                 {/* Step 6: Upload Receipt */}
-                <div className="bg-neutral-50 rounded-xl p-4 space-y-3 border border-neutral-200">
+                <div className="bg-secondary rounded-xl p-4 space-y-3 border border-border">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
+                    <div className="w-8 h-8 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
                     <div>
-                      <h4 className="font-semibold text-neutral-900">{t('uploadReceipt') || 'Upload Payment Receipt'}</h4>
-                      <p className="text-sm text-neutral-600">{t('uploadReceiptDesc') || 'Upload a screenshot of your payment confirmation for faster verification.'}</p>
+                      <h4 className="font-semibold text-foreground">{t('uploadReceipt') || 'Upload Payment Receipt'}</h4>
+                      <p className="text-sm text-muted-foreground">{t('uploadReceiptDesc') || 'Upload a screenshot of your payment confirmation for faster verification.'}</p>
                     </div>
                   </div>
 
@@ -1103,7 +1103,7 @@ function BookingPageContent() {
                       <img
                         src={tngReceiptPreview}
                         alt="Receipt preview"
-                        className="w-full max-h-48 object-contain rounded-lg border border-neutral-200"
+                        className="w-full max-h-48 object-contain rounded-lg border border-border"
                       />
                       <button
                         onClick={() => removeReceipt('tng')}
@@ -1118,10 +1118,10 @@ function BookingPageContent() {
                     </div>
                   ) : (
                     <label className="block cursor-pointer">
-                      <div className="border-2 border-dashed border-neutral-300 rounded-lg p-6 text-center hover:border-neutral-500 hover:bg-neutral-50/50 transition-colors">
-                        <ImagePlus className="w-10 h-10 mx-auto text-neutral-400 mb-2" />
-                        <p className="text-sm font-medium text-neutral-700">{t('tapToUpload') || 'Tap to upload receipt'}</p>
-                        <p className="text-xs text-neutral-500 mt-1">{t('maxFileSize') || 'Max 5MB (JPG, PNG)'}</p>
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-teal-500 hover:bg-secondary/50 transition-colors">
+                        <ImagePlus className="w-10 h-10 mx-auto text-muted-foreground mb-2" />
+                        <p className="text-sm font-medium text-foreground">{t('tapToUpload') || 'Tap to upload receipt'}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('maxFileSize') || 'Max 5MB (JPG, PNG)'}</p>
                       </div>
                       <input
                         type="file"
@@ -1135,11 +1135,11 @@ function BookingPageContent() {
               </div>
 
               {/* "I have paid" Toggle */}
-              <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 space-y-3">
+              <div className="bg-[#2a2820] border-2 border-[#4a4030] rounded-xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {tngHasPaid && <CheckCircle2 className="w-5 h-5 text-green-600" />}
-                    <Label htmlFor="tng-paid-toggle" className="text-base font-semibold text-neutral-900 cursor-pointer">
+                    <Label htmlFor="tng-paid-toggle" className="text-base font-semibold text-foreground cursor-pointer">
                       I have paid
                     </Label>
                   </div>
@@ -1150,14 +1150,14 @@ function BookingPageContent() {
                     className="data-[state=checked]:bg-green-600"
                   />
                 </div>
-                <p className="text-xs text-yellow-800">
+                <p className="text-xs text-muted-foreground">
                   Only turn this on after you have successfully paid in {t('paymentMethods.tng')}
                 </p>
               </div>
 
               {/* Confirm Button */}
               <Button
-                className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-neutral-900 hover:bg-neutral-800' : 'bg-neutral-300 cursor-not-allowed'}`}
+                className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-teal-500 hover:bg-teal-400' : 'bg-accent cursor-not-allowed'}`}
                 size="lg"
                 onClick={handleTngBookingConfirm}
                 disabled={!tngHasPaid || booking || uploadingReceipt}
@@ -1174,7 +1174,7 @@ function BookingPageContent() {
                   </>
                 )}
               </Button>
-              <p className="text-xs text-center text-neutral-500">
+              <p className="text-xs text-center text-muted-foreground">
                 This will submit your booking for payment verification
               </p>
             </div>
@@ -1184,8 +1184,8 @@ function BookingPageContent() {
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-10 h-10 text-green-600" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900">Booking Created!</h3>
-              <p className="text-neutral-600">
+              <h3 className="text-xl font-bold text-foreground">Booking Created!</h3>
+              <p className="text-muted-foreground">
                 Your booking is pending payment verification.
                 {tngReceiptFile && <span className="block text-green-600 font-medium mt-1">Receipt uploaded!</span>}
               </p>
@@ -1202,7 +1202,7 @@ function BookingPageContent() {
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
-              <CreditCard className="w-5 h-5 text-neutral-900" />
+              <CreditCard className="w-5 h-5 text-foreground" />
               Pay with {t('paymentMethods.duitnow')}
             </DialogTitle>
           </DialogHeader>
@@ -1210,19 +1210,19 @@ function BookingPageContent() {
           {!duitNowBookingCreated ? (
             <div className="space-y-4">
               {/* Amount Banner */}
-              <div className="bg-neutral-900 text-white rounded-xl p-4 text-center">
+              <div className="bg-teal-500 text-white rounded-xl p-4 text-center">
                 <p className="text-sm opacity-90">Amount to pay</p>
                 <p className="text-3xl font-bold">RM{total.toFixed(2)}</p>
               </div>
 
               {/* Step 1: Save QR Code */}
-              <div className="bg-neutral-50 rounded-xl p-4 space-y-3">
+              <div className="bg-secondary rounded-xl p-4 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
-                  <h4 className="font-semibold text-neutral-900">Save the QR Code</h4>
+                  <div className="w-8 h-8 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                  <h4 className="font-semibold text-foreground">Save the QR Code</h4>
                 </div>
                 <div className="flex justify-center">
-                  <div className="p-3 bg-white rounded-lg border-2 border-neutral-200">
+                  <div className="p-3 bg-card rounded-lg border-2 border-border">
                     <img
                       src="/images/duitnow-qr.png"
                       alt={`${t('paymentMethods.duitnow')} QR Code`}
@@ -1231,8 +1231,8 @@ function BookingPageContent() {
                         const target = e.target as HTMLImageElement
                         target.style.display = 'none'
                         target.parentElement!.innerHTML = `
-                          <div class="w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center bg-neutral-100 rounded-lg text-center p-4">
-                            <p class="text-sm text-neutral-500">QR Code placeholder</p>
+                          <div class="w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center bg-card rounded-lg text-center p-4">
+                            <p class="text-sm text-muted-foreground">QR Code placeholder</p>
                           </div>
                         `
                       }}
@@ -1241,60 +1241,60 @@ function BookingPageContent() {
                 </div>
                 <Button
                   variant="outline"
-                  className="w-full h-12 text-base border-2 border-neutral-900 text-neutral-900 hover:bg-neutral-50"
+                  className="w-full h-12 text-base border-2 border-border text-foreground hover:bg-secondary"
                   onClick={() => downloadQrCode('duitnow')}
                 >
                   <Download className="mr-2 h-5 w-5" />
                   Save QR Code to Gallery
                 </Button>
-                <p className="text-xs text-center text-neutral-500">Tap to save this QR code to your phone</p>
+                <p className="text-xs text-center text-muted-foreground">Tap to save this QR code to your phone</p>
               </div>
 
               {/* Step 2-5: Instructions */}
               <div className="space-y-3">
                 {/* Step 2 */}
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                  <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
+                  <div className="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
                   <div>
-                    <p className="font-medium text-neutral-900">Open Your Banking App</p>
-                    <p className="text-sm text-neutral-600">Maybank, CIMB, RHB, Public Bank, etc.</p>
+                    <p className="font-medium text-foreground">Open Your Banking App</p>
+                    <p className="text-sm text-muted-foreground">Maybank, CIMB, RHB, Public Bank, etc.</p>
                   </div>
                 </div>
 
                 {/* Step 3 */}
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                  <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
+                  <div className="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
                   <div>
-                    <p className="font-medium text-neutral-900">Scan from Gallery</p>
-                    <p className="text-sm text-neutral-600">Tap &apos;Scan &amp; Pay&apos; or &apos;{t('paymentMethods.duitnow')} QR&apos;, then select from gallery</p>
+                    <p className="font-medium text-foreground">Scan from Gallery</p>
+                    <p className="text-sm text-muted-foreground">Tap &apos;Scan &amp; Pay&apos; or &apos;{t('paymentMethods.duitnow')} QR&apos;, then select from gallery</p>
                   </div>
                 </div>
 
                 {/* Step 4 */}
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                  <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
+                <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
+                  <div className="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
                   <div>
-                    <p className="font-medium text-neutral-900">Enter Amount</p>
-                    <p className="text-sm text-neutral-600">Enter exactly <strong className="text-neutral-900">RM{total.toFixed(2)}</strong></p>
+                    <p className="font-medium text-foreground">Enter Amount</p>
+                    <p className="text-sm text-muted-foreground">Enter exactly <strong className="text-foreground">RM{total.toFixed(2)}</strong></p>
                   </div>
                 </div>
 
                 {/* Step 5 */}
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                  <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
+                <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
+                  <div className="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
                   <div>
-                    <p className="font-medium text-neutral-900">Complete Payment</p>
-                    <p className="text-sm text-neutral-600">Confirm and complete the payment in your app</p>
+                    <p className="font-medium text-foreground">Complete Payment</p>
+                    <p className="text-sm text-muted-foreground">Confirm and complete the payment in your app</p>
                   </div>
                 </div>
 
                 {/* Step 6: Upload Receipt */}
-                <div className="bg-neutral-50 rounded-xl p-4 space-y-3 border border-neutral-200">
+                <div className="bg-secondary rounded-xl p-4 space-y-3 border border-border">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-neutral-900 text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
+                    <div className="w-8 h-8 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
                     <div>
-                      <h4 className="font-semibold text-neutral-900">{t('uploadReceipt') || 'Upload Payment Receipt'}</h4>
-                      <p className="text-sm text-neutral-600">{t('uploadReceiptDesc') || 'Upload a screenshot of your payment confirmation for faster verification.'}</p>
+                      <h4 className="font-semibold text-foreground">{t('uploadReceipt') || 'Upload Payment Receipt'}</h4>
+                      <p className="text-sm text-muted-foreground">{t('uploadReceiptDesc') || 'Upload a screenshot of your payment confirmation for faster verification.'}</p>
                     </div>
                   </div>
 
@@ -1303,7 +1303,7 @@ function BookingPageContent() {
                       <img
                         src={duitNowReceiptPreview}
                         alt="Receipt preview"
-                        className="w-full max-h-48 object-contain rounded-lg border border-neutral-200"
+                        className="w-full max-h-48 object-contain rounded-lg border border-border"
                       />
                       <button
                         onClick={() => removeReceipt('duitnow')}
@@ -1318,10 +1318,10 @@ function BookingPageContent() {
                     </div>
                   ) : (
                     <label className="block cursor-pointer">
-                      <div className="border-2 border-dashed border-pink-300 rounded-lg p-6 text-center hover:border-pink-500 hover:bg-neutral-50/50 transition-colors">
-                        <ImagePlus className="w-10 h-10 mx-auto text-neutral-400 mb-2" />
-                        <p className="text-sm font-medium text-neutral-700">{t('tapToUpload') || 'Tap to upload receipt'}</p>
-                        <p className="text-xs text-neutral-500 mt-1">{t('maxFileSize') || 'Max 5MB (JPG, PNG)'}</p>
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-teal-500 hover:bg-secondary/50 transition-colors">
+                        <ImagePlus className="w-10 h-10 mx-auto text-muted-foreground mb-2" />
+                        <p className="text-sm font-medium text-foreground">{t('tapToUpload') || 'Tap to upload receipt'}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('maxFileSize') || 'Max 5MB (JPG, PNG)'}</p>
                       </div>
                       <input
                         type="file"
@@ -1335,11 +1335,11 @@ function BookingPageContent() {
               </div>
 
               {/* "I have paid" Toggle */}
-              <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 space-y-3">
+              <div className="bg-[#2a2820] border-2 border-[#4a4030] rounded-xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {duitNowHasPaid && <CheckCircle2 className="w-5 h-5 text-green-600" />}
-                    <Label htmlFor="duitnow-paid-toggle" className="text-base font-semibold text-neutral-900 cursor-pointer">
+                    <Label htmlFor="duitnow-paid-toggle" className="text-base font-semibold text-foreground cursor-pointer">
                       I have paid
                     </Label>
                   </div>
@@ -1350,14 +1350,14 @@ function BookingPageContent() {
                     className="data-[state=checked]:bg-green-600"
                   />
                 </div>
-                <p className="text-xs text-yellow-800">
+                <p className="text-xs text-muted-foreground">
                   Only turn this on after you have successfully paid via {t('paymentMethods.duitnow')}
                 </p>
               </div>
 
               {/* Confirm Button */}
               <Button
-                className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? 'bg-neutral-900 hover:bg-neutral-800' : 'bg-neutral-300 cursor-not-allowed'}`}
+                className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? 'bg-teal-500 hover:bg-teal-400' : 'bg-accent cursor-not-allowed'}`}
                 size="lg"
                 onClick={handleDuitNowBookingConfirm}
                 disabled={!duitNowHasPaid || booking || uploadingReceipt}
@@ -1374,7 +1374,7 @@ function BookingPageContent() {
                   </>
                 )}
               </Button>
-              <p className="text-xs text-center text-neutral-500">
+              <p className="text-xs text-center text-muted-foreground">
                 This will submit your booking for payment verification
               </p>
             </div>
@@ -1384,8 +1384,8 @@ function BookingPageContent() {
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-10 h-10 text-green-600" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900">Booking Created!</h3>
-              <p className="text-neutral-600">
+              <h3 className="text-xl font-bold text-foreground">Booking Created!</h3>
+              <p className="text-muted-foreground">
                 Your booking is pending payment verification.
                 {duitNowReceiptFile && <span className="block text-green-600 font-medium mt-1">Receipt uploaded!</span>}
               </p>
@@ -1404,7 +1404,7 @@ export default function BookingPage() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
       </div>
     }>
       <BookingPageContent />

@@ -79,14 +79,14 @@ export default function LessonsPage() {
     return (
       <Card
         key={lesson.value}
-        className={`relative bg-white border cursor-pointer hover-lift ${
-          isPopular ? 'border-neutral-900' : 'border-neutral-200'
+        className={`relative bg-background border cursor-pointer hover-lift ${
+          isPopular ? 'border-teal-500' : 'border-border'
         }`}
         onClick={() => handleLessonClick(lesson)}
       >
         {isPopular && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-            <Badge className="bg-neutral-900 text-white">
+            <Badge className="bg-teal-500 text-white">
               <Star className="w-3 h-3 mr-1" />
               {t('packages.popular')}
             </Badge>
@@ -95,13 +95,13 @@ export default function LessonsPage() {
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-neutral-400" />
-              <h3 className="font-semibold text-lg text-neutral-900">{getLessonLabel(lesson.value)}</h3>
+              <Users className="w-5 h-5 text-muted-foreground" />
+              <h3 className="font-semibold text-lg text-foreground">{getLessonLabel(lesson.value)}</h3>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              className="text-neutral-400 hover:text-neutral-900"
+              className="text-muted-foreground hover:text-foreground"
               onClick={(e) => {
                 e.stopPropagation()
                 handleLessonClick(lesson)
@@ -116,29 +116,29 @@ export default function LessonsPage() {
             {/* Per-person pricing for group lessons */}
             {perPersonPrice && lesson.maxStudents > 1 && !isMonthly ? (
               <div>
-                <span className="text-3xl font-bold text-neutral-900">RM{perPersonPrice}</span>
-                <span className="text-neutral-500 text-sm"> / {t('packages.perPerson')}</span>
-                <div className="text-xs text-neutral-400 mt-1">
+                <span className="text-3xl font-bold text-foreground">RM{perPersonPrice}</span>
+                <span className="text-muted-foreground text-sm"> / {t('packages.perPerson')}</span>
+                <div className="text-xs text-muted-foreground mt-1">
                   ({t('packages.total')}: RM{price})
                 </div>
               </div>
             ) : (
               <div>
-                <span className="text-3xl font-bold text-neutral-900">RM{price}</span>
-                <span className="text-neutral-500 text-sm">
+                <span className="text-3xl font-bold text-foreground">RM{price}</span>
+                <span className="text-muted-foreground text-sm">
                   {' '}/ {isMonthly ? t('packages.perMonth') : t('packages.perSession')}
                 </span>
               </div>
             )}
           </div>
 
-          <div className="space-y-2 text-sm text-neutral-500">
+          <div className="space-y-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-neutral-400" />
+              <Clock className="w-4 h-4 text-muted-foreground" />
               {formatDuration(lesson)}
             </div>
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-neutral-400" />
+              <Users className="w-4 h-4 text-muted-foreground" />
               {lesson.maxStudents === 1
                 ? t('packages.student')
                 : t('packages.maxStudents', { count: lesson.maxStudents })}
@@ -152,36 +152,50 @@ export default function LessonsPage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="pt-32 pb-16 md:pt-40 md:pb-24 bg-white">
+      <section className="pt-32 pb-16 md:pt-40 md:pb-24 bg-background relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-wide mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
-              {t('coach.certification')}
-            </p>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-neutral-900 tracking-tight leading-[1.1] mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
-              {t('title')}
-            </h1>
-            <p className="text-xl text-neutral-500 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">
-              {t('subtitle')}
-            </p>
-            <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer" className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards inline-block">
-              <Button size="lg" className="bg-neutral-900 text-white hover:bg-neutral-800 rounded-full h-12 px-6">
-                <Phone className="w-5 h-5 mr-2" />
-                WhatsApp
-              </Button>
-            </a>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="max-w-xl">
+              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
+                {t('coach.certification')}
+              </p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight leading-[1.1] mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
+                {t('title')}
+              </h1>
+              <p className="text-xl text-muted-foreground mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">
+                {t('subtitle')}
+              </p>
+              <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer" className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards inline-block">
+                <Button size="lg" className="bg-teal-500 text-white hover:bg-teal-400 rounded-full h-12 px-6">
+                  <Phone className="w-5 h-5 mr-2" />
+                  WhatsApp
+                </Button>
+              </a>
+            </div>
+            <div className="relative animate-in fade-in zoom-in-95 duration-1000 delay-200 fill-mode-forwards">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+                <Image
+                  src="/images/lessons-hero.jpg"
+                  alt="Professional badminton coaching"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#202219]/60 to-transparent" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Private Lesson Packages */}
-      <section className="py-16 md:py-24 bg-neutral-50">
+      <section className="py-16 md:py-24 bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
               {t('packages.title')}
             </h2>
-            <p className="text-neutral-500">{t('packages.privateSubtitle')}</p>
+            <p className="text-muted-foreground">{t('packages.privateSubtitle')}</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -194,10 +208,10 @@ export default function LessonsPage() {
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
               {t('packages.groupTitle')}
             </h2>
-            <p className="text-neutral-500">{t('packages.groupSubtitle')}</p>
+            <p className="text-muted-foreground">{t('packages.groupSubtitle')}</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -210,33 +224,48 @@ export default function LessonsPage() {
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4 animate-in fade-in duration-700 fill-mode-forwards">
+            {/* Coach Image */}
+            <div className="relative w-48 h-48 mx-auto mb-8 animate-in fade-in zoom-in-95 duration-700 fill-mode-forwards">
+              <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-teal-500/30 shadow-xl">
+                <Image
+                  src="/images/coach-teaching.jpg"
+                  alt="Professional badminton coach"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center shadow-lg">
+                <BadgeCheck className="w-6 h-6 text-white" />
+              </div>
+            </div>
+
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4 animate-in fade-in duration-700 fill-mode-forwards">
               {t('coach.title')}
             </h2>
-            <p className="text-neutral-500 text-lg mb-8 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
+            <p className="text-muted-foreground text-lg mb-8 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
               {t('coach.bio')}
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-              <div className="flex items-center gap-3 bg-white border border-neutral-200 px-6 py-4 rounded-2xl hover-lift animate-in fade-in slide-in-from-left-4 duration-500 delay-200 fill-mode-forwards">
-                <BadgeCheck className="w-8 h-8 text-neutral-400" />
+              <div className="flex items-center gap-3 bg-background border border-border px-6 py-4 rounded-2xl hover-lift animate-in fade-in slide-in-from-left-4 duration-500 delay-200 fill-mode-forwards">
+                <BadgeCheck className="w-8 h-8 text-muted-foreground" />
                 <div className="text-left">
-                  <p className="font-semibold text-neutral-900">{t('coach.certification')}</p>
-                  <p className="text-sm text-neutral-500">{t('coach.bam')}</p>
+                  <p className="font-semibold text-foreground">{t('coach.certification')}</p>
+                  <p className="text-sm text-muted-foreground">{t('coach.bam')}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 bg-white border border-neutral-200 px-6 py-4 rounded-2xl hover-lift animate-in fade-in slide-in-from-right-4 duration-500 delay-200 fill-mode-forwards">
-                <Users className="w-8 h-8 text-neutral-400" />
+              <div className="flex items-center gap-3 bg-background border border-border px-6 py-4 rounded-2xl hover-lift animate-in fade-in slide-in-from-right-4 duration-500 delay-200 fill-mode-forwards">
+                <Users className="w-8 h-8 text-muted-foreground" />
                 <div className="text-left">
-                  <p className="font-semibold text-neutral-900">{t('coach.experienceYears')}</p>
-                  <p className="text-sm text-neutral-500">{t('coach.experienceDesc')}</p>
+                  <p className="font-semibold text-foreground">{t('coach.experienceYears')}</p>
+                  <p className="text-sm text-muted-foreground">{t('coach.experienceDesc')}</p>
                 </div>
               </div>
             </div>
 
             <button
               onClick={() => handleRequestTrial()}
-              className="mt-8 inline-flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 rounded-full font-medium hover:bg-neutral-800 transition-colors animate-in fade-in duration-500 delay-300 fill-mode-forwards"
+              className="mt-8 inline-flex items-center gap-2 bg-teal-500 text-white px-6 py-3 rounded-full font-medium hover:bg-teal-400 transition-colors animate-in fade-in duration-500 delay-300 fill-mode-forwards"
             >
               {t('coach.bookTrial')}
             </button>
@@ -245,40 +274,40 @@ export default function LessonsPage() {
       </section>
 
       {/* What's Included */}
-      <section className="py-16 md:py-24 bg-neutral-50">
+      <section className="py-16 md:py-24 bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Card className="bg-white border border-neutral-200 hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
+            <Card className="bg-background border border-border hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
               <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BadgeCheck className="w-6 h-6 text-neutral-600" />
+                <div className="w-12 h-12 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BadgeCheck className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <h3 className="font-semibold text-lg text-neutral-900 mb-2">{t('features.courtBooking.title')}</h3>
-                <p className="text-neutral-500 text-sm">
+                <h3 className="font-semibold text-lg text-foreground mb-2">{t('features.courtBooking.title')}</h3>
+                <p className="text-muted-foreground text-sm">
                   {t('features.courtBooking.description')}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border border-neutral-200 hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 fill-mode-forwards">
+            <Card className="bg-background border border-border hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 fill-mode-forwards">
               <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BadgeCheck className="w-6 h-6 text-neutral-600" />
+                <div className="w-12 h-12 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BadgeCheck className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <h3 className="font-semibold text-lg text-neutral-900 mb-2">{t('features.shuttlecocks.title')}</h3>
-                <p className="text-neutral-500 text-sm">
+                <h3 className="font-semibold text-lg text-foreground mb-2">{t('features.shuttlecocks.title')}</h3>
+                <p className="text-muted-foreground text-sm">
                   {t('features.shuttlecocks.description')}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border border-neutral-200 hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-forwards">
+            <Card className="bg-background border border-border hover-lift animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-forwards">
               <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BadgeCheck className="w-6 h-6 text-neutral-600" />
+                <div className="w-12 h-12 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BadgeCheck className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <h3 className="font-semibold text-lg text-neutral-900 mb-2">{t('features.trial.title')}</h3>
-                <p className="text-neutral-500 text-sm">
+                <h3 className="font-semibold text-lg text-foreground mb-2">{t('features.trial.title')}</h3>
+                <p className="text-muted-foreground text-sm">
                   {t('features.trial.description')}
                 </p>
               </CardContent>

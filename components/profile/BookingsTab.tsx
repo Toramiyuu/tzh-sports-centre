@@ -122,7 +122,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
       </div>
     )
   }
@@ -131,22 +131,22 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
     <div className="space-y-6">
       {/* Credit Balance Display */}
       {creditBalance > 0 && (
-        <div className="bg-neutral-100 border border-neutral-200 rounded-xl p-4 flex items-center gap-3">
-          <CreditCard className="w-5 h-5 text-neutral-600" />
+        <div className="bg-accent border border-border rounded-xl p-4 flex items-center gap-3">
+          <CreditCard className="w-5 h-5 text-muted-foreground" />
           <div>
-            <p className="font-medium text-neutral-900">Credit Balance: RM{creditBalance.toFixed(2)}</p>
-            <p className="text-sm text-neutral-500">Available to use on your next booking</p>
+            <p className="font-medium text-foreground">Credit Balance: RM{creditBalance.toFixed(2)}</p>
+            <p className="text-sm text-muted-foreground">Available to use on your next booking</p>
           </div>
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
+        <div className="bg-red-900/30 text-red-400 p-3 rounded-lg text-sm flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span className="flex-1">{error}</span>
           <button
             onClick={() => { setError(''); setLoading(true); fetchBookings() }}
-            className="flex items-center gap-1 text-red-700 hover:text-red-800 font-medium"
+            className="flex items-center gap-1 text-red-300 hover:text-red-200 font-medium"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Retry
@@ -155,7 +155,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
       )}
 
       {success && (
-        <div className="bg-green-50 text-green-600 p-3 rounded-lg text-sm">
+        <div className="bg-green-900/30 text-green-400 p-3 rounded-lg text-sm">
           {success}
         </div>
       )}
@@ -166,15 +166,15 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
           onClick={() => setActiveView('upcoming')}
           className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'upcoming'
-              ? 'bg-neutral-900 text-white'
-              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+              ? 'bg-teal-500 text-white'
+              : 'bg-accent text-muted-foreground hover:bg-accent/80'
           }`}
         >
           <CalendarDays className="w-4 h-4" />
           Upcoming
           {upcomingBookings.length > 0 && (
             <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-              activeView === 'upcoming' ? 'bg-white/20' : 'bg-neutral-300'
+              activeView === 'upcoming' ? 'bg-white/20' : 'bg-border'
             }`}>
               {upcomingBookings.length}
             </span>
@@ -184,15 +184,15 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
           onClick={() => setActiveView('past')}
           className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'past'
-              ? 'bg-neutral-900 text-white'
-              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+              ? 'bg-teal-500 text-white'
+              : 'bg-accent text-muted-foreground hover:bg-accent/80'
           }`}
         >
           <History className="w-4 h-4" />
           Past
           {pastBookings.length > 0 && (
             <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-              activeView === 'past' ? 'bg-white/20' : 'bg-neutral-300'
+              activeView === 'past' ? 'bg-white/20' : 'bg-border'
             }`}>
               {pastBookings.length}
             </span>
@@ -202,55 +202,51 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
 
       {/* Bookings List */}
       {displayedBookings.length === 0 ? (
-        <Card className="border border-neutral-200 rounded-2xl">
+        <Card className="border border-border rounded-2xl bg-card">
           <CardContent className="py-12 text-center">
             {activeView === 'upcoming' ? (
               <>
-                <CalendarDays className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-neutral-900 mb-2">No upcoming bookings</h3>
-                <p className="text-neutral-500">You don&apos;t have any upcoming court bookings.</p>
+                <CalendarDays className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">No upcoming bookings</h3>
+                <p className="text-muted-foreground">You don&apos;t have any upcoming court bookings.</p>
               </>
             ) : (
               <>
-                <History className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-neutral-900 mb-2">No past bookings</h3>
-                <p className="text-neutral-500">You don&apos;t have any past court bookings.</p>
+                <History className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">No past bookings</h3>
+                <p className="text-muted-foreground">You don&apos;t have any past court bookings.</p>
               </>
             )}
           </CardContent>
         </Card>
       ) : (
-        <Card className="border border-neutral-200 rounded-2xl">
+        <Card className="border border-border rounded-2xl bg-card">
           <CardContent className="p-4">
             <div className="space-y-3">
               {displayedBookings.map((booking) => (
                 <div
                   key={booking.id}
-                  className={`flex items-center justify-between p-4 bg-neutral-50 rounded-xl ${
+                  className={`flex items-center justify-between p-4 bg-secondary rounded-xl ${
                     booking.status === 'cancelled' ? 'opacity-60' : ''
                   }`}
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-neutral-900">{booking.court.name}</span>
-                      <Badge className={
-                        booking.sport === 'badminton'
-                          ? 'bg-neutral-100 text-neutral-700'
-                          : 'bg-neutral-200 text-neutral-700'
-                      }>
+                      <span className="font-medium text-foreground">{booking.court.name}</span>
+                      <Badge className="bg-accent text-muted-foreground">
                         {booking.sport === 'badminton' ? 'Badminton' : 'Pickleball'}
                       </Badge>
                       <Badge className={
                         booking.status === 'confirmed'
-                          ? 'bg-green-100 text-green-700'
+                          ? 'bg-green-900/30 text-green-400'
                           : booking.status === 'cancelled'
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-yellow-100 text-yellow-700'
+                          ? 'bg-red-900/30 text-red-400'
+                          : 'bg-yellow-900/30 text-yellow-400'
                       }>
                         {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-neutral-500">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <CalendarDays className="w-4 h-4" />
                         {format(new Date(booking.bookingDate), 'EEE, MMM d, yyyy')}
@@ -263,8 +259,8 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                   </div>
                   <div className="text-right flex items-center gap-4">
                     <div>
-                      <p className="font-semibold text-neutral-900">RM{booking.totalAmount.toFixed(2)}</p>
-                      <p className="text-xs text-neutral-400">
+                      <p className="font-semibold text-foreground">RM{booking.totalAmount.toFixed(2)}</p>
+                      <p className="text-xs text-muted-foreground">
                         Booked {format(new Date(booking.createdAt), 'MMM d')}
                       </p>
                     </div>
@@ -272,7 +268,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                       <Button
                         variant="outline"
                         size="sm"
-                        className="text-red-600 border-red-200 hover:bg-red-50 rounded-full"
+                        className="text-red-400 border-red-900/30 hover:bg-red-900/20 rounded-full"
                         onClick={() => setCancelDialogId(booking.id)}
                         disabled={cancellingId === booking.id}
                       >
@@ -287,7 +283,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                       </Button>
                     )}
                     {activeView === 'upcoming' && !canCancel(booking) && booking.status === 'confirmed' && (
-                      <span className="text-xs text-neutral-400">
+                      <span className="text-xs text-muted-foreground">
                         Cannot cancel within 24hrs
                       </span>
                     )}
@@ -301,10 +297,10 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
 
       {/* Cancel Confirmation Dialog */}
       <Dialog open={!!cancelDialogId} onOpenChange={(open) => { if (!open) setCancelDialogId(null) }}>
-        <DialogContent>
+        <DialogContent className="bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-neutral-900">Cancel Booking</DialogTitle>
-            <DialogDescription className="text-neutral-500">
+            <DialogTitle className="text-foreground">Cancel Booking</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
               Are you sure you want to cancel this booking? The amount will be added to your credit balance.
             </DialogDescription>
           </DialogHeader>

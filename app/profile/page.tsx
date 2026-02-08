@@ -99,82 +99,84 @@ export default function ProfilePage() {
   ]
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-16 h-16 rounded-full bg-neutral-900 flex items-center justify-center text-white text-2xl font-bold">
-            {profile?.name?.charAt(0).toUpperCase() || 'U'}
+    <div className="min-h-screen bg-background">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-16 h-16 rounded-full bg-teal-500 flex items-center justify-center text-white text-2xl font-bold">
+              {profile?.name?.charAt(0).toUpperCase() || 'U'}
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold text-foreground">{profile?.name}</h1>
+              <p className="text-muted-foreground">{profile?.email}</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-semibold text-neutral-900">{profile?.name}</h1>
-            <p className="text-neutral-500">{profile?.email}</p>
-          </div>
+
+          {/* Credit Balance */}
+          {profile && profile.creditBalance > 0 && (
+            <div className="inline-flex items-center gap-2 bg-accent text-muted-foreground px-4 py-2 rounded-full">
+              <CreditCard className="w-4 h-4" />
+              <span className="font-medium">{t('credits.balance')}: RM{profile.creditBalance.toFixed(2)}</span>
+            </div>
+          )}
         </div>
 
-        {/* Credit Balance */}
-        {profile && profile.creditBalance > 0 && (
-          <div className="inline-flex items-center gap-2 bg-neutral-100 text-neutral-700 px-4 py-2 rounded-full">
-            <CreditCard className="w-4 h-4" />
-            <span className="font-medium">{t('credits.balance')}: RM{profile.creditBalance.toFixed(2)}</span>
+        {/* Tabs */}
+        <div className="flex gap-2 mb-6 border-b border-border overflow-x-auto">
+          {tabs.map((tab) => {
+            const Icon = tab.icon
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-3 font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-teal-500 text-foreground'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Tab Content */}
+        <div>
+          {activeTab === 'personal' && (
+            profile ? (
+              <PersonalInfoTab profile={profile} onUpdate={fetchProfile} />
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">{t('loadingProfile')}</div>
+            )
+          )}
+          {activeTab === 'bookings' && (
+            <BookingsTab creditBalance={profile?.creditBalance || 0} onCreditUpdate={fetchProfile} />
+          )}
+          {activeTab === 'recurring' && (
+            <RecurringTab />
+          )}
+          {activeTab === 'lessons' && profile?.isMember && (
+            <LessonsTab />
+          )}
+          {activeTab === 'settings' && (
+            profile ? (
+              <SettingsTab profile={profile} onUpdate={fetchProfile} />
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">{t('loadingSettings')}</div>
+            )
+          )}
+        </div>
+
+        {/* UID Display - Bottom Right */}
+        {profile?.uid && (
+          <div className="fixed bottom-4 right-4 bg-card text-muted-foreground px-3 py-1.5 rounded-lg text-sm font-mono border border-border">
+            UID: {profile.uid}
           </div>
         )}
       </div>
-
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-neutral-200 overflow-x-auto">
-        {tabs.map((tab) => {
-          const Icon = tab.icon
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-3 font-medium whitespace-nowrap border-b-2 transition-colors ${
-                activeTab === tab.id
-                  ? 'border-neutral-900 text-neutral-900'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-900'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Tab Content */}
-      <div>
-        {activeTab === 'personal' && (
-          profile ? (
-            <PersonalInfoTab profile={profile} onUpdate={fetchProfile} />
-          ) : (
-            <div className="text-center py-8 text-neutral-500">{t('loadingProfile')}</div>
-          )
-        )}
-        {activeTab === 'bookings' && (
-          <BookingsTab creditBalance={profile?.creditBalance || 0} onCreditUpdate={fetchProfile} />
-        )}
-        {activeTab === 'recurring' && (
-          <RecurringTab />
-        )}
-        {activeTab === 'lessons' && profile?.isMember && (
-          <LessonsTab />
-        )}
-        {activeTab === 'settings' && (
-          profile ? (
-            <SettingsTab profile={profile} onUpdate={fetchProfile} />
-          ) : (
-            <div className="text-center py-8 text-neutral-500">{t('loadingSettings')}</div>
-          )
-        )}
-      </div>
-
-      {/* UID Display - Bottom Right */}
-      {profile?.uid && (
-        <div className="fixed bottom-4 right-4 bg-neutral-900 text-neutral-400 px-3 py-1.5 rounded-lg text-sm font-mono border border-neutral-700">
-          UID: {profile.uid}
-        </div>
-      )}
     </div>
   )
 }

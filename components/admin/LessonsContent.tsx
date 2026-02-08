@@ -787,7 +787,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
       </div>
     )
   }
@@ -835,7 +835,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
       {/* Tab content */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
         </div>
       ) : (
         <>
@@ -926,19 +926,19 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                     <div className="overflow-x-auto">
                       <table className="w-full border-collapse">
                         <thead>
-                          <tr className="bg-gray-100">
-                            <th className="p-2 text-left text-sm font-medium text-gray-700 border-b">
+                          <tr className="bg-secondary">
+                            <th className="p-2 text-left text-sm font-medium text-foreground border-b border-border">
                               Time
                             </th>
                             {courts.map((court) => (
                               <th
                                 key={court.id}
-                                className="p-2 text-center text-sm font-medium text-gray-700 border-b min-w-[150px]"
+                                className="p-2 text-center text-sm font-medium text-foreground border-b border-border min-w-[150px]"
                               >
                                 {court.name}
                               </th>
                             ))}
-                            <th className="p-2 text-center text-sm font-medium text-gray-700 border-b min-w-[150px] bg-orange-50">
+                            <th className="p-2 text-center text-sm font-medium text-foreground border-b border-border min-w-[150px] bg-orange-900/30">
                               Requests
                               {getPendingRequestsForDate().length > 0 && (
                                 <Badge className="ml-2 bg-orange-500 text-white">
@@ -956,8 +956,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                             )
 
                             return (
-                              <tr key={slot.slotTime} className={idx % 2 === 0 ? 'bg-gray-50' : ''}>
-                                <td className="p-2 text-sm font-medium text-gray-700 border-b whitespace-nowrap">
+                              <tr key={slot.slotTime} className={idx % 2 === 0 ? 'bg-secondary' : ''}>
+                                <td className="p-2 text-sm font-medium text-foreground border-b border-border whitespace-nowrap">
                                   {formatTimeRange(slot.displayName)}
                                 </td>
                                 {courts.map((court) => {
@@ -973,30 +973,30 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                       return (
                                         <td
                                           key={court.id}
-                                          className="p-1 border-b"
+                                          className="p-1 border-b border-border"
                                           rowSpan={slotsCount}
                                         >
                                           <div
                                             className={`p-2 rounded text-xs h-full ${
                                               lesson.status === 'completed'
-                                                ? 'bg-green-100 border border-green-200'
-                                                : 'bg-purple-100 border border-purple-200'
+                                                ? 'bg-green-900/50 border border-green-800'
+                                                : 'bg-purple-900/50 border border-purple-800'
                                             }`}
                                           >
                                             <div className="flex items-center gap-1 font-medium flex-wrap">
-                                              <GraduationCap className="w-3 h-3 text-purple-600" />
-                                              <span className="text-purple-700">{typeInfo?.label}</span>
+                                              <GraduationCap className="w-3 h-3 text-purple-400" />
+                                              <span className="text-purple-300">{typeInfo?.label}</span>
                                               {lesson.status === 'completed' && (
-                                                <Badge className="text-[10px] px-1 py-0 bg-green-200 text-green-700 border-0">
+                                                <Badge className="text-[10px] px-1 py-0 bg-green-900/50 text-green-400 border-0">
                                                   Done
                                                 </Badge>
                                               )}
                                             </div>
-                                            <div className="text-gray-600 mt-1">
+                                            <div className="text-muted-foreground mt-1">
                                               <Users className="w-3 h-3 inline mr-1" />
                                               {lesson.students.map(s => s.name).join(', ')}
                                             </div>
-                                            <div className="text-gray-600 mt-1">
+                                            <div className="text-muted-foreground mt-1">
                                               <Clock className="w-3 h-3 inline mr-1" />
                                               {lesson.duration}hr • RM{lesson.price}
                                             </div>
@@ -1005,7 +1005,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                                 <Button
                                                   variant="ghost"
                                                   size="sm"
-                                                  className="h-6 text-green-600 hover:text-green-700 hover:bg-green-50 flex-1"
+                                                  className="h-6 text-green-400 hover:text-green-300 hover:bg-green-900/30 flex-1"
                                                   onClick={() => handleMarkCompleted(lesson.id)}
                                                   disabled={actionLoading}
                                                 >
@@ -1015,7 +1015,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                                 <Button
                                                   variant="ghost"
                                                   size="sm"
-                                                  className="h-6 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                  className="h-6 text-red-400 hover:text-red-300 hover:bg-red-900/30"
                                                   onClick={() => handleCancelLesson(lesson.id)}
                                                   disabled={actionLoading}
                                                 >
@@ -1037,8 +1037,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                     if (booking) {
                                       // Show booked slot
                                       return (
-                                        <td key={court.id} className="p-1 border-b">
-                                          <div className="w-full h-10 flex items-center justify-center bg-gray-100 border border-gray-200 rounded text-xs text-gray-500">
+                                        <td key={court.id} className="p-1 border-b border-border">
+                                          <div className="w-full h-10 flex items-center justify-center bg-secondary border border-border rounded text-xs text-muted-foreground">
                                             {booking.isRecurring ? (
                                               <span title={booking.recurringLabel || 'Recurring booking'}>
                                                 {booking.recurringLabel || 'Recurring'}
@@ -1055,11 +1055,11 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
 
                                     // Empty slot - show add button
                                     return (
-                                      <td key={court.id} className="p-1 border-b">
+                                      <td key={court.id} className="p-1 border-b border-border">
                                         <Button
                                           variant="outline"
                                           size="sm"
-                                          className="w-full h-10 border-dashed text-gray-400 hover:text-gray-600"
+                                          className="w-full h-10 border-dashed text-muted-foreground/70 hover:text-muted-foreground"
                                           onClick={() => openAddLessonDialog(court.id, slot.slotTime)}
                                           disabled={members.length === 0}
                                         >
@@ -1083,21 +1083,21 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                     // Render request card with rowSpan
                                     return (
                                       <td
-                                        className="p-1 border-b"
+                                        className="p-1 border-b border-border"
                                         rowSpan={slotsCount}
                                       >
                                         <div
-                                          className="p-2 rounded text-xs h-full bg-orange-100 border border-orange-300 cursor-pointer hover:bg-orange-200 transition-colors"
+                                          className="p-2 rounded text-xs h-full bg-orange-900/30 border border-orange-800 cursor-pointer hover:bg-orange-900/50 transition-colors"
                                           onClick={() => openRequestDetailsDialog(request)}
                                         >
                                           <div className="flex items-center gap-1 font-medium flex-wrap">
-                                            <Users className="w-3 h-3 text-orange-600" />
-                                            <span className="text-orange-700">{request.member.name}</span>
+                                            <Users className="w-3 h-3 text-orange-400" />
+                                            <span className="text-orange-300">{request.member.name}</span>
                                           </div>
-                                          <div className="text-gray-600 mt-1">
+                                          <div className="text-muted-foreground mt-1">
                                             {typeInfo?.label} ({request.requestedDuration}hr)
                                           </div>
-                                          <div className="text-green-600 font-medium mt-1">
+                                          <div className="text-green-400 font-medium mt-1">
                                             RM{getLessonPrice(request.lessonType, request.requestedDuration)}
                                           </div>
                                         </div>
@@ -1107,7 +1107,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
 
                                   // Empty request slot - just show empty cell
                                   return (
-                                    <td className="p-1 border-b">
+                                    <td className="p-1 border-b border-border">
                                       <div className="w-full h-10" />
                                     </td>
                                   )
@@ -1122,7 +1122,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                     /* List View */
                     <>
                       {lessons.filter(l => l.status !== 'cancelled').length === 0 ? (
-                        <div className="text-center py-12 text-gray-500">
+                        <div className="text-center py-12 text-muted-foreground">
                           No lessons scheduled for this date
                         </div>
                       ) : (
@@ -1137,28 +1137,28 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                   key={lesson.id}
                                   className={`p-4 rounded-lg border ${
                                     lesson.status === 'completed'
-                                      ? 'bg-green-50 border-green-200'
-                                      : 'bg-purple-50 border-purple-200'
+                                      ? 'bg-green-900/30 border-green-800'
+                                      : 'bg-purple-900/30 border-purple-800'
                                   }`}
                                 >
                                   <div className="flex items-start justify-between">
                                     <div>
                                       <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-medium">{typeInfo?.label}</span>
+                                        <span className="font-medium text-foreground">{typeInfo?.label}</span>
                                         <Badge variant="outline">{lesson.court.name}</Badge>
                                         {lesson.status === 'completed' && (
                                           <Badge className="bg-green-600">Completed</Badge>
                                         )}
                                       </div>
-                                      <div className="text-sm text-gray-600">
+                                      <div className="text-sm text-muted-foreground">
                                         <Clock className="w-3 h-3 inline mr-1" />
                                         {lesson.startTime} - {lesson.endTime} ({lesson.duration}hr)
                                       </div>
-                                      <div className="text-sm text-gray-600 mt-1">
+                                      <div className="text-sm text-muted-foreground mt-1">
                                         <Users className="w-3 h-3 inline mr-1" />
                                         {lesson.students.map(s => s.name).join(', ')}
                                       </div>
-                                      <div className="text-sm font-medium mt-1">
+                                      <div className="text-sm font-medium mt-1 text-foreground">
                                         RM{lesson.price} ({lesson.students.length > 1
                                           ? `RM${(lesson.price / lesson.students.length).toFixed(0)} each`
                                           : 'total'})
@@ -1170,7 +1170,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                           <Button
                                             variant="outline"
                                             size="sm"
-                                            className="text-green-600"
+                                            className="text-green-400"
                                             onClick={() => handleMarkCompleted(lesson.id)}
                                             disabled={actionLoading}
                                           >
@@ -1179,7 +1179,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                           <Button
                                             variant="outline"
                                             size="sm"
-                                            className="text-red-600"
+                                            className="text-red-400"
                                             onClick={() => handleCancelLesson(lesson.id)}
                                             disabled={actionLoading}
                                           >
@@ -1273,7 +1273,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               </CardHeader>
               <CardContent>
                 {coachAvailability.length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
+                  <div className="text-center py-12 text-muted-foreground">
                     No availability set. Add your available times for training.
                   </div>
                 ) : (
@@ -1286,9 +1286,9 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                           className={`p-4 rounded-lg border transition-all ${
                             availSelectMode
                               ? isSelected
-                                ? 'bg-blue-100 border-blue-400 ring-2 ring-blue-400'
-                                : 'bg-blue-50 border-blue-200 hover:border-blue-300 cursor-pointer'
-                              : 'bg-blue-50 border-blue-200'
+                                ? 'bg-teal-900/30 border-teal-600 ring-2 ring-teal-600'
+                                : 'bg-teal-900/30 border-border hover:border-teal-700 cursor-pointer'
+                              : 'bg-teal-900/30 border-border'
                           }`}
                           onClick={() => availSelectMode && toggleAvailSelection(avail.id)}
                         >
@@ -1297,15 +1297,15 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                               {availSelectMode && (
                                 <div className="pt-1">
                                   {isSelected ? (
-                                    <CheckSquare className="w-5 h-5 text-blue-600" />
+                                    <CheckSquare className="w-5 h-5 text-teal-400" />
                                   ) : (
-                                    <Square className="w-5 h-5 text-gray-400" />
+                                    <Square className="w-5 h-5 text-muted-foreground/70" />
                                   )}
                                 </div>
                               )}
                               <div>
-                                <div className="font-medium">{DAYS_OF_WEEK[avail.dayOfWeek]}</div>
-                                <div className="text-sm text-gray-600">
+                                <div className="font-medium text-foreground">{DAYS_OF_WEEK[avail.dayOfWeek]}</div>
+                                <div className="text-sm text-muted-foreground">
                                   {avail.startTime} - {avail.endTime}
                                 </div>
                                 {avail.isRecurring && (
@@ -1318,7 +1318,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-100"
+                                  className="text-teal-400 hover:text-teal-300 hover:bg-teal-900/30"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     openEditAvailDialog(avail)
@@ -1330,7 +1330,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                                  className="text-red-400 hover:text-red-300 hover:bg-red-900/30"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     handleDeleteAvailability(avail.id)
@@ -1368,7 +1368,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                 </CardHeader>
                 <CardContent>
                   {getBillingByMember().length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
+                    <div className="text-center py-12 text-muted-foreground">
                       No completed lessons for this month
                     </div>
                   ) : (
@@ -1376,12 +1376,12 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                       {getBillingByMember().map(({ member, lessons: memberLessons, total }) => (
                         <div
                           key={member.id}
-                          className="p-4 rounded-lg border bg-gray-50"
+                          className="p-4 rounded-lg border border-border bg-secondary"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
-                                <span className="font-medium text-lg">{member.name}</span>
+                                <span className="font-medium text-lg text-foreground">{member.name}</span>
                                 <Badge variant="outline">{member.phone}</Badge>
                               </div>
                               <div className="mt-2 space-y-1">
@@ -1389,7 +1389,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                   const typeInfo = getLessonTypeInfo(lesson.lessonType)
                                   const pricePerStudent = lesson.price / lesson.students.length
                                   return (
-                                    <div key={lesson.id} className="text-sm text-gray-600 flex justify-between">
+                                    <div key={lesson.id} className="text-sm text-muted-foreground flex justify-between">
                                       <span>
                                         {format(new Date(lesson.lessonDate), 'MMM d')} - {typeInfo?.label} ({lesson.duration}hr)
                                       </span>
@@ -1400,10 +1400,10 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-2xl font-bold text-blue-600">
+                              <div className="text-2xl font-bold text-teal-400">
                                 RM{total.toFixed(0)}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-muted-foreground">
                                 {memberLessons.length} lesson{memberLessons.length !== 1 ? 's' : ''}
                               </div>
                             </div>
@@ -1543,11 +1543,11 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                         <div className="flex items-center gap-2">
                           <span>{type.label}</span>
                           {type.billingType === 'monthly' ? (
-                            <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                            <Badge variant="outline" className="text-xs bg-purple-900/30 text-purple-300 border-purple-800">
                               RM{type.pricing as number}/mo
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                            <Badge variant="outline" className="text-xs bg-green-900/30 text-green-400 border-green-800">
                               From RM{Object.values(type.pricing as Record<number, number>)[0]}
                             </Badge>
                           )}
@@ -1566,7 +1566,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               <div>
                 <Label>Duration</Label>
                 {lessonType && isMonthlyBilling(lessonType) ? (
-                  <div className="mt-2 p-3 bg-gray-100 rounded-lg text-sm text-gray-600">
+                  <div className="mt-2 p-3 bg-secondary rounded-lg text-sm text-muted-foreground">
                     Duration is set by monthly schedule
                   </div>
                 ) : (
@@ -1593,10 +1593,10 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
 
             {/* Price Display */}
             {lessonType && (
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="p-3 bg-teal-900/30 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       {isMonthlyBilling(lessonType) ? 'Monthly Price' : 'Session Price'}
                     </span>
                     {(() => {
@@ -1608,23 +1608,23 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                       if (showPerPerson) {
                         return (
                           <div>
-                            <p className="font-bold text-xl text-blue-700">
+                            <p className="font-bold text-xl text-teal-400">
                               RM{perPersonPrice} <span className="text-sm font-normal">/ person</span>
                             </p>
-                            <p className="text-xs text-gray-500">(Total: RM{totalPrice})</p>
+                            <p className="text-xs text-muted-foreground">(Total: RM{totalPrice})</p>
                           </div>
                         )
                       }
 
                       return (
-                        <p className="font-bold text-xl text-blue-700">
+                        <p className="font-bold text-xl text-teal-400">
                           RM{totalPrice}
                           {isMonthlyBilling(lessonType) && <span className="text-sm font-normal">/month</span>}
                         </p>
                       )
                     })()}
                   </div>
-                  <div className="text-right text-sm text-gray-500">
+                  <div className="text-right text-sm text-muted-foreground">
                     <p>Max {getLessonType(lessonType)?.maxStudents} student(s)</p>
                     {!isMonthlyBilling(lessonType) && <p>{lessonDuration} hours</p>}
                   </div>
@@ -1692,8 +1692,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                         key={member.id}
                         className={`flex items-center gap-2 p-2 rounded border cursor-pointer ${
                           lessonStudentIds.includes(member.id)
-                            ? 'bg-blue-50 border-blue-300'
-                            : 'bg-white border-gray-200'
+                            ? 'bg-teal-900/30 border-teal-600'
+                            : 'bg-card border-border'
                         }`}
                       >
                         <input
@@ -1708,8 +1708,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                           }}
                           className="rounded"
                         />
-                        <span className="text-xs text-gray-400">#{member.uid}</span>
-                        <span>{member.name}</span>
+                        <span className="text-xs text-muted-foreground/70">#{member.uid}</span>
+                        <span className="text-foreground">{member.name}</span>
                         {member.skillLevel && (
                           <Badge variant="outline" className="text-xs">{member.skillLevel}</Badge>
                         )}
@@ -1723,7 +1723,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                       member.uid.toLowerCase().includes(search)
                     )
                   }).length === 0 && (
-                    <p className="text-sm text-gray-500 text-center py-2">No members found</p>
+                    <p className="text-sm text-muted-foreground text-center py-2">No members found</p>
                   )}
                 </div>
               </div>
@@ -1770,18 +1770,18 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           {selectedRequest && (
             <div className="py-4 space-y-4">
               {/* Request Info */}
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="p-4 bg-teal-900/30 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-semibold text-lg">{selectedRequest.member.name}</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-semibold text-lg text-foreground">{selectedRequest.member.name}</p>
+                    <p className="text-sm text-muted-foreground">
                       {selectedRequest.lessonType.replace('-', ' ')} lesson ({selectedRequest.requestedDuration}hr)
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">{format(new Date(selectedRequest.requestedDate), 'EEE, MMM d')}</p>
-                    <p className="text-lg font-bold text-blue-600">{selectedRequest.requestedTime}</p>
-                    <p className="text-sm font-medium text-green-600">RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</p>
+                    <p className="font-medium text-foreground">{format(new Date(selectedRequest.requestedDate), 'EEE, MMM d')}</p>
+                    <p className="text-lg font-bold text-teal-400">{selectedRequest.requestedTime}</p>
+                    <p className="text-sm font-medium text-green-400">RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</p>
                   </div>
                 </div>
               </div>
@@ -1791,7 +1791,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                 <Label className="mb-3 block">Select Court</Label>
                 {loadingAvailability ? (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground/70" />
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -1805,27 +1805,27 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                           disabled={!isAvailable}
                           className={`p-4 rounded-lg border-2 transition-all ${
                             !isAvailable
-                              ? 'bg-gray-100 border-gray-200 cursor-not-allowed opacity-60'
+                              ? 'bg-secondary border-border cursor-not-allowed opacity-60'
                               : isSelected
-                              ? 'bg-green-100 border-green-500 ring-2 ring-green-500'
-                              : 'bg-white border-gray-200 hover:border-green-400 hover:bg-green-50'
+                              ? 'bg-green-900/50 border-green-500 ring-2 ring-green-500'
+                              : 'bg-card border-border hover:border-green-600 hover:bg-green-900/30'
                           }`}
                         >
-                          <p className={`font-semibold ${isSelected ? 'text-green-700' : 'text-gray-900'}`}>
+                          <p className={`font-semibold ${isSelected ? 'text-green-400' : 'text-foreground'}`}>
                             {court.name}
                           </p>
                           <p className={`text-sm mt-1 ${
                             !isAvailable
-                              ? 'text-red-500'
+                              ? 'text-red-400'
                               : isSelected
-                              ? 'text-green-600'
-                              : 'text-gray-500'
+                              ? 'text-green-400'
+                              : 'text-muted-foreground'
                           }`}>
                             {!isAvailable ? 'Booked' : isSelected ? 'Selected' : 'Available'}
                           </p>
                           {isSelected && (
                             <div className="mt-2">
-                              <Check className="w-5 h-5 text-green-600 mx-auto" />
+                              <Check className="w-5 h-5 text-green-400 mx-auto" />
                             </div>
                           )}
                         </button>
@@ -1837,8 +1837,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
 
               {/* Time slot info */}
               {approveCourtId && (
-                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                  <p className="text-sm text-green-800">
+                <div className="p-3 bg-green-900/30 rounded-lg border border-green-800">
+                  <p className="text-sm text-green-300">
                     <strong>{courts.find(c => c.id === approveCourtId)?.name}</strong> will be booked for{' '}
                     <strong>{selectedRequest.member.name}</strong> on{' '}
                     <strong>{format(new Date(selectedRequest.requestedDate), 'MMM d')}</strong> at{' '}
@@ -1950,12 +1950,12 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           {selectedRequest && (
             <div className="py-4 space-y-4">
               {/* Member Info */}
-              <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+              <div className="p-4 bg-orange-900/30 rounded-lg border border-orange-800">
                 <div className="flex items-center gap-2 mb-2">
-                  <Users className="w-5 h-5 text-orange-600" />
-                  <span className="font-semibold text-lg">{selectedRequest.member.name}</span>
+                  <Users className="w-5 h-5 text-orange-400" />
+                  <span className="font-semibold text-lg text-foreground">{selectedRequest.member.name}</span>
                 </div>
-                <div className="text-sm text-gray-600 space-y-1">
+                <div className="text-sm text-muted-foreground space-y-1">
                   <p><strong>Phone:</strong> {selectedRequest.member.phone}</p>
                   {selectedRequest.member.skillLevel && (
                     <p><strong>Skill Level:</strong> {selectedRequest.member.skillLevel}</p>
@@ -1966,33 +1966,33 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               {/* Request Details */}
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Date:</span>
-                  <span className="font-medium">
+                  <span className="text-muted-foreground">Date:</span>
+                  <span className="font-medium text-foreground">
                     {format(new Date(selectedRequest.requestedDate), 'EEEE, MMM d, yyyy')}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Time:</span>
-                  <span className="font-medium">{selectedRequest.requestedTime}</span>
+                  <span className="text-muted-foreground">Time:</span>
+                  <span className="font-medium text-foreground">{selectedRequest.requestedTime}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Type:</span>
-                  <span className="font-medium">{getLessonTypeInfo(selectedRequest.lessonType)?.label}</span>
+                  <span className="text-muted-foreground">Type:</span>
+                  <span className="font-medium text-foreground">{getLessonTypeInfo(selectedRequest.lessonType)?.label}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Duration:</span>
-                  <span className="font-medium">{selectedRequest.requestedDuration} hour(s)</span>
+                  <span className="text-muted-foreground">Duration:</span>
+                  <span className="font-medium text-foreground">{selectedRequest.requestedDuration} hour(s)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Price:</span>
-                  <span className="font-medium text-green-600">
+                  <span className="text-muted-foreground">Price:</span>
+                  <span className="font-medium text-green-400">
                     RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}
                   </span>
                 </div>
               </div>
 
               {/* Request timestamp */}
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground/70">
                 Requested on {format(new Date(selectedRequest.createdAt), 'MMM d, yyyy h:mm a')}
               </p>
             </div>
@@ -2000,7 +2000,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button
               variant="outline"
-              className="text-red-600 border-red-200 hover:bg-red-50"
+              className="text-red-400 border-red-800 hover:bg-red-900/30"
               onClick={() => {
                 const notes = prompt('Reason for rejection (optional):')
                 if (selectedRequest) {
@@ -2046,7 +2046,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-blue-600" />
+              <Clock className="w-5 h-5 text-teal-400" />
               Suggest Alternative Time
             </DialogTitle>
             <DialogDescription>
@@ -2057,9 +2057,9 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           <div className="space-y-4 py-4">
             {/* Original Request Info */}
             {selectedRequest && (
-              <div className="p-3 bg-gray-50 rounded-lg border">
-                <p className="text-sm text-gray-600 mb-1">Original request:</p>
-                <p className="font-medium">
+              <div className="p-3 bg-secondary rounded-lg border border-border">
+                <p className="text-sm text-muted-foreground mb-1">Original request:</p>
+                <p className="font-medium text-foreground">
                   {format(new Date(selectedRequest.requestedDate), 'EEEE, MMMM d, yyyy')} at{' '}
                   {(() => {
                     const [h, m] = selectedRequest.requestedTime.split(':').map(Number)
@@ -2114,9 +2114,9 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
 
             {/* Preview */}
             {suggestDate && suggestTime && (
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-600 mb-1">New suggested time:</p>
-                <p className="font-medium text-blue-700">
+              <div className="p-3 bg-teal-900/30 rounded-lg border border-border">
+                <p className="text-sm text-teal-400 mb-1">New suggested time:</p>
+                <p className="font-medium text-teal-300">
                   {format(suggestDate, 'EEEE, MMMM d, yyyy')} at{' '}
                   {(() => {
                     const [h, m] = suggestTime.split(':').map(Number)

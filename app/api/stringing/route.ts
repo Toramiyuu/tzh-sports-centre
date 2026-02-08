@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { validateMalaysianPhone, validateEmail, validateTension, validateFutureDate } from '@/lib/validation'
+import { STRING_INVENTORY } from '@/lib/stringing-config'
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,7 +28,7 @@ export async function POST(request: NextRequest) {
       receiptUrl,
     } = body
 
-    // Validation
+    // Validation - required fields
     if (!stringId || !stringName || !price || !customerName || !customerPhone || !racketModel || !tensionMain || !tensionCross || !pickupDate) {
       return NextResponse.json(
         { message: 'Missing required fields' },
@@ -34,10 +36,51 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate tension range
-    if (tensionMain < 18 || tensionMain > 35 || tensionCross < 18 || tensionCross > 35) {
+    // Validate string ID exists in config
+    const validString = STRING_INVENTORY.find(s => s.id === stringId)
+    if (!validString) {
+      return NextResponse.json(
+        { message: 'Invalid string selection' },
+        { status: 400 }
+      )
+    }
+
+    // Validate phone number format
+    const validatedPhone = validateMalaysianPhone(customerPhone)
+    if (!validatedPhone) {
+      return NextResponse.json(
+        { message: 'Invalid phone number format. Please use a valid Malaysian phone number.' },
+        { status: 400 }
+      )
+    }
+
+    // Validate email format if provided
+    let validatedEmail: string | null = null
+    if (customerEmail) {
+      validatedEmail = validateEmail(customerEmail)
+      if (!validatedEmail) {
+        return NextResponse.json(
+          { message: 'Invalid email address format' },
+          { status: 400 }
+        )
+      }
+    }
+
+    // Validate tension range (server-side enforcement)
+    const validatedTensionMain = validateTension(tensionMain)
+    const validatedTensionCross = validateTension(tensionCross)
+    if (!validatedTensionMain || !validatedTensionCross) {
       return NextResponse.json(
         { message: 'Tension must be between 18 and 35 lbs' },
+        { status: 400 }
+      )
+    }
+
+    // Validate pickup date is not in the past
+    const validatedPickupDate = validateFutureDate(pickupDate)
+    if (!validatedPickupDate) {
+      return NextResponse.json(
+        { message: 'Pickup date cannot be in the past' },
         { status: 400 }
       )
     }
@@ -124,13 +167,13 @@ export async function POST(request: NextRequest) {
         stringColor: stringColor || null,
         price,
         customerName,
-        customerPhone,
-        customerEmail: customerEmail || null,
+        customerPhone: validatedPhone,
+        customerEmail: validatedEmail,
         racketModel,
         racketModelCustom: racketModelCustom || null,
-        tensionMain,
-        tensionCross,
-        pickupDate: new Date(pickupDate),
+        tensionMain: validatedTensionMain,
+        tensionCross: validatedTensionCross,
+        pickupDate: validatedPickupDate,
         notes: notes || null,
         paymentMethod: paymentMethod || null,
         paymentUserConfirmed: paymentUserConfirmed || false,

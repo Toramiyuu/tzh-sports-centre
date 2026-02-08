@@ -475,16 +475,16 @@ export default function AdminStockPage() {
 
   if (sessionStatus === 'loading' || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-teal-400" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b">
+      <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -495,15 +495,15 @@ export default function AdminStockPage() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">String Stock Management</h1>
-                <p className="text-sm text-gray-500">Manage inventory levels by color variant</p>
+                <h1 className="text-2xl font-bold text-foreground">String Stock Management</h1>
+                <p className="text-sm text-muted-foreground">Manage inventory levels by color variant</p>
               </div>
             </div>
             <div className="flex gap-2">
               <Button
                 variant={selectMode ? 'default' : 'outline'}
                 onClick={toggleSelectMode}
-                className={selectMode ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                className={selectMode ? 'bg-teal-600 hover:bg-teal-700' : ''}
               >
                 {selectMode ? (
                   <>
@@ -533,47 +533,47 @@ export default function AdminStockPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <Card>
+          <Card className="bg-card border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">Total Strings</p>
-                  <p className="text-3xl font-bold">{stats.totalStrings}</p>
+                  <p className="text-sm text-muted-foreground">Total Strings</p>
+                  <p className="text-3xl font-bold text-foreground">{stats.totalStrings}</p>
                 </div>
-                <Package className="w-10 h-10 text-blue-500 opacity-50" />
+                <Package className="w-10 h-10 text-teal-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-card border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">Color Variants</p>
-                  <p className="text-3xl font-bold text-purple-600">{stats.totalColorVariants}</p>
+                  <p className="text-sm text-muted-foreground">Color Variants</p>
+                  <p className="text-3xl font-bold text-purple-400">{stats.totalColorVariants}</p>
                 </div>
-                <Palette className="w-10 h-10 text-purple-500 opacity-50" />
+                <Palette className="w-10 h-10 text-purple-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-card border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">Low Stock Colors</p>
-                  <p className="text-3xl font-bold text-yellow-600">{stats.lowStock}</p>
+                  <p className="text-sm text-muted-foreground">Low Stock Colors</p>
+                  <p className="text-3xl font-bold text-yellow-400">{stats.lowStock}</p>
                 </div>
-                <AlertTriangle className="w-10 h-10 text-yellow-500 opacity-50" />
+                <AlertTriangle className="w-10 h-10 text-yellow-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-card border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">Out of Stock</p>
-                  <p className="text-3xl font-bold text-red-600">{stats.outOfStock}</p>
+                  <p className="text-sm text-muted-foreground">Out of Stock</p>
+                  <p className="text-3xl font-bold text-red-400">{stats.outOfStock}</p>
                 </div>
-                <XCircle className="w-10 h-10 text-red-500 opacity-50" />
+                <XCircle className="w-10 h-10 text-red-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
@@ -581,7 +581,7 @@ export default function AdminStockPage() {
 
         {/* Bulk Action Bar */}
         {selectMode && selectedIds.size > 0 && (
-          <div className="sticky top-0 z-10 bg-blue-600 text-white rounded-lg shadow-lg p-4 mb-4 flex items-center justify-between">
+          <div className="sticky top-0 z-10 bg-teal-600 text-white rounded-lg shadow-lg p-4 mb-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <span className="font-medium">
                 {selectedIds.size} item{selectedIds.size !== 1 ? 's' : ''} selected
@@ -589,7 +589,7 @@ export default function AdminStockPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-blue-700"
+                className="text-white hover:bg-teal-700"
                 onClick={selectAll}
               >
                 Select All ({stockRecords.length})
@@ -597,7 +597,7 @@ export default function AdminStockPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-blue-700"
+                className="text-white hover:bg-teal-700"
                 onClick={deselectAll}
               >
                 Deselect All
@@ -629,10 +629,10 @@ export default function AdminStockPage() {
         )}
 
         {/* Stock List */}
-        <Card>
+        <Card className="bg-card border-border">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>String Inventory by Color</CardTitle>
+              <CardTitle className="text-foreground">String Inventory by Color</CardTitle>
               {selectMode && stockRecords.length > 0 && (
                 <div className="flex items-center gap-2">
                   <Checkbox
@@ -672,20 +672,20 @@ export default function AdminStockPage() {
                     <div
                       className={`rounded-lg border ${
                         isOutOfStock
-                          ? 'bg-red-50 border-red-200'
+                          ? 'bg-red-900/20 border-red-800'
                           : hasLowStock
-                          ? 'bg-yellow-50 border-yellow-200'
-                          : 'bg-white'
+                          ? 'bg-yellow-900/20 border-yellow-800'
+                          : 'bg-card border-border'
                       }`}
                     >
                       {/* String Header */}
                       <CollapsibleTrigger asChild>
-                        <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50/50">
+                        <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-card">
                           <div className="flex items-center gap-4">
                             {isExpanded ? (
-                              <ChevronDown className="w-5 h-5 text-gray-400" />
+                              <ChevronDown className="w-5 h-5 text-muted-foreground/70" />
                             ) : (
-                              <ChevronRight className="w-5 h-5 text-gray-400" />
+                              <ChevronRight className="w-5 h-5 text-muted-foreground/70" />
                             )}
                             <div
                               className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-xs font-bold"
@@ -694,8 +694,8 @@ export default function AdminStockPage() {
                               {string.brand.slice(0, 2).toUpperCase()}
                             </div>
                             <div>
-                              <p className="font-medium">{string.fullName}</p>
-                              <p className="text-sm text-gray-500">
+                              <p className="font-medium text-foreground">{string.fullName}</p>
+                              <p className="text-sm text-muted-foreground">
                                 RM{string.price} • {string.gauge}
                               </p>
                             </div>
@@ -704,25 +704,25 @@ export default function AdminStockPage() {
                           <div className="flex items-center gap-4">
                             {/* Total Stock */}
                             <div className="text-right">
-                              <p className="text-sm text-gray-500">Total Stock</p>
-                              <p className="text-xl font-bold">{hasColors ? totalStock : '-'}</p>
+                              <p className="text-sm text-muted-foreground">Total Stock</p>
+                              <p className="text-xl font-bold text-foreground">{hasColors ? totalStock : '-'}</p>
                             </div>
 
                             {/* Colors Count */}
                             <div className="text-right min-w-[80px]">
-                              <p className="text-sm text-gray-500">Colors</p>
-                              <p className="text-lg font-semibold">{colors.length}</p>
+                              <p className="text-sm text-muted-foreground">Colors</p>
+                              <p className="text-lg font-semibold text-foreground">{colors.length}</p>
                             </div>
 
                             {/* Status Badge */}
                             {!hasColors ? (
-                              <Badge className="bg-gray-100 text-gray-600">No Colors</Badge>
+                              <Badge className="bg-secondary text-muted-foreground">No Colors</Badge>
                             ) : isOutOfStock ? (
-                              <Badge className="bg-red-100 text-red-700">Sold Out</Badge>
+                              <Badge className="bg-red-900/30 text-red-400">Sold Out</Badge>
                             ) : hasLowStock ? (
-                              <Badge className="bg-yellow-100 text-yellow-700">Low Stock</Badge>
+                              <Badge className="bg-yellow-900/30 text-yellow-400">Low Stock</Badge>
                             ) : (
-                              <Badge className="bg-green-100 text-green-700">In Stock</Badge>
+                              <Badge className="bg-green-900/50 text-green-400">In Stock</Badge>
                             )}
                           </div>
                         </div>
@@ -730,7 +730,7 @@ export default function AdminStockPage() {
 
                       {/* Color Variants */}
                       <CollapsibleContent>
-                        <div className="border-t px-4 py-3 bg-gray-50/50">
+                        <div className="border-t border-border px-4 py-3 bg-secondary">
                           {/* Action Row */}
                           <div className="flex justify-between items-center mb-3">
                             {/* Select All for this string */}
@@ -770,7 +770,7 @@ export default function AdminStockPage() {
                           </div>
 
                           {colors.length === 0 ? (
-                            <p className="text-center text-gray-500 py-4">
+                            <p className="text-center text-muted-foreground py-4">
                               No color variants added yet. Click &quot;Add Color&quot; to add one.
                             </p>
                           ) : (
@@ -784,12 +784,12 @@ export default function AdminStockPage() {
                                     key={stock.id}
                                     className={`flex items-center justify-between p-3 rounded-lg ${
                                       selectedIds.has(stock.id)
-                                        ? 'bg-blue-100 border border-blue-300'
+                                        ? 'bg-teal-900/30 border border-teal-800'
                                         : isColorOutOfStock
-                                        ? 'bg-red-100'
+                                        ? 'bg-red-900/30'
                                         : isColorLowStock
-                                        ? 'bg-yellow-100'
-                                        : 'bg-white'
+                                        ? 'bg-yellow-900/30'
+                                        : 'bg-card'
                                     }`}
                                   >
                                     <div
@@ -804,18 +804,18 @@ export default function AdminStockPage() {
                                         />
                                       )}
                                       <div
-                                        className="w-6 h-6 rounded-full border-2 border-gray-300"
+                                        className="w-6 h-6 rounded-full border-2 border-[#5a554a]"
                                         style={{
                                           backgroundColor: stock.color.toLowerCase(),
                                         }}
                                         title={stock.color}
                                       />
-                                      <span className="font-medium">{stock.color}</span>
+                                      <span className="font-medium text-foreground">{stock.color}</span>
                                       {isColorOutOfStock && (
                                         <Badge variant="destructive" className="text-xs">Out of Stock</Badge>
                                       )}
                                       {isColorLowStock && (
-                                        <Badge className="bg-yellow-200 text-yellow-800 text-xs">Low</Badge>
+                                        <Badge className="bg-yellow-900/30 text-yellow-400 text-xs">Low</Badge>
                                       )}
                                     </div>
 
@@ -834,7 +834,7 @@ export default function AdminStockPage() {
                                         >
                                           <Minus className="h-3 w-3" />
                                         </Button>
-                                        <span className="w-10 text-center font-semibold">
+                                        <span className="w-10 text-center font-semibold text-foreground">
                                           {stock.quantity}
                                         </span>
                                         <Button
@@ -866,7 +866,7 @@ export default function AdminStockPage() {
                                       <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                        className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-900/20"
                                         onClick={(e) => {
                                           e.stopPropagation()
                                           setStockToDelete(stock)
@@ -995,7 +995,7 @@ export default function AdminStockPage() {
                 value={editLowAlert}
                 onChange={(e) => setEditLowAlert(parseInt(e.target.value) || 0)}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 Alert when stock falls to or below this number
               </p>
             </div>
@@ -1055,7 +1055,7 @@ export default function AdminStockPage() {
 
           <div className="space-y-3 py-4">
             {logs.length === 0 ? (
-              <p className="text-center text-gray-500 py-8">No stock history yet</p>
+              <p className="text-center text-muted-foreground py-8">No stock history yet</p>
             ) : (
               logs.map((log) => {
                 const stringInfo = getStringById(log.stock.stringId)
@@ -1064,27 +1064,27 @@ export default function AdminStockPage() {
                 return (
                   <div
                     key={log.id}
-                    className="flex items-start gap-4 p-3 rounded-lg bg-gray-50"
+                    className="flex items-start gap-4 p-3 rounded-lg bg-secondary"
                   >
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        isIncrease ? 'bg-green-100' : 'bg-red-100'
+                        isIncrease ? 'bg-green-900/50' : 'bg-red-900/30'
                       }`}
                     >
                       {isIncrease ? (
-                        <Plus className="w-4 h-4 text-green-600" />
+                        <Plus className="w-4 h-4 text-green-400" />
                       ) : (
-                        <Minus className="w-4 h-4 text-red-600" />
+                        <Minus className="w-4 h-4 text-red-400" />
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium">
+                      <p className="font-medium text-foreground">
                         {stringInfo?.fullName || log.stock.stringId}
                         {log.stock.color && (
-                          <span className="text-gray-500 font-normal"> - {log.stock.color}</span>
+                          <span className="text-muted-foreground font-normal"> - {log.stock.color}</span>
                         )}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-muted-foreground">
                         {log.previousQty} → {log.newQty} (
                         {isIncrease ? '+' : ''}
                         {log.newQty - log.previousQty})
@@ -1100,10 +1100,10 @@ export default function AdminStockPage() {
                             : 'Manual'}
                         </Badge>
                         {log.reason && (
-                          <span className="text-xs text-gray-500">{log.reason}</span>
+                          <span className="text-xs text-muted-foreground">{log.reason}</span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-muted-foreground/70 mt-1">
                         {format(new Date(log.createdAt), 'PPp')} by {log.changedBy || 'System'}
                       </p>
                     </div>
@@ -1127,8 +1127,8 @@ export default function AdminStockPage() {
 
           <div className="space-y-4 py-4">
             {/* Preview selected items */}
-            <div className="max-h-32 overflow-y-auto border rounded-lg p-2 bg-gray-50">
-              <p className="text-xs text-gray-500 mb-2">Selected items:</p>
+            <div className="max-h-32 overflow-y-auto border border-border rounded-lg p-2 bg-secondary">
+              <p className="text-xs text-muted-foreground mb-2">Selected items:</p>
               <div className="flex flex-wrap gap-1">
                 {getSelectedStocks().slice(0, 10).map((stock) => (
                   <Badge key={stock.id} variant="outline" className="text-xs">
@@ -1187,19 +1187,19 @@ export default function AdminStockPage() {
 
           <div className="py-4">
             {/* Preview selected items */}
-            <div className="max-h-48 overflow-y-auto border rounded-lg p-2 bg-red-50">
-              <p className="text-xs text-red-600 mb-2">Items to be deleted:</p>
+            <div className="max-h-48 overflow-y-auto border border-red-800 rounded-lg p-2 bg-red-900/20">
+              <p className="text-xs text-red-400 mb-2">Items to be deleted:</p>
               <div className="space-y-1">
                 {getSelectedStocks().map((stock) => (
-                  <div key={stock.id} className="flex items-center gap-2 text-sm">
+                  <div key={stock.id} className="flex items-center gap-2 text-sm text-foreground">
                     <div
-                      className="w-4 h-4 rounded-full border"
+                      className="w-4 h-4 rounded-full border border-[#5a554a]"
                       style={{ backgroundColor: stock.color.toLowerCase() }}
                     />
                     <span>
                       {getStringById(stock.stringId)?.fullName} - {stock.color}
                     </span>
-                    <span className="text-gray-500">({stock.quantity} in stock)</span>
+                    <span className="text-muted-foreground">({stock.quantity} in stock)</span>
                   </div>
                 ))}
               </div>

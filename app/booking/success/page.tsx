@@ -94,10 +94,10 @@ function SuccessContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-neutral-900 mx-auto mb-4" />
-          <p className="text-gray-600">Verifying your payment...</p>
+          <Loader2 className="w-12 h-12 animate-spin text-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">Verifying your payment...</p>
         </div>
       </div>
     )
@@ -105,14 +105,14 @@ function SuccessContent() {
 
   if (error || !paymentData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">!</span>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
-            <p className="text-gray-600 mb-6">{error || 'Unable to verify payment'}</p>
+            <h2 className="text-xl font-bold text-foreground mb-2">Something went wrong</h2>
+            <p className="text-muted-foreground mb-6">{error || 'Unable to verify payment'}</p>
             <Button onClick={() => router.push('/booking')}>
               Return to Booking
             </Button>
@@ -129,17 +129,17 @@ function SuccessContent() {
     'Guest'
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen bg-background py-12 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Success Header */}
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             {isPaid ? 'Payment Successful!' : 'Booking Confirmed!'}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Thank you, {customerName}! Your court booking has been confirmed.
           </p>
         </div>
@@ -160,33 +160,33 @@ function SuccessContent() {
                 key={booking.id}
                 className={`p-4 rounded-lg ${
                   booking.sport === 'badminton'
-                    ? 'bg-neutral-50 border border-neutral-200'
+                    ? 'bg-background border border-border'
                     : 'bg-green-50 border border-green-100'
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-gray-500" />
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
                       <span className="font-medium">{booking.court.name}</span>
                       <Badge
                         variant="outline"
                         className={
                           booking.sport === 'badminton'
-                            ? 'bg-neutral-100 text-neutral-700 border-0'
+                            ? 'bg-secondary text-foreground border-0'
                             : 'bg-green-100 text-green-700 border-0'
                         }
                       >
                         {booking.sport.charAt(0).toUpperCase() + booking.sport.slice(1)}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600">
+                    <div className="flex items-center gap-2 text-muted-foreground">
                       <Calendar className="w-4 h-4" />
                       <span>
                         {format(new Date(booking.bookingDate), 'EEEE, MMMM d, yyyy')}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600">
+                    <div className="flex items-center gap-2 text-muted-foreground">
                       <Clock className="w-4 h-4" />
                       <span>{booking.startTime} - {booking.endTime}</span>
                     </div>
@@ -200,7 +200,7 @@ function SuccessContent() {
 
             {/* Total */}
             <div className="border-t pt-4 flex justify-between items-center">
-              <span className="font-medium text-gray-700">Total Paid</span>
+              <span className="font-medium text-foreground">Total Paid</span>
               <span className="text-2xl font-bold text-green-600">
                 RM {paymentData.amountTotal.toFixed(2)}
               </span>
@@ -233,9 +233,9 @@ function SuccessContent() {
         </div>
 
         {/* Reminder */}
-        <div className="mt-8 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
-          <h3 className="font-medium text-neutral-900 mb-2">Important Reminders</h3>
-          <ul className="text-sm text-neutral-700 space-y-1">
+        <div className="mt-8 p-4 bg-background rounded-lg border border-border">
+          <h3 className="font-medium text-foreground mb-2">Important Reminders</h3>
+          <ul className="text-sm text-foreground space-y-1">
             <li>Please arrive 10 minutes before your booking time</li>
             <li>Bring your own rackets and shuttlecocks</li>
             <li>Contact us at <a href="tel:+60116868508" className="underline">011-6868 8508</a> for any changes</li>
@@ -250,8 +250,8 @@ export default function BookingSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <Loader2 className="w-12 h-12 animate-spin text-neutral-900" />
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-foreground" />
         </div>
       }
     >

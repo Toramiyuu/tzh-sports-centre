@@ -50,11 +50,11 @@ interface TrialRequest {
 }
 
 const statusOptions = [
-  { value: 'new', label: 'New', color: 'bg-blue-100 text-blue-800' },
-  { value: 'contacted', label: 'Contacted', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'scheduled', label: 'Scheduled', color: 'bg-purple-100 text-purple-800' },
-  { value: 'converted', label: 'Converted', color: 'bg-green-100 text-green-800' },
-  { value: 'not_interested', label: 'Not Interested', color: 'bg-gray-100 text-gray-800' },
+  { value: 'new', label: 'New', color: 'bg-teal-900/30 text-teal-400' },
+  { value: 'contacted', label: 'Contacted', color: 'bg-yellow-900/30 text-yellow-400' },
+  { value: 'scheduled', label: 'Scheduled', color: 'bg-purple-900/30 text-purple-400' },
+  { value: 'converted', label: 'Converted', color: 'bg-green-900/30 text-green-400' },
+  { value: 'not_interested', label: 'Not Interested', color: 'bg-accent text-muted-foreground' },
 ]
 
 const lessonTypeLabels: Record<string, string> = {
@@ -175,12 +175,12 @@ export default function TrialRequestsContent() {
         {statusOptions.map((status) => (
           <Card
             key={status.value}
-            className={`cursor-pointer transition-all ${filter === status.value ? 'ring-2 ring-blue-500' : ''}`}
+            className={`cursor-pointer transition-all ${filter === status.value ? 'ring-2 ring-teal-500' : ''}`}
             onClick={() => setFilter(status.value)}
           >
             <CardContent className="p-4 text-center">
               <p className="text-2xl font-bold">{counts[status.value] || 0}</p>
-              <p className="text-sm text-gray-600">{status.label}</p>
+              <p className="text-sm text-muted-foreground">{status.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -188,7 +188,7 @@ export default function TrialRequestsContent() {
 
       {/* Filter */}
       <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-600">Filter:</span>
+        <span className="text-sm text-muted-foreground">Filter:</span>
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-48">
             <SelectValue />
@@ -210,14 +210,14 @@ export default function TrialRequestsContent() {
       {/* Requests List */}
       {loading ? (
         <div className="text-center py-12">
-          <RefreshCw className="w-8 h-8 animate-spin mx-auto text-gray-400" />
-          <p className="mt-4 text-gray-600">Loading requests...</p>
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto text-muted-foreground/70" />
+          <p className="mt-4 text-muted-foreground">Loading requests...</p>
         </div>
       ) : requests.length === 0 ? (
         <Card>
           <CardContent className="p-12 text-center">
-            <AlertCircle className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-600">No trial requests found</p>
+            <AlertCircle className="w-12 h-12 mx-auto text-muted-foreground/70 mb-4" />
+            <p className="text-muted-foreground">No trial requests found</p>
           </CardContent>
         </Card>
       ) : (
@@ -229,7 +229,7 @@ export default function TrialRequestsContent() {
                   <div className="flex-1 space-y-3">
                     {/* Header */}
                     <div className="flex items-center gap-3">
-                      <User className="w-5 h-5 text-gray-400" />
+                      <User className="w-5 h-5 text-muted-foreground/70" />
                       <span className="font-semibold text-lg">{request.name}</span>
                       {getStatusBadge(request.status)}
                     </div>
@@ -238,7 +238,7 @@ export default function TrialRequestsContent() {
                     <div className="flex flex-wrap gap-4 text-sm">
                       <a
                         href={`tel:${request.phone}`}
-                        className="flex items-center gap-1 text-blue-600 hover:underline"
+                        className="flex items-center gap-1 text-teal-400 hover:underline"
                       >
                         <Phone className="w-4 h-4" />
                         {request.phone}
@@ -246,7 +246,7 @@ export default function TrialRequestsContent() {
                       {request.email && (
                         <a
                           href={`mailto:${request.email}`}
-                          className="flex items-center gap-1 text-blue-600 hover:underline"
+                          className="flex items-center gap-1 text-teal-400 hover:underline"
                         >
                           <Mail className="w-4 h-4" />
                           {request.email}
@@ -255,8 +255,8 @@ export default function TrialRequestsContent() {
                     </div>
 
                     {/* Lesson Details */}
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      <span className="bg-gray-100 px-2 py-1 rounded">
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                      <span className="bg-accent text-muted-foreground px-2 py-1 rounded">
                         {lessonTypeLabels[request.preferredLessonType] || request.preferredLessonType}
                       </span>
                       {request.preferredDate && (
@@ -275,7 +275,7 @@ export default function TrialRequestsContent() {
 
                     {/* Message */}
                     {request.message && (
-                      <div className="flex items-start gap-2 text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                      <div className="flex items-start gap-2 text-sm text-muted-foreground bg-secondary p-3 rounded">
                         <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0" />
                         <p>{request.message}</p>
                       </div>
@@ -283,13 +283,13 @@ export default function TrialRequestsContent() {
 
                     {/* Admin Notes */}
                     {request.adminNotes && (
-                      <div className="text-sm text-gray-600 bg-yellow-50 p-3 rounded border-l-4 border-yellow-400">
+                      <div className="text-sm text-muted-foreground bg-yellow-900/20 p-3 rounded border-l-4 border-yellow-600">
                         <strong>Admin Notes:</strong> {request.adminNotes}
                       </div>
                     )}
 
                     {/* Meta */}
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-muted-foreground/70">
                       Submitted {format(new Date(request.createdAt), 'MMM d, yyyy h:mm a')}
                       {request.handledBy && ` • Handled by ${request.handledBy}`}
                     </div>
@@ -331,7 +331,7 @@ export default function TrialRequestsContent() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Button variant="outline" size="sm" className="w-full text-green-600 border-green-600">
+                      <Button variant="outline" size="sm" className="w-full text-green-400 border-green-700">
                         <Phone className="w-4 h-4 mr-2" />
                         WhatsApp
                       </Button>
@@ -340,7 +340,7 @@ export default function TrialRequestsContent() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
                       onClick={() => setDeleteConfirm(request.id)}
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
