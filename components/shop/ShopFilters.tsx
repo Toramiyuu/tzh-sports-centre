@@ -68,7 +68,7 @@ export function ShopFilters({
               <Checkbox
                 checked={selectedBrands.includes(brand)}
                 onCheckedChange={() => handleBrandToggle(brand)}
-                className="border-border data-[state=checked]:bg-teal-500 data-[state=checked]:border-teal-500"
+                className="border-border data-[state=checked]:bg-[#1854d6] data-[state=checked]:border-[#1854d6]"
               />
               <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                 {brand}
@@ -153,13 +153,13 @@ export function ShopFilters({
             variant="outline"
             className={cn(
               'lg:hidden border-border text-muted-foreground hover:text-foreground rounded-full',
-              activeFilterCount > 0 && 'border-teal-500 text-teal-500'
+              activeFilterCount > 0 && 'border-[#1854d6] text-[#0a2540]'
             )}
           >
             <SlidersHorizontal className="w-4 h-4 mr-2" />
             {t('filters.filters')}
             {activeFilterCount > 0 && (
-              <span className="ml-1 bg-teal-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="ml-1 bg-[#1854d6] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {activeFilterCount}
               </span>
             )}

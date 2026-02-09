@@ -15,7 +15,7 @@ export function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-[#1854d6] rounded-lg flex items-center justify-center">
                 <span className="text-foreground font-semibold text-sm">TZH</span>
               </div>
               <span className="text-base font-semibold text-foreground">TZH Sports Centre</span>
@@ -27,7 +27,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-teal-400 uppercase tracking-wide mb-4">{t('quickLinks')}</h3>
+            <h3 className="text-sm font-semibold text-[#0a2540] uppercase tracking-wide mb-4">{t('quickLinks')}</h3>
             <div className="space-y-3">
               <Link href="/booking" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                 {t('bookCourt')}
@@ -49,7 +49,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-sm font-semibold text-teal-400 uppercase tracking-wide mb-4">{t('contact')}</h3>
+            <h3 className="text-sm font-semibold text-[#0a2540] uppercase tracking-wide mb-4">{t('contact')}</h3>
             <div className="space-y-3 text-sm text-muted-foreground">
               <p>
                 Jalan Sekolah La Salle,<br />
@@ -65,7 +65,7 @@ export function Footer() {
 
           {/* Hours & Phone */}
           <div>
-            <h3 className="text-sm font-semibold text-teal-400 uppercase tracking-wide mb-4">Contact</h3>
+            <h3 className="text-sm font-semibold text-[#0a2540] uppercase tracking-wide mb-4">Contact</h3>
             <div className="space-y-3 text-sm text-muted-foreground">
               <p>
                 {t('courtBookings')}:<br />

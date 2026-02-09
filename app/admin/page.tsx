@@ -24,7 +24,7 @@ export default async function AdminPage() {
       descriptionKey: 'bookingsLessons.description',
       icon: Calendar,
       href: '/admin/bookings-lessons',
-      color: 'bg-teal-900/50 text-teal-400',
+      color: 'bg-[#2A76B0]/50 text-[#0a2540]',
     },
     {
       titleKey: 'membersAccounts.title',

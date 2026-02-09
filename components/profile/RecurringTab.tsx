@@ -39,7 +39,7 @@ function PaymentBadge({ status }: { status: string }) {
     case 'overdue':
       return <Badge className="bg-red-600 text-white">Overdue</Badge>
     case 'unpaid':
-      return <Badge className="bg-amber-500 text-white">Unpaid</Badge>
+      return <Badge className="bg-[#71d2f0] text-white">Unpaid</Badge>
     default:
       return <Badge variant="outline">{status}</Badge>
   }

@@ -104,7 +104,7 @@ export default function ProfilePage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-teal-500 flex items-center justify-center text-white text-2xl font-bold">
+            <div className="w-16 h-16 rounded-full bg-[#1854d6] flex items-center justify-center text-white text-2xl font-bold">
               {profile?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div>
@@ -132,7 +132,7 @@ export default function ProfilePage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 font-medium whitespace-nowrap border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? 'border-teal-500 text-foreground'
+                    ? 'border-[#1854d6] text-foreground'
                     : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
               >

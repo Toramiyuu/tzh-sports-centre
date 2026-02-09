@@ -83,7 +83,7 @@ function BookingsLessonsContent() {
             variant="ghost"
             className={`rounded-none border-b-2 ${
               activeTab === 'court-bookings'
-                ? 'border-teal-500 text-teal-500'
+                ? 'border-[#1854d6] text-[#0a2540]'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
             onClick={() => handleTabChange('court-bookings')}
@@ -95,7 +95,7 @@ function BookingsLessonsContent() {
             variant="ghost"
             className={`rounded-none border-b-2 ${
               activeTab === 'lessons'
-                ? 'border-teal-500 text-teal-500'
+                ? 'border-[#1854d6] text-[#0a2540]'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
             onClick={() => handleTabChange('lessons')}

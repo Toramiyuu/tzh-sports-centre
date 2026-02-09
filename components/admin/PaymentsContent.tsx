@@ -410,8 +410,8 @@ export default function PaymentsContent() {
           <Card>
             <CardContent className="py-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-teal-900/30 rounded-lg">
-                  <User className="w-5 h-5 text-teal-400" />
+                <div className="p-2 bg-[#2A76B0]/30 rounded-lg">
+                  <User className="w-5 h-5 text-[#0a2540]" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Customers</p>
@@ -467,10 +467,10 @@ export default function PaymentsContent() {
 
       {/* Bulk Actions */}
       {selectedUserIds.size > 0 && (
-        <Card className="bg-teal-900/30 border-border">
+        <Card className="bg-[#2A76B0]/30 border-border">
           <CardContent className="py-3">
             <div className="flex items-center justify-between">
-              <span className="font-medium text-teal-400">
+              <span className="font-medium text-[#0a2540]">
                 {selectedUserIds.size} customer(s) selected
               </span>
               <div className="flex gap-2">
@@ -790,7 +790,7 @@ export default function PaymentsContent() {
                         <td className="px-3 py-2">{format(new Date(item.date), 'dd MMM')}</td>
                         <td className="px-3 py-2">
                           <Badge variant="outline" className={
-                            item.type === 'recurring' ? 'bg-purple-900/30 text-purple-400' : 'bg-teal-900/30 text-teal-400'
+                            item.type === 'recurring' ? 'bg-purple-900/30 text-purple-400' : 'bg-[#2A76B0]/30 text-[#0a2540]'
                           }>
                             {item.type === 'recurring' ? 'Recurring' : 'One-time'}
                           </Badge>
@@ -832,7 +832,7 @@ export default function PaymentsContent() {
           </DialogHeader>
 
           <div className="py-4 space-y-4">
-            <div className="p-3 bg-teal-900/30 rounded-lg">
+            <div className="p-3 bg-[#2A76B0]/30 rounded-lg">
               <p className="font-medium">Selected Customers:</p>
               <ul className="text-sm text-muted-foreground mt-2 space-y-1">
                 {users

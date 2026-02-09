@@ -29,10 +29,10 @@ export function Navbar() {
               href="/"
               className="flex items-center gap-2 outline-none focus:outline-none"
             >
-              <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-[#1854d6] rounded-lg flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">TZH</span>
               </div>
-              <span className="text-base font-semibold text-white hidden sm:block">
+              <span className="text-base font-semibold text-foreground hidden sm:block">
                 TZH Sports Centre
               </span>
             </Link>
@@ -42,20 +42,20 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-1">
             <Link
               href="/booking"
-              className="px-4 py-2 text-sm text-muted-foreground hover:text-white transition-colors"
+              className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {t('booking')}
             </Link>
             <Link
               href="/lessons"
-              className="px-4 py-2 text-sm text-muted-foreground hover:text-white transition-colors"
+              className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {t('lessons')}
             </Link>
 
             <Link
               href="/stringing"
-              className="px-4 py-2 text-sm text-muted-foreground hover:text-white transition-colors"
+              className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {t('stringing')}
             </Link>
@@ -63,7 +63,7 @@ export function Navbar() {
             {session?.user && (
               <Link
                 href="/member"
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-white transition-colors"
+                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 {t('member')}
               </Link>
@@ -71,7 +71,7 @@ export function Navbar() {
             {session?.user && (
               <Link
                 href="/updates"
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-white transition-colors"
+                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 {t('updates')}
               </Link>
@@ -79,7 +79,7 @@ export function Navbar() {
             {userIsAdmin && (
               <Link
                 href="/admin"
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-white transition-colors"
+                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 {t('admin')}
               </Link>
@@ -98,13 +98,13 @@ export function Navbar() {
                 <Link href="/auth/login">
                   <Button
                     variant="ghost"
-                    className="text-sm text-muted-foreground hover:text-white hover:bg-white/10"
+                    className="text-sm text-muted-foreground hover:text-foreground hover:bg-white/10"
                   >
                     {t('login')}
                   </Button>
                 </Link>
                 <Link href="/auth/register">
-                  <Button className="text-sm bg-teal-500 hover:bg-teal-400 text-white rounded-full px-4">
+                  <Button className="text-sm bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full px-4">
                     {t('signup')}
                   </Button>
                 </Link>
@@ -116,7 +116,7 @@ export function Navbar() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-md text-muted-foreground hover:text-white"
+              className="p-2 rounded-md text-muted-foreground hover:text-foreground"
             >
               {mobileMenuOpen ? (
                 <X className="w-6 h-6" />
@@ -134,14 +134,14 @@ export function Navbar() {
           <div className="px-6 py-4 space-y-1">
             <Link
               href="/booking"
-              className="block py-2 text-muted-foreground hover:text-white"
+              className="block py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('booking')}
             </Link>
             <Link
               href="/lessons"
-              className="block py-2 text-muted-foreground hover:text-white"
+              className="block py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('lessons')}
@@ -149,7 +149,7 @@ export function Navbar() {
 
             <Link
               href="/stringing"
-              className="block py-2 text-muted-foreground hover:text-white"
+              className="block py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('stringing')}
@@ -158,7 +158,7 @@ export function Navbar() {
             {session?.user && (
               <Link
                 href="/member"
-                className="block py-2 text-muted-foreground hover:text-white"
+                className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('member')}
@@ -167,7 +167,7 @@ export function Navbar() {
             {session?.user && (
               <Link
                 href="/updates"
-                className="block py-2 text-muted-foreground hover:text-white"
+                className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('updates')}
@@ -176,7 +176,7 @@ export function Navbar() {
             {userIsAdmin && (
               <Link
                 href="/admin"
-                className="block py-2 text-muted-foreground hover:text-white"
+                className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('admin')}
@@ -206,14 +206,14 @@ export function Navbar() {
               <>
                 <Link
                   href="/auth/login"
-                  className="block py-2 text-muted-foreground hover:text-white"
+                  className="block py-2 text-muted-foreground hover:text-foreground"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t('login')}
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block py-2 text-teal-400 font-medium"
+                  className="block py-2 text-[#0a2540] font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t('signup')}

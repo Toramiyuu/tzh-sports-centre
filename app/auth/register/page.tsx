@@ -153,7 +153,7 @@ export default function RegisterPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full bg-teal-500 hover:bg-teal-400 text-white rounded-full h-11" disabled={loading}>
+            <Button type="submit" className="w-full bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full h-11" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -165,7 +165,7 @@ export default function RegisterPage() {
             </Button>
             <p className="text-sm text-muted-foreground text-center">
               {t('hasAccount')}{' '}
-              <Link href="/auth/login" className="text-teal-400 font-medium hover:underline">
+              <Link href="/auth/login" className="text-[#0a2540] font-medium hover:underline">
                 {t('signIn')}
               </Link>
             </p>

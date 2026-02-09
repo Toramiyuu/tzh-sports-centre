@@ -188,7 +188,7 @@ function StringCard({
               </span>
             </div>
             {isInStock ? (
-              <Button size="sm" className="bg-teal-500 hover:bg-teal-400 rounded-full">
+              <Button size="sm" className="bg-[#1854d6] hover:bg-[#2060e0] rounded-full">
                 {selectLabel}
               </Button>
             ) : (
@@ -325,7 +325,7 @@ export default function StringingPage() {
                 id={`brand-${brand}`}
                 checked={selectedBrands.includes(brand)}
                 onCheckedChange={() => handleBrandToggle(brand)}
-                className="border-border data-[state=checked]:bg-teal-500 data-[state=checked]:border-teal-500"
+                className="border-border data-[state=checked]:bg-[#1854d6] data-[state=checked]:border-[#1854d6]"
               />
               <label
                 htmlFor={`brand-${brand}`}
@@ -392,7 +392,7 @@ export default function StringingPage() {
             </p>
             <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
               <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="bg-teal-500 text-white hover:bg-teal-400 rounded-full h-12 px-6">
+                <Button size="lg" className="bg-[#1854d6] text-white hover:bg-[#2060e0] rounded-full h-12 px-6">
                   <Phone className="w-5 h-5 mr-2" />
                   WhatsApp
                 </Button>
@@ -430,7 +430,7 @@ export default function StringingPage() {
                     <Filter className="w-4 h-4 mr-2" />
                     {t('catalog.filters')}
                     {(selectedBrands.length > 0 || search) && (
-                      <Badge variant="secondary" className="ml-2 bg-teal-500 text-white">
+                      <Badge variant="secondary" className="ml-2 bg-[#1854d6] text-white">
                         {selectedBrands.length + (search ? 1 : 0)}
                       </Badge>
                     )}
@@ -511,7 +511,7 @@ export default function StringingPage() {
                   onClick={() => setSelectedColor(colorOption.color)}
                   className={`relative flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
                     selectedColor === colorOption.color
-                      ? 'border-teal-500 bg-secondary'
+                      ? 'border-[#1854d6] bg-secondary'
                       : 'border-border hover:border-border'
                   }`}
                 >

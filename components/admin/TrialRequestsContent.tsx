@@ -50,7 +50,7 @@ interface TrialRequest {
 }
 
 const statusOptions = [
-  { value: 'new', label: 'New', color: 'bg-teal-900/30 text-teal-400' },
+  { value: 'new', label: 'New', color: 'bg-[#2A76B0]/30 text-[#0a2540]' },
   { value: 'contacted', label: 'Contacted', color: 'bg-yellow-900/30 text-yellow-400' },
   { value: 'scheduled', label: 'Scheduled', color: 'bg-purple-900/30 text-purple-400' },
   { value: 'converted', label: 'Converted', color: 'bg-green-900/30 text-green-400' },
@@ -175,7 +175,7 @@ export default function TrialRequestsContent() {
         {statusOptions.map((status) => (
           <Card
             key={status.value}
-            className={`cursor-pointer transition-all ${filter === status.value ? 'ring-2 ring-teal-500' : ''}`}
+            className={`cursor-pointer transition-all ${filter === status.value ? 'ring-2 ring-[#1854d6]' : ''}`}
             onClick={() => setFilter(status.value)}
           >
             <CardContent className="p-4 text-center">
@@ -238,7 +238,7 @@ export default function TrialRequestsContent() {
                     <div className="flex flex-wrap gap-4 text-sm">
                       <a
                         href={`tel:${request.phone}`}
-                        className="flex items-center gap-1 text-teal-400 hover:underline"
+                        className="flex items-center gap-1 text-[#0a2540] hover:underline"
                       >
                         <Phone className="w-4 h-4" />
                         {request.phone}
@@ -246,7 +246,7 @@ export default function TrialRequestsContent() {
                       {request.email && (
                         <a
                           href={`mailto:${request.email}`}
-                          className="flex items-center gap-1 text-teal-400 hover:underline"
+                          className="flex items-center gap-1 text-[#0a2540] hover:underline"
                         >
                           <Mail className="w-4 h-4" />
                           {request.email}

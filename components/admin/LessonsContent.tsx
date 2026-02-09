@@ -910,7 +910,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                       </div>
                     </div>
                     {members.length === 0 && (
-                      <p className="text-xs text-amber-600 mt-2">
+                      <p className="text-xs text-[#0a2540] mt-2">
                         {t('scheduled.addMembersFirst')}
                       </p>
                     )}
@@ -1286,9 +1286,9 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                           className={`p-4 rounded-lg border transition-all ${
                             availSelectMode
                               ? isSelected
-                                ? 'bg-teal-900/30 border-teal-600 ring-2 ring-teal-600'
-                                : 'bg-teal-900/30 border-border hover:border-teal-700 cursor-pointer'
-                              : 'bg-teal-900/30 border-border'
+                                ? 'bg-[#2A76B0]/30 border-[#1854d6] ring-2 ring-[#1854d6]'
+                                : 'bg-[#2A76B0]/30 border-border hover:border-[#1854d6] cursor-pointer'
+                              : 'bg-[#2A76B0]/30 border-border'
                           }`}
                           onClick={() => availSelectMode && toggleAvailSelection(avail.id)}
                         >
@@ -1297,7 +1297,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                               {availSelectMode && (
                                 <div className="pt-1">
                                   {isSelected ? (
-                                    <CheckSquare className="w-5 h-5 text-teal-400" />
+                                    <CheckSquare className="w-5 h-5 text-[#0a2540]" />
                                   ) : (
                                     <Square className="w-5 h-5 text-muted-foreground/70" />
                                   )}
@@ -1318,7 +1318,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="text-teal-400 hover:text-teal-300 hover:bg-teal-900/30"
+                                  className="text-[#0a2540] hover:text-[#0a2540] hover:bg-[#2A76B0]/30"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     openEditAvailDialog(avail)
@@ -1400,7 +1400,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-2xl font-bold text-teal-400">
+                              <div className="text-2xl font-bold text-[#0a2540]">
                                 RM{total.toFixed(0)}
                               </div>
                               <div className="text-sm text-muted-foreground">
@@ -1593,7 +1593,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
 
             {/* Price Display */}
             {lessonType && (
-              <div className="p-3 bg-teal-900/30 rounded-lg border border-border">
+              <div className="p-3 bg-[#2A76B0]/30 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-sm text-muted-foreground">
@@ -1608,7 +1608,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                       if (showPerPerson) {
                         return (
                           <div>
-                            <p className="font-bold text-xl text-teal-400">
+                            <p className="font-bold text-xl text-[#0a2540]">
                               RM{perPersonPrice} <span className="text-sm font-normal">/ person</span>
                             </p>
                             <p className="text-xs text-muted-foreground">(Total: RM{totalPrice})</p>
@@ -1617,7 +1617,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                       }
 
                       return (
-                        <p className="font-bold text-xl text-teal-400">
+                        <p className="font-bold text-xl text-[#0a2540]">
                           RM{totalPrice}
                           {isMonthlyBilling(lessonType) && <span className="text-sm font-normal">/month</span>}
                         </p>
@@ -1692,7 +1692,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                         key={member.id}
                         className={`flex items-center gap-2 p-2 rounded border cursor-pointer ${
                           lessonStudentIds.includes(member.id)
-                            ? 'bg-teal-900/30 border-teal-600'
+                            ? 'bg-[#2A76B0]/30 border-[#1854d6]'
                             : 'bg-card border-border'
                         }`}
                       >
@@ -1770,7 +1770,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           {selectedRequest && (
             <div className="py-4 space-y-4">
               {/* Request Info */}
-              <div className="p-4 bg-teal-900/30 rounded-lg border border-border">
+              <div className="p-4 bg-[#2A76B0]/30 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-lg text-foreground">{selectedRequest.member.name}</p>
@@ -1780,7 +1780,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                   </div>
                   <div className="text-right">
                     <p className="font-medium text-foreground">{format(new Date(selectedRequest.requestedDate), 'EEE, MMM d')}</p>
-                    <p className="text-lg font-bold text-teal-400">{selectedRequest.requestedTime}</p>
+                    <p className="text-lg font-bold text-[#0a2540]">{selectedRequest.requestedTime}</p>
                     <p className="text-sm font-medium text-green-400">RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</p>
                   </div>
                 </div>
@@ -2046,7 +2046,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-teal-400" />
+              <Clock className="w-5 h-5 text-[#0a2540]" />
               Suggest Alternative Time
             </DialogTitle>
             <DialogDescription>
@@ -2114,9 +2114,9 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
 
             {/* Preview */}
             {suggestDate && suggestTime && (
-              <div className="p-3 bg-teal-900/30 rounded-lg border border-border">
-                <p className="text-sm text-teal-400 mb-1">New suggested time:</p>
-                <p className="font-medium text-teal-300">
+              <div className="p-3 bg-[#2A76B0]/30 rounded-lg border border-border">
+                <p className="text-sm text-[#0a2540] mb-1">New suggested time:</p>
+                <p className="font-medium text-[#1854d6]">
                   {format(suggestDate, 'EEEE, MMMM d, yyyy')} at{' '}
                   {(() => {
                     const [h, m] = suggestTime.split(':').map(Number)

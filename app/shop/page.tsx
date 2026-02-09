@@ -198,7 +198,7 @@ function ShopContent() {
             </p>
             <button
               onClick={handleClearFilters}
-              className="text-teal-400 hover:text-teal-300 underline"
+              className="text-[#0a2540] hover:text-[#0a2540] underline"
             >
               {t('filters.clearAll')}
             </button>

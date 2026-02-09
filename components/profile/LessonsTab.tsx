@@ -153,7 +153,7 @@ export function LessonsTab() {
           onClick={() => setActiveView('sessions')}
           className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'sessions'
-              ? 'bg-teal-500 text-white'
+              ? 'bg-[#1854d6] text-white'
               : 'bg-accent text-muted-foreground hover:bg-accent/80'
           }`}
         >
@@ -171,7 +171,7 @@ export function LessonsTab() {
           onClick={() => setActiveView('requests')}
           className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'requests'
-              ? 'bg-teal-500 text-white'
+              ? 'bg-[#1854d6] text-white'
               : 'bg-accent text-muted-foreground hover:bg-accent/80'
           }`}
         >

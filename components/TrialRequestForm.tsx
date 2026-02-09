@@ -99,9 +99,9 @@ export default function TrialRequestForm() {
   }
 
   return (
-    <Card className="border-2 border-teal-800/50 bg-card">
+    <Card className="border-2 border-[#1854d6]/50 bg-card">
       <CardHeader className="text-center pb-4">
-        <CardTitle className="text-2xl font-bold text-teal-400">
+        <CardTitle className="text-2xl font-bold text-[#0a2540]">
           {t('title')}
         </CardTitle>
         <p className="text-muted-foreground mt-2">
@@ -223,7 +223,7 @@ export default function TrialRequestForm() {
 
           <Button
             type="submit"
-            className="w-full bg-teal-600 hover:bg-teal-700"
+            className="w-full bg-[#1854d6] hover:bg-[#1854d6]"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

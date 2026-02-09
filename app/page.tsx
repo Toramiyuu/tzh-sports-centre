@@ -34,7 +34,7 @@ function HeroSection() {
           <span className="text-sm text-muted-foreground">Open now until 12:00 AM</span>
         </div>
 
-        <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-6 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
+        <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.2em] mb-6 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
           Ayer Itam, Penang
         </p>
 
@@ -52,14 +52,14 @@ function HeroSection() {
 
         <div className="flex flex-wrap justify-center gap-4 animate-in fade-in duration-700 delay-500 fill-mode-forwards">
           <Link href="/booking">
-            <Button className="h-12 px-8 text-sm font-medium uppercase tracking-wider bg-teal-500 hover:bg-teal-400 text-white rounded-sm">
+            <Button className="h-12 px-8 text-sm font-medium uppercase tracking-wider bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-sm">
               {t("hero.bookCourt")}
             </Button>
           </Link>
           <Link href="/lessons">
             <Button
               variant="outline"
-              className="h-12 px-8 text-sm font-medium uppercase tracking-wider border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white rounded-sm"
+              className="h-12 px-8 text-sm font-medium uppercase tracking-wider border-[#1854d6] text-[#0a2540] hover:bg-[#2060e0] hover:text-white rounded-sm"
             >
               {t("hero.viewLessons")}
             </Button>
@@ -70,7 +70,7 @@ function HeroSection() {
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-in fade-in duration-700 delay-700 fill-mode-forwards">
         <span className="text-xs text-muted-foreground uppercase tracking-[0.2em]">Scroll</span>
-        <div className="w-px h-8 bg-teal-500/50" />
+        <div className="w-px h-8 bg-[#1854d6]/50" />
       </div>
     </section>
   );
@@ -100,7 +100,7 @@ function AboutSection() {
 
           {/* Content */}
           <div className="animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
-            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+            <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.2em] mb-4">
               Our Courts
             </p>
             <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6">
@@ -119,19 +119,19 @@ function AboutSection() {
             {/* Stats row — like Lucky Hole highlights */}
             <div className="border-t border-border pt-8 grid grid-cols-4 gap-6">
               <div>
-                <div className="text-2xl font-semibold text-teal-500">4</div>
+                <div className="text-2xl font-semibold text-[#0a2540]">4</div>
                 <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">{t("hero.stat.courts")}</div>
               </div>
               <div>
-                <div className="text-2xl font-semibold text-teal-500">4.7</div>
+                <div className="text-2xl font-semibold text-[#0a2540]">4.7</div>
                 <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">Google (100+ reviews)</div>
               </div>
               <div>
-                <div className="text-2xl font-semibold text-teal-500">RM15</div>
+                <div className="text-2xl font-semibold text-[#0a2540]">RM15</div>
                 <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">Starting price</div>
               </div>
               <div>
-                <div className="text-2xl font-semibold text-teal-500">12AM</div>
+                <div className="text-2xl font-semibold text-[#0a2540]">12AM</div>
                 <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">Open until</div>
               </div>
             </div>
@@ -153,7 +153,7 @@ function SportsSection() {
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Section header — centered, Lucky Hole style */}
         <div className="text-center mb-16 md:mb-20">
-          <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+          <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.2em] mb-4">
             What We Offer
           </p>
           <h2 className="text-3xl md:text-4xl font-semibold text-foreground">
@@ -164,7 +164,7 @@ function SportsSection() {
         {/* Badminton */}
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center mb-24 md:mb-32">
           <div className="order-2 md:order-1 animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
-            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.15em] mb-3">
+            <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.15em] mb-3">
               {t("badminton.courts")}
             </p>
             <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
@@ -179,7 +179,7 @@ function SportsSection() {
             <Link href="/booking">
               <Button
                 variant="outline"
-                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white bg-transparent"
+                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-[#1854d6] text-[#0a2540] hover:bg-[#2060e0] hover:text-white bg-transparent"
               >
                 Book Court <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -210,7 +210,7 @@ function SportsSection() {
             </div>
           </div>
           <div className="animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
-            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.15em] mb-3">
+            <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.15em] mb-3">
               {t("pickleball.courts")}
             </p>
             <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
@@ -225,7 +225,7 @@ function SportsSection() {
             <Link href="/booking?sport=pickleball">
               <Button
                 variant="outline"
-                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white bg-transparent"
+                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-[#1854d6] text-[#0a2540] hover:bg-[#2060e0] hover:text-white bg-transparent"
               >
                 Book Court <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -248,7 +248,7 @@ function PricingSection() {
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Section header — centered */}
         <div className="text-center mb-16 md:mb-20">
-          <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+          <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.2em] mb-4">
             Pricing
           </p>
           <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
@@ -261,7 +261,7 @@ function PricingSection() {
 
         <div className="grid md:grid-cols-3 gap-6">
           {/* Badminton */}
-          <div className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-teal-500 hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
+          <div className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-[#1854d6] hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
             <h3 className="text-lg font-semibold text-foreground mb-6">
               {t("badminton.title")}
             </h3>
@@ -275,13 +275,13 @@ function PricingSection() {
                 <span className="text-2xl font-semibold text-foreground">RM18<span className="text-sm font-normal text-muted-foreground">/hr</span></span>
               </div>
             </div>
-            <Link href="/booking" className="text-sm font-medium text-teal-500 hover:text-teal-400 uppercase tracking-wider inline-flex items-center">
+            <Link href="/booking" className="text-sm font-medium text-[#0a2540] hover:text-[#0a2540] uppercase tracking-wider inline-flex items-center">
               Book now <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
 
           {/* Pickleball */}
-          <div className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-teal-500 hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 fill-mode-forwards">
+          <div className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-[#1854d6] hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 fill-mode-forwards">
             <h3 className="text-lg font-semibold text-foreground mb-6">
               {t("pickleball.title")}
             </h3>
@@ -292,13 +292,13 @@ function PricingSection() {
               </div>
               <p className="text-sm text-muted-foreground">{t("pickleball.minimum")}</p>
             </div>
-            <Link href="/booking?sport=pickleball" className="text-sm font-medium text-teal-500 hover:text-teal-400 uppercase tracking-wider inline-flex items-center">
+            <Link href="/booking?sport=pickleball" className="text-sm font-medium text-[#0a2540] hover:text-[#0a2540] uppercase tracking-wider inline-flex items-center">
               Book now <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
 
           {/* Coaching */}
-          <div className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-teal-500 hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-forwards">
+          <div className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-[#1854d6] hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-forwards">
             <h3 className="text-lg font-semibold text-foreground mb-6">
               {t("coaching.title")}
             </h3>
@@ -309,7 +309,7 @@ function PricingSection() {
               </div>
               <p className="text-sm text-muted-foreground">{t("coaching.note")}</p>
             </div>
-            <Link href="/lessons" className="text-sm font-medium text-teal-500 hover:text-teal-400 uppercase tracking-wider inline-flex items-center">
+            <Link href="/lessons" className="text-sm font-medium text-[#0a2540] hover:text-[#0a2540] uppercase tracking-wider inline-flex items-center">
               View lessons <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
@@ -368,14 +368,14 @@ function ReviewsSection() {
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Section header */}
         <div className="text-center mb-16 md:mb-20 animate-in fade-in duration-700 fill-mode-forwards">
-          <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+          <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.2em] mb-4">
             {t("subtitle")}
           </p>
           <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-3">
             Guest Reviews
           </h2>
           <p className="text-muted-foreground">
-            Rated <span className="text-teal-500 font-semibold">4.7</span> on Google &middot; 100+ reviews
+            Rated <span className="text-[#0a2540] font-semibold">4.7</span> on Google &middot; 100+ reviews
           </p>
         </div>
 
@@ -384,7 +384,7 @@ function ReviewsSection() {
           {reviews.map((review, i) => (
             <div
               key={i}
-              className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-teal-500 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards"
+              className="bg-card border border-border rounded-sm p-8 transition-all duration-300 hover:border-[#1854d6] animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards"
               style={{ animationDelay: `${i * 100}ms` }}
             >
               {/* Stars */}
@@ -392,7 +392,7 @@ function ReviewsSection() {
                 {Array.from({ length: 5 }).map((_, j) => (
                   <Star
                     key={j}
-                    className={`h-4 w-4 ${j < review.stars ? "fill-teal-500 text-teal-500" : "fill-[#353828] text-[#353828]"}`}
+                    className={`h-4 w-4 ${j < review.stars ? "fill-[#1854d6] text-[#0a2540]" : "fill-gray-300 text-gray-300"}`}
                   />
                 ))}
               </div>
@@ -406,7 +406,7 @@ function ReviewsSection() {
               <div>
                 <span className="text-foreground text-sm font-medium">{review.author}</span>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] font-medium bg-teal-500/15 text-teal-400 px-2 py-0.5 rounded-sm uppercase tracking-wider">Google</span>
+                  <span className="text-[10px] font-medium bg-[#1854d6]/15 text-[#0a2540] px-2 py-0.5 rounded-sm uppercase tracking-wider">Google</span>
                   <span className="text-muted-foreground text-xs">{review.time}</span>
                 </div>
               </div>
@@ -420,7 +420,7 @@ function ReviewsSection() {
             href="https://maps.app.goo.gl/6id7KLMbwohP7o9J6"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-teal-500 hover:text-teal-400 uppercase tracking-wider inline-flex items-center"
+            className="text-sm font-medium text-[#0a2540] hover:text-[#0a2540] uppercase tracking-wider inline-flex items-center"
           >
             {t("viewOnGoogle")} <ArrowRight className="ml-1 h-4 w-4" />
           </a>
@@ -451,7 +451,7 @@ function StringingSection() {
             </div>
           </div>
           <div className="animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
-            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+            <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.2em] mb-4">
               Professional Service
             </p>
             <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
@@ -463,7 +463,7 @@ function StringingSection() {
             <Link href="/stringing">
               <Button
                 variant="outline"
-                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white bg-transparent"
+                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-[#1854d6] text-[#0a2540] hover:bg-[#2060e0] hover:text-white bg-transparent"
               >
                 {t("cta")} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -486,7 +486,7 @@ function LocationSection() {
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-12 md:gap-20">
           <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
-            <p className="text-sm font-medium text-teal-500 uppercase tracking-[0.2em] mb-4">
+            <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.2em] mb-4">
               Find Us
             </p>
             <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-10">
@@ -496,7 +496,7 @@ function LocationSection() {
             <div className="space-y-8">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <MapPin className="h-5 w-5 text-teal-500" />
+                  <MapPin className="h-5 w-5 text-[#0a2540]" />
                   <h3 className="font-medium text-foreground">{t("address.title")}</h3>
                 </div>
                 <p className="text-muted-foreground ml-8">
@@ -507,7 +507,7 @@ function LocationSection() {
                   href="https://maps.app.goo.gl/xmtbgwLbfGoEUDWA9"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium text-teal-500 hover:text-teal-400 ml-8 mt-2 inline-flex items-center"
+                  className="text-sm font-medium text-[#0a2540] hover:text-[#0a2540] ml-8 mt-2 inline-flex items-center"
                 >
                   {t("address.directions")} <ArrowRight className="ml-1 h-4 w-4" />
                 </a>
@@ -515,7 +515,7 @@ function LocationSection() {
 
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <Clock className="h-5 w-5 text-teal-500" />
+                  <Clock className="h-5 w-5 text-[#0a2540]" />
                   <h3 className="font-medium text-foreground">{t("hours.title")}</h3>
                 </div>
                 <p className="text-muted-foreground ml-8">
@@ -526,12 +526,12 @@ function LocationSection() {
 
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <Phone className="h-5 w-5 text-teal-500" />
+                  <Phone className="h-5 w-5 text-[#0a2540]" />
                   <h3 className="font-medium text-foreground">{t("contact.title")}</h3>
                 </div>
                 <p className="text-muted-foreground ml-8">
-                  {t("contact.bookingsLabel")} <a href="tel:+60116868508" className="text-foreground hover:text-teal-500 transition-colors">011-6868 8508</a><br />
-                  {t("contact.lessonsLabel")} <a href="tel:+60117575508" className="text-foreground hover:text-teal-500 transition-colors">011-7575 8508</a>
+                  {t("contact.bookingsLabel")} <a href="tel:+60116868508" className="text-foreground hover:text-[#0a2540] transition-colors">011-6868 8508</a><br />
+                  {t("contact.lessonsLabel")} <a href="tel:+60117575508" className="text-foreground hover:text-[#0a2540] transition-colors">011-7575 8508</a>
                 </p>
               </div>
             </div>

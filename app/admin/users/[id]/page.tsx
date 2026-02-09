@@ -185,7 +185,7 @@ function PaymentStatusBadge({ status }: { status: string }) {
     case 'overdue':
       return <Badge className="bg-red-600">Overdue</Badge>
     case 'unpaid':
-      return <Badge className="bg-amber-500">Unpaid</Badge>
+      return <Badge className="bg-[#71d2f0]">Unpaid</Badge>
     default:
       return <Badge variant="outline">{status}</Badge>
   }
@@ -379,7 +379,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               <Badge variant="outline" className="font-mono">#{user.uid}</Badge>
               {user.isSuperAdmin && <Badge className="bg-purple-600">Super Admin</Badge>}
               {user.isAdmin && !user.isSuperAdmin && <Badge className="bg-green-600">Admin</Badge>}
-              {user.isMember && <Badge className="bg-teal-600">Member</Badge>}
+              {user.isMember && <Badge className="bg-[#1854d6]">Member</Badge>}
             </div>
             <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
               <span className="flex items-center gap-1">
@@ -425,11 +425,11 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Password Management */}
       {showPasswordSection && (
-        <Card className="mb-6 border-amber-800 bg-amber-900/20">
+        <Card className="mb-6 border-[#1854d6] bg-[#2A76B0]/20">
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-amber-900/50 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Shield className="w-5 h-5 text-amber-400" />
+              <div className="w-10 h-10 bg-[#2A76B0]/50 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Shield className="w-5 h-5 text-[#0a2540]" />
               </div>
               <div className="flex-1 space-y-4">
                 <div>
@@ -437,7 +437,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-sm text-muted-foreground">Status:</span>
                     {user.isDefaultPassword ? (
-                      <Badge className="bg-amber-500">Default</Badge>
+                      <Badge className="bg-[#71d2f0]">Default</Badge>
                     ) : (
                       <Badge className="bg-green-600">Custom</Badge>
                     )}
@@ -451,7 +451,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                     size="sm"
                     onClick={handleResetPassword}
                     disabled={passwordLoading || user.isDefaultPassword}
-                    className="border-amber-700 hover:bg-amber-900/30"
+                    className="border-[#1854d6] hover:bg-[#2A76B0]/30"
                   >
                     {passwordLoading ? (
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -518,8 +518,8 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-teal-900/50 rounded-lg flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-teal-400" />
+              <div className="w-12 h-12 bg-[#2A76B0]/50 rounded-lg flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-[#0a2540]" />
               </div>
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground">Bookings</p>

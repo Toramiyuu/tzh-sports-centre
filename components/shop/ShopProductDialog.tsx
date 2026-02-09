@@ -59,7 +59,7 @@ export function ShopProductDialog({
 
             {/* Featured badge */}
             {product.featured && (
-              <Badge className="absolute top-4 left-4 bg-teal-500 text-white">
+              <Badge className="absolute top-4 left-4 bg-[#1854d6] text-white">
                 {t('product.featured')}
               </Badge>
             )}
@@ -168,7 +168,7 @@ export function ShopProductDialog({
                 className="block"
               >
                 <Button
-                  className="w-full bg-teal-500 hover:bg-teal-400 text-white rounded-full text-lg py-6"
+                  className="w-full bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full text-lg py-6"
                   disabled={!product.inStock}
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />

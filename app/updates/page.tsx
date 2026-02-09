@@ -66,7 +66,7 @@ export default function UpdatesPage() {
               </div>
 
               {/* Update card */}
-              <div className="bg-card rounded-xl border border-border p-5 ml-2 border-l-4 border-l-teal-500">
+              <div className="bg-card rounded-xl border border-border p-5 ml-2 border-l-4 border-l-[#1854d6]">
                 <h3 className="text-lg font-semibold text-foreground mb-3">
                   {t(`entries.${entry.id}.title`)}
                 </h3>

@@ -45,7 +45,7 @@ export function ShopCategoryTabs({
             className={cn(
               'flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all',
               selectedCategory === 'all'
-                ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/25'
+                ? 'bg-[#1854d6] text-white shadow-lg shadow-[#1854d6]/25'
                 : 'bg-card text-muted-foreground hover:bg-accent hover:text-foreground border border-border'
             )}
           >
@@ -63,7 +63,7 @@ export function ShopCategoryTabs({
                 className={cn(
                   'flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all',
                   selectedCategory === category.id
-                    ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/25'
+                    ? 'bg-[#1854d6] text-white shadow-lg shadow-[#1854d6]/25'
                     : 'bg-card text-muted-foreground hover:bg-accent hover:text-foreground border border-border'
                 )}
               >

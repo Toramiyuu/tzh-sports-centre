@@ -286,9 +286,9 @@ export default function AdminStringingPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('admin.totalOrders')}</p>
-                  <p className="text-3xl font-bold text-teal-400">{stats.totalOrders}</p>
+                  <p className="text-3xl font-bold text-[#0a2540]">{stats.totalOrders}</p>
                 </div>
-                <Package className="w-10 h-10 text-teal-500 opacity-50" />
+                <Package className="w-10 h-10 text-[#0a2540] opacity-50" />
               </div>
             </CardContent>
           </Card>
@@ -449,7 +449,7 @@ export default function AdminStringingPage() {
                             <div>
                               <p className="text-muted-foreground">{t('admin.string')}</p>
                               <p className="font-medium text-foreground">{order.stringName}</p>
-                              <p className="text-teal-400 font-semibold">RM{order.price}</p>
+                              <p className="text-[#0a2540] font-semibold">RM{order.price}</p>
                             </div>
 
                             {/* Racket */}
@@ -512,7 +512,7 @@ export default function AdminStringingPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              <Button variant="outline" className="w-full bg-teal-900/30 border-teal-800 text-teal-400 hover:bg-teal-900/50">
+                              <Button variant="outline" className="w-full bg-[#2A76B0]/30 border-[#1854d6] text-[#0a2540] hover:bg-[#2A76B0]/50">
                                 <Image className="w-4 h-4 mr-2" />
                                 View Receipt
                               </Button>
