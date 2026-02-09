@@ -892,6 +892,12 @@
     "description": "查看最新改进和变更",
     "back": "返回",
     "entries": {
+      "proShopLaunch": {
+        "title": "专业商店正式上线",
+        "change1": "浏览我们的羽毛球和匹克球装备目录",
+        "change2": "按类别、品牌和价格范围筛选",
+        "change3": "一键通过WhatsApp下单"
+      },
       "adminPanelMerge": {
         "title": "管理面板重新设计",
         "change1": "将球场管理和课程管理合并为一个「预订与课程」页面",

@@ -1008,6 +1008,12 @@
     "description": "See what's new and improved",
     "back": "Back",
     "entries": {
+      "proShopLaunch": {
+        "title": "Pro Shop Now Open",
+        "change1": "Browse our catalog of badminton and pickleball equipment",
+        "change2": "Filter by category, brand, and price range",
+        "change3": "Order via WhatsApp with one tap"
+      },
       "adminPanelMerge": {
         "title": "Admin Panel Redesign",
         "change1": "Combined Court Management and Lesson Management into a single \"Bookings & Lessons\" page",
