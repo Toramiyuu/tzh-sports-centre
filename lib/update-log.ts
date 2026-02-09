@@ -7,12 +7,6 @@ export interface UpdateEntry {
 
 export const updateLog: UpdateEntry[] = [
   {
-    date: '2026-02-09',
-    time: '10:30:00',
-    id: 'proShopLaunch',
-    changeCount: 3,
-  },
-  {
     date: '2026-02-02',
     time: '00:49:00',
     id: 'adminPanelMerge',
