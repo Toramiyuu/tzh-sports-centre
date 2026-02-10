@@ -784,7 +784,7 @@ function BookingPageContent() {
                     </thead>
                     <tbody>
                       {availability[0]?.slots.map((slot, idx) => (
-                        <tr key={slot.id} className={idx % 2 === 0 ? 'bg-[#C8D4EA]' : 'bg-[#D4DDEF]'}>
+                        <tr key={slot.id} className={idx % 2 === 0 ? 'bg-[#DAE1F5]' : 'bg-[#EDF1FD]'}>
                           <td className="p-2 text-sm font-medium text-foreground border-b border-border whitespace-nowrap">
                             {formatTimeRange(slot.displayName)}
                           </td>
@@ -799,11 +799,11 @@ function BookingPageContent() {
                                   className={`w-full py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                                     !courtSlot.available
                                       ? courtSlot.isPast
-                                        ? 'bg-[#B8C4DE] text-[#6878A0] cursor-not-allowed'
-                                        : 'bg-[#A0B4E0] text-[#4060A0] cursor-not-allowed'
+                                        ? 'bg-[#D0D8EE] text-[#8090B0] cursor-not-allowed'
+                                        : 'bg-[#B8C8F0] text-[#5068A0] cursor-not-allowed'
                                       : selected
                                       ? 'bg-[#1854d6] text-white scale-[1.02] shadow-md'
-                                      : 'bg-[#E0E8F8] border border-[#1854d6]/30 text-foreground hover:border-[#1854d6] hover:shadow-sm hover:scale-[1.02]'
+                                      : 'bg-[#F4F6FE] border border-[#1854d6]/30 text-foreground hover:border-[#1854d6] hover:shadow-sm hover:scale-[1.02]'
                                   }`}
                                 >
                                   {!courtSlot.available

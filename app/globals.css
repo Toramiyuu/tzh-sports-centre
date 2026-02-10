@@ -49,71 +49,71 @@
 :root {
   --radius: 0.625rem;
   /* Soft lavender-blue background with deep royal blue accents */
-  --background: #c0ceed;
+  --background: #e1e9fc;
   --foreground: #0a2540;
-  --card: #D4DDEF;
+  --card: #EDF1FD;
   --card-foreground: #0a2540;
-  --popover: #D4DDEF;
+  --popover: #EDF1FD;
   --popover-foreground: #0a2540;
   --primary: #1854d6;
   --primary-foreground: #FFFFFF;
-  --secondary: #B0BEE0;
+  --secondary: #CDD6EE;
   --secondary-foreground: #0a2540;
-  --muted: #B0BEE0;
+  --muted: #CDD6EE;
   --muted-foreground: #4A5680;
-  --accent: #DDE3F3;
+  --accent: #F0F3FE;
   --accent-foreground: #0a2540;
   --destructive: #dc2626;
-  --border: #A0B0D8;
-  --input: #D4DDEF;
+  --border: #B8C4E0;
+  --input: #EDF1FD;
   --ring: #1854d6;
   --chart-1: oklch(0.588 0.107 230);
   --chart-2: oklch(0.705 0.191 220);
   --chart-3: oklch(0.696 0.153 200);
   --chart-4: oklch(0.750 0.160 210);
   --chart-5: oklch(0.490 0.096 230);
-  --sidebar: #B0BEE0;
+  --sidebar: #CDD6EE;
   --sidebar-foreground: #0a2540;
   --sidebar-primary: #1854d6;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #DDE3F3;
+  --sidebar-accent: #F0F3FE;
   --sidebar-accent-foreground: #0a2540;
-  --sidebar-border: #A0B0D8;
+  --sidebar-border: #B8C4E0;
   --sidebar-ring: #1854d6;
 }
 
 .dark {
   /* Same as root for now */
-  --background: #c0ceed;
+  --background: #e1e9fc;
   --foreground: #0a2540;
-  --card: #D4DDEF;
+  --card: #EDF1FD;
   --card-foreground: #0a2540;
-  --popover: #D4DDEF;
+  --popover: #EDF1FD;
   --popover-foreground: #0a2540;
   --primary: #1854d6;
   --primary-foreground: #FFFFFF;
-  --secondary: #B0BEE0;
+  --secondary: #CDD6EE;
   --secondary-foreground: #0a2540;
-  --muted: #B0BEE0;
+  --muted: #CDD6EE;
   --muted-foreground: #4A5680;
-  --accent: #DDE3F3;
+  --accent: #F0F3FE;
   --accent-foreground: #0a2540;
   --destructive: #dc2626;
-  --border: #A0B0D8;
-  --input: #D4DDEF;
+  --border: #B8C4E0;
+  --input: #EDF1FD;
   --ring: #1854d6;
   --chart-1: oklch(0.588 0.107 230);
   --chart-2: oklch(0.705 0.191 220);
   --chart-3: oklch(0.696 0.153 200);
   --chart-4: oklch(0.750 0.160 210);
   --chart-5: oklch(0.490 0.096 230);
-  --sidebar: #B0BEE0;
+  --sidebar: #CDD6EE;
   --sidebar-foreground: #0a2540;
   --sidebar-primary: #1854d6;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #DDE3F3;
+  --sidebar-accent: #F0F3FE;
   --sidebar-accent-foreground: #0a2540;
-  --sidebar-border: #A0B0D8;
+  --sidebar-border: #B8C4E0;
   --sidebar-ring: #1854d6;
 }
 

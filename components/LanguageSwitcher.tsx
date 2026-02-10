@@ -27,7 +27,7 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={loc}
             onClick={() => setLocale(loc)}
-            className={locale === loc ? 'bg-[#DDE3F3] text-[#0a2540]' : ''}
+            className={locale === loc ? 'bg-[#F0F3FE] text-[#0a2540]' : ''}
           >
             {localeNames[loc]}
           </DropdownMenuItem>
