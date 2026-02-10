@@ -96,12 +96,12 @@ export function RecurringTab() {
   return (
     <div className="space-y-4">
       {error && (
-        <div className="bg-red-900/30 text-red-400 p-3 rounded-lg text-sm flex items-center gap-2">
+        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span className="flex-1">{error}</span>
           <button
             onClick={() => { setError(null); setLoading(true); fetchData() }}
-            className="flex items-center gap-1 text-red-300 hover:text-red-200 font-medium"
+            className="flex items-center gap-1 text-red-500 hover:text-red-600 font-medium"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Retry

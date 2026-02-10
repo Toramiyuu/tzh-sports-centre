@@ -141,12 +141,12 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
       )}
 
       {error && (
-        <div className="bg-red-900/30 text-red-400 p-3 rounded-lg text-sm flex items-center gap-2">
+        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span className="flex-1">{error}</span>
           <button
             onClick={() => { setError(''); setLoading(true); fetchBookings() }}
-            className="flex items-center gap-1 text-red-300 hover:text-red-200 font-medium"
+            className="flex items-center gap-1 text-red-500 hover:text-red-600 font-medium"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Retry
@@ -155,7 +155,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
       )}
 
       {success && (
-        <div className="bg-green-900/30 text-green-400 p-3 rounded-lg text-sm">
+        <div className="bg-green-50 text-green-700 p-3 rounded-lg text-sm">
           {success}
         </div>
       )}
@@ -238,10 +238,10 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                       </Badge>
                       <Badge className={
                         booking.status === 'confirmed'
-                          ? 'bg-green-900/30 text-green-400'
+                          ? 'bg-green-50 text-green-700'
                           : booking.status === 'cancelled'
-                          ? 'bg-red-900/30 text-red-400'
-                          : 'bg-yellow-900/30 text-yellow-400'
+                          ? 'bg-red-50 text-red-600'
+                          : 'bg-amber-50 text-amber-700'
                       }>
                         {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                       </Badge>
@@ -268,7 +268,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
                       <Button
                         variant="outline"
                         size="sm"
-                        className="text-red-400 border-red-900/30 hover:bg-red-900/20 rounded-full"
+                        className="text-red-600 border-red-200 hover:bg-red-50 rounded-full"
                         onClick={() => setCancelDialogId(booking.id)}
                         disabled={cancellingId === booking.id}
                       >

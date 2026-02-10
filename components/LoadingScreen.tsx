@@ -6,17 +6,26 @@ export function LoadingScreen() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Hide loading screen once the page is fully loaded
-    const handleLoad = () => {
+    let delayTimer: ReturnType<typeof setTimeout>
+    let maxTimer: ReturnType<typeof setTimeout>
+
+    const hide = () => {
       // Small delay to ensure smooth transition
-      setTimeout(() => setIsLoading(false), 300)
+      delayTimer = setTimeout(() => setIsLoading(false), 300)
     }
 
     if (document.readyState === 'complete') {
-      handleLoad()
+      hide()
     } else {
-      window.addEventListener('load', handleLoad)
-      return () => window.removeEventListener('load', handleLoad)
+      window.addEventListener('load', hide)
+      // Fallback: auto-hide after 5s even if load event never fires
+      maxTimer = setTimeout(hide, 5000)
+    }
+
+    return () => {
+      window.removeEventListener('load', hide)
+      clearTimeout(delayTimer)
+      clearTimeout(maxTimer)
     }
   }, [])
 

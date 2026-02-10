@@ -73,9 +73,9 @@ interface StringingOrder {
 }
 
 const ORDER_STATUSES = [
-  { key: 'RECEIVED', label: 'Received', color: 'bg-blue-900/50 text-blue-400' },
-  { key: 'IN_PROGRESS', label: 'In Progress', color: 'bg-yellow-900/50 text-yellow-400' },
-  { key: 'READY', label: 'Ready', color: 'bg-green-900/50 text-green-400' },
+  { key: 'RECEIVED', label: 'Received', color: 'bg-blue-100 text-blue-700' },
+  { key: 'IN_PROGRESS', label: 'In Progress', color: 'bg-amber-100 text-amber-700' },
+  { key: 'READY', label: 'Ready', color: 'bg-green-100 text-green-700' },
   { key: 'COLLECTED', label: 'Collected', color: 'bg-accent text-muted-foreground' },
 ]
 
@@ -218,11 +218,11 @@ export default function AdminStringingPage() {
 
   const getStatusBadge = (order: StringingOrder) => {
     if (order.paymentStatus === 'paid') {
-      return <Badge className="bg-green-900/50 text-green-400">{t('status.paid')}</Badge>
+      return <Badge className="bg-green-100 text-green-700">{t('status.paid')}</Badge>
     }
     if (order.paymentUserConfirmed) {
       return (
-        <Badge className="bg-yellow-900/50 text-yellow-400">
+        <Badge className="bg-amber-100 text-amber-700">
           {t('admin.paymentConfirmed')}
         </Badge>
       )
@@ -247,7 +247,7 @@ export default function AdminStringingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-card border-b border-border">
+      <div className="bg-card border-b border-border pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -297,7 +297,7 @@ export default function AdminStringingPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('admin.pendingPayments')}</p>
-                  <p className="text-3xl font-bold text-yellow-400">{stats.pendingOrders}</p>
+                  <p className="text-3xl font-bold text-amber-700">{stats.pendingOrders}</p>
                 </div>
                 <Clock className="w-10 h-10 text-yellow-500 opacity-50" />
               </div>
@@ -308,7 +308,7 @@ export default function AdminStringingPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('admin.completedOrders')}</p>
-                  <p className="text-3xl font-bold text-green-400">{stats.paidOrders}</p>
+                  <p className="text-3xl font-bold text-green-700">{stats.paidOrders}</p>
                 </div>
                 <CheckCircle2 className="w-10 h-10 text-green-500 opacity-50" />
               </div>

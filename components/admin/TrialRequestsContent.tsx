@@ -51,9 +51,9 @@ interface TrialRequest {
 
 const statusOptions = [
   { value: 'new', label: 'New', color: 'bg-[#2A76B0]/30 text-[#0a2540]' },
-  { value: 'contacted', label: 'Contacted', color: 'bg-yellow-900/30 text-yellow-400' },
-  { value: 'scheduled', label: 'Scheduled', color: 'bg-purple-900/30 text-purple-400' },
-  { value: 'converted', label: 'Converted', color: 'bg-green-900/30 text-green-400' },
+  { value: 'contacted', label: 'Contacted', color: 'bg-amber-50 text-amber-700' },
+  { value: 'scheduled', label: 'Scheduled', color: 'bg-purple-50 text-purple-700' },
+  { value: 'converted', label: 'Converted', color: 'bg-green-50 text-green-700' },
   { value: 'not_interested', label: 'Not Interested', color: 'bg-accent text-muted-foreground' },
 ]
 
@@ -283,7 +283,7 @@ export default function TrialRequestsContent() {
 
                     {/* Admin Notes */}
                     {request.adminNotes && (
-                      <div className="text-sm text-muted-foreground bg-yellow-900/20 p-3 rounded border-l-4 border-yellow-600">
+                      <div className="text-sm text-muted-foreground bg-amber-50 p-3 rounded border-l-4 border-amber-300">
                         <strong>Admin Notes:</strong> {request.adminNotes}
                       </div>
                     )}
@@ -331,7 +331,7 @@ export default function TrialRequestsContent() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Button variant="outline" size="sm" className="w-full text-green-400 border-green-700">
+                      <Button variant="outline" size="sm" className="w-full text-green-700 border-green-300">
                         <Phone className="w-4 h-4 mr-2" />
                         WhatsApp
                       </Button>
@@ -340,7 +340,7 @@ export default function TrialRequestsContent() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                      className="text-red-600 hover:text-red-500 hover:bg-red-50"
                       onClick={() => setDeleteConfirm(request.id)}
                     >
                       <Trash2 className="w-4 h-4 mr-2" />

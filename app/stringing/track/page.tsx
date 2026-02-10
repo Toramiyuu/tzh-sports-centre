@@ -130,7 +130,7 @@ export default function TrackOrderPage() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 pt-24 pb-8">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-foreground mb-2">
             {t('track.title')}

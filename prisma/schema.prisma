@@ -37,6 +37,7 @@ model User {
   recurringBookings     RecurringBooking[]
   stringingOrders       StringingOrder[]
   lessonSessions        LessonSession[]    @relation("StudentLessons")
+  shopOrders            ShopOrder[]
 
   @@map("users")
 }
@@ -371,4 +372,61 @@ model StringingMonthCounter {
 
   @@unique([year, month])
   @@map("stringing_month_counters")
+}
+
+model ShopProduct {
+  id          String   @id @default(cuid())
+  productId   String   @unique @map("product_id")
+  category    String
+  subcategory String?
+  brand       String
+  name        String
+  fullName    String   @map("full_name")
+  price       Float
+  description String?
+  specs       Json?
+  image       String
+  images      Json?
+  colors      Json?
+  sizes       Json?
+  inStock     Boolean  @default(true) @map("in_stock")
+  stockCount  Int      @default(0) @map("stock_count")
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([brand])
+  @@index([inStock])
+  @@map("shop_products")
+}
+
+enum ShopOrderStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  PREPARING
+  READY_FOR_PICKUP
+  COMPLETED
+  CANCELLED
+}
+
+model ShopOrder {
+  id            String          @id @default(cuid())
+  userId        String?         @map("user_id")
+  customerName  String          @map("customer_name")
+  customerPhone String          @map("customer_phone")
+  customerEmail String?         @map("customer_email")
+  items         Json
+  total         Float
+  status        ShopOrderStatus @default(PENDING_PAYMENT)
+  paymentMethod String?         @map("payment_method")
+  paymentStatus String          @default("pending") @map("payment_status")
+  receiptUrl    String?         @map("receipt_url")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  user          User?           @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("shop_orders")
 }

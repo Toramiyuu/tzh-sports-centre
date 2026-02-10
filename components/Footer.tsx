@@ -35,14 +35,14 @@ export function Footer() {
               <Link href="/lessons" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                 {t('lessons')}
               </Link>
-              <Link href="/stringing" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
-                {t('stringing')}
-              </Link>
               <Link href="/dashboard" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                 {t('myBookings')}
               </Link>
               <Link href="/updates" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                 {t('updates')}
+              </Link>
+              <Link href="/shop" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                {t('shop')}
               </Link>
             </div>
           </div>

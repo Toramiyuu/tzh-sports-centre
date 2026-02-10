@@ -47,9 +47,9 @@ export default function MembersContent() {
   const tAdmin = useTranslations('admin')
 
   const SKILL_LEVELS = [
-    { value: 'beginner', label: t('beginner'), color: 'bg-green-900/50 text-green-400' },
-    { value: 'intermediate', label: t('intermediate'), color: 'bg-blue-900/50 text-blue-400' },
-    { value: 'advanced', label: t('advanced'), color: 'bg-purple-900/50 text-purple-400' },
+    { value: 'beginner', label: t('beginner'), color: 'bg-green-100 text-green-700' },
+    { value: 'intermediate', label: t('intermediate'), color: 'bg-blue-100 text-blue-700' },
+    { value: 'advanced', label: t('advanced'), color: 'bg-purple-100 text-purple-700' },
   ]
 
   const [members, setMembers] = useState<User[]>([])
@@ -177,11 +177,11 @@ export default function MembersContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-900/50 rounded-lg flex items-center justify-center">
-                <Star className="w-5 h-5 text-green-400" />
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <Star className="w-5 h-5 text-green-700" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-green-400">
+                <p className="text-2xl font-bold text-green-700">
                   {members.reduce((sum, m) => sum + m._count.lessonSessions, 0)}
                 </p>
                 <p className="text-sm text-muted-foreground">{t('totalLessons')}</p>
@@ -192,11 +192,11 @@ export default function MembersContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-900/50 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-purple-400" />
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-purple-700" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-purple-400">{allUsers.length}</p>
+                <p className="text-2xl font-bold text-purple-700">{allUsers.length}</p>
                 <p className="text-sm text-muted-foreground">{t('totalRegisteredUsers')}</p>
               </div>
             </div>
@@ -335,7 +335,7 @@ export default function MembersContent() {
                         onClick={() => toggleMember(user.id, user.isMember)}
                         disabled={updating === user.id}
                         className={user.isMember
-                          ? 'text-red-400 border-red-800 hover:bg-red-900/30'
+                          ? 'text-red-600 border-red-300 hover:bg-red-100'
                           : 'bg-[#1854d6] hover:bg-[#1854d6]'
                         }
                       >

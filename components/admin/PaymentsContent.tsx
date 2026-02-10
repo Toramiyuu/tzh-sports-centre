@@ -326,11 +326,11 @@ export default function PaymentsContent() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
-        return <Badge className="bg-green-900/50 text-green-400 border-0"><Check className="w-3 h-3 mr-1" />Paid</Badge>
+        return <Badge className="bg-green-100 text-green-700 border-0"><Check className="w-3 h-3 mr-1" />Paid</Badge>
       case 'partial':
-        return <Badge className="bg-yellow-900/50 text-yellow-400 border-0"><Banknote className="w-3 h-3 mr-1" />Partial</Badge>
+        return <Badge className="bg-amber-100 text-amber-700 border-0"><Banknote className="w-3 h-3 mr-1" />Partial</Badge>
       case 'unpaid':
-        return <Badge className="bg-red-900/50 text-red-400 border-0"><Clock className="w-3 h-3 mr-1" />Unpaid</Badge>
+        return <Badge className="bg-red-100 text-red-600 border-0"><Clock className="w-3 h-3 mr-1" />Unpaid</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
     }
@@ -423,12 +423,12 @@ export default function PaymentsContent() {
           <Card>
             <CardContent className="py-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-900/50 rounded-lg">
-                  <Check className="w-5 h-5 text-green-400" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Check className="w-5 h-5 text-green-700" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Paid</p>
-                  <p className="text-xl font-bold text-green-400">{totals.paidCount}</p>
+                  <p className="text-xl font-bold text-green-700">{totals.paidCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -436,12 +436,12 @@ export default function PaymentsContent() {
           <Card>
             <CardContent className="py-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-900/50 rounded-lg">
-                  <Clock className="w-5 h-5 text-red-400" />
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Clock className="w-5 h-5 text-red-600" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Unpaid</p>
-                  <p className="text-xl font-bold text-red-400">{totals.unpaidCount + totals.partialCount}</p>
+                  <p className="text-xl font-bold text-red-600">{totals.unpaidCount + totals.partialCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -449,8 +449,8 @@ export default function PaymentsContent() {
           <Card>
             <CardContent className="py-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-900/50 rounded-lg">
-                  <DollarSign className="w-5 h-5 text-purple-400" />
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <DollarSign className="w-5 h-5 text-purple-700" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Collected</p>
@@ -520,10 +520,10 @@ export default function PaymentsContent() {
                   key={user.userId}
                   className={`p-4 rounded-lg border ${
                     user.status === 'paid'
-                      ? 'bg-green-900/20 border-green-800/50'
+                      ? 'bg-green-50 border-green-200'
                       : user.status === 'partial'
-                      ? 'bg-yellow-900/20 border-yellow-800/50'
-                      : 'bg-red-900/20 border-red-800/50'
+                      ? 'bg-amber-50 border-yellow-200'
+                      : 'bg-red-50 border-red-200'
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -578,13 +578,13 @@ export default function PaymentsContent() {
                         {user.paidAmount > 0 && (
                           <div>
                             <span className="text-sm text-muted-foreground">Paid: </span>
-                            <span className="font-bold text-green-400">RM{user.paidAmount.toFixed(2)}</span>
+                            <span className="font-bold text-green-700">RM{user.paidAmount.toFixed(2)}</span>
                           </div>
                         )}
                         {user.unpaidAmount > 0 && (
                           <div>
                             <span className="text-sm text-muted-foreground">Unpaid: </span>
-                            <span className="font-bold text-red-400">RM{user.unpaidAmount.toFixed(2)}</span>
+                            <span className="font-bold text-red-600">RM{user.unpaidAmount.toFixed(2)}</span>
                           </div>
                         )}
                       </div>
@@ -654,7 +654,7 @@ export default function PaymentsContent() {
                 <p><strong>Customer:</strong> {selectedUser.name} (UID: {selectedUser.uid})</p>
                 <p><strong>Total Due:</strong> RM{selectedUser.totalAmount.toFixed(2)}</p>
                 <p><strong>Already Paid:</strong> RM{selectedUser.paidAmount.toFixed(2)}</p>
-                <p className="text-lg font-bold text-red-400">
+                <p className="text-lg font-bold text-red-600">
                   <strong>Remaining:</strong> RM{selectedUser.unpaidAmount.toFixed(2)}
                 </p>
               </div>
@@ -790,7 +790,7 @@ export default function PaymentsContent() {
                         <td className="px-3 py-2">{format(new Date(item.date), 'dd MMM')}</td>
                         <td className="px-3 py-2">
                           <Badge variant="outline" className={
-                            item.type === 'recurring' ? 'bg-purple-900/30 text-purple-400' : 'bg-[#2A76B0]/30 text-[#0a2540]'
+                            item.type === 'recurring' ? 'bg-purple-50 text-purple-700' : 'bg-[#2A76B0]/30 text-[#0a2540]'
                           }>
                             {item.type === 'recurring' ? 'Recurring' : 'One-time'}
                           </Badge>

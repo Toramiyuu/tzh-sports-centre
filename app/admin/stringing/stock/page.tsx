@@ -484,7 +484,7 @@ export default function AdminStockPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-card border-b border-border">
+      <div className="bg-card border-b border-border pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -549,9 +549,9 @@ export default function AdminStockPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Color Variants</p>
-                  <p className="text-3xl font-bold text-purple-400">{stats.totalColorVariants}</p>
+                  <p className="text-3xl font-bold text-purple-700">{stats.totalColorVariants}</p>
                 </div>
-                <Palette className="w-10 h-10 text-purple-400 opacity-50" />
+                <Palette className="w-10 h-10 text-purple-700 opacity-50" />
               </div>
             </CardContent>
           </Card>
@@ -560,9 +560,9 @@ export default function AdminStockPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Low Stock Colors</p>
-                  <p className="text-3xl font-bold text-yellow-400">{stats.lowStock}</p>
+                  <p className="text-3xl font-bold text-amber-700">{stats.lowStock}</p>
                 </div>
-                <AlertTriangle className="w-10 h-10 text-yellow-400 opacity-50" />
+                <AlertTriangle className="w-10 h-10 text-amber-700 opacity-50" />
               </div>
             </CardContent>
           </Card>
@@ -571,9 +571,9 @@ export default function AdminStockPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Out of Stock</p>
-                  <p className="text-3xl font-bold text-red-400">{stats.outOfStock}</p>
+                  <p className="text-3xl font-bold text-red-600">{stats.outOfStock}</p>
                 </div>
-                <XCircle className="w-10 h-10 text-red-400 opacity-50" />
+                <XCircle className="w-10 h-10 text-red-600 opacity-50" />
               </div>
             </CardContent>
           </Card>
@@ -672,9 +672,9 @@ export default function AdminStockPage() {
                     <div
                       className={`rounded-lg border ${
                         isOutOfStock
-                          ? 'bg-red-900/20 border-red-800'
+                          ? 'bg-red-50 border-red-300'
                           : hasLowStock
-                          ? 'bg-yellow-900/20 border-yellow-800'
+                          ? 'bg-amber-50 border-yellow-300'
                           : 'bg-card border-border'
                       }`}
                     >
@@ -718,11 +718,11 @@ export default function AdminStockPage() {
                             {!hasColors ? (
                               <Badge className="bg-secondary text-muted-foreground">No Colors</Badge>
                             ) : isOutOfStock ? (
-                              <Badge className="bg-red-900/30 text-red-400">Sold Out</Badge>
+                              <Badge className="bg-red-50 text-red-600">Sold Out</Badge>
                             ) : hasLowStock ? (
-                              <Badge className="bg-yellow-900/30 text-yellow-400">Low Stock</Badge>
+                              <Badge className="bg-amber-50 text-amber-700">Low Stock</Badge>
                             ) : (
-                              <Badge className="bg-green-900/50 text-green-400">In Stock</Badge>
+                              <Badge className="bg-green-100 text-green-700">In Stock</Badge>
                             )}
                           </div>
                         </div>
@@ -786,9 +786,9 @@ export default function AdminStockPage() {
                                       selectedIds.has(stock.id)
                                         ? 'bg-[#2A76B0]/30 border border-[#1854d6]'
                                         : isColorOutOfStock
-                                        ? 'bg-red-900/30'
+                                        ? 'bg-red-50'
                                         : isColorLowStock
-                                        ? 'bg-yellow-900/30'
+                                        ? 'bg-amber-50'
                                         : 'bg-card'
                                     }`}
                                   >
@@ -815,7 +815,7 @@ export default function AdminStockPage() {
                                         <Badge variant="destructive" className="text-xs">Out of Stock</Badge>
                                       )}
                                       {isColorLowStock && (
-                                        <Badge className="bg-yellow-900/30 text-yellow-400 text-xs">Low</Badge>
+                                        <Badge className="bg-amber-50 text-amber-700 text-xs">Low</Badge>
                                       )}
                                     </div>
 
@@ -866,7 +866,7 @@ export default function AdminStockPage() {
                                       <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                                        className="h-8 w-8 text-red-600 hover:text-red-500 hover:bg-red-50"
                                         onClick={(e) => {
                                           e.stopPropagation()
                                           setStockToDelete(stock)
@@ -1068,13 +1068,13 @@ export default function AdminStockPage() {
                   >
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        isIncrease ? 'bg-green-900/50' : 'bg-red-900/30'
+                        isIncrease ? 'bg-green-100' : 'bg-red-50'
                       }`}
                     >
                       {isIncrease ? (
-                        <Plus className="w-4 h-4 text-green-400" />
+                        <Plus className="w-4 h-4 text-green-700" />
                       ) : (
-                        <Minus className="w-4 h-4 text-red-400" />
+                        <Minus className="w-4 h-4 text-red-600" />
                       )}
                     </div>
                     <div className="flex-1">
@@ -1187,8 +1187,8 @@ export default function AdminStockPage() {
 
           <div className="py-4">
             {/* Preview selected items */}
-            <div className="max-h-48 overflow-y-auto border border-red-800 rounded-lg p-2 bg-red-900/20">
-              <p className="text-xs text-red-400 mb-2">Items to be deleted:</p>
+            <div className="max-h-48 overflow-y-auto border border-red-300 rounded-lg p-2 bg-red-50">
+              <p className="text-xs text-red-600 mb-2">Items to be deleted:</p>
               <div className="space-y-1">
                 {getSelectedStocks().map((stock) => (
                   <div key={stock.id} className="flex items-center gap-2 text-sm text-foreground">

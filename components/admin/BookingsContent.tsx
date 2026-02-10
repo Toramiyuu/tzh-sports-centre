@@ -1004,14 +1004,14 @@ export default function BookingsContent() {
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-secondary">
-                        <th className="p-2 text-left text-sm font-medium text-foreground border-b border-border">
+                      <tr className="bg-[#1854d6]">
+                        <th className="p-2 text-left text-sm font-medium text-white border-b border-[#1854d6]">
                           {t('time')}
                         </th>
                         {courts.map((court) => (
                           <th
                             key={court.id}
-                            className="p-2 text-center text-sm font-medium text-foreground border-b border-border min-w-[150px]"
+                            className="p-2 text-center text-sm font-medium text-white border-b border-[#1854d6] min-w-[150px]"
                           >
                             {court.name}
                           </th>
@@ -1020,7 +1020,7 @@ export default function BookingsContent() {
                     </thead>
                     <tbody>
                       {timeSlots.map((slot, idx) => (
-                        <tr key={slot.id} className={idx % 2 === 0 ? 'bg-secondary' : ''}>
+                        <tr key={slot.id} className={idx % 2 === 0 ? 'bg-blue-50/50' : 'bg-white'}>
                           <td className="p-2 text-sm font-medium text-foreground border-b border-border whitespace-nowrap">
                             {formatTimeRange(slot.displayName)}
                           </td>
@@ -1040,18 +1040,18 @@ export default function BookingsContent() {
                                   <div
                                     className={`p-2 rounded text-xs relative ${
                                       isSelected
-                                        ? 'ring-2 ring-red-500 bg-red-900/30'
+                                        ? 'ring-2 ring-red-500 bg-red-50'
                                         : booking.isRecurring
-                                        ? 'bg-purple-900/50 border border-purple-700'
+                                        ? 'bg-purple-50 border border-purple-300'
                                         : booking.receiptVerificationStatus === 'rejected'
-                                        ? 'bg-red-900/30 border border-red-700'
+                                        ? 'bg-red-50 border border-red-300'
                                         : booking.receiptVerificationStatus === 'approved' || booking.paymentStatus === 'paid'
-                                        ? 'bg-green-900/50 border border-green-700'
+                                        ? 'bg-green-50 border border-green-300'
                                         : booking.receiptVerificationStatus === 'pending_verification' || (booking.paymentScreenshotUrl && booking.paymentStatus === 'pending')
-                                        ? 'bg-yellow-900/30 border border-yellow-700'
+                                        ? 'bg-amber-50 border border-amber-300'
                                         : booking.sport === 'badminton'
-                                        ? 'bg-[#2A76B0]/30 border border-[#1854d6]'
-                                        : 'bg-green-900/50 border border-green-700'
+                                        ? 'bg-blue-50 border border-blue-300'
+                                        : 'bg-emerald-50 border border-emerald-300'
                                     } ${selectionMode ? 'cursor-pointer hover:opacity-80' : ''}`}
                                     onClick={selectionMode ? () => {
                                       if (booking.isRecurring) {
@@ -1064,22 +1064,22 @@ export default function BookingsContent() {
                                     {/* Selection checkbox indicator */}
                                     {selectionMode && (
                                       <div className={`absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center ${
-                                        isSelected ? 'bg-red-500' : 'bg-[#5a554a]'
+                                        isSelected ? 'bg-red-500' : 'bg-slate-300'
                                       }`}>
                                         {isSelected && <Check className="w-3 h-3 text-white" />}
                                       </div>
                                     )}
                                     <div className="flex items-center gap-1 font-medium flex-wrap">
                                       {booking.isRecurring ? (
-                                        <Repeat className="w-3 h-3 text-purple-400" />
+                                        <Repeat className="w-3 h-3 text-purple-600" />
                                       ) : (
-                                        <User className="w-3 h-3 text-foreground" />
+                                        <User className="w-3 h-3 text-slate-700" />
                                       )}
-                                      <span className={booking.isRecurring ? 'text-purple-400' : 'text-foreground'}>
+                                      <span className={booking.isRecurring ? 'text-purple-700' : 'text-slate-800'}>
                                         {booking.name}
                                       </span>
                                       {booking.isRecurring && (
-                                        <Badge className="text-[10px] px-1 py-0 bg-purple-900/50 text-purple-400 border-0">
+                                        <Badge className="text-[10px] px-1 py-0 bg-purple-100 text-purple-700 border-0">
                                           {t('recurring')}
                                         </Badge>
                                       )}
@@ -1098,18 +1098,18 @@ export default function BookingsContent() {
                                     {!booking.isRecurring && booking.paymentStatus && (
                                       <div className="mt-1 flex items-center gap-1 flex-wrap">
                                         {booking.receiptVerificationStatus === 'approved' || booking.paymentStatus === 'paid' ? (
-                                          <Badge className="text-[10px] px-1 py-0 bg-green-900/50 text-green-400 border-0">
+                                          <Badge className="text-[10px] px-1 py-0 bg-green-100 text-green-700 border-0">
                                             <Check className="w-2.5 h-2.5 mr-0.5" />
                                             Approved
                                           </Badge>
                                         ) : booking.receiptVerificationStatus === 'rejected' ? (
-                                          <Badge className="text-[10px] px-1 py-0 bg-red-900/30 text-red-400 border-0">
+                                          <Badge className="text-[10px] px-1 py-0 bg-red-50 text-red-600 border-0">
                                             <XCircle className="w-2.5 h-2.5 mr-0.5" />
                                             Rejected
                                           </Badge>
                                         ) : booking.paymentScreenshotUrl ? (
                                           <>
-                                            <Badge className="text-[10px] px-1 py-0 bg-yellow-900/30 text-yellow-400 border-0">
+                                            <Badge className="text-[10px] px-1 py-0 bg-amber-50 text-amber-700 border-0">
                                               <Eye className="w-2.5 h-2.5 mr-0.5" />
                                               Needs Review
                                             </Badge>
@@ -1139,7 +1139,7 @@ export default function BookingsContent() {
                                               <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="h-5 px-1.5 text-[10px] text-green-400 hover:text-green-300 hover:bg-green-900/30"
+                                                className="h-5 px-1.5 text-[10px] text-green-700 hover:text-green-600 hover:bg-green-100"
                                                 onClick={(e) => {
                                                   e.stopPropagation()
                                                   setBookingToConfirmPayment(booking)
@@ -1158,7 +1158,7 @@ export default function BookingsContent() {
                                       <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="w-full mt-1 h-6 text-purple-400 hover:text-purple-300 hover:bg-purple-900/30"
+                                        className="w-full mt-1 h-6 text-purple-700 hover:text-purple-600 hover:bg-purple-50"
                                         onClick={() => openEditDialogById(booking.id)}
                                       >
                                         <Pencil className="w-3 h-3 mr-1" />
@@ -1169,7 +1169,7 @@ export default function BookingsContent() {
                                       <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="w-full mt-1 h-6 text-red-400 hover:text-red-300 hover:bg-red-900/30"
+                                        className="w-full mt-1 h-6 text-red-600 hover:text-red-500 hover:bg-red-50"
                                         onClick={() => openCancelDialog(booking)}
                                       >
                                         <Trash2 className="w-3 h-3 mr-1" />
@@ -1220,16 +1220,16 @@ export default function BookingsContent() {
                     {recurringBookingsForDay.map((rb) => (
                       <div
                         key={`recurring-${rb.id}`}
-                        className="p-4 rounded-lg border bg-purple-900/50 border-purple-700"
+                        className="p-4 rounded-lg border bg-purple-100 border-purple-300"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
-                              <Repeat className="w-4 h-4 text-purple-400" />
-                              <span className="font-medium text-purple-300">
+                              <Repeat className="w-4 h-4 text-purple-700" />
+                              <span className="font-medium text-purple-600">
                                 {rb.label || (rb.user?.name || rb.guestName || 'Unknown')}
                               </span>
-                              <Badge className="bg-purple-900/50 text-purple-400 border-0">
+                              <Badge className="bg-purple-100 text-purple-700 border-0">
                                 {t('recurring')}
                               </Badge>
                               <Badge
@@ -1237,7 +1237,7 @@ export default function BookingsContent() {
                                 className={
                                   rb.sport === 'badminton'
                                     ? 'bg-[#2A76B0]/30 text-[#0a2540] border-[#1854d6]'
-                                    : 'bg-green-900/50 text-green-400 border-green-700'
+                                    : 'bg-green-100 text-green-700 border-green-300'
                                 }
                               >
                                 {rb.sport}
@@ -1265,7 +1265,7 @@ export default function BookingsContent() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-purple-400 hover:text-purple-300 hover:bg-purple-900/50"
+                            className="text-purple-700 hover:text-purple-600 hover:bg-purple-100"
                             onClick={() => openEditDialog(rb)}
                           >
                             <Pencil className="w-4 h-4 mr-1" />
@@ -1281,7 +1281,7 @@ export default function BookingsContent() {
                         className={`p-4 rounded-lg border ${
                           booking.sport === 'badminton'
                             ? 'bg-[#2A76B0]/30 border-[#1854d6]'
-                            : 'bg-green-900/50 border-green-700'
+                            : 'bg-green-50 border-green-300'
                         }`}
                       >
                         <div className="flex items-start justify-between">
@@ -1295,7 +1295,7 @@ export default function BookingsContent() {
                                 className={
                                   booking.sport === 'badminton'
                                     ? 'bg-[#2A76B0]/30 text-[#0a2540] border-[#1854d6]'
-                                    : 'bg-green-900/50 text-green-400 border-green-700'
+                                    : 'bg-green-100 text-green-700 border-green-300'
                                 }
                               >
                                 {booking.sport}
@@ -1323,18 +1323,18 @@ export default function BookingsContent() {
                                 RM{booking.totalAmount.toFixed(2)}
                               </span>
                               {booking.receiptVerificationStatus === 'approved' || booking.paymentStatus === 'paid' ? (
-                                <Badge className="bg-green-900/50 text-green-400 border-0 text-xs">
+                                <Badge className="bg-green-100 text-green-700 border-0 text-xs">
                                   <Check className="w-3 h-3 mr-1" />
                                   Approved
                                 </Badge>
                               ) : booking.receiptVerificationStatus === 'rejected' ? (
-                                <Badge className="bg-red-900/30 text-red-400 border-0 text-xs">
+                                <Badge className="bg-red-50 text-red-600 border-0 text-xs">
                                   <XCircle className="w-3 h-3 mr-1" />
                                   Rejected
                                 </Badge>
                               ) : booking.paymentScreenshotUrl ? (
                                 <>
-                                  <Badge className="bg-yellow-900/30 text-yellow-400 border-0 text-xs">
+                                  <Badge className="bg-amber-50 text-amber-700 border-0 text-xs">
                                     <Eye className="w-3 h-3 mr-1" />
                                     Needs Review
                                   </Badge>
@@ -1372,7 +1372,7 @@ export default function BookingsContent() {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-6 px-2 text-xs text-green-400 hover:text-green-300 hover:bg-green-900/30"
+                                    className="h-6 px-2 text-xs text-green-700 hover:text-green-600 hover:bg-green-100"
                                     onClick={() => {
                                       setBookingToConfirmPayment({
                                         id: booking.id,
@@ -1400,7 +1400,7 @@ export default function BookingsContent() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-red-400 hover:text-red-300 hover:bg-red-900/30"
+                            className="text-red-600 hover:text-red-500 hover:bg-red-50"
                             onClick={() =>
                               openCancelDialog({
                                 id: booking.id,
@@ -1582,7 +1582,7 @@ export default function BookingsContent() {
                       className={`flex items-center justify-between p-3 rounded-lg border transition-all hover:shadow-sm cursor-pointer ${
                         rb.sport === 'badminton'
                           ? 'bg-[#2A76B0]/20 border-[#1854d6] hover:bg-[#2A76B0]/30'
-                          : 'bg-green-900/30 border-green-700 hover:bg-green-900/50'
+                          : 'bg-green-100 border-green-300 hover:bg-green-200'
                       }`}
                       onClick={() => openEditDialog(rb)}
                     >
@@ -1594,12 +1594,12 @@ export default function BookingsContent() {
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-foreground">{rb.label || rb.sport}</span>
                             {rb.user && (
-                              <Badge className="bg-purple-900/50 text-purple-400 border-0 text-xs">
+                              <Badge className="bg-purple-100 text-purple-700 border-0 text-xs">
                                 #{rb.user.uid}
                               </Badge>
                             )}
                             {!rb.user && rb.guestName && (
-                              <Badge className="bg-orange-900/30 text-orange-400 border-0 text-xs">
+                              <Badge className="bg-orange-50 text-orange-700 border-0 text-xs">
                                 {t('guest')}
                               </Badge>
                             )}
@@ -1613,17 +1613,17 @@ export default function BookingsContent() {
                             {rb.user && (
                               <>
                                 <span className="text-muted-foreground/70">|</span>
-                                <span className="text-purple-400">{rb.user.name}</span>
+                                <span className="text-purple-700">{rb.user.name}</span>
                               </>
                             )}
                             {!rb.user && rb.guestName && (
                               <>
                                 <span className="text-muted-foreground/70">|</span>
-                                <span className="text-orange-400">{rb.guestName}</span>
+                                <span className="text-orange-700">{rb.guestName}</span>
                                 {rb.guestPhone && (
                                   <>
                                     <span className="text-muted-foreground/70">|</span>
-                                    <span className="text-orange-400">{rb.guestPhone}</span>
+                                    <span className="text-orange-700">{rb.guestPhone}</span>
                                   </>
                                 )}
                               </>
@@ -1643,7 +1643,7 @@ export default function BookingsContent() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-muted-foreground/70 hover:text-red-400 hover:bg-red-900/30"
+                          className="text-muted-foreground/70 hover:text-red-600 hover:bg-red-50"
                           onClick={() => handleDeleteRecurring(rb.id)}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1856,7 +1856,7 @@ export default function BookingsContent() {
 
                   <div>
                     <Label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                      {t('endTime')} {recurringSport === 'pickleball' && <span className="text-green-400 font-normal">({t('minHours')})</span>}
+                      {t('endTime')} {recurringSport === 'pickleball' && <span className="text-green-700 font-normal">({t('minHours')})</span>}
                     </Label>
                     <Select value={recurringEndTime} onValueChange={setRecurringEndTime} disabled={!recurringStartTime}>
                       <SelectTrigger className="bg-card border-border text-foreground">
@@ -1943,15 +1943,15 @@ export default function BookingsContent() {
                     )}
                   </div>
                   {recurringUser && (
-                    <div className="mt-2 p-3 bg-green-900/50 border border-green-700 rounded-lg">
+                    <div className="mt-2 p-3 bg-green-50 border border-green-300 rounded-lg">
                       <div className="flex items-center gap-2 text-sm">
-                        <User className="w-4 h-4 text-green-400" />
-                        <span className="font-medium text-green-400">{recurringUser.name}</span>
-                        <Badge className="bg-green-900/50 text-green-400 border-0 text-xs">
+                        <User className="w-4 h-4 text-green-700" />
+                        <span className="font-medium text-green-700">{recurringUser.name}</span>
+                        <Badge className="bg-green-100 text-green-700 border-0 text-xs">
                           #{recurringUser.uid}
                         </Badge>
                       </div>
-                      <div className="text-xs text-green-400 mt-1 flex items-center gap-1">
+                      <div className="text-xs text-green-700 mt-1 flex items-center gap-1">
                         <Phone className="w-3 h-3" />
                         {recurringUser.phone}
                       </div>
@@ -2061,8 +2061,8 @@ export default function BookingsContent() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-4 border-b border-border">
             <DialogTitle className="flex items-center gap-3 text-xl">
-              <div className="p-2 bg-orange-900/30 rounded-lg">
-                <Pencil className="w-5 h-5 text-orange-400" />
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <Pencil className="w-5 h-5 text-orange-700" />
               </div>
               {t('editRecurring')}
             </DialogTitle>
@@ -2256,15 +2256,15 @@ export default function BookingsContent() {
                 )}
               </div>
               {recurringUser && (
-                <div className="mt-2 p-3 bg-green-900/50 border border-green-700 rounded-lg">
+                <div className="mt-2 p-3 bg-green-50 border border-green-300 rounded-lg">
                   <div className="flex items-center gap-2 text-sm">
-                    <User className="w-4 h-4 text-green-400" />
-                    <span className="font-medium text-green-400">{recurringUser.name}</span>
-                    <Badge className="bg-green-900/50 text-green-400 border-0 text-xs">
+                    <User className="w-4 h-4 text-green-700" />
+                    <span className="font-medium text-green-700">{recurringUser.name}</span>
+                    <Badge className="bg-green-100 text-green-700 border-0 text-xs">
                       #{recurringUser.uid}
                     </Badge>
                   </div>
-                  <div className="text-xs text-green-400 mt-1 flex items-center gap-1">
+                  <div className="text-xs text-green-700 mt-1 flex items-center gap-1">
                     <Phone className="w-3 h-3" />
                     {recurringUser.phone}
                   </div>
@@ -2340,14 +2340,14 @@ export default function BookingsContent() {
 
       {/* Floating Action Bar for Selection Mode */}
       {selectionMode && (selectedRecurringIds.size > 0 || selectedBookingIds.size > 0) && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-4 z-50">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-4 z-50">
           <span className="text-sm">
             {selectedRecurringIds.size + selectedBookingIds.size} {t('selected')}
             {selectedRecurringIds.size > 0 && (
-              <span className="text-purple-300 ml-1">({selectedRecurringIds.size} {t('recurring')})</span>
+              <span className="text-purple-600 ml-1">({selectedRecurringIds.size} {t('recurring')})</span>
             )}
             {selectedPendingPaymentCount > 0 && (
-              <span className="text-yellow-300 ml-1">({selectedPendingPaymentCount} pending)</span>
+              <span className="text-amber-600 ml-1">({selectedPendingPaymentCount} pending)</span>
             )}
           </span>
           {selectedRecurringIds.size > 0 && (
@@ -2400,7 +2400,7 @@ export default function BookingsContent() {
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-red-400">
+            <DialogTitle className="flex items-center gap-2 text-red-600">
               <Trash2 className="w-5 h-5" />
               {t('confirmDeleteTitle')}
             </DialogTitle>
@@ -2412,7 +2412,7 @@ export default function BookingsContent() {
           </DialogHeader>
           <div className="py-4">
             {selectedRecurringIds.size > 0 && (
-              <div className="flex items-center gap-2 text-sm text-purple-400 bg-purple-900/50 p-2 rounded mb-2">
+              <div className="flex items-center gap-2 text-sm text-purple-700 bg-purple-100 p-2 rounded mb-2">
                 <Repeat className="w-4 h-4" />
                 {selectedRecurringIds.size} {t('recurringBookings')}
               </div>
@@ -2488,7 +2488,7 @@ export default function BookingsContent() {
                 {bookingToConfirmPayment.totalAmount != null && (
                   <div>
                     <span className="text-muted-foreground">Amount:</span>
-                    <span className="ml-2 font-bold text-green-400">RM {bookingToConfirmPayment.totalAmount.toFixed(2)}</span>
+                    <span className="ml-2 font-bold text-green-700">RM {bookingToConfirmPayment.totalAmount.toFixed(2)}</span>
                   </div>
                 )}
               </div>
@@ -2539,13 +2539,13 @@ export default function BookingsContent() {
 
               {/* Action Info */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-green-900/50 border border-green-700 rounded-lg">
-                  <p className="text-xs text-green-400">
+                <div className="p-3 bg-green-50 border border-green-300 rounded-lg">
+                  <p className="text-xs text-green-700">
                     <strong>Approve:</strong> Marks as paid & confirms booking
                   </p>
                 </div>
-                <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg">
-                  <p className="text-xs text-red-400">
+                <div className="p-3 bg-red-50 border border-red-300 rounded-lg">
+                  <p className="text-xs text-red-600">
                     <strong>Reject:</strong> Cancels booking (customer notified)
                   </p>
                 </div>
@@ -2621,7 +2621,7 @@ export default function BookingsContent() {
       }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-orange-400">
+            <DialogTitle className="flex items-center gap-2 text-orange-700">
               <Pencil className="w-5 h-5" />
               Bulk Edit Recurring Bookings
             </DialogTitle>

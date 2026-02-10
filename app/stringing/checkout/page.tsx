@@ -363,7 +363,7 @@ function CheckoutContent() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 pt-24 pb-8">
         <h1 className="text-2xl font-bold text-foreground mb-6">
           {t('checkout.title')}
         </h1>

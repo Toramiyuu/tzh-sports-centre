@@ -344,7 +344,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
   if (!data) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
         <div className="text-center py-12">
           <p className="text-muted-foreground">User not found</p>
           <Link href="/admin/members-accounts?tab=accounts">
@@ -363,7 +363,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="min-h-screen bg-background">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
@@ -539,8 +539,8 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-orange-900/50 rounded-lg flex items-center justify-center">
-                <Repeat className="w-6 h-6 text-orange-400" />
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <Repeat className="w-6 h-6 text-orange-700" />
               </div>
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground">Recurring</p>
@@ -560,8 +560,8 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-purple-900/50 rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-purple-400" />
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-purple-700" />
               </div>
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground">Lessons</p>
@@ -581,8 +581,8 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-900/50 rounded-lg flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-green-400" />
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-green-700" />
               </div>
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground">Total Paid</p>
@@ -604,12 +604,12 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                paymentsSummary.recurring.outstanding > 0 ? 'bg-red-900/50' : 'bg-green-900/50'
+                paymentsSummary.recurring.outstanding > 0 ? 'bg-red-100' : 'bg-green-100'
               }`}>
                 {paymentsSummary.recurring.outstanding > 0 ? (
-                  <AlertTriangle className="w-6 h-6 text-red-400" />
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
                 ) : (
-                  <DollarSign className="w-6 h-6 text-green-400" />
+                  <DollarSign className="w-6 h-6 text-green-700" />
                 )}
               </div>
               <div className="flex-1">
@@ -692,7 +692,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                 ) : (
                   <div className="space-y-3">
                     {recurringBookings.filter(rb => rb.isActive).map((rb) => (
-                      <div key={rb.id} className="p-3 bg-orange-900/20 border border-orange-800 rounded-lg">
+                      <div key={rb.id} className="p-3 bg-orange-50 border border-orange-300 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="flex items-center gap-2">
@@ -733,8 +733,8 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                   <div className="space-y-3">
                     {lessonsTimeline.slice(0, 5).map((lesson) => (
                       <div key={lesson.id} className={`p-3 rounded-lg ${
-                        lesson.status === 'completed' ? 'bg-green-900/20 border border-green-800' :
-                        lesson.status === 'scheduled' ? 'bg-purple-900/20 border border-purple-800' :
+                        lesson.status === 'completed' ? 'bg-green-50 border border-green-300' :
+                        lesson.status === 'scheduled' ? 'bg-purple-50 border border-purple-300' :
                         'bg-secondary border border-border'
                       }`}>
                         <div className="flex items-center justify-between">
@@ -777,9 +777,9 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                   <div className="space-y-3">
                     {paymentHistory.slice(0, 5).map((payment) => (
                       <div key={payment.id} className={`p-3 rounded-lg ${
-                        payment.status === 'paid' ? 'bg-green-900/20' :
-                        payment.status === 'partial' ? 'bg-yellow-900/20' :
-                        'bg-red-900/20'
+                        payment.status === 'paid' ? 'bg-green-50' :
+                        payment.status === 'partial' ? 'bg-amber-50' :
+                        'bg-red-50'
                       }`}>
                         <div className="flex items-center justify-between">
                           <div>
@@ -866,7 +866,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                 <div className="space-y-4">
                   {recurringBookings.map((rb) => (
                     <div key={rb.id} className={`p-4 rounded-lg border ${
-                      rb.isActive ? 'bg-orange-900/20 border-orange-800' : 'bg-secondary border-border opacity-60'
+                      rb.isActive ? 'bg-orange-50 border-orange-300' : 'bg-secondary border-border opacity-60'
                     }`}>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -1019,9 +1019,9 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                 <div className="space-y-4">
                   {paymentHistory.map((payment) => (
                     <div key={payment.id} className={`p-4 rounded-lg border ${
-                      payment.status === 'paid' ? 'bg-green-900/20 border-green-800' :
-                      payment.status === 'partial' ? 'bg-yellow-900/20 border-yellow-800' :
-                      'bg-red-900/20 border-red-800'
+                      payment.status === 'paid' ? 'bg-green-50 border-green-300' :
+                      payment.status === 'partial' ? 'bg-amber-50 border-yellow-300' :
+                      'bg-red-50 border-red-300'
                     }`}>
                       <div className="flex items-start justify-between">
                         <div>

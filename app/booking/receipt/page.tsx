@@ -115,7 +115,7 @@ function ReceiptContent() {
   const isPaid = firstBooking.paymentStatus === 'paid'
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <div className="min-h-screen bg-background pt-24 pb-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header with actions - hide when printing */}
         <div className="flex items-center justify-between mb-6 print:hidden">

@@ -86,15 +86,15 @@ export function LessonsTab() {
       case 'scheduled':
         return <Badge className="bg-accent text-muted-foreground">Scheduled</Badge>
       case 'completed':
-        return <Badge className="bg-green-900/30 text-green-400">Completed</Badge>
+        return <Badge className="bg-green-50 text-green-700">Completed</Badge>
       case 'cancelled':
-        return <Badge className="bg-red-900/30 text-red-400">Cancelled</Badge>
+        return <Badge className="bg-red-50 text-red-600">Cancelled</Badge>
       case 'pending':
-        return <Badge className="bg-yellow-900/30 text-yellow-400">Pending</Badge>
+        return <Badge className="bg-amber-50 text-amber-700">Pending</Badge>
       case 'approved':
-        return <Badge className="bg-green-900/30 text-green-400">Approved</Badge>
+        return <Badge className="bg-green-50 text-green-700">Approved</Badge>
       case 'rejected':
-        return <Badge className="bg-red-900/30 text-red-400">Rejected</Badge>
+        return <Badge className="bg-red-50 text-red-600">Rejected</Badge>
       case 'changed':
         return <Badge className="bg-accent text-muted-foreground">Time Changed</Badge>
       default:
@@ -134,12 +134,12 @@ export function LessonsTab() {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-900/30 text-red-400 p-3 rounded-lg text-sm flex items-center gap-2">
+        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span className="flex-1">{error}</span>
           <button
             onClick={() => { setError(null); setLoading(true); fetchLessons() }}
-            className="flex items-center gap-1 text-red-300 hover:text-red-200 font-medium"
+            className="flex items-center gap-1 text-red-500 hover:text-red-600 font-medium"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Retry

@@ -434,11 +434,11 @@ export default function AccountsContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-900/50 rounded-lg flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-green-400" />
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-green-700" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-green-400">
+                <p className="text-2xl font-bold text-green-700">
                   {users.reduce((sum, u) => sum + u.totalBookings, 0)}
                 </p>
                 <p className="text-sm text-muted-foreground">{t('totalBookings')}</p>
@@ -449,11 +449,11 @@ export default function AccountsContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-900/50 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-purple-400" />
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-purple-700" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-purple-400">
+                <p className="text-2xl font-bold text-purple-700">
                   {users.filter(
                     (u) =>
                       new Date(u.createdAt) >
@@ -515,7 +515,7 @@ export default function AccountsContent() {
                     key={user.id}
                     className={`rounded-lg border transition-all relative ${
                       isSelected
-                        ? 'ring-2 ring-red-500 bg-red-900/30'
+                        ? 'ring-2 ring-red-500 bg-red-50'
                         : isExpanded
                         ? 'bg-card ring-2 ring-[#1854d6]'
                         : 'bg-secondary border-border hover:bg-card'
@@ -566,13 +566,13 @@ export default function AccountsContent() {
                               </button>
                             )}
                             {user.isSuperAdmin && (
-                              <Badge className="bg-purple-900/50 text-purple-400 border-0">
+                              <Badge className="bg-purple-100 text-purple-700 border-0">
                                 <ShieldCheck className="w-3 h-3 mr-1" />
                                 {t('superAdmin')}
                               </Badge>
                             )}
                             {user.isAdmin && !user.isSuperAdmin && (
-                              <Badge className="bg-green-900/50 text-green-400 border-0">
+                              <Badge className="bg-green-100 text-green-700 border-0">
                                 <Shield className="w-3 h-3 mr-1" />
                                 {t('admin')}
                               </Badge>
@@ -598,7 +598,7 @@ export default function AccountsContent() {
                             <Badge variant="outline" className="bg-[#2A76B0]/30 text-[#0a2540] border-[#1854d6]">
                               {user.totalBookings} {t('bookings')}
                             </Badge>
-                            <Badge variant="outline" className="bg-green-900/30 text-green-400 border-green-800">
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
                               RM {user.totalSpent.toFixed(2)}
                             </Badge>
                             {!selectionMode && (
@@ -669,26 +669,26 @@ export default function AccountsContent() {
                             </div>
                             <p className="text-xl font-bold text-[#1854d6]">{user.totalBookings}</p>
                           </div>
-                          <div className="bg-green-900/30 rounded-lg p-3 text-center">
-                            <div className="flex items-center justify-center gap-1 text-green-400 mb-1">
+                          <div className="bg-green-50 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-green-700 mb-1">
                               <DollarSign className="w-4 h-4" />
                               <span className="text-xs font-medium">{t('totalSpent')}</span>
                             </div>
-                            <p className="text-xl font-bold text-green-300">RM {user.totalSpent.toFixed(2)}</p>
+                            <p className="text-xl font-bold text-green-600">RM {user.totalSpent.toFixed(2)}</p>
                           </div>
-                          <div className="bg-purple-900/30 rounded-lg p-3 text-center">
-                            <div className="flex items-center justify-center gap-1 text-purple-400 mb-1">
+                          <div className="bg-purple-50 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-purple-700 mb-1">
                               <Clock className="w-4 h-4" />
                               <span className="text-xs font-medium">{t('regularBookings')}</span>
                             </div>
-                            <p className="text-xl font-bold text-purple-300">{user.regularBookings}</p>
+                            <p className="text-xl font-bold text-purple-600">{user.regularBookings}</p>
                           </div>
-                          <div className="bg-orange-900/30 rounded-lg p-3 text-center">
-                            <div className="flex items-center justify-center gap-1 text-orange-400 mb-1">
+                          <div className="bg-orange-50 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-orange-700 mb-1">
                               <Repeat className="w-4 h-4" />
                               <span className="text-xs font-medium">{t('recurringBookings')}</span>
                             </div>
-                            <p className="text-xl font-bold text-orange-300">{user.recurringBookingsCount}</p>
+                            <p className="text-xl font-bold text-orange-600">{user.recurringBookingsCount}</p>
                           </div>
                         </div>
 
@@ -739,7 +739,7 @@ export default function AccountsContent() {
                             <h4 className="text-sm font-medium text-foreground mb-2">{t('activeRecurring')}</h4>
                             <div className="grid gap-2">
                               {user.recurringBookings.filter(rb => rb.isActive).map((rb) => (
-                                <div key={rb.id} className="bg-orange-900/30 border border-orange-800 rounded-lg p-3 flex items-center justify-between">
+                                <div key={rb.id} className="bg-orange-50 border border-orange-300 rounded-lg p-3 flex items-center justify-between">
                                   <div>
                                     <span className="font-medium text-foreground">
                                       {dayNames[rb.dayOfWeek]}s

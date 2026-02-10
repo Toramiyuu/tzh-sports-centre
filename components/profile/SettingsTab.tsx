@@ -164,7 +164,7 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
         </CardHeader>
         <CardContent>
           {passwordSuccess && (
-            <div className="mb-4 bg-green-900/30 text-green-400 p-3 rounded-lg text-sm flex items-center gap-2">
+            <div className="mb-4 bg-green-50 text-green-700 p-3 rounded-lg text-sm flex items-center gap-2">
               <Check className="w-4 h-4" />
               {passwordSuccess}
             </div>
@@ -177,7 +177,7 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
           ) : (
             <div className="space-y-4">
               {passwordError && (
-                <div className="bg-red-900/30 text-red-400 p-3 rounded-lg text-sm flex items-center gap-2">
+                <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4" />
                   {passwordError}
                 </div>
@@ -317,9 +317,9 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
       </Card>
 
       {/* Delete Account */}
-      <Card className="border border-red-900/30 rounded-2xl bg-card">
+      <Card className="border border-red-200 rounded-2xl bg-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-red-400">
+          <CardTitle className="flex items-center gap-2 text-red-600">
             <Trash2 className="w-5 h-5" />
             Delete Account
           </CardTitle>
@@ -331,19 +331,19 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
           {!showDeleteConfirm ? (
             <Button
               variant="outline"
-              className="text-red-400 border-red-900/30 hover:bg-red-900/20 rounded-full"
+              className="text-red-600 border-red-200 hover:bg-red-50 rounded-full"
               onClick={() => setShowDeleteConfirm(true)}
             >
               Delete My Account
             </Button>
           ) : (
-            <div className="space-y-4 p-4 bg-red-900/20 rounded-xl">
-              <p className="text-sm text-red-300">
+            <div className="space-y-4 p-4 bg-red-50 rounded-xl">
+              <p className="text-sm text-red-500">
                 <strong>Warning:</strong> This action cannot be undone. Your account will be permanently deleted.
               </p>
 
               {deleteError && (
-                <div className="bg-red-900/30 text-red-400 p-3 rounded-lg text-sm flex items-center gap-2">
+                <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4" />
                   {deleteError}
                 </div>

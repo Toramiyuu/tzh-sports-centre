@@ -84,11 +84,11 @@ export default function DashboardPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return <Badge className="bg-green-900/30 text-green-400">Confirmed</Badge>
+        return <Badge className="bg-green-50 text-green-700">Confirmed</Badge>
       case 'pending':
-        return <Badge className="bg-yellow-900/30 text-yellow-400">Pending</Badge>
+        return <Badge className="bg-amber-50 text-amber-700">Pending</Badge>
       case 'cancelled':
-        return <Badge className="bg-red-900/30 text-red-400">Cancelled</Badge>
+        return <Badge className="bg-red-50 text-red-600">Cancelled</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
     }

@@ -49,7 +49,7 @@
 :root {
   --radius: 0.625rem;
   /* Soft lavender-blue background with deep royal blue accents */
-  --background: #e1e9fc;
+  --background: #f5f8ff;
   --foreground: #0a2540;
   --card: #EDF1FD;
   --card-foreground: #0a2540;
@@ -84,7 +84,7 @@
 
 .dark {
   /* Same as root for now */
-  --background: #e1e9fc;
+  --background: #f5f8ff;
   --foreground: #0a2540;
   --card: #EDF1FD;
   --card-foreground: #0a2540;

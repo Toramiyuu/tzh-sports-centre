@@ -11,6 +11,7 @@ import {
   Package,
   CircleDot,
   LayoutGrid,
+  Wrench,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -25,8 +26,8 @@ const iconMap: Record<string, React.ElementType> = {
 }
 
 interface ShopCategoryTabsProps {
-  selectedCategory: ShopCategoryId | 'all'
-  onCategoryChange: (category: ShopCategoryId | 'all') => void
+  selectedCategory: ShopCategoryId | 'all' | 'stringing'
+  onCategoryChange: (category: ShopCategoryId | 'all' | 'stringing') => void
 }
 
 export function ShopCategoryTabs({
@@ -72,6 +73,20 @@ export function ShopCategoryTabs({
               </button>
             )
           })}
+
+          {/* Stringing Service tab */}
+          <button
+            onClick={() => onCategoryChange('stringing')}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all',
+              selectedCategory === 'stringing'
+                ? 'bg-[#1854d6] text-white shadow-lg shadow-[#1854d6]/25'
+                : 'bg-card text-muted-foreground hover:bg-accent hover:text-foreground border border-border'
+            )}
+          >
+            <Wrench className="w-4 h-4" />
+            {t('categories.stringing')}
+          </button>
         </div>
       </div>
     </div>

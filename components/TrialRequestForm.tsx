@@ -84,13 +84,13 @@ export default function TrialRequestForm() {
 
   if (isSubmitted) {
     return (
-      <Card className="border-green-800 bg-green-900/20">
+      <Card className="border-green-300 bg-green-50">
         <CardContent className="p-8 text-center">
-          <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-green-400 mb-2">
+          <CheckCircle className="w-16 h-16 text-green-700 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-green-700 mb-2">
             {t('successTitle')}
           </h3>
-          <p className="text-green-300">
+          <p className="text-green-600">
             {t('successMessage')}
           </p>
         </CardContent>
