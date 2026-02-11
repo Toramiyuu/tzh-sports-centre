@@ -36,7 +36,7 @@ export function ShopProductCard({ product, onViewDetails }: ShopProductCardProps
 
         {/* Featured badge */}
         {product.featured && (
-          <Badge className="absolute top-3 left-3 bg-[#1854d6] text-white">
+          <Badge className="absolute top-3 left-3 bg-primary text-white">
             {t('product.featured')}
           </Badge>
         )}
@@ -76,7 +76,7 @@ export function ShopProductCard({ product, onViewDetails }: ShopProductCardProps
 
         {/* Name */}
         <h3
-          className="font-semibold text-foreground mb-2 line-clamp-2 cursor-pointer hover:text-[#0a2540] transition-colors"
+          className="font-semibold text-foreground mb-2 line-clamp-2 cursor-pointer hover:text-foreground transition-colors"
           onClick={() => onViewDetails(product)}
         >
           {product.name}
@@ -96,7 +96,7 @@ export function ShopProductCard({ product, onViewDetails }: ShopProductCardProps
 
         {/* View Details Button */}
         <Button
-          className="w-full bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full"
+          className="w-full bg-primary hover:bg-primary/90 text-white rounded-full"
           onClick={() => onViewDetails(product)}
         >
           <Eye className="w-4 h-4 mr-2" />

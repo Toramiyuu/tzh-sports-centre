@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useCallback, Suspense, lazy } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { motion } from 'framer-motion'
 import { ShopHero } from '@/components/shop/ShopHero'
 import { ShopCategoryTabs } from '@/components/shop/ShopCategoryTabs'
 import { ShopProductCard } from '@/components/shop/ShopProductCard'
@@ -227,27 +228,30 @@ function ShopContent() {
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="animate-pulse">
-                    <div className="aspect-square bg-secondary rounded-lg mb-3" />
-                    <div className="h-3 bg-secondary rounded w-1/3 mb-2" />
-                    <div className="h-4 bg-secondary rounded w-2/3 mb-2" />
-                    <div className="h-5 bg-secondary rounded w-1/4" />
+                  <div key={i} className="space-y-3">
+                    <div className="aspect-square bg-secondary/60 rounded-xl animate-pulse" />
+                    <div className="space-y-2 px-1">
+                      <div className="h-3 bg-secondary/60 rounded-full w-1/3 animate-pulse" />
+                      <div className="h-4 bg-secondary/60 rounded-full w-2/3 animate-pulse" />
+                      <div className="h-5 bg-primary/20 rounded-full w-1/4 animate-pulse" />
+                    </div>
                   </div>
                 ))}
               </div>
             ) : filteredProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredProducts.map((product, index) => (
-                  <div
+                  <motion.div
                     key={product.id}
-                    className="animate-in fade-in slide-in-from-bottom-4 duration-500"
-                    style={{ animationDelay: `${index * 50}ms` }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.4) }}
                   >
                     <ShopProductCard
                       product={product}
                       onViewDetails={handleViewDetails}
                     />
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             ) : (
@@ -257,7 +261,7 @@ function ShopContent() {
                 </p>
                 <button
                   onClick={handleClearFilters}
-                  className="text-[#0a2540] hover:text-[#0a2540] underline"
+                  className="text-foreground hover:text-foreground underline"
                 >
                   {t('filters.clearAll')}
                 </button>
@@ -270,6 +274,8 @@ function ShopContent() {
             product={selectedProduct}
             open={dialogOpen}
             onOpenChange={setDialogOpen}
+            allProducts={allProducts}
+            onViewDetails={handleViewDetails}
           />
         </>
       )}

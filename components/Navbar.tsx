@@ -5,9 +5,12 @@ import { signOut, useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import {
   Menu,
+  Moon,
+  Sun,
   X,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useTheme } from 'next-themes'
 import { UserMenu } from '@/components/UserMenu'
 import { isAdmin } from '@/lib/admin'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
@@ -15,6 +18,7 @@ import { useTranslations } from 'next-intl'
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { theme, setTheme } = useTheme()
   const { data: session, status } = useSession()
   const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin)
   const t = useTranslations('nav')
@@ -29,10 +33,10 @@ export function Navbar() {
               href="/"
               className="flex items-center gap-2 outline-none focus:outline-none"
             >
-              <div className="w-8 h-8 bg-[#1854d6] rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">TZH</span>
               </div>
-              <span className="text-base font-semibold text-foreground hidden sm:block">
+              <span className="text-base font-semibold text-foreground font-display hidden sm:block">
                 TZH Sports Centre
               </span>
             </Link>
@@ -88,6 +92,13 @@ export function Navbar() {
 
           {/* Auth Section */}
           <div className="hidden md:flex items-center gap-3">
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             <LanguageSwitcher />
             {status === 'loading' ? (
               <div className="w-8 h-8 rounded-full bg-card animate-pulse" />
@@ -104,7 +115,7 @@ export function Navbar() {
                   </Button>
                 </Link>
                 <Link href="/auth/register">
-                  <Button className="text-sm bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full px-4">
+                  <Button className="text-sm bg-primary hover:bg-primary/90 text-white rounded-full px-4">
                     {t('signup')}
                   </Button>
                 </Link>
@@ -183,7 +194,14 @@ export function Navbar() {
               </Link>
             )}
             <hr className="my-3 border-border" />
-            <div className="py-2">
+            <div className="py-2 flex items-center gap-3">
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
               <LanguageSwitcher />
             </div>
             <hr className="my-3 border-border" />
@@ -213,7 +231,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block py-2 text-[#0a2540] font-medium"
+                  className="block py-2 text-foreground font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t('signup')}

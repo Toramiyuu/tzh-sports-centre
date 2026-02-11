@@ -46,7 +46,7 @@ export function ShopCategoryTabs({
             className={cn(
               'flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all',
               selectedCategory === 'all'
-                ? 'bg-[#1854d6] text-white shadow-lg shadow-[#1854d6]/25'
+                ? 'bg-primary text-white shadow-lg shadow-primary/25'
                 : 'bg-card text-muted-foreground hover:bg-accent hover:text-foreground border border-border'
             )}
           >
@@ -64,7 +64,7 @@ export function ShopCategoryTabs({
                 className={cn(
                   'flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all',
                   selectedCategory === category.id
-                    ? 'bg-[#1854d6] text-white shadow-lg shadow-[#1854d6]/25'
+                    ? 'bg-primary text-white shadow-lg shadow-primary/25'
                     : 'bg-card text-muted-foreground hover:bg-accent hover:text-foreground border border-border'
                 )}
               >
@@ -80,7 +80,7 @@ export function ShopCategoryTabs({
             className={cn(
               'flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all',
               selectedCategory === 'stringing'
-                ? 'bg-[#1854d6] text-white shadow-lg shadow-[#1854d6]/25'
+                ? 'bg-primary text-white shadow-lg shadow-primary/25'
                 : 'bg-card text-muted-foreground hover:bg-accent hover:text-foreground border border-border'
             )}
           >

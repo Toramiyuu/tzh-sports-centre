@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   Dialog,
@@ -18,12 +18,16 @@ interface ShopProductDialogProps {
   product: ShopProduct | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  allProducts?: ShopProduct[]
+  onViewDetails?: (product: ShopProduct) => void
 }
 
 export function ShopProductDialog({
   product,
   open,
   onOpenChange,
+  allProducts = [],
+  onViewDetails,
 }: ShopProductDialogProps) {
   const t = useTranslations('shop')
   const [activeIndex, setActiveIndex] = useState(0)
@@ -31,6 +35,8 @@ export function ShopProductDialog({
   const [selectedSize, setSelectedSize] = useState<string | undefined>()
   const touchStartX = useRef(0)
   const touchEndX = useRef(0)
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 })
+  const [isZooming, setIsZooming] = useState(false)
 
   // Build the images array: use product.images if available, otherwise fall back to [product.image]
   const allImages =
@@ -41,6 +47,14 @@ export function ShopProductDialog({
         : []
 
   const hasMultipleImages = allImages.length > 1
+
+  // Related products: same category, different product, max 4
+  const relatedProducts = useMemo(() => {
+    if (!product || allProducts.length === 0) return []
+    return allProducts
+      .filter((p) => p.category === product.category && p.id !== product.id && p.inStock)
+      .slice(0, 4)
+  }, [product, allProducts])
 
   // Reset index and selections when product changes or dialog opens
   useEffect(() => {
@@ -89,6 +103,14 @@ export function ShopProductDialog({
     }
   }, [goToNext, goToPrev])
 
+  // Image zoom handlers
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setZoomPos({ x, y })
+  }, [])
+
   if (!product) return null
 
   return (
@@ -109,17 +131,22 @@ export function ShopProductDialog({
         <div className="grid md:grid-cols-2 gap-0">
           {/* Product Image Gallery */}
           <div className="flex flex-col">
-            {/* Main Image */}
+            {/* Main Image with Zoom */}
             <div
-              className="relative aspect-square bg-secondary overflow-hidden"
+              className="relative aspect-square bg-secondary overflow-hidden cursor-zoom-in"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
+              onMouseEnter={() => setIsZooming(true)}
+              onMouseLeave={() => setIsZooming(false)}
+              onMouseMove={handleMouseMove}
             >
               {/* Sliding track */}
               <div
                 className="flex h-full transition-transform duration-300 ease-out will-change-transform"
-                style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+                style={{
+                  transform: `translateX(-${activeIndex * 100}%)`,
+                }}
               >
                 {allImages.map((img, idx) => (
                   <div key={idx} className="relative w-full h-full flex-shrink-0">
@@ -127,7 +154,15 @@ export function ShopProductDialog({
                       src={img}
                       alt={`${product.fullName} - ${idx + 1}`}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-200"
+                      style={
+                        isZooming && idx === activeIndex
+                          ? {
+                              transform: 'scale(2)',
+                              transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                            }
+                          : undefined
+                      }
                       sizes="(max-width: 768px) 100vw, 50vw"
                       priority={idx === 0}
                       onError={(e) => {
@@ -141,7 +176,7 @@ export function ShopProductDialog({
 
               {/* Featured badge */}
               {product.featured && (
-                <Badge className="absolute top-4 left-4 bg-[#1854d6] text-white z-[1]">
+                <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground z-[1]">
                   {t('product.featured')}
                 </Badge>
               )}
@@ -193,7 +228,7 @@ export function ShopProductDialog({
                     onClick={() => setActiveIndex(idx)}
                     className={`relative w-14 h-14 flex-shrink-0 rounded-md overflow-hidden transition-all duration-200 ${
                       idx === activeIndex
-                        ? 'ring-2 ring-[#1854d6] ring-offset-1 opacity-100'
+                        ? 'ring-2 ring-primary ring-offset-1 opacity-100'
                         : 'opacity-60 hover:opacity-90'
                     }`}
                     aria-label={`View image ${idx + 1}`}
@@ -250,7 +285,7 @@ export function ShopProductDialog({
                       onClick={() => setSelectedColor(color)}
                       className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
                         selectedColor === color
-                          ? 'bg-[#1854d6] text-white border-[#1854d6]'
+                          ? 'bg-primary text-primary-foreground border-primary'
                           : 'bg-transparent text-muted-foreground border-border hover:border-foreground'
                       }`}
                     >
@@ -274,7 +309,7 @@ export function ShopProductDialog({
                       onClick={() => setSelectedSize(size)}
                       className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
                         selectedSize === size
-                          ? 'bg-[#1854d6] text-white border-[#1854d6]'
+                          ? 'bg-primary text-primary-foreground border-primary'
                           : 'bg-transparent text-muted-foreground border-border hover:border-foreground'
                       }`}
                     >
@@ -315,7 +350,7 @@ export function ShopProductDialog({
                 className="block"
               >
                 <Button
-                  className="w-full bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full text-lg py-6"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full text-lg py-6"
                   disabled={!product.inStock}
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
@@ -328,6 +363,41 @@ export function ShopProductDialog({
             </div>
           </div>
         </div>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && onViewDetails && (
+          <div className="border-t border-border p-6">
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              You may also like
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {relatedProducts.map((rp) => (
+                <button
+                  key={rp.id}
+                  onClick={() => onViewDetails(rp)}
+                  className="group text-left"
+                >
+                  <div className="relative aspect-square bg-secondary rounded-lg overflow-hidden mb-2">
+                    <Image
+                      src={rp.image}
+                      alt={rp.name}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="150px"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = '/images/shop/placeholder.jpg'
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground uppercase">{rp.brand}</p>
+                  <p className="text-sm font-medium text-foreground line-clamp-1">{rp.name}</p>
+                  <p className="text-sm font-bold text-foreground">RM{rp.price.toFixed(0)}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   )

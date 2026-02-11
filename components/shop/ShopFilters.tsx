@@ -72,13 +72,13 @@ export function ShopFilters({
               variant="outline"
               className={cn(
                 'lg:hidden border-border text-muted-foreground hover:text-foreground rounded-full',
-                activeFilterCount > 0 && 'border-[#1854d6] text-[#0a2540]'
+                activeFilterCount > 0 && 'border-primary text-foreground'
               )}
             >
               <SlidersHorizontal className="w-4 h-4 mr-2" />
               {t('filters.filters')}
               {activeFilterCount > 0 && (
-                <span className="ml-1 bg-[#1854d6] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="ml-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {activeFilterCount}
                 </span>
               )}

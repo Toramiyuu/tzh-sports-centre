@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Geist_Mono, Outfit } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { SessionProvider } from '@/components/SessionProvider'
 import { I18nProvider } from '@/components/I18nProvider'
+import { ThemeProvider } from '@/components/ThemeProvider'
 import { Toaster } from 'sonner'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { LoadingScreen } from '@/components/LoadingScreen'
@@ -19,8 +20,14 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+const outfit = Outfit({
+  variable: '--font-outfit',
+  subsets: ['latin'],
+})
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://tzh-sports-centre.vercel.app'),
+  manifest: '/manifest.json',
   title: {
     default: 'TZH Sports Centre - Badminton & Pickleball Courts in Ayer Itam, Penang',
     template: '%s | TZH Sports Centre',
@@ -57,7 +64,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -109,26 +116,28 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} antialiased min-h-screen flex flex-col`}
       >
-        <I18nProvider>
-          <SessionProvider>
-              <LoadingScreen />
-              <Toaster
-                position="top-right"
-                richColors
-                closeButton
-                toastOptions={{
-                  duration: 4000,
-                  className: 'font-sans',
-                }}
-              />
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <WhatsAppButton />
-          </SessionProvider>
-        </I18nProvider>
+        <ThemeProvider>
+          <I18nProvider>
+            <SessionProvider>
+                <LoadingScreen />
+                <Toaster
+                  position="top-right"
+                  richColors
+                  closeButton
+                  toastOptions={{
+                    duration: 4000,
+                    className: 'font-sans',
+                  }}
+                />
+                <Navbar />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <WhatsAppButton />
+            </SessionProvider>
+          </I18nProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

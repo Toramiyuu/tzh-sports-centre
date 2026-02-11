@@ -1,0 +1,16 @@
+{
+  "name": "TZH Sports Centre",
+  "short_name": "TZH Sports",
+  "description": "Book badminton and pickleball courts online at TZH Sports Centre, Ayer Itam, Penang.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f8ff",
+  "theme_color": "#1854d6",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
