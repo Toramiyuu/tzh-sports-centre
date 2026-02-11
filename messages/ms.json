@@ -1089,6 +1089,20 @@
     "description": "Lihat apa yang baru dan diperbaiki",
     "back": "Kembali",
     "entries": {
+      "adminImageUpload": {
+        "title": "Muat Naik Imej Admin",
+        "change1": "Muat naik imej produk terus dari panel admin dengan seret & lepas",
+        "change2": "Sokongan untuk berbilang imej tambahan bagi setiap produk",
+        "change3": "Pratonton imej dengan pilihan padam dan masukan URL manual"
+      },
+      "premiumUpgrades": {
+        "title": "Naik Taraf Visual Premium",
+        "change1": "Togol mod gelap — tukar antara tema cerah dan gelap",
+        "change2": "Animasi tatal lancar dan peralihan halaman di seluruh laman",
+        "change3": "Kesan paralaks hero di halaman kedai",
+        "change4": "Zum imej produk semasa hover dan cadangan produk berkaitan",
+        "change5": "Footer dipertingkat dengan pautan sosial, waktu operasi, dan peta"
+      },
       "adminPanelMerge": {
         "title": "Reka Bentuk Semula Panel Admin",
         "change1": "Gabungan Pengurusan Gelanggang dan Pengurusan Kelas ke dalam satu halaman \"Tempahan & Kelas\"",

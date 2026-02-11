@@ -7,6 +7,18 @@ export interface UpdateEntry {
 
 export const updateLog: UpdateEntry[] = [
   {
+    date: '2026-02-11',
+    time: '22:00:00',
+    id: 'adminImageUpload',
+    changeCount: 3,
+  },
+  {
+    date: '2026-02-11',
+    time: '18:00:00',
+    id: 'premiumUpgrades',
+    changeCount: 5,
+  },
+  {
     date: '2026-02-02',
     time: '00:49:00',
     id: 'adminPanelMerge',

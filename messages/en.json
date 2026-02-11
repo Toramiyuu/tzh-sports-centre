@@ -1101,6 +1101,20 @@
     "description": "See what's new and improved",
     "back": "Back",
     "entries": {
+      "adminImageUpload": {
+        "title": "Admin Image Upload",
+        "change1": "Upload product images directly from the admin panel with drag & drop",
+        "change2": "Support for multiple additional images per product",
+        "change3": "Image preview with remove and URL fallback options"
+      },
+      "premiumUpgrades": {
+        "title": "Premium Visual Upgrades",
+        "change1": "Dark mode toggle — switch between light and dark themes",
+        "change2": "Smooth scroll animations and page transitions throughout the site",
+        "change3": "Parallax hero effect on the shop page",
+        "change4": "Product image zoom on hover and related product suggestions",
+        "change5": "Enhanced footer with social links, opening hours, and map"
+      },
       "adminPanelMerge": {
         "title": "Admin Panel Redesign",
         "change1": "Combined Court Management and Lesson Management into a single \"Bookings & Lessons\" page",
