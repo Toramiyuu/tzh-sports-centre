@@ -8,7 +8,6 @@ import { I18nProvider } from '@/components/I18nProvider'
 import { Toaster } from 'sonner'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { LoadingScreen } from '@/components/LoadingScreen'
-import { CartProvider } from '@/components/shop/CartProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -114,7 +113,6 @@ export default function RootLayout({
       >
         <I18nProvider>
           <SessionProvider>
-            <CartProvider>
               <LoadingScreen />
               <Toaster
                 position="top-right"
@@ -129,7 +127,6 @@ export default function RootLayout({
               <main className="flex-1">{children}</main>
               <Footer />
               <WhatsAppButton />
-            </CartProvider>
           </SessionProvider>
         </I18nProvider>
       </body>

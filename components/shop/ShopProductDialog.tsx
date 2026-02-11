@@ -11,10 +11,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ShopProduct, getWhatsAppOrderLink } from '@/lib/shop-config'
-import { MessageCircle, ShoppingCart, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { MessageCircle, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
-import { useCart } from '@/components/shop/CartProvider'
-import { toast } from 'sonner'
 
 interface ShopProductDialogProps {
   product: ShopProduct | null
@@ -28,7 +26,6 @@ export function ShopProductDialog({
   onOpenChange,
 }: ShopProductDialogProps) {
   const t = useTranslations('shop')
-  const { addToCart, setIsOpen } = useCart()
   const [activeIndex, setActiveIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [selectedColor, setSelectedColor] = useState<string | undefined>()
@@ -76,26 +73,6 @@ export function ShopProductDialog({
     const newIndex = activeIndex === allImages.length - 1 ? 0 : activeIndex + 1
     goToImage(newIndex)
   }, [activeIndex, allImages.length, goToImage])
-
-  const handleAddToCart = () => {
-    if (!product) return
-    addToCart({
-      productId: product.id,
-      name: product.fullName,
-      price: product.price,
-      image: product.image,
-      selectedSize,
-      selectedColor,
-    })
-    toast.success(t('cart.added'), {
-      description: product.fullName,
-      action: {
-        label: t('cart.viewCart'),
-        onClick: () => setIsOpen(true),
-      },
-    })
-    onOpenChange(false)
-  }
 
   if (!product) return null
 
@@ -301,17 +278,7 @@ export function ShopProductDialog({
 
             {/* Action Buttons */}
             <div className="mt-auto pt-4 space-y-3">
-              {/* Add to Cart Button */}
-              <Button
-                className="w-full bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full text-lg py-6"
-                disabled={!product.inStock}
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="w-5 h-5 mr-2" />
-                {t('cart.addToCart')}
-              </Button>
-
-              {/* WhatsApp as secondary */}
+              {/* WhatsApp Order */}
               <a
                 href={getWhatsAppOrderLink(product)}
                 target="_blank"
@@ -319,11 +286,10 @@ export function ShopProductDialog({
                 className="block"
               >
                 <Button
-                  variant="outline"
-                  className="w-full rounded-full border-border text-foreground py-5"
+                  className="w-full bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full text-lg py-6"
                   disabled={!product.inStock}
                 >
-                  <MessageCircle className="w-4 h-4 mr-2" />
+                  <MessageCircle className="w-5 h-5 mr-2" />
                   {t('product.whatsappOrder')}
                 </Button>
               </a>

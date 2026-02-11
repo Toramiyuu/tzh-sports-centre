@@ -6,23 +6,18 @@ import { Button } from '@/components/ui/button'
 import {
   Menu,
   X,
-  ShoppingCart,
 } from 'lucide-react'
 import { useState } from 'react'
 import { UserMenu } from '@/components/UserMenu'
 import { isAdmin } from '@/lib/admin'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { useTranslations } from 'next-intl'
-import { useCart } from '@/components/shop/CartProvider'
-import { CartDrawer } from '@/components/shop/CartDrawer'
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { data: session, status } = useSession()
   const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin)
   const t = useTranslations('nav')
-  const { getItemCount, setIsOpen: setCartOpen } = useCart()
-  const cartItemCount = getItemCount()
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
@@ -49,20 +44,20 @@ export function Navbar() {
               href="/booking"
               className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              {t('booking')}
+              🏸 {t('booking')}
             </Link>
             <Link
               href="/lessons"
               className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              {t('lessons')}
+              📖 {t('lessons')}
             </Link>
 
             <Link
               href="/shop"
               className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              {t('shop')}
+              🛒 {t('shop')}
             </Link>
 
             {session?.user && (
@@ -70,7 +65,7 @@ export function Navbar() {
                 href="/member"
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                {t('member')}
+                👤 {t('member')}
               </Link>
             )}
             {session?.user && (
@@ -78,7 +73,7 @@ export function Navbar() {
                 href="/updates"
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                {t('updates')}
+                📢 {t('updates')}
               </Link>
             )}
             {userIsAdmin && (
@@ -86,26 +81,13 @@ export function Navbar() {
                 href="/admin"
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                {t('admin')}
+                ⚙️ {t('admin')}
               </Link>
             )}
           </div>
 
           {/* Auth Section */}
           <div className="hidden md:flex items-center gap-3">
-            {/* Cart Icon */}
-            <button
-              onClick={() => setCartOpen(true)}
-              className="relative p-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Shopping cart"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#1854d6] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                  {cartItemCount > 99 ? '99+' : cartItemCount}
-                </span>
-              )}
-            </button>
             <LanguageSwitcher />
             {status === 'loading' ? (
               <div className="w-8 h-8 rounded-full bg-card animate-pulse" />
@@ -132,19 +114,6 @@ export function Navbar() {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-1">
-            {/* Mobile Cart Icon */}
-            <button
-              onClick={() => setCartOpen(true)}
-              className="relative p-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Shopping cart"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#1854d6] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                  {cartItemCount > 99 ? '99+' : cartItemCount}
-                </span>
-              )}
-            </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-md text-muted-foreground hover:text-foreground"
@@ -168,14 +137,14 @@ export function Navbar() {
               className="block py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {t('booking')}
+              🏸 {t('booking')}
             </Link>
             <Link
               href="/lessons"
               className="block py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {t('lessons')}
+              📖 {t('lessons')}
             </Link>
 
             <Link
@@ -183,7 +152,7 @@ export function Navbar() {
               className="block py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {t('shop')}
+              🛒 {t('shop')}
             </Link>
 
             {session?.user && (
@@ -192,7 +161,7 @@ export function Navbar() {
                 className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {t('member')}
+                👤 {t('member')}
               </Link>
             )}
             {session?.user && (
@@ -201,7 +170,7 @@ export function Navbar() {
                 className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {t('updates')}
+                📢 {t('updates')}
               </Link>
             )}
             {userIsAdmin && (
@@ -210,7 +179,7 @@ export function Navbar() {
                 className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {t('admin')}
+                ⚙️ {t('admin')}
               </Link>
             )}
             <hr className="my-3 border-border" />
@@ -254,8 +223,6 @@ export function Navbar() {
           </div>
         </div>
       )}
-      {/* Cart Drawer */}
-      <CartDrawer />
     </nav>
   )
 }

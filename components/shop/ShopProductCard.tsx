@@ -4,11 +4,9 @@ import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ShopProduct, getWhatsAppOrderLink } from '@/lib/shop-config'
-import { ShoppingCart, Eye } from 'lucide-react'
+import { ShopProduct } from '@/lib/shop-config'
+import { Eye } from 'lucide-react'
 import Image from 'next/image'
-import { useCart } from '@/components/shop/CartProvider'
-import { toast } from 'sonner'
 
 interface ShopProductCardProps {
   product: ShopProduct
@@ -17,24 +15,6 @@ interface ShopProductCardProps {
 
 export function ShopProductCard({ product, onViewDetails }: ShopProductCardProps) {
   const t = useTranslations('shop')
-  const { addToCart, setIsOpen } = useCart()
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    addToCart({
-      productId: product.id,
-      name: product.fullName,
-      price: product.price,
-      image: product.image,
-    })
-    toast.success(t('cart.added'), {
-      description: product.fullName,
-      action: {
-        label: t('cart.viewCart'),
-        onClick: () => setIsOpen(true),
-      },
-    })
-  }
 
   return (
     <Card className="group bg-card border-border overflow-hidden hover-lift cursor-pointer">
@@ -114,14 +94,13 @@ export function ShopProductCard({ product, onViewDetails }: ShopProductCardProps
           </p>
         )}
 
-        {/* Add to Cart Button */}
+        {/* View Details Button */}
         <Button
           className="w-full bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full"
-          disabled={!product.inStock}
-          onClick={handleAddToCart}
+          onClick={() => onViewDetails(product)}
         >
-          <ShoppingCart className="w-4 h-4 mr-2" />
-          {t('cart.addToCart')}
+          <Eye className="w-4 h-4 mr-2" />
+          {t('product.quickView')}
         </Button>
       </CardContent>
     </Card>
