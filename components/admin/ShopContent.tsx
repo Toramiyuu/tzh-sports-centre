@@ -35,6 +35,7 @@ import {
   ImageIcon,
   Star,
   X,
+  Upload,
 } from 'lucide-react'
 import { isAdmin } from '@/lib/admin'
 import { useTranslations } from 'next-intl'
@@ -73,6 +74,7 @@ const EMPTY_PRODUCT = {
   stockCount: 0,
   description: '',
   image: '/images/shop/placeholder.jpg',
+  images: [] as string[],
   inStock: true,
   featured: false,
 }
@@ -181,6 +183,7 @@ export default function ShopContent() {
       stockCount: product.stockCount,
       description: product.description || '',
       image: product.image,
+      images: product.images || [],
       inStock: product.inStock,
       featured: product.featured,
     })
@@ -209,6 +212,7 @@ export default function ShopContent() {
           stockCount: Number(formData.stockCount),
           description: formData.description || null,
           image: formData.image,
+          images: formData.images.length > 0 ? formData.images : null,
           inStock: formData.inStock,
           featured: formData.featured,
         }),
@@ -243,6 +247,7 @@ export default function ShopContent() {
           stockCount: Number(formData.stockCount),
           description: formData.description || null,
           image: formData.image,
+          images: formData.images.length > 0 ? formData.images : null,
           inStock: formData.inStock,
           featured: formData.featured,
         }),
@@ -582,6 +587,269 @@ export default function ShopContent() {
   )
 }
 
+function useImageUpload() {
+  const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState('')
+
+  const upload = async (file: File): Promise<string | null> => {
+    setError('')
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/upload/product-image', {
+        method: 'POST',
+        body: fd,
+      })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        return data.url
+      } else {
+        setError(data.message || 'Upload failed')
+        return null
+      }
+    } catch {
+      setError('Upload failed. Please try again.')
+      return null
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return { upload, uploading, error, setError }
+}
+
+function ImageUploadZone({
+  image,
+  onImageChange,
+}: {
+  image: string
+  onImageChange: (url: string) => void
+}) {
+  const { upload, uploading, error } = useImageUpload()
+  const [dragOver, setDragOver] = useState(false)
+  const [showUrlInput, setShowUrlInput] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const url = await upload(file)
+      if (url) onImageChange(url)
+    }
+    if (e.target) e.target.value = ''
+  }
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOver(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file && file.type.startsWith('image/')) {
+      const url = await upload(file)
+      if (url) onImageChange(url)
+    }
+  }
+
+  const hasImage = image && !image.includes('placeholder')
+
+  return (
+    <div className="space-y-2">
+      <Label className="flex items-center justify-between">
+        <span>Main Image</span>
+        <button
+          type="button"
+          onClick={() => setShowUrlInput(!showUrlInput)}
+          className="text-xs text-muted-foreground hover:text-foreground underline"
+        >
+          {showUrlInput ? 'Upload' : 'Enter URL'}
+        </button>
+      </Label>
+
+      {showUrlInput ? (
+        <div className="space-y-2">
+          <Input
+            value={image}
+            onChange={(e) => onImageChange(e.target.value)}
+            placeholder="https://... or /images/shop/..."
+          />
+          {hasImage && (
+            <div className="relative w-20 h-20 rounded-md overflow-hidden border border-border">
+              <img src={image} alt="Preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={handleDrop}
+          onClick={() => !uploading && fileInputRef.current?.click()}
+          className={`relative border-2 border-dashed rounded-lg transition-colors cursor-pointer ${
+            dragOver
+              ? 'border-[#1854d6] bg-[#1854d6]/5'
+              : 'border-border hover:border-[#1854d6]/50'
+          } ${uploading ? 'pointer-events-none opacity-60' : ''}`}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+
+          {hasImage ? (
+            <div className="flex items-center gap-3 p-3">
+              <div className="relative w-16 h-16 rounded-md overflow-hidden border border-border flex-shrink-0">
+                <img src={image} alt="Product" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-foreground font-medium truncate">Image uploaded</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Click or drag to replace</p>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onImageChange('/images/shop/placeholder.jpg')
+                }}
+                className="p-1 rounded hover:bg-muted"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-6 px-4">
+              {uploading ? (
+                <Loader2 className="w-8 h-8 animate-spin text-[#1854d6] mb-2" />
+              ) : (
+                <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+              )}
+              <p className="text-sm text-foreground font-medium">
+                {uploading ? 'Uploading...' : 'Click or drag image'}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                JPG, PNG, WebP up to 5MB
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {error && (
+        <p className="text-xs text-red-500 flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" />
+          {error}
+        </p>
+      )}
+    </div>
+  )
+}
+
+function AdditionalImagesZone({
+  images,
+  onImagesChange,
+}: {
+  images: string[]
+  onImagesChange: (urls: string[]) => void
+}) {
+  const { upload, uploading, error } = useImageUpload()
+  const [dragOver, setDragOver] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFiles = async (files: FileList) => {
+    const imageFiles = Array.from(files).filter((f) => f.type.startsWith('image/'))
+    if (imageFiles.length === 0) return
+
+    const newUrls: string[] = []
+    for (const file of imageFiles) {
+      const url = await upload(file)
+      if (url) newUrls.push(url)
+    }
+    if (newUrls.length > 0) {
+      onImagesChange([...images, ...newUrls])
+    }
+  }
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) handleFiles(e.target.files)
+    if (e.target) e.target.value = ''
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOver(false)
+    if (e.dataTransfer.files) handleFiles(e.dataTransfer.files)
+  }
+
+  const removeImage = (index: number) => {
+    onImagesChange(images.filter((_, i) => i !== index))
+  }
+
+  return (
+    <div className="space-y-2">
+      <Label>Additional Images</Label>
+
+      {/* Thumbnail grid of existing additional images */}
+      {images.length > 0 && (
+        <div className="grid grid-cols-4 gap-2">
+          {images.map((url, i) => (
+            <div key={i} className="relative group aspect-square rounded-md overflow-hidden border border-border">
+              <img src={url} alt={`Additional ${i + 1}`} className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={() => removeImage(i)}
+                className="absolute top-1 right-1 p-0.5 rounded bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Upload zone for adding more */}
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+        onClick={() => !uploading && fileInputRef.current?.click()}
+        className={`border-2 border-dashed rounded-lg transition-colors cursor-pointer ${
+          dragOver
+            ? 'border-[#1854d6] bg-[#1854d6]/5'
+            : 'border-border hover:border-[#1854d6]/50'
+        } ${uploading ? 'pointer-events-none opacity-60' : ''}`}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+          multiple
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        <div className="flex items-center justify-center gap-2 py-3 px-4">
+          {uploading ? (
+            <Loader2 className="w-4 h-4 animate-spin text-[#1854d6]" />
+          ) : (
+            <Plus className="w-4 h-4 text-muted-foreground" />
+          )}
+          <p className="text-sm text-muted-foreground">
+            {uploading ? 'Uploading...' : 'Add more images'}
+          </p>
+        </div>
+      </div>
+
+      {error && (
+        <p className="text-xs text-red-500 flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" />
+          {error}
+        </p>
+      )}
+    </div>
+  )
+}
+
 function ProductForm({
   formData,
   setFormData,
@@ -662,7 +930,7 @@ function ProductForm({
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>{t('price')} (RM)</Label>
           <Input
@@ -683,15 +951,19 @@ function ProductForm({
             step={1}
           />
         </div>
-        <div className="space-y-2">
-          <Label>{t('imageUrl')}</Label>
-          <Input
-            value={formData.image}
-            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-            placeholder="/images/shop/..."
-          />
-        </div>
       </div>
+
+      {/* Image Upload */}
+      <ImageUploadZone
+        image={formData.image}
+        onImageChange={(url) => setFormData({ ...formData, image: url })}
+      />
+
+      {/* Additional Images */}
+      <AdditionalImagesZone
+        images={formData.images}
+        onImagesChange={(urls) => setFormData({ ...formData, images: urls })}
+      />
 
       <div className="space-y-2">
         <Label>{t('description')}</Label>
