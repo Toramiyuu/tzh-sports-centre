@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   Dialog,
@@ -27,9 +27,10 @@ export function ShopProductDialog({
 }: ShopProductDialogProps) {
   const t = useTranslations('shop')
   const [activeIndex, setActiveIndex] = useState(0)
-  const [isTransitioning, setIsTransitioning] = useState(false)
   const [selectedColor, setSelectedColor] = useState<string | undefined>()
   const [selectedSize, setSelectedSize] = useState<string | undefined>()
+  const touchStartX = useRef(0)
+  const touchEndX = useRef(0)
 
   // Build the images array: use product.images if available, otherwise fall back to [product.image]
   const allImages =
@@ -44,35 +45,49 @@ export function ShopProductDialog({
   // Reset index and selections when product changes or dialog opens
   useEffect(() => {
     setActiveIndex(0)
-    setIsTransitioning(false)
     if (product) {
       setSelectedColor(product.colors?.[0])
       setSelectedSize(product.sizes?.[0])
     }
   }, [product?.id, open])
 
-  const goToImage = useCallback(
-    (index: number) => {
-      if (index === activeIndex || isTransitioning) return
-      setIsTransitioning(true)
-      // Brief transition delay for fade effect
-      setTimeout(() => {
-        setActiveIndex(index)
-        setTimeout(() => setIsTransitioning(false), 200)
-      }, 150)
-    },
-    [activeIndex, isTransitioning]
-  )
-
   const goToPrev = useCallback(() => {
-    const newIndex = activeIndex === 0 ? allImages.length - 1 : activeIndex - 1
-    goToImage(newIndex)
-  }, [activeIndex, allImages.length, goToImage])
+    setActiveIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))
+  }, [allImages.length])
 
   const goToNext = useCallback(() => {
-    const newIndex = activeIndex === allImages.length - 1 ? 0 : activeIndex + 1
-    goToImage(newIndex)
-  }, [activeIndex, allImages.length, goToImage])
+    setActiveIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1))
+  }, [allImages.length])
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!open || !hasMultipleImages) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') goToPrev()
+      else if (e.key === 'ArrowRight') goToNext()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open, hasMultipleImages, goToPrev, goToNext])
+
+  // Touch swipe handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    touchEndX.current = e.touches[0].clientX
+  }, [])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    const diff = touchStartX.current - touchEndX.current
+    const threshold = 50
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) goToNext()
+      else goToPrev()
+    }
+  }, [goToNext, goToPrev])
 
   if (!product) return null
 
@@ -95,20 +110,34 @@ export function ShopProductDialog({
           {/* Product Image Gallery */}
           <div className="flex flex-col">
             {/* Main Image */}
-            <div className="relative aspect-square bg-secondary overflow-hidden">
-              <Image
-                key={allImages[activeIndex]}
-                src={allImages[activeIndex]}
-                alt={`${product.fullName} - ${activeIndex + 1}`}
-                fill
-                className={`object-cover transition-opacity duration-300 ${
-                  isTransitioning ? 'opacity-0' : 'opacity-100'
-                }`}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement
-                  target.src = '/images/shop/placeholder.jpg'
-                }}
-              />
+            <div
+              className="relative aspect-square bg-secondary overflow-hidden"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              {/* Sliding track */}
+              <div
+                className="flex h-full transition-transform duration-300 ease-out will-change-transform"
+                style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+              >
+                {allImages.map((img, idx) => (
+                  <div key={idx} className="relative w-full h-full flex-shrink-0">
+                    <Image
+                      src={img}
+                      alt={`${product.fullName} - ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      priority={idx === 0}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = '/images/shop/placeholder.jpg'
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
 
               {/* Featured badge */}
               {product.featured && (
@@ -161,7 +190,7 @@ export function ShopProductDialog({
                 {allImages.map((img, idx) => (
                   <button
                     key={idx}
-                    onClick={() => goToImage(idx)}
+                    onClick={() => setActiveIndex(idx)}
                     className={`relative w-14 h-14 flex-shrink-0 rounded-md overflow-hidden transition-all duration-200 ${
                       idx === activeIndex
                         ? 'ring-2 ring-[#1854d6] ring-offset-1 opacity-100'

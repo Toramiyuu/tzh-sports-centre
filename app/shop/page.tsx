@@ -12,9 +12,7 @@ import {
   ShopProduct,
   ShopCategoryId,
   SHOP_CATEGORIES,
-  filterByBrands,
   filterByPriceRange,
-  getAllBrands,
   getPriceRange,
   searchProducts,
 } from '@/lib/shop-config'
@@ -95,7 +93,6 @@ function ShopContent() {
     }
   }, [categoryParam])
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
   const [selectedProduct, setSelectedProduct] = useState<ShopProduct | null>(
     null
   )
@@ -115,16 +112,12 @@ function ShopContent() {
     }
   }, [allProducts])
 
-  // Get all brands
-  const allBrands = useMemo(() => getAllBrands(allProducts), [allProducts])
-
   // Filter products
   const filteredProducts = useMemo(() => {
     let products = allProducts
 
     // Category filter
     if (selectedCategory === 'all') {
-      // Show all in-stock products, featured first
       products = products.filter(p => p.inStock)
       products.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
     } else {
@@ -134,11 +127,6 @@ function ShopContent() {
     // Search filter
     if (searchQuery) {
       products = searchProducts(products, searchQuery)
-    }
-
-    // Brand filter
-    if (selectedBrands.length > 0) {
-      products = filterByBrands(products, selectedBrands)
     }
 
     // Price range filter
@@ -158,22 +146,19 @@ function ShopContent() {
     allProducts,
     selectedCategory,
     searchQuery,
-    selectedBrands,
     selectedPriceRange,
     priceRange,
   ])
 
   // Calculate active filter count
   const activeFilterCount = useMemo(() => {
-    let count = 0
-    if (selectedBrands.length > 0) count += selectedBrands.length
     if (
       selectedPriceRange[0] !== priceRange[0] ||
       selectedPriceRange[1] !== priceRange[1]
     )
-      count += 1
-    return count
-  }, [selectedBrands, selectedPriceRange, priceRange])
+      return 1
+    return 0
+  }, [selectedPriceRange, priceRange])
 
   const handleViewDetails = (product: ShopProduct) => {
     setSelectedProduct(product)
@@ -181,7 +166,6 @@ function ShopContent() {
   }
 
   const handleClearFilters = () => {
-    setSelectedBrands([])
     setSelectedPriceRange(priceRange)
     setSearchQuery('')
   }
@@ -215,9 +199,6 @@ function ShopContent() {
               <ShopFilters
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
-                brands={allBrands}
-                selectedBrands={selectedBrands}
-                onBrandChange={setSelectedBrands}
                 priceRange={priceRange}
                 selectedPriceRange={selectedPriceRange}
                 onPriceRangeChange={setSelectedPriceRange}
