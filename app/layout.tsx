@@ -28,6 +28,14 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL('https://tzh-sports-centre.vercel.app'),
   manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'TZH Sports',
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
   title: {
     default: 'TZH Sports Centre - Badminton & Pickleball Courts in Ayer Itam, Penang',
     template: '%s | TZH Sports Centre',
@@ -112,6 +120,13 @@ export default function RootLayout({
                 { '@type': 'LocationFeatureSpecification', name: 'Food & Beverages', value: true },
               ],
             }),
+          }}
+        />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <meta name="theme-color" content="#1854d6" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js')})}`,
           }}
         />
       </head>
