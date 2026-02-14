@@ -129,8 +129,8 @@ function AboutSection() {
             <div className="absolute -inset-4 bg-primary/10 rounded-2xl -rotate-2" />
             <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-xl">
               <Image
-                src="/images/badminton-action.jpg"
-                alt="Badminton at TZH"
+                src="/images/facility-interior.jpg"
+                alt="TZH Sports Centre courts"
                 fill
                 className="object-cover"
               />
