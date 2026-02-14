@@ -177,94 +177,105 @@ function AboutSection() {
 }
 
 // ============================================
-// SPORTS — Two sport cards (image + text, alternating)
+// SPORTS — Interactive showcase cards
 // ============================================
 function SportsSection() {
   const t = useTranslations("home.availableSports");
 
+  const sports = [
+    {
+      name: t("badminton.name"),
+      courts: t("badminton.courts"),
+      price: t("badminton.price"),
+      image: "/images/badminton-action.jpg",
+      href: "/booking",
+      description: "Professional courts with quality flooring and lighting. Perfect for casual games or serious training.",
+      highlights: ["Vinyl Flooring", "Zero-Glare Lighting", "Walk-ins Welcome"],
+    },
+    {
+      name: t("pickleball.name"),
+      courts: t("pickleball.courts"),
+      price: t("pickleball.price"),
+      image: "/images/pickleball.jpg",
+      href: "/booking?sport=pickleball",
+      description: "The fastest-growing sport in the world, now in Ayer Itam. Paddles and balls available for rent.",
+      highlights: ["Equipment Rental", "Beginner Friendly", "2hr Minimum"],
+    },
+  ];
+
   return (
     <section className="py-28 md:py-32 bg-secondary">
       <div className="max-w-[1200px] mx-auto px-6">
-        {/* Section header — centered, Lucky Hole style */}
-        <div className="text-center mb-16 md:mb-20">
-          <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.2em] mb-4">
-            What We Offer
-          </p>
-          <h2 className="text-3xl md:text-4xl font-semibold text-foreground">
+        {/* Header with badge */}
+        <div className="text-center mb-16 md:mb-20 animate-in fade-in duration-700 fill-mode-forwards">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
+            <Zap className="w-3.5 h-3.5 text-primary" />
+            <span className="text-xs font-semibold text-primary uppercase tracking-wider">What We Offer</span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground">
             Two Sports, One Venue
           </h2>
         </div>
 
-        {/* Badminton */}
-        <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center mb-24 md:mb-32">
-          <div className="order-2 md:order-1 animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
-            <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.15em] mb-3">
-              {t("badminton.courts")}
-            </p>
-            <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
-              {t("badminton.name")}
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Professional courts with quality flooring and lighting. Perfect for casual games or serious training.
-            </p>
-            <p className="text-xl font-semibold text-foreground mb-8">
-              {t("badminton.price")}
-            </p>
-            <Link href="/booking">
-              <Button
-                variant="outline"
-                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-[#1854d6] text-[#0a2540] hover:bg-[#2060e0] hover:text-white bg-transparent"
-              >
-                Book Court <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="order-1 md:order-2 animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
-            <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-card">
-              <Image
-                src="/images/badminton-action.jpg"
-                alt="Badminton court"
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-          </div>
-        </div>
+        {/* Sport Cards */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {sports.map((sport) => (
+            <div
+              key={sport.name}
+              className="group relative rounded-2xl overflow-hidden bg-card border border-border hover:border-primary/40 transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-forwards"
+            >
+              {/* Image */}
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <Image
+                  src={sport.image}
+                  alt={sport.name}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
-        {/* Pickleball */}
-        <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
-            <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-card">
-              <Image
-                src="/images/pickleball.jpg"
-                alt="Pickleball court"
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-700"
-              />
+                {/* Floating price badge */}
+                <div className="absolute top-4 right-4 px-4 py-2 rounded-full bg-white/90 dark:bg-black/70 backdrop-blur-sm shadow-lg">
+                  <span className="text-sm font-bold text-foreground">{sport.price}</span>
+                </div>
+
+                {/* Courts badge */}
+                <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-primary/90 backdrop-blur-sm">
+                  <span className="text-xs font-semibold text-white uppercase tracking-wider">{sport.courts}</span>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  {sport.name}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-5">
+                  {sport.description}
+                </p>
+
+                {/* Highlight pills */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {sport.highlights.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 rounded-full text-xs font-medium bg-primary/8 text-primary border border-primary/15"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <Link href={sport.href}>
+                  <Button className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg group/btn">
+                    Book Now
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </div>
             </div>
-          </div>
-          <div className="animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
-            <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.15em] mb-3">
-              {t("pickleball.courts")}
-            </p>
-            <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
-              {t("pickleball.name")}
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              The fastest-growing sport in the world, now in Ayer Itam. Paddles and balls available for rent.
-            </p>
-            <p className="text-xl font-semibold text-foreground mb-8">
-              {t("pickleball.price")}
-            </p>
-            <Link href="/booking?sport=pickleball">
-              <Button
-                variant="outline"
-                className="h-11 px-6 text-sm font-medium uppercase tracking-wider rounded-sm border-[#1854d6] text-[#0a2540] hover:bg-[#2060e0] hover:text-white bg-transparent"
-              >
-                Book Court <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
+          ))}
         </div>
       </div>
     </section>
