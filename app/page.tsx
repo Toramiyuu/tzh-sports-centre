@@ -622,7 +622,7 @@ function ShopSection() {
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">
-              {["TZH Brand", "Yonex", "Joola", "PR IND"].map((brand) => (
+              {["Yonex", "Li-Ning", "Joola", "Victor"].map((brand) => (
                 <span key={brand} className="px-3 py-1 rounded-full text-xs font-medium bg-card border border-border text-muted-foreground">
                   {brand}
                 </span>
