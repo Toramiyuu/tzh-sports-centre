@@ -29,24 +29,24 @@ function HeroSection() {
       {/* Content — centered */}
       <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
         {/* Status badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-background/80 backdrop-blur-sm mb-8 animate-in fade-in duration-700 fill-mode-forwards">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm mb-8 animate-in fade-in duration-700 fill-mode-forwards">
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-sm text-muted-foreground">Open now until 12:00 AM</span>
+          <span className="text-sm text-white/80">Open now until 12:00 AM</span>
         </div>
 
-        <p className="text-sm font-medium text-[#0a2540] uppercase tracking-[0.2em] mb-6 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
+        <p className="text-sm font-medium text-white/70 uppercase tracking-[0.2em] mb-6 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
           Ayer Itam, Penang
         </p>
 
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight leading-[0.95] mb-6 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-[0.95] mb-6 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
           {t("hero.headline")}
         </h1>
 
-        <p className="text-lg md:text-xl text-muted-foreground uppercase tracking-[0.15em] mb-4 animate-in fade-in duration-700 delay-300 fill-mode-forwards">
+        <p className="text-lg md:text-xl text-white/70 uppercase tracking-[0.15em] mb-4 animate-in fade-in duration-700 delay-300 fill-mode-forwards">
           Badminton &amp; Pickleball
         </p>
 
-        <p className="text-base text-muted-foreground mb-10 max-w-lg mx-auto animate-in fade-in duration-700 delay-400 fill-mode-forwards">
+        <p className="text-base text-white/60 mb-10 max-w-lg mx-auto animate-in fade-in duration-700 delay-400 fill-mode-forwards">
           {t("hero.subheadline")}
         </p>
 
@@ -59,7 +59,7 @@ function HeroSection() {
           <Link href="/lessons">
             <Button
               variant="outline"
-              className="h-12 px-8 text-sm font-medium uppercase tracking-wider border-[#1854d6] text-[#0a2540] hover:bg-[#2060e0] hover:text-white rounded-sm"
+              className="h-12 px-8 text-sm font-medium uppercase tracking-wider border-white/40 text-white hover:bg-white/10 rounded-sm"
             >
               {t("hero.viewLessons")}
             </Button>
@@ -69,8 +69,8 @@ function HeroSection() {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-in fade-in duration-700 delay-700 fill-mode-forwards">
-        <span className="text-xs text-muted-foreground uppercase tracking-[0.2em]">Scroll</span>
-        <div className="w-px h-8 bg-[#1854d6]/50" />
+        <span className="text-xs text-white/50 uppercase tracking-[0.2em]">Scroll</span>
+        <div className="w-px h-8 bg-white/30" />
       </div>
     </section>
   );
