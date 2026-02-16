@@ -3,6 +3,7 @@ export interface UpdateEntry {
   time: string // HH:mm:ss
   id: string // matches i18n key under updates.entries
   changeCount: number // number of changes
+  adminOnly?: boolean // hide from non-admin users
 }
 
 export const updateLog: UpdateEntry[] = [
@@ -11,6 +12,7 @@ export const updateLog: UpdateEntry[] = [
     time: '22:00:00',
     id: 'adminImageUpload',
     changeCount: 3,
+    adminOnly: true,
   },
   {
     date: '2026-02-11',
@@ -23,6 +25,7 @@ export const updateLog: UpdateEntry[] = [
     time: '00:49:00',
     id: 'adminPanelMerge',
     changeCount: 3,
+    adminOnly: true,
   },
   {
     date: '2026-02-01',
@@ -41,6 +44,7 @@ export const updateLog: UpdateEntry[] = [
     time: '21:24:00',
     id: 'receiptVerification',
     changeCount: 3,
+    adminOnly: true,
   },
   {
     date: '2026-01-25',

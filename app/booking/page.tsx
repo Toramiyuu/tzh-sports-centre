@@ -672,7 +672,7 @@ function BookingPageContent() {
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
             >
-              {tHome('sports.badminton')}
+              {tHome('sportsNames.badminton')}
             </button>
             <button
               onClick={() => setSport('pickleball')}
@@ -682,7 +682,7 @@ function BookingPageContent() {
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
             >
-              {tHome('sports.pickleball')}
+              {tHome('sportsNames.pickleball')}
             </button>
           </nav>
         </div>
@@ -756,7 +756,7 @@ function BookingPageContent() {
                   variant="outline"
                   className="ml-2 bg-secondary"
                 >
-                  {sport === 'badminton' ? tHome('sports.badminton') : tHome('sports.pickleball')}
+                  {sport === 'badminton' ? tHome('sportsNames.badminton') : tHome('sportsNames.pickleball')}
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -850,7 +850,7 @@ function BookingPageContent() {
                     <p className="text-sm text-muted-foreground mb-1">
                       <strong>{t('selectSport')}:</strong>{' '}
                       <span className="text-foreground font-medium">
-                        {sport === 'badminton' ? tHome('sports.badminton') : tHome('sports.pickleball')}
+                        {sport === 'badminton' ? tHome('sportsNames.badminton') : tHome('sportsNames.pickleball')}
                       </span>
                     </p>
                     <p className="text-sm text-muted-foreground">

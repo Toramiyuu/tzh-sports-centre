@@ -26,6 +26,8 @@ export default function UpdatesPage() {
     }
   }, [session, status, router])
 
+  const isAdmin = !!(session?.user as { isAdmin?: boolean })?.isAdmin
+
   if (status === 'loading' || !session?.user) {
     return (
       <div className="flex items-center justify-center min-h-[50vh] bg-background">
@@ -33,6 +35,10 @@ export default function UpdatesPage() {
       </div>
     )
   }
+
+  const visibleEntries = isAdmin
+    ? updateLog
+    : updateLog.filter((entry) => !entry.adminOnly)
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,7 +59,7 @@ export default function UpdatesPage() {
 
         {/* Timeline */}
         <div className="space-y-8">
-          {updateLog.map((entry, index) => (
+          {visibleEntries.map((entry, index) => (
             <div key={entry.id} className="relative">
               {/* Date/Time header */}
               <div className="flex items-center gap-3 mb-3">
@@ -81,7 +87,7 @@ export default function UpdatesPage() {
               </div>
 
               {/* Connector line */}
-              {index < updateLog.length - 1 && (
+              {index < visibleEntries.length - 1 && (
                 <div className="absolute left-5 top-full w-0.5 h-8 bg-border" />
               )}
             </div>
