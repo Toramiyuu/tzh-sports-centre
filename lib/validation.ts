@@ -124,3 +124,18 @@ export function validatePaymentMethod(method: string | undefined | null): 'tng' 
 
   return lower as 'tng' | 'duitnow'
 }
+
+/**
+ * Sanitise free-text input by stripping HTML tags and trimming.
+ * Prevents stored XSS when values are rendered outside React (emails, exports).
+ * @returns sanitised string or null if empty
+ */
+export function sanitiseText(input: string | undefined | null): string | null {
+  if (!input) return null
+  // Strip HTML tags, then collapse whitespace and trim
+  const cleaned = input
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return cleaned || null
+}

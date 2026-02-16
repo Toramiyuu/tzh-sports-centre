@@ -23,28 +23,28 @@ export default async function AdminPage() {
       descriptionKey: 'bookingsLessons.description',
       icon: Calendar,
       href: '/admin/bookings-lessons',
-      iconBg: 'bg-blue-100 text-primary',
+      iconBg: 'bg-primary/10 text-primary',
     },
     {
       titleKey: 'membersAccounts.title',
       descriptionKey: 'membersAccounts.description',
       icon: Users,
       href: '/admin/members-accounts',
-      iconBg: 'bg-violet-100 text-violet-600',
+      iconBg: 'bg-primary/15 text-primary',
     },
     {
       titleKey: 'trainingOrders.title',
       descriptionKey: 'trainingOrders.description',
       icon: Wrench,
       href: '/admin/stringing',
-      iconBg: 'bg-teal-100 text-teal-600',
+      iconBg: 'bg-primary/10 text-primary',
     },
     {
       titleKey: 'shopInventory.title',
       descriptionKey: 'shopInventory.description',
       icon: ShoppingBag,
       href: '/admin/shop',
-      iconBg: 'bg-amber-100 text-amber-600',
+      iconBg: 'bg-primary/15 text-primary',
     },
   ]
 

@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { isAdmin } from '@/lib/admin'
 import { calculateBookingAmount } from '@/lib/recurring-booking-utils'
-import { validateMalaysianPhone, validateEmail, validateSport, validateFutureDate } from '@/lib/validation'
+import { validateMalaysianPhone, validateEmail, validateSport, validateFutureDate, sanitiseText } from '@/lib/validation'
 import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 
 // GET - Fetch user's bookings
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
         bookingGuestEmail = session?.user?.email || null
       }
 
-      bookingGuestName = guestName?.trim() || session?.user?.name || null
+      bookingGuestName = sanitiseText(guestName) || session?.user?.name || null
 
       // Set userId if logged in
       if (session?.user?.id) {

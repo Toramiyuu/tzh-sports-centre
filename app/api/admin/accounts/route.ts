@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { isAdmin, isSuperAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import { logAdminAction } from '@/lib/audit'
+import { validateMalaysianPhone, sanitiseText } from '@/lib/validation'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 
@@ -197,13 +198,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Clean phone number (remove non-digits)
-    const cleanPhone = phone.replace(/\D/g, '')
-
     // Validate phone format (Malaysian)
-    if (cleanPhone.length < 10 || cleanPhone.length > 12) {
+    const cleanPhone = validateMalaysianPhone(phone)
+    if (!cleanPhone) {
       return NextResponse.json(
-        { error: 'Invalid phone number format' },
+        { error: 'Invalid phone number format. Please use a valid Malaysian phone number.' },
         { status: 400 }
       )
     }
@@ -251,7 +250,7 @@ export async function POST(request: NextRequest) {
     // Create the user
     const newUser = await prisma.user.create({
       data: {
-        name,
+        name: sanitiseText(name) || name,
         phone: cleanPhone,
         email: userEmail,
         passwordHash,

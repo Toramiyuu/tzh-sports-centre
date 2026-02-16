@@ -6,7 +6,7 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-gray-200", className)}
+      className={cn("animate-pulse rounded-md bg-muted", className)}
       {...props}
     />
   )
@@ -15,7 +15,7 @@ function Skeleton({
 // Pre-built skeleton components for common UI patterns
 function SkeletonCard({ className }: { className?: string }) {
   return (
-    <div className={cn("rounded-lg border bg-white p-6 space-y-4", className)}>
+    <div className={cn("rounded-lg border bg-card p-6 space-y-4", className)}>
       <Skeleton className="h-6 w-3/4" />
       <Skeleton className="h-4 w-1/2" />
       <div className="space-y-2">
@@ -52,7 +52,7 @@ function SkeletonTable({ rows = 5 }: { rows?: number }) {
 
 function SkeletonBookingCard() {
   return (
-    <div className="rounded-lg border bg-white p-4 space-y-3">
+    <div className="rounded-lg border bg-card p-4 space-y-3">
       <div className="flex justify-between items-start">
         <div className="space-y-2">
           <Skeleton className="h-5 w-32" />
@@ -97,7 +97,7 @@ function SkeletonCourtGrid() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="rounded-lg border bg-white p-4 space-y-3">
+        <div key={i} className="rounded-lg border bg-card p-4 space-y-3">
           <Skeleton className="h-6 w-24" />
           <div className="grid grid-cols-3 gap-2">
             {Array.from({ length: 9 }).map((_, j) => (

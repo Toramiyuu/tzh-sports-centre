@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
+import { sanitiseText, validateEmail, validateMalaysianPhone } from '@/lib/validation'
 import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
@@ -24,18 +25,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
+    const validatedEmail = validateEmail(email)
+    if (!validatedEmail) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
       )
     }
 
-    const phoneRegex = /^[\d\s\-+()]{8,}$/
-    if (!phoneRegex.test(phone)) {
+    const validatedPhone = validateMalaysianPhone(phone)
+    if (!validatedPhone) {
       return NextResponse.json(
-        { error: 'Invalid phone number format' },
+        { error: 'Invalid phone number format. Please use a valid Malaysian phone number.' },
         { status: 400 }
       )
     }
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     // Check for existing email
     const existingEmail = await prisma.user.findUnique({
-      where: { email },
+      where: { email: validatedEmail },
     })
 
     if (existingEmail) {
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     // Check for existing phone
     const existingPhone = await prisma.user.findUnique({
-      where: { phone },
+      where: { phone: validatedPhone },
     })
 
     if (existingPhone) {
@@ -82,10 +83,10 @@ export async function POST(request: NextRequest) {
 
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: sanitiseText(name) || name,
+        email: validatedEmail,
         passwordHash,
-        phone,
+        phone: validatedPhone,
         uid: newUid,
       },
       select: {

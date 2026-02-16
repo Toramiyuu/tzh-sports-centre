@@ -29,12 +29,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         })
 
         if (!user || !user.passwordHash) {
+          console.warn(`[AUTH] Failed login: user not found for ${isEmail ? 'email' : 'phone'} "${identifier}"`)
           return null
         }
 
         const passwordMatch = await bcrypt.compare(password, user.passwordHash)
 
         if (!passwordMatch) {
+          console.warn(`[AUTH] Failed login: wrong password for user ${user.email} (id: ${user.id})`)
           return null
         }
 
@@ -68,5 +70,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   session: {
     strategy: 'jwt',
+    maxAge: 8 * 60 * 60, // 8 hours
   },
 })
