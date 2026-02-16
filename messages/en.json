@@ -137,7 +137,7 @@
         "desc": "Private and group lessons for all ages and skill levels."
       }
     },
-    "sports": {
+    "sportsNames": {
       "badminton": "Badminton",
       "pickleball": "Pickleball"
     },

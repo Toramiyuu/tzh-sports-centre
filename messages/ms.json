@@ -126,7 +126,7 @@
         "desc": "Kelas persendirian dan berkumpulan untuk semua umur dan tahap."
       }
     },
-    "sports": {
+    "sportsNames": {
       "badminton": "Badminton",
       "pickleball": "Pickleball"
     },
