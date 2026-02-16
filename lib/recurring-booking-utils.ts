@@ -50,6 +50,13 @@ export function getSportRate(sport: string, startTime?: string): number {
   return BADMINTON_RATE
 }
 
+// Get rate per 30-minute slot (server-side pricing authority)
+export function getSlotRate(sport: string, slotTime: string): number {
+  if (sport.toLowerCase() === 'pickleball') return 12.5  // RM12.50 per 30 min
+  if (slotTime >= '18:00') return 9                       // RM9 per 30 min (peak)
+  return 7.5                                               // RM7.50 per 30 min (off-peak)
+}
+
 // Count sessions in a month for a given day of week
 export function countSessionsInMonth(year: number, month: number, dayOfWeek: number): number {
   let count = 0

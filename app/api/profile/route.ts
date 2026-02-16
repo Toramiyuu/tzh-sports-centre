@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { sendEmail, getEmailVerificationEmail } from '@/lib/email'
 
 export async function GET() {
   try {
@@ -88,7 +89,14 @@ export async function PATCH(request: Request) {
         },
       })
 
-      // TODO: Send verification email
+      // Send verification email to the new address
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+      const verifyUrl = `${appUrl}/api/verify-email?token=${verifyToken}`
+      const emailTemplate = getEmailVerificationEmail({
+        userName: user.name || 'User',
+        verifyUrl,
+      })
+      await sendEmail({ to: email, ...emailTemplate })
       emailVerificationSent = true
     }
 

@@ -12,7 +12,7 @@ export function Footer() {
   return (
     <footer className="bg-secondary border-t border-border">
       {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="md:col-span-1">
@@ -171,18 +171,14 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-border">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground/60">
             &copy; {new Date().getFullYear()} {t('copyright')}
           </p>
           <div className="flex items-center gap-6 text-sm text-muted-foreground/60">
-            <a href="#" className="hover:text-foreground transition-colors">
-              Privacy Policy
-            </a>
-            <span className="text-border">|</span>
-            <a href="#" className="hover:text-foreground transition-colors">
-              Terms of Service
-            </a>
+            <Link href="/terms" className="hover:text-foreground transition-colors">
+              Terms & Conditions
+            </Link>
           </div>
         </div>
       </div>

@@ -149,7 +149,7 @@ export default function DashboardPage() {
                 You haven&apos;t made any court bookings. Book your first session now!
               </p>
               <Link href="/booking">
-                <Button className="bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full">Book a Court</Button>
+                <Button className="bg-primary hover:bg-primary/90 text-white rounded-full">Book a Court</Button>
               </Link>
             </CardContent>
           </Card>
@@ -167,7 +167,7 @@ export default function DashboardPage() {
                 {upcomingBookings.length === 0 ? (
                   <div className="text-center py-6 text-muted-foreground">
                     <p>No upcoming bookings</p>
-                    <Link href="/booking" className="text-[#0a2540] font-medium hover:underline text-sm">
+                    <Link href="/booking" className="text-primary font-medium hover:underline text-sm">
                       Book a court
                     </Link>
                   </div>

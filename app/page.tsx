@@ -27,7 +27,7 @@ function HeroSection() {
       </div>
 
       {/* Content — centered */}
-      <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
+      <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6">
         {/* Status badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm mb-8 animate-in fade-in duration-700 fill-mode-forwards">
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
@@ -38,7 +38,7 @@ function HeroSection() {
           Ayer Itam, Penang
         </p>
 
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-[0.95] mb-6 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
+        <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-[0.95] mb-6 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
           {t("hero.headline")}
         </h1>
 
@@ -52,14 +52,14 @@ function HeroSection() {
 
         <div className="flex flex-wrap justify-center gap-4 animate-in fade-in duration-700 delay-500 fill-mode-forwards">
           <Link href="/booking">
-            <Button className="h-12 px-8 text-sm font-medium uppercase tracking-wider bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-sm">
+            <Button className="h-12 px-6 sm:px-8 text-sm font-medium uppercase tracking-wider bg-primary hover:bg-primary/90 text-white rounded-sm">
               {t("hero.bookCourt")}
             </Button>
           </Link>
           <Link href="/lessons">
             <Button
               variant="outline"
-              className="h-12 px-8 text-sm font-medium uppercase tracking-wider border-white/40 text-white bg-transparent hover:bg-white/10 dark:bg-transparent dark:hover:bg-white/10 rounded-sm"
+              className="h-12 px-6 sm:px-8 text-sm font-medium uppercase tracking-wider border-white/40 text-white bg-transparent hover:bg-white/10 dark:bg-transparent dark:hover:bg-white/10 rounded-sm"
             >
               {t("hero.viewLessons")}
             </Button>
@@ -108,8 +108,8 @@ function AboutSection() {
   ];
 
   return (
-    <section className="py-28 md:py-32 bg-background">
-      <div className="max-w-[1200px] mx-auto px-6">
+    <section className="py-16 md:py-32 bg-background">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-16 animate-in fade-in duration-700 fill-mode-forwards">
           <p className="text-sm font-medium text-primary uppercase tracking-[0.2em] mb-4">
@@ -166,7 +166,7 @@ function AboutSection() {
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                 <stat.icon className="w-5 h-5 text-primary" />
               </div>
-              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</div>
               <div className="text-xs uppercase tracking-[0.1em] text-muted-foreground mt-1">{stat.label}</div>
             </div>
           ))}
@@ -204,15 +204,15 @@ function SportsSection() {
   ];
 
   return (
-    <section className="py-28 md:py-32 bg-secondary">
-      <div className="max-w-[1200px] mx-auto px-6">
+    <section className="py-16 md:py-32 bg-secondary">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         {/* Header with badge */}
         <div className="text-center mb-16 md:mb-20 animate-in fade-in duration-700 fill-mode-forwards">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <Zap className="w-3.5 h-3.5 text-primary" />
             <span className="text-xs font-semibold text-primary uppercase tracking-wider">What We Offer</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground">
             Two Sports, One Venue
           </h2>
         </div>
@@ -322,15 +322,15 @@ function PricingSection() {
   ];
 
   return (
-    <section className="py-28 md:py-32 bg-background">
-      <div className="max-w-[1200px] mx-auto px-6">
+    <section className="py-16 md:py-32 bg-background">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-16 md:mb-20 animate-in fade-in duration-700 fill-mode-forwards">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <Calendar className="w-3.5 h-3.5 text-primary" />
             <span className="text-xs font-semibold text-primary uppercase tracking-wider">Pricing</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground mb-4">
             Simple, Transparent Rates
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto">
@@ -448,15 +448,15 @@ function ReviewsSection() {
   ];
 
   return (
-    <section className="py-28 md:py-32 bg-secondary">
-      <div className="max-w-[1200px] mx-auto px-6">
+    <section className="py-16 md:py-32 bg-secondary">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-16 md:mb-20 animate-in fade-in duration-700 fill-mode-forwards">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <Star className="w-3.5 h-3.5 text-primary fill-primary" />
             <span className="text-xs font-semibold text-primary uppercase tracking-wider">{t("subtitle")}</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground">
             What Players Say
           </h2>
         </div>
@@ -545,7 +545,7 @@ function StringingSection() {
   const features = ["18+ String Options", "Same-Day Service", "Expert Tension", "All Brands"];
 
   return (
-    <section className="relative py-28 md:py-32 overflow-hidden">
+    <section className="relative py-16 md:py-32 overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -557,14 +557,14 @@ function StringingSection() {
         <div className="absolute inset-0 bg-black/70" />
       </div>
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-6">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 mb-6 animate-in fade-in duration-700 fill-mode-forwards">
             <Wrench className="w-3.5 h-3.5 text-white" />
             <span className="text-xs font-semibold text-white uppercase tracking-wider">Professional Service</span>
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-4 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
             {t("title")}
           </h2>
           <p className="text-white/70 text-lg leading-relaxed mb-8 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
@@ -582,7 +582,7 @@ function StringingSection() {
           </div>
 
           <Link href="/stringing" className="animate-in fade-in duration-700 delay-400 fill-mode-forwards inline-block">
-            <Button className="h-12 px-8 bg-white text-black hover:bg-white/90 font-medium rounded-lg group/btn">
+            <Button className="h-12 px-6 sm:px-8 bg-white text-black hover:bg-white/90 font-medium rounded-lg group/btn">
               {t("cta")}
               <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
             </Button>
@@ -605,8 +605,8 @@ function ShopSection() {
   ];
 
   return (
-    <section className="py-28 md:py-32 bg-background">
-      <div className="max-w-[1200px] mx-auto px-6">
+    <section className="py-16 md:py-32 bg-background">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
           {/* Left: Text + CTA */}
           <div className="animate-in fade-in slide-in-from-left-8 duration-700 fill-mode-forwards">
@@ -614,7 +614,7 @@ function ShopSection() {
               <ShoppingBag className="w-3.5 h-3.5 text-primary" />
               <span className="text-xs font-semibold text-primary uppercase tracking-wider">Pro Shop</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground mb-4">
               Gear Up for <br className="hidden md:block" />Your Game
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
@@ -630,7 +630,7 @@ function ShopSection() {
             </div>
 
             <Link href="/shop">
-              <Button className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg group/btn">
+              <Button className="h-12 px-6 sm:px-8 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg group/btn">
                 Browse Shop
                 <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
               </Button>
@@ -708,15 +708,15 @@ function LocationSection() {
   ];
 
   return (
-    <section className="py-28 md:py-32 bg-secondary">
-      <div className="max-w-[1200px] mx-auto px-6">
+    <section className="py-16 md:py-32 bg-secondary">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-16 animate-in fade-in duration-700 fill-mode-forwards">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <MapPin className="w-3.5 h-3.5 text-primary" />
             <span className="text-xs font-semibold text-primary uppercase tracking-wider">Find Us</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground">
             {t("title")}
           </h2>
         </div>
@@ -752,7 +752,8 @@ function LocationSection() {
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1986.0259229585!2d100.29758!3d5.4090748!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x304ac300162c75fd%3A0x65461617c304bf30!2sTZH%20Badminton%20Academy!5e0!3m2!1sen!2smy!4v1705000000000"
             width="100%"
-            height="400"
+            height="300"
+            className="md:h-[400px]"
             style={{ border: 0 }}
             allowFullScreen
             loading="lazy"

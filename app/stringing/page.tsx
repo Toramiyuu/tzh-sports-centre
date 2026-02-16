@@ -188,7 +188,7 @@ function StringCard({
               </span>
             </div>
             {isInStock ? (
-              <Button size="sm" className="bg-[#1854d6] hover:bg-[#2060e0] rounded-full">
+              <Button size="sm" className="bg-primary hover:bg-primary/90 rounded-full">
                 {selectLabel}
               </Button>
             ) : (
@@ -325,7 +325,7 @@ export default function StringingPage() {
                 id={`brand-${brand}`}
                 checked={selectedBrands.includes(brand)}
                 onCheckedChange={() => handleBrandToggle(brand)}
-                className="border-border data-[state=checked]:bg-[#1854d6] data-[state=checked]:border-[#1854d6]"
+                className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
               />
               <label
                 htmlFor={`brand-${brand}`}
@@ -392,7 +392,7 @@ export default function StringingPage() {
             </p>
             <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
               <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="bg-[#1854d6] text-white hover:bg-[#2060e0] rounded-full h-12 px-6">
+                <Button size="lg" className="bg-primary text-white hover:bg-primary/90 rounded-full h-12 px-6">
                   <Phone className="w-5 h-5 mr-2" />
                   WhatsApp
                 </Button>
@@ -414,7 +414,7 @@ export default function StringingPage() {
         <div className="flex gap-8">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="sticky top-24 bg-background rounded-2xl border border-border p-6">
+            <div className="sticky top-20 sm:top-24 bg-background rounded-2xl border border-border p-6">
               <h2 className="font-semibold text-lg text-foreground mb-4">{t('catalog.filters')}</h2>
               {filtersContent}
             </div>
@@ -430,7 +430,7 @@ export default function StringingPage() {
                     <Filter className="w-4 h-4 mr-2" />
                     {t('catalog.filters')}
                     {(selectedBrands.length > 0 || search) && (
-                      <Badge variant="secondary" className="ml-2 bg-[#1854d6] text-white">
+                      <Badge variant="secondary" className="ml-2 bg-primary text-white">
                         {selectedBrands.length + (search ? 1 : 0)}
                       </Badge>
                     )}
@@ -511,7 +511,7 @@ export default function StringingPage() {
                   onClick={() => setSelectedColor(colorOption.color)}
                   className={`relative flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
                     selectedColor === colorOption.color
-                      ? 'border-[#1854d6] bg-secondary'
+                      ? 'border-primary bg-secondary'
                       : 'border-border hover:border-border'
                   }`}
                 >

@@ -44,6 +44,61 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
 
 // Email Templates
 
+export function getEmailVerificationEmail(params: {
+  userName: string
+  verifyUrl: string
+}) {
+  const { userName, verifyUrl } = params
+
+  return {
+    subject: 'Verify your new email - TZH Sports Centre',
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #3b82f6; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { background: #f9fafb; padding: 20px; border-radius: 0 0 8px 8px; }
+            .info { background: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px; margin: 15px 0; }
+            .cta { text-align: center; margin: 20px 0; }
+            .cta a { background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; }
+            .footer { text-align: center; margin-top: 20px; color: #6b7280; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>TZH Sports Centre</h1>
+            </div>
+            <div class="content">
+              <p>Hi ${userName},</p>
+
+              <div class="info">
+                <strong>Please verify your new email address.</strong>
+              </div>
+
+              <p>You requested to change your email address. Click the button below to confirm:</p>
+
+              <div class="cta">
+                <a href="${verifyUrl}">Verify Email</a>
+              </div>
+
+              <p>This link expires in 24 hours. If you did not request this change, you can safely ignore this email.</p>
+
+              <p>Best regards,<br>TZH Sports Centre Team</p>
+            </div>
+            <div class="footer">
+              <p>This is an automated message from TZH Sports Centre.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `,
+  }
+}
+
 export function getBookingExpirationWarningEmail(params: {
   userName: string
   bookingDate: string

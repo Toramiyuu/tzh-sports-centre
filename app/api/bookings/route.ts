@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { isAdmin } from '@/lib/admin'
 import { calculateBookingAmount } from '@/lib/recurring-booking-utils'
 import { validateMalaysianPhone, validateEmail, validateSport, validateFutureDate } from '@/lib/validation'
+import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 
 // GET - Fetch user's bookings
 export async function GET() {
@@ -42,6 +43,15 @@ export async function GET() {
 
 // POST - Create a new booking (guest, logged-in user, or admin test)
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request.headers)
+  const { success } = checkRateLimit(`booking:${ip}`, RATE_LIMITS.booking)
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429 }
+    )
+  }
+
   try {
     const session = await auth()
     const body = await request.json()

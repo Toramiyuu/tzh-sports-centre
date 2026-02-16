@@ -3,11 +3,12 @@ import { stripe, formatAmountForStripe, PAYMENT_METHOD_TYPES } from '@/lib/strip
 import { prisma } from '@/lib/prisma'
 import { getCachedTimeSlots } from '@/lib/cache'
 import { auth } from '@/lib/auth'
+import { getSlotRate } from '@/lib/recurring-booking-utils'
 
 interface SlotData {
   courtId: number
   slotTime: string
-  slotRate: number
+  slotRate?: number // ignored server-side, kept for backward compat
 }
 
 export async function POST(request: NextRequest) {
@@ -138,8 +139,8 @@ export async function POST(request: NextRequest) {
     }
     const courtMap = new Map(courts.map(c => [c.id, c]))
 
-    // Calculate total amount
-    const totalAmount = slots.reduce((sum: number, s: SlotData) => sum + s.slotRate, 0)
+    // Calculate total amount SERVER-SIDE (never trust client-submitted rates)
+    const totalAmount = slots.reduce((sum: number, s: SlotData) => sum + getSlotRate(sport, s.slotTime), 0)
 
     // Helper function to calculate end time
     const getEndTime = (startTime: string): string => {
@@ -168,7 +169,7 @@ export async function POST(request: NextRequest) {
               day: 'numeric',
             })} | ${slot.slotTime} - ${getEndTime(slot.slotTime)}`,
           },
-          unit_amount: formatAmountForStripe(slot.slotRate),
+          unit_amount: formatAmountForStripe(getSlotRate(sport, slot.slotTime)),
         },
         quantity: 1,
       }

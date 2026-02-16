@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
+import { logAdminAction } from '@/lib/audit'
 import { getCachedTimeSlots, getCachedCourts } from '@/lib/cache'
 import { calculateBookingAmount } from '@/lib/recurring-booking-utils'
 
@@ -172,6 +173,14 @@ export async function DELETE(request: NextRequest) {
     await prisma.booking.updateMany({
       where: { id: { in: bookingIds } },
       data: { status: 'cancelled' },
+    })
+
+    logAdminAction({
+      adminId: session.user.id!,
+      adminEmail: session.user.email!,
+      action: 'booking_cancel',
+      targetType: 'booking',
+      details: { bookingIds, count: bookingIds.length },
     })
 
     return NextResponse.json({ success: true, cancelled: bookingIds.length })

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { isAdmin, isSuperAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
+import { logAdminAction } from '@/lib/audit'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 
@@ -266,6 +267,15 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    logAdminAction({
+      adminId: session.user.id!,
+      adminEmail: session.user.email!,
+      action: 'account_create',
+      targetType: 'user',
+      targetId: newUser.id,
+      details: { name: newUser.name, email: newUser.email, phone: newUser.phone },
+    })
+
     return NextResponse.json({
       success: true,
       user: {
@@ -495,6 +505,18 @@ export async function DELETE(request: NextRequest) {
     // Delete the users
     await prisma.user.deleteMany({
       where: { id: { in: toDelete } },
+    })
+
+    const deletedUsers = users.filter(u => toDelete.includes(u.id))
+    logAdminAction({
+      adminId: session.user.id!,
+      adminEmail: session.user.email!,
+      action: 'account_delete',
+      targetType: 'user',
+      details: {
+        deletedUsers: deletedUsers.map(u => ({ id: u.id, name: u.name, email: u.email })),
+        count: toDelete.length,
+      },
     })
 
     return NextResponse.json({

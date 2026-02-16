@@ -50,7 +50,7 @@ interface UserData {
   isMember: boolean
   skillLevel: string | null
   createdAt: string
-  isDefaultPassword: boolean
+  isDefaultPassword?: boolean
 }
 
 interface BookingsSummary {
@@ -248,10 +248,13 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       })
       const result = await res.json()
       if (res.ok) {
-        setPasswordMessage({ type: 'success', text: 'Password reset to default (temp1234)' })
-        if (data) {
-          setData({ ...data, user: { ...data.user, isDefaultPassword: true } })
-        }
+        const tempPass = result.temporaryPassword
+        setPasswordMessage({
+          type: 'success',
+          text: tempPass
+            ? `Password reset. Temporary password: ${tempPass}`
+            : 'Password has been reset',
+        })
       } else {
         setPasswordMessage({ type: 'error', text: result.error || 'Failed to reset password' })
       }
@@ -280,9 +283,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         setPasswordMessage({ type: 'success', text: 'Password updated successfully' })
         setNewPassword('')
         setShowNewPassword(false)
-        if (data) {
-          setData({ ...data, user: { ...data.user, isDefaultPassword: false } })
-        }
       } else {
         setPasswordMessage({ type: 'error', text: result.error || 'Failed to set password' })
       }
@@ -379,7 +379,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               <Badge variant="outline" className="font-mono">#{user.uid}</Badge>
               {user.isSuperAdmin && <Badge className="bg-purple-600">Super Admin</Badge>}
               {user.isAdmin && !user.isSuperAdmin && <Badge className="bg-green-600">Admin</Badge>}
-              {user.isMember && <Badge className="bg-[#1854d6]">Member</Badge>}
+              {user.isMember && <Badge className="bg-primary">Member</Badge>}
             </div>
             <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
               <span className="flex items-center gap-1">
@@ -425,23 +425,15 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Password Management */}
       {showPasswordSection && (
-        <Card className="mb-6 border-[#1854d6] bg-[#2A76B0]/20">
+        <Card className="mb-6 border-primary bg-primary/20">
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-[#2A76B0]/50 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Shield className="w-5 h-5 text-[#0a2540]" />
+              <div className="w-10 h-10 bg-primary/50 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Shield className="w-5 h-5 text-foreground" />
               </div>
               <div className="flex-1 space-y-4">
                 <div>
                   <h3 className="font-semibold text-foreground">Password Management</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm text-muted-foreground">Status:</span>
-                    {user.isDefaultPassword ? (
-                      <Badge className="bg-[#71d2f0]">Default</Badge>
-                    ) : (
-                      <Badge className="bg-green-600">Custom</Badge>
-                    )}
-                  </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -450,15 +442,15 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                     variant="outline"
                     size="sm"
                     onClick={handleResetPassword}
-                    disabled={passwordLoading || user.isDefaultPassword}
-                    className="border-[#1854d6] hover:bg-[#2A76B0]/30"
+                    disabled={passwordLoading}
+                    className="border-primary hover:bg-primary/30"
                   >
                     {passwordLoading ? (
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     ) : (
                       <RefreshCw className="w-4 h-4 mr-2" />
                     )}
-                    Reset to Default
+                    Reset Password
                   </Button>
 
                   {/* Set custom password */}
@@ -518,8 +510,8 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#2A76B0]/50 rounded-lg flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-[#0a2540]" />
+              <div className="w-12 h-12 bg-primary/50 rounded-lg flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-foreground" />
               </div>
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground">Bookings</p>

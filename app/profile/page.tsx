@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -42,8 +43,17 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
+  return (
+    <Suspense>
+      <ProfileContent />
+    </Suspense>
+  )
+}
+
+function ProfileContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const t = useTranslations('profile')
   const [activeTab, setActiveTab] = useState<TabType>('personal')
   const [profile, setProfile] = useState<UserProfile | null>(null)
@@ -54,6 +64,25 @@ export default function ProfilePage() {
       router.push('/auth/login?callbackUrl=/profile')
     }
   }, [status, router])
+
+  // Handle email verification redirect
+  useEffect(() => {
+    const verify = searchParams.get('verify')
+    if (!verify) return
+    const messages: Record<string, { type: 'success' | 'error'; text: string }> = {
+      success: { type: 'success', text: 'Email verified successfully! Your email has been updated.' },
+      expired: { type: 'error', text: 'Verification link has expired. Please request a new one from your profile.' },
+      taken: { type: 'error', text: 'That email address is already in use by another account.' },
+      error: { type: 'error', text: 'Something went wrong during verification. Please try again.' },
+    }
+    const msg = messages[verify]
+    if (msg) {
+      if (msg.type === 'success') toast.success(msg.text, { duration: 6000 })
+      else toast.error(msg.text, { duration: 6000 })
+    }
+    // Clean URL without triggering navigation
+    router.replace('/profile', { scroll: false })
+  }, [searchParams, router])
 
   useEffect(() => {
     if (session?.user) {
@@ -104,7 +133,7 @@ export default function ProfilePage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-[#1854d6] flex items-center justify-center text-white text-2xl font-bold">
+            <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold">
               {profile?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div>
@@ -132,7 +161,7 @@ export default function ProfilePage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 font-medium whitespace-nowrap border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? 'border-[#1854d6] text-foreground'
+                    ? 'border-primary text-foreground'
                     : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
               >

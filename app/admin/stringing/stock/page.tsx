@@ -476,7 +476,7 @@ export default function AdminStockPage() {
   if (sessionStatus === 'loading' || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0a2540]" />
+        <Loader2 className="w-8 h-8 animate-spin text-foreground" />
       </div>
     )
   }
@@ -503,7 +503,7 @@ export default function AdminStockPage() {
               <Button
                 variant={selectMode ? 'default' : 'outline'}
                 onClick={toggleSelectMode}
-                className={selectMode ? 'bg-[#1854d6] hover:bg-[#1854d6]' : ''}
+                className={selectMode ? 'bg-primary hover:bg-primary' : ''}
               >
                 {selectMode ? (
                   <>
@@ -540,7 +540,7 @@ export default function AdminStockPage() {
                   <p className="text-sm text-muted-foreground">Total Strings</p>
                   <p className="text-3xl font-bold text-foreground">{stats.totalStrings}</p>
                 </div>
-                <Package className="w-10 h-10 text-[#0a2540] opacity-50" />
+                <Package className="w-10 h-10 text-foreground opacity-50" />
               </div>
             </CardContent>
           </Card>
@@ -581,7 +581,7 @@ export default function AdminStockPage() {
 
         {/* Bulk Action Bar */}
         {selectMode && selectedIds.size > 0 && (
-          <div className="sticky top-0 z-10 bg-[#1854d6] text-white rounded-lg shadow-lg p-4 mb-4 flex items-center justify-between">
+          <div className="sticky top-0 z-10 bg-primary text-white rounded-lg shadow-lg p-4 mb-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <span className="font-medium">
                 {selectedIds.size} item{selectedIds.size !== 1 ? 's' : ''} selected
@@ -589,7 +589,7 @@ export default function AdminStockPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-[#1854d6]"
+                className="text-white hover:bg-primary"
                 onClick={selectAll}
               >
                 Select All ({stockRecords.length})
@@ -597,7 +597,7 @@ export default function AdminStockPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-[#1854d6]"
+                className="text-white hover:bg-primary"
                 onClick={deselectAll}
               >
                 Deselect All
@@ -784,7 +784,7 @@ export default function AdminStockPage() {
                                     key={stock.id}
                                     className={`flex items-center justify-between p-3 rounded-lg ${
                                       selectedIds.has(stock.id)
-                                        ? 'bg-[#2A76B0]/30 border border-[#1854d6]'
+                                        ? 'bg-primary/30 border border-primary'
                                         : isColorOutOfStock
                                         ? 'bg-red-50'
                                         : isColorLowStock

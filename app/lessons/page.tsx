@@ -80,13 +80,13 @@ export default function LessonsPage() {
       <Card
         key={lesson.value}
         className={`relative bg-background border cursor-pointer hover-lift ${
-          isPopular ? 'border-[#1854d6]' : 'border-border'
+          isPopular ? 'border-primary' : 'border-border'
         }`}
         onClick={() => handleLessonClick(lesson)}
       >
         {isPopular && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-            <Badge className="bg-[#1854d6] text-white">
+            <Badge className="bg-primary text-white">
               <Star className="w-3 h-3 mr-1" />
               {t('packages.popular')}
             </Badge>
@@ -159,14 +159,14 @@ export default function LessonsPage() {
               <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
                 {t('coach.certification')}
               </p>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight leading-[1.1] mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight leading-[1.1] mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
                 {t('title')}
               </h1>
               <p className="text-xl text-muted-foreground mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">
                 {t('subtitle')}
               </p>
               <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer" className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards inline-block">
-                <Button size="lg" className="bg-[#1854d6] text-white hover:bg-[#2060e0] rounded-full h-12 px-6">
+                <Button size="lg" className="bg-primary text-white hover:bg-primary/90 rounded-full h-12 px-6">
                   <Phone className="w-5 h-5 mr-2" />
                   WhatsApp
                 </Button>
@@ -226,7 +226,7 @@ export default function LessonsPage() {
           <div className="max-w-3xl mx-auto text-center">
             {/* Coach Image */}
             <div className="relative w-48 h-48 mx-auto mb-8 animate-in fade-in zoom-in-95 duration-700 fill-mode-forwards">
-              <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-[#1854d6]/30 shadow-xl">
+              <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-primary/30 shadow-xl">
                 <Image
                   src="/images/coach-teaching.jpg"
                   alt="Professional badminton coach"
@@ -234,7 +234,7 @@ export default function LessonsPage() {
                   className="object-cover"
                 />
               </div>
-              <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-[#1854d6] rounded-full flex items-center justify-center shadow-lg">
+              <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg">
                 <BadgeCheck className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -265,7 +265,7 @@ export default function LessonsPage() {
 
             <button
               onClick={() => handleRequestTrial()}
-              className="mt-8 inline-flex items-center gap-2 bg-[#1854d6] text-white px-6 py-3 rounded-full font-medium hover:bg-[#2060e0] transition-colors animate-in fade-in duration-500 delay-300 fill-mode-forwards"
+              className="mt-8 inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors animate-in fade-in duration-500 delay-300 fill-mode-forwards"
             >
               {t('coach.bookTrial')}
             </button>

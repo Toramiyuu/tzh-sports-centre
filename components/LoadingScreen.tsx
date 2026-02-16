@@ -36,21 +36,21 @@ export function LoadingScreen() {
       <div className="flex flex-col items-center gap-6">
         {/* Logo */}
         <div className="relative">
-          <div className="w-16 h-16 bg-[#1854d6] rounded-xl flex items-center justify-center animate-pulse">
+          <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center animate-pulse">
             <span className="text-white font-semibold text-xl">TZH</span>
           </div>
           {/* Spinning ring */}
-          <div className="absolute -inset-2 border-2 border-[#1854d6]/30 rounded-2xl animate-spin-slow"
-               style={{ borderTopColor: 'rgb(20 184 166)' }} />
+          <div className="absolute -inset-2 border-2 border-primary/30 rounded-2xl animate-spin-slow"
+               style={{ borderTopColor: 'var(--primary)' }} />
         </div>
 
         {/* Loading text */}
         <div className="flex items-center gap-1">
           <span className="text-muted-foreground text-sm tracking-wider">Loading</span>
           <span className="flex gap-1">
-            <span className="w-1.5 h-1.5 bg-[#1854d6] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-            <span className="w-1.5 h-1.5 bg-[#1854d6] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-            <span className="w-1.5 h-1.5 bg-[#1854d6] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
           </span>
         </div>
       </div>

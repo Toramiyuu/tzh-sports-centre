@@ -360,7 +360,7 @@ export default function ShopContent() {
             <SelectItem value="outOfStock">{t('outOfStock')}</SelectItem>
           </SelectContent>
         </Select>
-        <Button onClick={handleAddClick} className="bg-[#1854d6] hover:bg-[#1347b8] text-white">
+        <Button onClick={handleAddClick} className="bg-primary hover:bg-primary/90 text-white">
           <Plus className="w-4 h-4 mr-2" />
           {t('addProduct')}
         </Button>
@@ -519,7 +519,7 @@ export default function ShopContent() {
             <Button
               onClick={handleSaveEdit}
               disabled={actionLoading}
-              className="bg-[#1854d6] hover:bg-[#1347b8] text-white"
+              className="bg-primary hover:bg-primary/90 text-white"
             >
               {actionLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {t('saveChanges')}
@@ -547,7 +547,7 @@ export default function ShopContent() {
             <Button
               onClick={handleAddProduct}
               disabled={actionLoading || !formData.productId || !formData.brand || !formData.name || !formData.fullName}
-              className="bg-[#1854d6] hover:bg-[#1347b8] text-white"
+              className="bg-primary hover:bg-primary/90 text-white"
             >
               {actionLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {t('addProduct')}
@@ -686,8 +686,8 @@ function ImageUploadZone({
           onClick={() => !uploading && fileInputRef.current?.click()}
           className={`relative border-2 border-dashed rounded-lg transition-colors cursor-pointer ${
             dragOver
-              ? 'border-[#1854d6] bg-[#1854d6]/5'
-              : 'border-border hover:border-[#1854d6]/50'
+              ? 'border-primary bg-primary/5'
+              : 'border-border hover:border-primary/50'
           } ${uploading ? 'pointer-events-none opacity-60' : ''}`}
         >
           <input
@@ -721,7 +721,7 @@ function ImageUploadZone({
           ) : (
             <div className="flex flex-col items-center justify-center py-6 px-4">
               {uploading ? (
-                <Loader2 className="w-8 h-8 animate-spin text-[#1854d6] mb-2" />
+                <Loader2 className="w-8 h-8 animate-spin text-primary mb-2" />
               ) : (
                 <Upload className="w-8 h-8 text-muted-foreground mb-2" />
               )}
@@ -816,8 +816,8 @@ function AdditionalImagesZone({
         onClick={() => !uploading && fileInputRef.current?.click()}
         className={`border-2 border-dashed rounded-lg transition-colors cursor-pointer ${
           dragOver
-            ? 'border-[#1854d6] bg-[#1854d6]/5'
-            : 'border-border hover:border-[#1854d6]/50'
+            ? 'border-primary bg-primary/5'
+            : 'border-border hover:border-primary/50'
         } ${uploading ? 'pointer-events-none opacity-60' : ''}`}
       >
         <input
@@ -830,7 +830,7 @@ function AdditionalImagesZone({
         />
         <div className="flex items-center justify-center gap-2 py-3 px-4">
           {uploading ? (
-            <Loader2 className="w-4 h-4 animate-spin text-[#1854d6]" />
+            <Loader2 className="w-4 h-4 animate-spin text-primary" />
           ) : (
             <Plus className="w-4 h-4 text-muted-foreground" />
           )}

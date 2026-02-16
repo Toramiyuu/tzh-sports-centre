@@ -164,11 +164,11 @@ export default function MembersContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#2A76B0]/50 rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-[#0a2540]" />
+              <div className="w-10 h-10 bg-primary/50 rounded-lg flex items-center justify-center">
+                <GraduationCap className="w-5 h-5 text-foreground" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#0a2540]">{members.length}</p>
+                <p className="text-2xl font-bold text-foreground">{members.length}</p>
                 <p className="text-sm text-muted-foreground">{t('activeMembers')}</p>
               </div>
             </div>
@@ -272,7 +272,7 @@ export default function MembersContent() {
                   key={user.id}
                   className={`p-4 rounded-lg border transition-colors ${
                     user.isMember
-                      ? 'bg-[#2A76B0]/20 border-[#1854d6]'
+                      ? 'bg-primary/20 border-primary'
                       : 'bg-secondary border-border'
                   }`}
                 >
@@ -285,7 +285,7 @@ export default function MembersContent() {
                         <span className="font-medium text-foreground">{user.name}</span>
                         <span className="text-xs font-mono text-muted-foreground/70">#{user.uid}</span>
                         {user.isMember && (
-                          <Badge className="bg-[#1854d6] text-white border-0">
+                          <Badge className="bg-primary text-white border-0">
                             {t('membersTab')}
                           </Badge>
                         )}
@@ -336,7 +336,7 @@ export default function MembersContent() {
                         disabled={updating === user.id}
                         className={user.isMember
                           ? 'text-red-600 border-red-300 hover:bg-red-100'
-                          : 'bg-[#1854d6] hover:bg-[#1854d6]'
+                          : 'bg-primary hover:bg-primary'
                         }
                       >
                         {updating === user.id ? (

@@ -808,7 +808,7 @@
       "namePlaceholder": "Masukkan nama pelanggan",
       "phoneFormat": "Format Malaysia: 01x-xxx xxxx",
       "optional": "pilihan",
-      "defaultPasswordNote": "Kata laluan lalai ialah 'temp1234'. Pelanggan harus menukarnya selepas log masuk pertama.",
+      "defaultPasswordNote": "Kata laluan sementara rawak akan dijana. Kongsikan dengan pelanggan supaya mereka boleh log masuk dan menukarnya.",
       "create": "Cipta Akaun",
       "failedToCreate": "Gagal mencipta akaun",
       "deleteAccount": "Padam Akaun",
@@ -1405,5 +1405,69 @@
       },
       "statusCancelled": "Pesanan ini telah dibatalkan"
     }
+  },
+  "terms": {
+    "pageTitle": "Terma & Syarat",
+    "pageSubtitle": "Sila baca terma dan syarat kami dengan teliti sebelum menggunakan kemudahan kami.",
+    "lastUpdated": "Kemas kini terakhir",
+    "sections": {
+      "payment": {
+        "title": "1. Polisi Pembayaran",
+        "content": "Semua pembayaran yang dibuat tidak boleh dikembalikan dan tidak boleh dipindah milik. Pembayaran tidak boleh dikembalikan, ditukar, atau ditukar kepada sesi, tarikh, atau perkhidmatan lain dalam apa jua keadaan."
+      },
+      "coaching": {
+        "title": "2. Polisi Kejurulatihan & Penggunaan Komersial",
+        "content": "Tempahan gelanggang hanya untuk permainan peribadi sahaja. Tempahan untuk kejurulatihan, sesi latihan, kelas berkumpulan, atau sebarang aktiviti komersial tanpa kelulusan bertulis daripada pengurusan adalah dilarang sama sekali.",
+        "extra": "Sebarang tempahan yang didapati digunakan untuk kejurulatihan atau tujuan komersial akan dibatalkan serta-merta tanpa bayaran balik."
+      },
+      "confirmation": {
+        "title": "3. Pengesahan Tempahan",
+        "content": "Tempahan hanya disahkan setelah pembayaran penuh diterima. Pelanggan mesti menghantar bukti pembayaran untuk pengesahan.",
+        "extra": "Pengurusan berhak melepaskan slot jika bukti pembayaran tidak diterima."
+      },
+      "paymentDetails": {
+        "title": "4. Butiran Pembayaran",
+        "content": "Pembayaran boleh dibuat melalui Touch 'n Go atau DuitNow. Sila rujuk halaman tempahan untuk kod QR dan arahan pembayaran.",
+        "whatsapp": "WhatsApp: 011-6868 8508"
+      },
+      "outsideSales": {
+        "title": "5. Jualan & Minuman Luar",
+        "content": "Menjual minuman, makanan, atau sebarang produk di dalam premis tanpa kebenaran adalah dilarang sama sekali. Membawa minuman atau barangan ke dalam kemudahan untuk tujuan jualan semula tidak dibenarkan."
+      },
+      "cancellation": {
+        "title": "6. Polisi Pembatalan & Tidak Hadir",
+        "content": "Sebaik sahaja tempahan disahkan, pembatalan, penjadualan semula, atau bayaran balik tidak dibenarkan. Ketidakhadiran tidak akan diberi pampasan."
+      },
+      "time": {
+        "title": "7. Polisi Ketepatan Masa",
+        "content": "Masa tempahan bermula dan berakhir mengikut slot yang ditempah. Penggunaan lebih masa akan dikenakan caj sewajarnya."
+      },
+      "damage": {
+        "title": "8. Kerosakan & Tanggungjawab",
+        "content": "Sebarang kerosakan kepada kemudahan, lantai, jaring, atau peralatan akan dikenakan caj sewajarnya. Pemegang tempahan bertanggungjawab ke atas semua peserta."
+      },
+      "conduct": {
+        "title": "9. Kelakuan & Liabiliti",
+        "content": "Pengurusan tidak bertanggungjawab atas kecederaan, kemalangan, atau kehilangan barang peribadi. Semua pengguna memasuki dan menggunakan kemudahan atas risiko sendiri."
+      },
+      "media": {
+        "title": "10. Polisi Media & Rakaman",
+        "content": "Pengurusan berhak merakam foto dan video untuk tujuan promosi. Bantahan bertulis mesti dikemukakan terlebih dahulu jika mana-mana individu tidak mahu muncul dalam rakaman."
+      },
+      "transfer": {
+        "title": "11. Polisi Pemindahan Tempahan",
+        "content": "Pemindahan tempahan dibenarkan. Pemegang tempahan boleh memindahkan sesi kepada individu lain jika tidak dapat hadir.",
+        "conditions": "Walau bagaimanapun, tempahan tidak boleh dijual semula untuk keuntungan. Harga yang dikenakan tidak boleh melebihi kadar tempahan asal. Pemegang tempahan masih bertanggungjawab atas sebarang salah laku atau kerosakan.",
+        "extra": "Pengurusan berhak membatalkan tempahan yang disyaki dijual semula pada harga melambung tanpa bayaran balik."
+      },
+      "management": {
+        "title": "12. Hak Pengurusan",
+        "content": "Pengurusan berhak menolak perkhidmatan, membatalkan tempahan yang melanggar polisi, dan mengemas kini Terma & Syarat ini tanpa notis terlebih dahulu."
+      }
+    },
+    "agreement": "Dengan meneruskan pembayaran, anda mengakui dan bersetuju dengan Terma & Syarat di atas.",
+    "agreeCheckbox": "Saya telah membaca dan bersetuju dengan",
+    "termsLink": "Terma & Syarat",
+    "mustAgree": "Anda mesti bersetuju dengan Terma & Syarat untuk meneruskan."
   }
 }

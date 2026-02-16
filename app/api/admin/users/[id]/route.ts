@@ -4,6 +4,8 @@ import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from 'date-fns'
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
+import { logAdminAction } from '@/lib/audit'
 import {
   calculateHours,
   calculateBookingAmount,
@@ -25,7 +27,12 @@ interface PaymentRecord {
   notes: string | null
 }
 
-const DEFAULT_PASSWORD = 'temp1234'
+// Generate a random 12-character password for admin password resets
+function generateRandomPassword(): string {
+  const chars = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$'
+  const bytes = crypto.randomBytes(12)
+  return Array.from(bytes, b => chars[b % chars.length]).join('')
+}
 
 // GET: Get detailed user information
 export async function GET(
@@ -75,11 +82,6 @@ export async function GET(
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
-
-    // Check if password is the default
-    const isDefaultPassword = user.passwordHash
-      ? await bcrypt.compare(DEFAULT_PASSWORD, user.passwordHash)
-      : false
 
     // Auto-generate missing payment records for current month
     const activeSlotIds = user.recurringBookings
@@ -355,7 +357,6 @@ export async function GET(
         isMember: user.isMember,
         skillLevel: user.skillLevel,
         createdAt: user.createdAt.toISOString(),
-        isDefaultPassword,
       },
       bookingsSummary: {
         thisWeek: bookingsThisWeek,
@@ -424,9 +425,11 @@ export async function PATCH(
     }
 
     let passwordToHash: string
+    let generatedPassword: string | null = null
 
     if (action === 'reset') {
-      passwordToHash = DEFAULT_PASSWORD
+      generatedPassword = generateRandomPassword()
+      passwordToHash = generatedPassword
     } else if (action === 'set' && newPassword) {
       if (newPassword.length < 8) {
         return NextResponse.json(
@@ -448,11 +451,18 @@ export async function PATCH(
       data: { passwordHash },
     })
 
-    const isDefault = action === 'reset'
+    logAdminAction({
+      adminId: session.user.id!,
+      adminEmail: session.user.email!,
+      action: action === 'reset' ? 'password_reset' : 'password_set',
+      targetType: 'user',
+      targetId: id,
+      details: { targetEmail: user.email },
+    })
 
     return NextResponse.json({
-      message: isDefault ? 'Password reset to default' : 'Password updated',
-      isDefaultPassword: isDefault,
+      message: action === 'reset' ? 'Password has been reset' : 'Password updated',
+      ...(generatedPassword && { temporaryPassword: generatedPassword }),
     })
   } catch (error) {
     console.error('Error updating password:', error)

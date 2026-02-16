@@ -699,13 +699,13 @@
       "uidMustBeNumber": "UID必须是数字",
       "failedToUpdateUid": "更新UID失败",
       "createAccount": "创建账户",
-      "createAccountDescription": "为临时顾客创建账户。默认密码为'temp1234'，用户稍后可以在个人资料中更改密码。",
+      "createAccountDescription": "为临时顾客创建账户。系统将生成随机临时密码，用户稍后可以在个人资料中更改密码。",
       "namePlaceholder": "输入姓名",
       "phonePlaceholder": "例如：0123456789",
       "emailOptionalPlaceholder": "电子邮件（可选）",
       "accountCreated": "账户创建成功！",
       "defaultPassword": "默认密码",
-      "defaultPasswordNote": "默认密码为'temp1234'。请告知用户在首次登录后更改密码。",
+      "defaultPasswordNote": "系统将生成随机临时密码。请将密码告知用户，以便他们登录后更改。",
       "creating": "创建中...",
       "createError": "创建账户失败",
       "phoneRequired": "请输入姓名和电话号码",
@@ -1419,5 +1419,69 @@
       },
       "statusCancelled": "此订单已被取消"
     }
+  },
+  "terms": {
+    "pageTitle": "条款与细则",
+    "pageSubtitle": "使用我们的设施前，请仔细阅读以下条款与细则。",
+    "lastUpdated": "最后更新",
+    "sections": {
+      "payment": {
+        "title": "1. 付款政策",
+        "content": "所有已支付款项一律不可退款及不可转让。任何已付款项在任何情况下均不得退款、更换日期或转用于其他服务。"
+      },
+      "coaching": {
+        "title": "2. 教练及商业用途政策",
+        "content": "场地预约仅限个人打球使用。未经管理方书面批准，严禁将场地用于教学、训练班或任何商业用途。",
+        "extra": "如发现违规使用，管理方有权立即取消预约且不予退款。"
+      },
+      "confirmation": {
+        "title": "3. 预约确认",
+        "content": "预约仅在全额付款完成后方为确认。客户必须发送付款记录以确认预约。",
+        "extra": "若未收到付款证明，管理方有权释放该时段。"
+      },
+      "paymentDetails": {
+        "title": "4. 付款资料",
+        "content": "可通过Touch 'n Go或DuitNow付款。请参阅预约页面的二维码和付款说明。",
+        "whatsapp": "WhatsApp联络号码：011-6868 8508"
+      },
+      "outsideSales": {
+        "title": "5. 禁止销售及饮料规定",
+        "content": "未经许可，严禁在场地内售卖饮料、食品或任何商品。不得携带商品或饮料进入场地进行转售。"
+      },
+      "cancellation": {
+        "title": "6. 取消及缺席政策",
+        "content": "预约确认后，不可取消、更改时间或退款。未出席者将不获补偿。"
+      },
+      "time": {
+        "title": "7. 时间规定",
+        "content": "使用时间严格按照预约时段开始及结束。超时将另行收费。"
+      },
+      "damage": {
+        "title": "8. 损坏及责任",
+        "content": "如造成场地、地板、球网或设备损坏，需照价赔偿。预约人需对所有参与者的行为负责。"
+      },
+      "conduct": {
+        "title": "9. 行为及免责声明",
+        "content": "管理方不对任何受伤、意外或个人财物损失负责。所有使用者需自行承担风险。"
+      },
+      "media": {
+        "title": "10. 拍摄及宣传用途",
+        "content": "管理方保留拍摄照片及影片用于宣传用途的权利。如不愿入镜，请提前书面通知。"
+      },
+      "transfer": {
+        "title": "11. 预约转让政策",
+        "content": "允许预约转让。若预约人无法出席，可将时段转让他人使用。",
+        "conditions": "但必须符合以下条件：不得加价转售或从中获利。收费不得高于原本预约价格。原预约人仍需承担相关责任。",
+        "extra": "如发现加价转卖或商业滥用，管理方有权取消预约且不退款。"
+      },
+      "management": {
+        "title": "12. 管理方权利",
+        "content": "管理方保留拒绝服务、取消违规预约及随时更新条款的权利，恕不另行通知。"
+      }
+    },
+    "agreement": "继续付款即表示您已阅读并同意以上条款与细则。",
+    "agreeCheckbox": "我已阅读并同意",
+    "termsLink": "条款与细则",
+    "mustAgree": "您必须同意条款与细则才能继续。"
   }
 }

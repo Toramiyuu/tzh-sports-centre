@@ -23,6 +23,8 @@ import { isAdmin } from '@/lib/admin'
 import { toast } from 'sonner'
 import { celebrateBooking } from '@/lib/confetti'
 import { useTranslations } from 'next-intl'
+import { Checkbox } from '@/components/ui/checkbox'
+import { TermsModal } from '@/components/TermsModal'
 
 // Rates per 30-minute slot
 const BADMINTON_RATE_PER_SLOT = 7.5 // RM7.50 per 30 min (RM15/hour)
@@ -141,6 +143,9 @@ function BookingPageContent() {
   const [duitNowReceiptFile, setDuitNowReceiptFile] = useState<File | null>(null)
   const [duitNowReceiptPreview, setDuitNowReceiptPreview] = useState<string | null>(null)
   const [uploadingReceipt, setUploadingReceipt] = useState(false)
+  const [termsAgreed, setTermsAgreed] = useState(false)
+  const [termsModalOpen, setTermsModalOpen] = useState(false)
+  const tTerms = useTranslations('terms')
 
   // Download QR code to gallery
   const downloadQrCode = async (qrType: 'tng' | 'duitnow') => {
@@ -663,7 +668,7 @@ function BookingPageContent() {
               onClick={() => setSport('badminton')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 sport === 'badminton'
-                  ? 'border-[#1854d6] text-foreground'
+                  ? 'border-primary text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
             >
@@ -673,7 +678,7 @@ function BookingPageContent() {
               onClick={() => setSport('pickleball')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 sport === 'pickleball'
-                  ? 'border-[#1854d6] text-foreground'
+                  ? 'border-primary text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
             >
@@ -699,7 +704,7 @@ function BookingPageContent() {
                 </p>
               </div>
             </div>
-            <div className="px-4 py-2 rounded-full bg-[#1854d6] text-white">
+            <div className="px-4 py-2 rounded-full bg-primary text-white">
               <p className="font-medium">
                 {sport === 'badminton'
                   ? 'Min: 1 Hour'
@@ -766,16 +771,16 @@ function BookingPageContent() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
+                  <table className="w-full border-collapse rounded-lg overflow-hidden border border-border">
                     <thead>
-                      <tr>
-                        <th className="p-2 text-left text-sm font-medium text-muted-foreground border-b border-border">
+                      <tr className="bg-secondary">
+                        <th className="p-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide border-b border-border">
                           Time
                         </th>
                         {availability.map((ca) => (
                           <th
                             key={ca.court.id}
-                            className="p-2 text-center text-sm font-medium text-muted-foreground border-b border-border"
+                            className="p-3 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wide border-b border-l border-border"
                           >
                             {ca.court.name}
                           </th>
@@ -784,26 +789,24 @@ function BookingPageContent() {
                     </thead>
                     <tbody>
                       {availability[0]?.slots.map((slot, idx) => (
-                        <tr key={slot.id} className={idx % 2 === 0 ? 'bg-[#DAE1F5]' : 'bg-[#EDF1FD]'}>
-                          <td className="p-2 text-sm font-medium text-foreground border-b border-border whitespace-nowrap">
+                        <tr key={slot.id} className="bg-background">
+                          <td className="p-3 text-sm font-medium text-foreground border-b border-border whitespace-nowrap">
                             {formatTimeRange(slot.displayName)}
                           </td>
                           {availability.map((ca) => {
                             const courtSlot = ca.slots[idx]
                             const selected = isSlotSelected(ca.court.id, courtSlot.slotTime)
                             return (
-                              <td key={ca.court.id} className="p-2 text-center border-b border-border">
+                              <td key={ca.court.id} className="p-1.5 border-b border-l border-border">
                                 <button
                                   onClick={() => toggleSlot(ca.court, courtSlot)}
                                   disabled={!courtSlot.available}
-                                  className={`w-full py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                  className={`w-full py-2.5 px-2 rounded-lg text-sm font-medium transition-all duration-150 ${
                                     !courtSlot.available
-                                      ? courtSlot.isPast
-                                        ? 'bg-[#D0D8EE] text-[#8090B0] cursor-not-allowed'
-                                        : 'bg-[#B8C8F0] text-[#5068A0] cursor-not-allowed'
+                                      ? 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed'
                                       : selected
-                                      ? 'bg-[#1854d6] text-white scale-[1.02] shadow-md'
-                                      : 'bg-[#F4F6FE] border border-[#1854d6]/30 text-foreground hover:border-[#1854d6] hover:shadow-sm hover:scale-[1.02]'
+                                      ? 'bg-primary text-white shadow-sm'
+                                      : 'bg-card border border-border text-foreground hover:border-primary hover:bg-primary/5'
                                   }`}
                                 >
                                   {!courtSlot.available
@@ -829,7 +832,7 @@ function BookingPageContent() {
 
         {/* Right: Booking Summary */}
         <div className="lg:col-span-1">
-          <Card className="sticky top-24 animate-in fade-in slide-in-from-right-4 duration-500 fill-mode-forwards">
+          <Card className="sticky top-20 sm:top-24 animate-in fade-in slide-in-from-right-4 duration-500 fill-mode-forwards">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="w-5 h-5" />
@@ -923,12 +926,35 @@ function BookingPageContent() {
                       </div>
                     )}
 
+                    {/* Terms & Conditions checkbox */}
+                    <div className="flex items-start gap-2 mb-4 p-3 rounded-lg bg-secondary">
+                      <Checkbox
+                        id="terms-agree"
+                        checked={termsAgreed}
+                        onCheckedChange={(checked) => setTermsAgreed(checked === true)}
+                        className="mt-0.5 border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                      />
+                      <label htmlFor="terms-agree" className="text-sm text-muted-foreground cursor-pointer leading-relaxed">
+                        {tTerms('agreeCheckbox')}{' '}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setTermsModalOpen(true)
+                          }}
+                          className="text-primary hover:underline font-medium"
+                        >
+                          {tTerms('termsLink')}
+                        </button>
+                      </label>
+                    </div>
+
                     {/* Touch 'n Go payment button */}
                     <Button
-                      className="w-full mb-2 bg-[#1854d6] hover:bg-[#2060e0] rounded-full"
+                      className="w-full mb-2 bg-primary hover:bg-primary/90 rounded-full"
                       size="lg"
                       onClick={handleTngPayment}
-                      disabled={booking}
+                      disabled={booking || !termsAgreed}
                     >
                       <Smartphone className="mr-2 h-4 w-4" />
                       {t('bookNow')} - {t('paymentMethods.tng')}
@@ -937,10 +963,10 @@ function BookingPageContent() {
                     {/* DuitNow payment button */}
                     <Button
                       variant="outline"
-                      className="w-full mb-2 border-border text-foreground hover:bg-secondary hover:border-[#1854d6] rounded-full"
+                      className="w-full mb-2 border-border text-foreground hover:bg-secondary hover:border-primary rounded-full"
                       size="lg"
                       onClick={handleDuitNowPayment}
-                      disabled={booking}
+                      disabled={booking || !termsAgreed}
                     >
                       <CreditCard className="mr-2 h-4 w-4" />
                       {t('bookNow')} - {t('paymentMethods.duitnow')}
@@ -1010,7 +1036,7 @@ function BookingPageContent() {
           {!tngBookingCreated ? (
             <div className="space-y-4">
               {/* Amount Banner */}
-              <div className="bg-[#1854d6] text-white rounded-xl p-4 text-center">
+              <div className="bg-primary text-white rounded-xl p-4 text-center">
                 <p className="text-sm opacity-90">Amount to pay</p>
                 <p className="text-3xl font-bold">RM{total.toFixed(2)}</p>
               </div>
@@ -1018,7 +1044,7 @@ function BookingPageContent() {
               {/* Step 1: Save QR Code */}
               <div className="bg-secondary rounded-xl p-4 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                  <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
                   <h4 className="font-semibold text-foreground">Save the QR Code</h4>
                 </div>
                 <div className="flex justify-center">
@@ -1054,7 +1080,7 @@ function BookingPageContent() {
               <div className="space-y-3">
                 {/* Step 2 */}
                 <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
-                  <div className="w-7 h-7 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                  <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
                   <div>
                     <p className="font-medium text-foreground">Open {t('paymentMethods.tng')} App</p>
                     <p className="text-sm text-muted-foreground">Open your {t('paymentMethods.tng')} eWallet app</p>
@@ -1063,7 +1089,7 @@ function BookingPageContent() {
 
                 {/* Step 3 */}
                 <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
-                  <div className="w-7 h-7 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                  <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
                   <div>
                     <p className="font-medium text-foreground">Scan from Gallery</p>
                     <p className="text-sm text-muted-foreground">Tap &apos;Scan&apos;, then select the QR code from your gallery</p>
@@ -1072,7 +1098,7 @@ function BookingPageContent() {
 
                 {/* Step 4 */}
                 <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
-                  <div className="w-7 h-7 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
+                  <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
                   <div>
                     <p className="font-medium text-foreground">Enter Amount</p>
                     <p className="text-sm text-muted-foreground">Enter exactly <strong className="text-foreground">RM{total.toFixed(2)}</strong></p>
@@ -1081,7 +1107,7 @@ function BookingPageContent() {
 
                 {/* Step 5 */}
                 <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
-                  <div className="w-7 h-7 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
+                  <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
                   <div>
                     <p className="font-medium text-foreground">Complete Payment</p>
                     <p className="text-sm text-muted-foreground">Confirm and complete the payment in your app</p>
@@ -1091,7 +1117,7 @@ function BookingPageContent() {
                 {/* Step 6: Upload Receipt */}
                 <div className="bg-secondary rounded-xl p-4 space-y-3 border border-border">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
+                    <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
                     <div>
                       <h4 className="font-semibold text-foreground">{t('uploadReceipt') || 'Upload Payment Receipt'}</h4>
                       <p className="text-sm text-muted-foreground">{t('uploadReceiptDesc') || 'Upload a screenshot of your payment confirmation for faster verification.'}</p>
@@ -1118,7 +1144,7 @@ function BookingPageContent() {
                     </div>
                   ) : (
                     <label className="block cursor-pointer">
-                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-[#1854d6] hover:bg-secondary/50 transition-colors">
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary hover:bg-secondary/50 transition-colors">
                         <ImagePlus className="w-10 h-10 mx-auto text-muted-foreground mb-2" />
                         <p className="text-sm font-medium text-foreground">{t('tapToUpload') || 'Tap to upload receipt'}</p>
                         <p className="text-xs text-muted-foreground mt-1">{t('maxFileSize') || 'Max 5MB (JPG, PNG)'}</p>
@@ -1135,7 +1161,7 @@ function BookingPageContent() {
               </div>
 
               {/* "I have paid" Toggle */}
-              <div className="bg-card border-2 border-[#1854d6]/30 rounded-xl p-4 space-y-3">
+              <div className="bg-card border-2 border-primary/30 rounded-xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {tngHasPaid && <CheckCircle2 className="w-5 h-5 text-green-600" />}
@@ -1157,7 +1183,7 @@ function BookingPageContent() {
 
               {/* Confirm Button */}
               <Button
-                className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-[#1854d6] hover:bg-[#2060e0]' : 'bg-accent cursor-not-allowed'}`}
+                className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? 'bg-primary hover:bg-primary/90' : 'bg-accent cursor-not-allowed'}`}
                 size="lg"
                 onClick={handleTngBookingConfirm}
                 disabled={!tngHasPaid || booking || uploadingReceipt}
@@ -1197,6 +1223,9 @@ function BookingPageContent() {
         </DialogContent>
       </Dialog>
 
+      {/* Terms & Conditions Modal */}
+      <TermsModal open={termsModalOpen} onOpenChange={setTermsModalOpen} />
+
       {/* DuitNow Payment Modal - Mobile-First Design */}
       <Dialog open={showDuitNowModal} onOpenChange={setShowDuitNowModal}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
@@ -1210,7 +1239,7 @@ function BookingPageContent() {
           {!duitNowBookingCreated ? (
             <div className="space-y-4">
               {/* Amount Banner */}
-              <div className="bg-[#1854d6] text-white rounded-xl p-4 text-center">
+              <div className="bg-primary text-white rounded-xl p-4 text-center">
                 <p className="text-sm opacity-90">Amount to pay</p>
                 <p className="text-3xl font-bold">RM{total.toFixed(2)}</p>
               </div>
@@ -1218,7 +1247,7 @@ function BookingPageContent() {
               {/* Step 1: Save QR Code */}
               <div className="bg-secondary rounded-xl p-4 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                  <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
                   <h4 className="font-semibold text-foreground">Save the QR Code</h4>
                 </div>
                 <div className="flex justify-center">
@@ -1254,7 +1283,7 @@ function BookingPageContent() {
               <div className="space-y-3">
                 {/* Step 2 */}
                 <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
-                  <div className="w-7 h-7 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                  <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
                   <div>
                     <p className="font-medium text-foreground">Open Your Banking App</p>
                     <p className="text-sm text-muted-foreground">Maybank, CIMB, RHB, Public Bank, etc.</p>
@@ -1263,7 +1292,7 @@ function BookingPageContent() {
 
                 {/* Step 3 */}
                 <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
-                  <div className="w-7 h-7 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                  <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
                   <div>
                     <p className="font-medium text-foreground">Scan from Gallery</p>
                     <p className="text-sm text-muted-foreground">Tap &apos;Scan &amp; Pay&apos; or &apos;{t('paymentMethods.duitnow')} QR&apos;, then select from gallery</p>
@@ -1272,7 +1301,7 @@ function BookingPageContent() {
 
                 {/* Step 4 */}
                 <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
-                  <div className="w-7 h-7 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
+                  <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">4</div>
                   <div>
                     <p className="font-medium text-foreground">Enter Amount</p>
                     <p className="text-sm text-muted-foreground">Enter exactly <strong className="text-foreground">RM{total.toFixed(2)}</strong></p>
@@ -1281,7 +1310,7 @@ function BookingPageContent() {
 
                 {/* Step 5 */}
                 <div className="flex items-start gap-3 p-3 bg-secondary rounded-lg">
-                  <div className="w-7 h-7 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
+                  <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">5</div>
                   <div>
                     <p className="font-medium text-foreground">Complete Payment</p>
                     <p className="text-sm text-muted-foreground">Confirm and complete the payment in your app</p>
@@ -1291,7 +1320,7 @@ function BookingPageContent() {
                 {/* Step 6: Upload Receipt */}
                 <div className="bg-secondary rounded-xl p-4 space-y-3 border border-border">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-[#1854d6] text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
+                    <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">6</div>
                     <div>
                       <h4 className="font-semibold text-foreground">{t('uploadReceipt') || 'Upload Payment Receipt'}</h4>
                       <p className="text-sm text-muted-foreground">{t('uploadReceiptDesc') || 'Upload a screenshot of your payment confirmation for faster verification.'}</p>
@@ -1318,7 +1347,7 @@ function BookingPageContent() {
                     </div>
                   ) : (
                     <label className="block cursor-pointer">
-                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-[#1854d6] hover:bg-secondary/50 transition-colors">
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary hover:bg-secondary/50 transition-colors">
                         <ImagePlus className="w-10 h-10 mx-auto text-muted-foreground mb-2" />
                         <p className="text-sm font-medium text-foreground">{t('tapToUpload') || 'Tap to upload receipt'}</p>
                         <p className="text-xs text-muted-foreground mt-1">{t('maxFileSize') || 'Max 5MB (JPG, PNG)'}</p>
@@ -1335,7 +1364,7 @@ function BookingPageContent() {
               </div>
 
               {/* "I have paid" Toggle */}
-              <div className="bg-card border-2 border-[#1854d6]/30 rounded-xl p-4 space-y-3">
+              <div className="bg-card border-2 border-primary/30 rounded-xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {duitNowHasPaid && <CheckCircle2 className="w-5 h-5 text-green-600" />}
@@ -1357,7 +1386,7 @@ function BookingPageContent() {
 
               {/* Confirm Button */}
               <Button
-                className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? 'bg-[#1854d6] hover:bg-[#2060e0]' : 'bg-accent cursor-not-allowed'}`}
+                className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? 'bg-primary hover:bg-primary/90' : 'bg-accent cursor-not-allowed'}`}
                 size="lg"
                 onClick={handleDuitNowBookingConfirm}
                 disabled={!duitNowHasPaid || booking || uploadingReceipt}

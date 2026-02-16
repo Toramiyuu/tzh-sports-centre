@@ -166,7 +166,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
           onClick={() => setActiveView('upcoming')}
           className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'upcoming'
-              ? 'bg-[#1854d6] text-white'
+              ? 'bg-primary text-white'
               : 'bg-accent text-muted-foreground hover:bg-accent/80'
           }`}
         >
@@ -184,7 +184,7 @@ export function BookingsTab({ creditBalance, onCreditUpdate }: BookingsTabProps)
           onClick={() => setActiveView('past')}
           className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
             activeView === 'past'
-              ? 'bg-[#1854d6] text-white'
+              ? 'bg-primary text-white'
               : 'bg-accent text-muted-foreground hover:bg-accent/80'
           }`}
         >

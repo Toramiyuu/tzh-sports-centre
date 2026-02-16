@@ -14,7 +14,9 @@ import { useTranslations } from 'next-intl'
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/'
+  const rawCallback = searchParams.get('callbackUrl') || '/'
+  // Only allow relative paths — block protocol-relative (//evil.com) and absolute URLs
+  const callbackUrl = rawCallback.startsWith('/') && !rawCallback.startsWith('//') ? rawCallback : '/'
   const t = useTranslations('auth.login')
   const tCommon = useTranslations('common')
 
@@ -91,7 +93,7 @@ function LoginForm() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full h-11" disabled={loading}>
+          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white rounded-full h-11" disabled={loading}>
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -103,7 +105,7 @@ function LoginForm() {
           </Button>
           <p className="text-sm text-muted-foreground text-center">
             {t('noAccount')}{' '}
-            <Link href="/auth/register" className="text-[#0a2540] font-medium hover:underline">
+            <Link href="/auth/register" className="text-primary font-medium hover:underline">
               {t('signUp')}
             </Link>
           </p>

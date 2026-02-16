@@ -421,11 +421,11 @@ export default function AccountsContent() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#2A76B0]/50 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-[#0a2540]" />
+              <div className="w-10 h-10 bg-primary/50 rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-foreground" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#0a2540]">{users.length}</p>
+                <p className="text-2xl font-bold text-foreground">{users.length}</p>
                 <p className="text-sm text-muted-foreground">{t('totalUsers')}</p>
               </div>
             </div>
@@ -517,7 +517,7 @@ export default function AccountsContent() {
                       isSelected
                         ? 'ring-2 ring-red-500 bg-red-50'
                         : isExpanded
-                        ? 'bg-card ring-2 ring-[#1854d6]'
+                        ? 'bg-card ring-2 ring-primary'
                         : 'bg-secondary border-border hover:bg-card'
                     }`}
                   >
@@ -559,7 +559,7 @@ export default function AccountsContent() {
                                   e.stopPropagation()
                                   openEditUid(user)
                                 }}
-                                className="text-xs font-mono text-muted-foreground/70 hover:text-[#0a2540] hover:bg-[#2A76B0]/30 px-1.5 py-0.5 rounded transition-colors flex items-center gap-1"
+                                className="text-xs font-mono text-muted-foreground/70 hover:text-foreground hover:bg-primary/30 px-1.5 py-0.5 rounded transition-colors flex items-center gap-1"
                               >
                                 #{user.uid}
                                 <Pencil className="w-3 h-3" />
@@ -595,7 +595,7 @@ export default function AccountsContent() {
                         </div>
                         <div className="text-right space-y-2">
                           <div className="flex gap-2 justify-end items-center">
-                            <Badge variant="outline" className="bg-[#2A76B0]/30 text-[#0a2540] border-[#1854d6]">
+                            <Badge variant="outline" className="bg-primary/30 text-foreground border-primary">
                               {user.totalBookings} {t('bookings')}
                             </Badge>
                             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
@@ -662,12 +662,12 @@ export default function AccountsContent() {
                       <div className="border-t border-border px-4 pb-4 space-y-4">
                         {/* Stats summary */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
-                          <div className="bg-[#2A76B0]/30 rounded-lg p-3 text-center">
-                            <div className="flex items-center justify-center gap-1 text-[#0a2540] mb-1">
+                          <div className="bg-primary/30 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-foreground mb-1">
                               <Calendar className="w-4 h-4" />
                               <span className="text-xs font-medium">{t('totalBookings')}</span>
                             </div>
-                            <p className="text-xl font-bold text-[#1854d6]">{user.totalBookings}</p>
+                            <p className="text-xl font-bold text-primary">{user.totalBookings}</p>
                           </div>
                           <div className="bg-green-50 rounded-lg p-3 text-center">
                             <div className="flex items-center justify-center gap-1 text-green-700 mb-1">
@@ -830,7 +830,7 @@ export default function AccountsContent() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Pencil className="w-5 h-5 text-[#0a2540]" />
+              <Pencil className="w-5 h-5 text-foreground" />
               {t('editUid')}
             </DialogTitle>
             <DialogDescription>
@@ -887,7 +887,7 @@ export default function AccountsContent() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-[#0a2540]" />
+              <UserPlus className="w-5 h-5 text-foreground" />
               {t('createAccount')}
             </DialogTitle>
             <DialogDescription>
@@ -903,7 +903,7 @@ export default function AccountsContent() {
                 <div className="space-y-2 text-sm">
                   <p><span className="text-muted-foreground">{t('name')}:</span> <span className="font-medium">{createdUser.name}</span></p>
                   <p><span className="text-muted-foreground">{t('phone')}:</span> <span className="font-mono font-medium">{createdUser.phone}</span></p>
-                  <p><span className="text-muted-foreground">{t('defaultPassword')}:</span> <span className="font-mono font-medium text-[#0a2540]">{createdUser.password}</span></p>
+                  <p><span className="text-muted-foreground">{t('defaultPassword')}:</span> <span className="font-mono font-medium text-foreground">{createdUser.password}</span></p>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">{t('shareCredentials')}</p>
@@ -953,7 +953,7 @@ export default function AccountsContent() {
                     placeholder="user@example.com"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground bg-[#2A76B0]/30 p-2 rounded">
+                <p className="text-xs text-muted-foreground bg-primary/30 p-2 rounded">
                   {t('defaultPasswordNote')}
                 </p>
               </div>

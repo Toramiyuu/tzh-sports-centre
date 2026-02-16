@@ -83,7 +83,7 @@ function MembersAccountsContent() {
             variant="ghost"
             className={`rounded-none border-b-2 ${
               activeTab === 'members'
-                ? 'border-[#1854d6] text-[#0a2540]'
+                ? 'border-primary text-foreground'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
             onClick={() => handleTabChange('members')}
@@ -95,7 +95,7 @@ function MembersAccountsContent() {
             variant="ghost"
             className={`rounded-none border-b-2 ${
               activeTab === 'accounts'
-                ? 'border-[#1854d6] text-[#0a2540]'
+                ? 'border-primary text-foreground'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
             onClick={() => handleTabChange('accounts')}

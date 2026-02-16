@@ -858,7 +858,7 @@ export default function BookingsContent() {
           <Repeat className="w-4 h-4 mr-2" />
           {t('recurringBookings')}
           {recurringBookings.length > 0 && (
-            <Badge className="ml-2 bg-[#2A76B0]/30 text-[#0a2540] border-0">{recurringBookings.length}</Badge>
+            <Badge className="ml-2 bg-primary/30 text-foreground border-0">{recurringBookings.length}</Badge>
           )}
         </Button>
         <Button onClick={fetchBookings} variant="outline" size="sm">
@@ -961,7 +961,7 @@ export default function BookingsContent() {
               <div className="mt-4 pt-4 border-t border-border">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <Clock className="w-4 h-4 text-[#0a2540]" />
+                    <Clock className="w-4 h-4 text-foreground" />
                     <div>
                       <p className="font-medium text-foreground">{t('operatingHours')}</p>
                       <p className="text-muted-foreground">{t('weekdays')}</p>
@@ -969,7 +969,7 @@ export default function BookingsContent() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <Phone className="w-4 h-4 text-[#0a2540]" />
+                    <Phone className="w-4 h-4 text-foreground" />
                     <div>
                       <p className="font-medium text-foreground">{t('contact')}</p>
                       <p className="text-muted-foreground">011-6868 8508</p>
@@ -1004,14 +1004,14 @@ export default function BookingsContent() {
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-[#1854d6]">
-                        <th className="p-2 text-left text-sm font-medium text-white border-b border-[#1854d6]">
+                      <tr className="bg-primary">
+                        <th className="p-2 text-left text-sm font-medium text-white border-b border-primary">
                           {t('time')}
                         </th>
                         {courts.map((court) => (
                           <th
                             key={court.id}
-                            className="p-2 text-center text-sm font-medium text-white border-b border-[#1854d6] min-w-[150px]"
+                            className="p-2 text-center text-sm font-medium text-white border-b border-primary min-w-[150px]"
                           >
                             {court.name}
                           </th>
@@ -1117,7 +1117,7 @@ export default function BookingsContent() {
                                               <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="h-5 px-1.5 text-[10px] text-[#0a2540] hover:text-[#0a2540] hover:bg-[#2A76B0]/30"
+                                                className="h-5 px-1.5 text-[10px] text-foreground hover:text-foreground hover:bg-primary/30"
                                                 onClick={(e) => {
                                                   e.stopPropagation()
                                                   setBookingToConfirmPayment(booking)
@@ -1236,7 +1236,7 @@ export default function BookingsContent() {
                                 variant="outline"
                                 className={
                                   rb.sport === 'badminton'
-                                    ? 'bg-[#2A76B0]/30 text-[#0a2540] border-[#1854d6]'
+                                    ? 'bg-primary/30 text-foreground border-primary'
                                     : 'bg-green-100 text-green-700 border-green-300'
                                 }
                               >
@@ -1280,7 +1280,7 @@ export default function BookingsContent() {
                         key={booking.id}
                         className={`p-4 rounded-lg border ${
                           booking.sport === 'badminton'
-                            ? 'bg-[#2A76B0]/30 border-[#1854d6]'
+                            ? 'bg-primary/30 border-primary'
                             : 'bg-green-50 border-green-300'
                         }`}
                       >
@@ -1294,7 +1294,7 @@ export default function BookingsContent() {
                                 variant="outline"
                                 className={
                                   booking.sport === 'badminton'
-                                    ? 'bg-[#2A76B0]/30 text-[#0a2540] border-[#1854d6]'
+                                    ? 'bg-primary/30 text-foreground border-primary'
                                     : 'bg-green-100 text-green-700 border-green-300'
                                 }
                               >
@@ -1341,7 +1341,7 @@ export default function BookingsContent() {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-6 px-2 text-xs text-[#0a2540] hover:text-[#0a2540] hover:bg-[#2A76B0]/30"
+                                    className="h-6 px-2 text-xs text-foreground hover:text-foreground hover:bg-primary/30"
                                     onClick={() => {
                                       setBookingToConfirmPayment({
                                         id: booking.id,
@@ -1451,11 +1451,11 @@ export default function BookingsContent() {
                 <strong>{t('sport')}:</strong> {selectedBooking.sport}
               </p>
               {relatedBookings.length > 1 && (
-                <div className="mt-3 p-3 bg-[#2A76B0]/30 border border-[#1854d6] rounded-lg">
-                  <p className="text-sm font-medium text-[#0a2540] mb-2">
+                <div className="mt-3 p-3 bg-primary/30 border border-primary rounded-lg">
+                  <p className="text-sm font-medium text-foreground mb-2">
                     {t('slotsToBeCancelled')}
                   </p>
-                  <ul className="text-sm text-[#0a2540] space-y-1">
+                  <ul className="text-sm text-foreground space-y-1">
                     {relatedBookings.map((b) => (
                       <li key={b.id}>
                         {b.court.name} | {b.startTime} - {b.endTime}
@@ -1555,8 +1555,8 @@ export default function BookingsContent() {
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-4 border-b border-border">
             <DialogTitle className="flex items-center gap-3 text-xl">
-              <div className="p-2 bg-[#2A76B0]/30 rounded-lg">
-                <Repeat className="w-5 h-5 text-[#0a2540]" />
+              <div className="p-2 bg-primary/30 rounded-lg">
+                <Repeat className="w-5 h-5 text-foreground" />
               </div>
               {t('recurringTitle')}
             </DialogTitle>
@@ -1581,14 +1581,14 @@ export default function BookingsContent() {
                       key={rb.id}
                       className={`flex items-center justify-between p-3 rounded-lg border transition-all hover:shadow-sm cursor-pointer ${
                         rb.sport === 'badminton'
-                          ? 'bg-[#2A76B0]/20 border-[#1854d6] hover:bg-[#2A76B0]/30'
+                          ? 'bg-primary/20 border-primary hover:bg-primary/30'
                           : 'bg-green-100 border-green-300 hover:bg-green-200'
                       }`}
                       onClick={() => openEditDialog(rb)}
                     >
                       <div className="flex items-center gap-3">
                         <div className={`w-1 h-8 rounded-full ${
-                          rb.sport === 'badminton' ? 'bg-[#1854d6]' : 'bg-green-500'
+                          rb.sport === 'badminton' ? 'bg-primary' : 'bg-green-500'
                         }`} />
                         <div>
                           <div className="flex items-center gap-2">
@@ -1635,7 +1635,7 @@ export default function BookingsContent() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-muted-foreground/70 hover:text-[#0a2540] hover:bg-[#2A76B0]/30"
+                          className="text-muted-foreground/70 hover:text-foreground hover:bg-primary/30"
                           onClick={() => openEditDialog(rb)}
                         >
                           <Pencil className="w-4 h-4" />
@@ -1658,7 +1658,7 @@ export default function BookingsContent() {
             {/* Add New Recurring Booking Form */}
             <div className="bg-secondary rounded-xl p-5 border border-border">
               <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Plus className="w-4 h-4 text-[#0a2540]" />
+                <Plus className="w-4 h-4 text-foreground" />
                 {t('addNewRecurring')}
               </h4>
 
@@ -1681,7 +1681,7 @@ export default function BookingsContent() {
                         type="button"
                         variant={recurringSport === 'badminton' ? 'default' : 'outline'}
                         size="sm"
-                        className={`flex-1 ${recurringSport === 'badminton' ? 'bg-[#1854d6] hover:bg-[#1854d6]' : 'bg-card border-border text-muted-foreground'}`}
+                        className={`flex-1 ${recurringSport === 'badminton' ? 'bg-primary hover:bg-primary' : 'bg-card border-border text-muted-foreground'}`}
                         onClick={() => setRecurringSport('badminton')}
                       >
                         {t('badminton')}
@@ -1720,7 +1720,7 @@ export default function BookingsContent() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-6 px-2 text-xs text-[#0a2540] hover:text-[#0a2540] hover:bg-[#2A76B0]/30"
+                        className="h-6 px-2 text-xs text-foreground hover:text-foreground hover:bg-primary/30"
                         onClick={() => setRecurringDays([1, 2, 3, 4, 5])}
                       >
                         {t('weekdaysBtn')}
@@ -1729,7 +1729,7 @@ export default function BookingsContent() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-6 px-2 text-xs text-[#0a2540] hover:text-[#0a2540] hover:bg-[#2A76B0]/30"
+                        className="h-6 px-2 text-xs text-foreground hover:text-foreground hover:bg-primary/30"
                         onClick={() => setRecurringDays([0, 6])}
                       >
                         {t('weekendsBtn')}
@@ -1738,7 +1738,7 @@ export default function BookingsContent() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-6 px-2 text-xs text-[#0a2540] hover:text-[#0a2540] hover:bg-[#2A76B0]/30"
+                        className="h-6 px-2 text-xs text-foreground hover:text-foreground hover:bg-primary/30"
                         onClick={() => setRecurringDays([0, 1, 2, 3, 4, 5, 6])}
                       >
                         {t('allBtn')}
@@ -1770,8 +1770,8 @@ export default function BookingsContent() {
                         }}
                         className={`py-2.5 px-1 rounded-lg text-xs font-medium transition-all ${
                           recurringDays.includes(idx)
-                            ? 'bg-[#1854d6] text-white shadow-sm'
-                            : 'bg-card border border-border text-muted-foreground hover:border-[#1854d6] hover:text-[#0a2540]'
+                            ? 'bg-primary text-white shadow-sm'
+                            : 'bg-card border border-border text-muted-foreground hover:border-primary hover:text-foreground'
                         }`}
                       >
                         {day.slice(0, 3)}
@@ -1789,7 +1789,7 @@ export default function BookingsContent() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-6 px-2 text-xs text-[#0a2540] hover:text-[#0a2540] hover:bg-[#2A76B0]/30"
+                        className="h-6 px-2 text-xs text-foreground hover:text-foreground hover:bg-primary/30"
                         onClick={() => setRecurringCourtIds(courts.map(c => c.id))}
                       >
                         {t('selectAll')}
@@ -1821,8 +1821,8 @@ export default function BookingsContent() {
                         }}
                         className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                           recurringCourtIds.includes(court.id)
-                            ? 'bg-[#1854d6] text-white shadow-sm'
-                            : 'bg-card border border-border text-muted-foreground hover:border-[#1854d6] hover:text-[#0a2540]'
+                            ? 'bg-primary text-white shadow-sm'
+                            : 'bg-card border border-border text-muted-foreground hover:border-primary hover:text-foreground'
                         }`}
                       >
                         {court.name}
@@ -1995,18 +1995,18 @@ export default function BookingsContent() {
 
                 {/* Summary */}
                 {recurringDays.length > 0 && recurringCourtIds.length > 0 && recurringStartTime && recurringEndTime && (
-                  <div className="bg-[#2A76B0]/30 border border-[#1854d6] rounded-lg p-4 mt-4">
+                  <div className="bg-primary/30 border border-primary rounded-lg p-4 mt-4">
                     <div className="flex items-start gap-3">
-                      <div className="p-1.5 bg-[#2A76B0]/50 rounded-md">
-                        <Check className="w-4 h-4 text-[#0a2540]" />
+                      <div className="p-1.5 bg-primary/50 rounded-md">
+                        <Check className="w-4 h-4 text-foreground" />
                       </div>
                       <div>
-                        <p className="font-medium text-[#0a2540] text-sm">
+                        <p className="font-medium text-foreground text-sm">
                           {recurringDays.length * recurringCourtIds.length > 1
                             ? t('readyToCreatePlural', { count: recurringDays.length * recurringCourtIds.length })
                             : t('readyToCreate', { count: recurringDays.length * recurringCourtIds.length })}
                         </p>
-                        <p className="text-[#0a2540] text-xs mt-1">
+                        <p className="text-foreground text-xs mt-1">
                           {recurringDays.sort((a, b) => a - b).map(d => DAYS_OF_WEEK[d].slice(0, 3)).join(', ')}
                           {' '}&bull;{' '}
                           {recurringCourtIds.length} {t('courts').toLowerCase()}
@@ -2029,7 +2029,7 @@ export default function BookingsContent() {
             </Button>
             <Button
               onClick={handleAddRecurring}
-              className="bg-[#1854d6] hover:bg-[#1854d6] shadow-sm"
+              className="bg-primary hover:bg-primary shadow-sm"
               disabled={
                 actionLoading ||
                 recurringCourtIds.length === 0 ||
@@ -2090,7 +2090,7 @@ export default function BookingsContent() {
                     type="button"
                     variant={recurringSport === 'badminton' ? 'default' : 'outline'}
                     size="sm"
-                    className={`flex-1 ${recurringSport === 'badminton' ? 'bg-[#1854d6] hover:bg-[#1854d6]' : 'bg-card border-border text-muted-foreground'}`}
+                    className={`flex-1 ${recurringSport === 'badminton' ? 'bg-primary hover:bg-primary' : 'bg-card border-border text-muted-foreground'}`}
                     onClick={() => setRecurringSport('badminton')}
                   >
                     {t('badminton')}
@@ -2119,8 +2119,8 @@ export default function BookingsContent() {
                     onClick={() => setRecurringDays([idx])}
                     className={`py-2.5 px-1 rounded-lg text-xs font-medium transition-all ${
                       recurringDays.includes(idx)
-                        ? 'bg-[#1854d6] text-white shadow-sm'
-                        : 'bg-secondary border border-border text-muted-foreground hover:border-[#1854d6] hover:text-[#0a2540]'
+                        ? 'bg-primary text-white shadow-sm'
+                        : 'bg-secondary border border-border text-muted-foreground hover:border-primary hover:text-foreground'
                     }`}
                   >
                     {day.slice(0, 3)}
@@ -2140,8 +2140,8 @@ export default function BookingsContent() {
                     onClick={() => setRecurringCourtIds([court.id])}
                     className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                       recurringCourtIds.includes(court.id)
-                        ? 'bg-[#1854d6] text-white shadow-sm'
-                        : 'bg-secondary border border-border text-muted-foreground hover:border-[#1854d6] hover:text-[#0a2540]'
+                        ? 'bg-primary text-white shadow-sm'
+                        : 'bg-secondary border border-border text-muted-foreground hover:border-primary hover:text-foreground'
                     }`}
                   >
                     {court.name}
@@ -2418,7 +2418,7 @@ export default function BookingsContent() {
               </div>
             )}
             {selectedBookingIds.size > 0 && (
-              <div className="flex items-center gap-2 text-sm text-[#0a2540] bg-[#2A76B0]/30 p-2 rounded">
+              <div className="flex items-center gap-2 text-sm text-foreground bg-primary/30 p-2 rounded">
                 <CalendarDays className="w-4 h-4" />
                 {selectedBookingIds.size} {t('regularBookings')}
               </div>
@@ -2686,7 +2686,7 @@ export default function BookingsContent() {
                 </Button>
               </div>
               {bulkEditUser && (
-                <div className="mt-2 p-2 bg-[#2A76B0]/30 rounded-lg flex items-center justify-between">
+                <div className="mt-2 p-2 bg-primary/30 rounded-lg flex items-center justify-between">
                   <div className="text-sm">
                     <p className="font-medium text-foreground">{bulkEditUser.name}</p>
                     <p className="text-muted-foreground">{bulkEditUser.phone}</p>

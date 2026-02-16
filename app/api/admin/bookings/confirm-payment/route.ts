@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { isAdmin } from '@/lib/admin'
+import { logAdminAction } from '@/lib/audit'
 
 // PATCH - Confirm payment for a booking (mark as paid)
 export async function PATCH(request: NextRequest) {
@@ -42,6 +43,14 @@ export async function PATCH(request: NextRequest) {
         paymentStatus: 'paid',
         status: 'confirmed',
       },
+    })
+
+    logAdminAction({
+      adminId: session.user.id,
+      adminEmail: session.user.email,
+      action: 'payment_confirm',
+      targetType: 'booking',
+      details: { bookingIds, updatedCount: updatedBookings.count },
     })
 
     return NextResponse.json({

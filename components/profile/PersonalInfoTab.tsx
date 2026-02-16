@@ -129,7 +129,7 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
                   className="rounded-lg border-border bg-background text-foreground"
                 />
                 {formData.email !== profile.email && (
-                  <p className="text-xs text-[#0a2540] mt-1">
+                  <p className="text-xs text-foreground mt-1">
                     Changing your email will require verification
                   </p>
                 )}
@@ -192,7 +192,7 @@ export function PersonalInfoTab({ profile, onUpdate }: PersonalInfoTabProps) {
         {/* Action Buttons */}
         {editing && (
           <div className="flex gap-3 pt-4">
-            <Button onClick={handleSave} disabled={saving} className="bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full">
+            <Button onClick={handleSave} disabled={saving} className="bg-primary hover:bg-primary/90 text-white rounded-full">
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

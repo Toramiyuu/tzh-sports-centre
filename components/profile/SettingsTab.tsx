@@ -227,7 +227,7 @@ export function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
               </div>
 
               <div className="flex gap-3">
-                <Button onClick={handlePasswordChange} disabled={passwordLoading} className="bg-[#1854d6] hover:bg-[#2060e0] text-white rounded-full">
+                <Button onClick={handlePasswordChange} disabled={passwordLoading} className="bg-primary hover:bg-primary/90 text-white rounded-full">
                   {passwordLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
