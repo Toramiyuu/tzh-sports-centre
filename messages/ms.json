@@ -45,11 +45,42 @@
       "subheadline": "Gelanggang badminton dan pickleball di Ayer Itam. Tempah online, hadir, main.",
       "bookCourt": "Tempah Gelanggang",
       "viewLessons": "Lihat Kelas",
+      "openNow": "Buka sehingga 12:00 MLM",
+      "location": "Ayer Itam, Pulau Pinang",
+      "sportsList": "Badminton & Pickleball",
+      "scroll": "Tatal",
       "stat": {
         "courts": "4 Gelanggang",
         "price": "Dari RM15/jam",
-        "hours": "Buka Lewat Malam"
+        "hours": "Buka Lewat Malam",
+        "googleRating": "Penilaian Google",
+        "fromPerHour": "Dari / Jam",
+        "openUntil": "Buka Sehingga"
       }
+    },
+    "about": {
+      "badge": "Gelanggang Kami",
+      "title": "Dibina untuk Pemain",
+      "subtitle": "Destinasi badminton dan pickleball Ayer Itam — tempah online, hadir, dan main.",
+      "professionalCourts": "Gelanggang Profesional",
+      "professionalCourtsDesc": "4 gelanggang dengan lantai vinil berkualiti dan lampu sisi tanpa silau.",
+      "racketStringing": "Pasang Tali Raket",
+      "racketStringingDesc": "Perkhidmatan pasang tali di premis dengan 18+ pilihan tali. Boleh siap hari yang sama.",
+      "expertCoaching": "Jurulatih Pakar",
+      "expertCoachingDesc": "Jurulatih bertauliah BAM untuk semua tahap. Kelas persendirian dan berkumpulan."
+    },
+    "sports": {
+      "badge": "Apa Yang Kami Tawarkan",
+      "title": "Dua Sukan, Satu Tempat",
+      "badmintonDesc": "Gelanggang profesional dengan lantai dan lampu berkualiti. Sesuai untuk permainan kasual atau latihan serius.",
+      "pickleballDesc": "Sukan paling pesat berkembang di dunia, kini di Ayer Itam. Raket dan bola boleh disewa.",
+      "bookNow": "Tempah Sekarang",
+      "vinylFlooring": "Lantai Vinil",
+      "zeroGlareLighting": "Lampu Tanpa Silau",
+      "walkInsWelcome": "Walk-in Dialu-alukan",
+      "equipmentRental": "Sewa Peralatan",
+      "beginnerFriendly": "Sesuai Pemula",
+      "twoHrMinimum": "Min 2 Jam"
     },
     "pricing": {
       "from": "Dari",
@@ -145,21 +176,63 @@
       },
       "cta": "Tempah Gelanggang"
     },
+    "pricingSection": {
+      "badge": "Harga",
+      "title": "Kadar Mudah dan Telus",
+      "popular": "Popular",
+      "bookCourt": "Tempah Gelanggang",
+      "viewLessons": "Lihat Kelas",
+      "peakNote": "Puncak: RM18/jam",
+      "pickleballNote": "Min 2 jam",
+      "coachingNote": "Kelas berkumpulan dari RM50. Persendirian dari RM130.",
+      "features": {
+        "onlineBooking": "Tempahan online",
+        "walkInsWelcome": "Walk-in dialu-alukan",
+        "vinylFlooring": "Lantai vinil berkualiti",
+        "zeroGlareLighting": "Lampu tanpa silau",
+        "cleanBetween": "Bersih antara sesi",
+        "equipmentRental": "Sewa peralatan",
+        "beginnerFriendly": "Sesuai pemula",
+        "bamCoaches": "Jurulatih BAM",
+        "allSkillLevels": "Semua tahap",
+        "kidsAdultGroups": "Kelas kanak-kanak & dewasa",
+        "privateSessions": "Kelas persendirian",
+        "flexibleScheduling": "Jadual fleksibel"
+      }
+    },
     "googleReviews": {
       "title": "Apa Kata Pemain Kami",
       "subtitle": "Penilaian 4.7 daripada 5 di Google Maps",
+      "sectionTitle": "Apa Kata Pemain",
+      "googleRating": "Penilaian Google",
+      "basedOn": "Berdasarkan 100+ ulasan daripada pemain sebenar.",
+      "viewOnGoogle": "Lihat di Google",
       "review1": "Panas tapi seronok gila!",
       "review1Time": "2 bulan lalu",
       "review2": "Gelanggang yang bagus dan suasana mesra. Sangat disyorkan!",
-      "review2Time": "9 bulan lalu",
-      "viewOnGoogle": "Lihat semua ulasan di Google Maps"
+      "review2Time": "9 bulan lalu"
     },
     "stringingPromo": {
+      "badge": "Perkhidmatan Profesional",
       "title": "Perkhidmatan Tali Raket Profesional",
       "description": "18+ pilihan tali dari jenama terkemuka. Harga dari RM33 setiap raket.",
-      "cta": "Lihat Tali"
+      "cta": "Lihat Tali",
+      "features": {
+        "stringOptions": "18+ Pilihan Tali",
+        "sameDayService": "Siap Hari Sama",
+        "expertTension": "Ketegangan Pakar",
+        "allBrands": "Semua Jenama"
+      }
+    },
+    "shopPromo": {
+      "badge": "Kedai Pro",
+      "title": "Sediakan Peralatan Anda",
+      "description": "Lihat koleksi raket, kasut, beg, dan aksesori kami dari jenama terkemuka. Tersedia di kedai dan dalam talian.",
+      "browseCta": "Lihat Kedai",
+      "products": "produk"
     },
     "location": {
+      "badge": "Cari Kami",
       "title": "Lokasi Kami",
       "address": {
         "title": "Alamat",

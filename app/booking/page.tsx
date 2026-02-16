@@ -734,7 +734,7 @@ function BookingPageContent() {
                   onSelect={(date) => date && setSelectedDate(date)}
                   disabled={(date) =>
                     isBefore(date, startOfDay(new Date())) ||
-                    isBefore(addDays(new Date(), 30), date)
+                    isBefore(addDays(new Date(), 90), date)
                   }
                   className="rounded-md border border-border"
                 />

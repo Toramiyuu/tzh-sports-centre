@@ -136,6 +136,12 @@ export default function RootLayout({
         <ThemeProvider>
           <I18nProvider>
             <SessionProvider>
+                <a
+                  href="#main-content"
+                  className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-md focus:text-sm focus:font-medium"
+                >
+                  Skip to main content
+                </a>
                 <LoadingScreen />
                 <Toaster
                   position="top-right"
@@ -147,7 +153,7 @@ export default function RootLayout({
                   }}
                 />
                 <Navbar />
-                <main className="flex-1">{children}</main>
+                <main id="main-content" className="flex-1">{children}</main>
                 <Footer />
                 <WhatsAppButton />
             </SessionProvider>

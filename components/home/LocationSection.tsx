@@ -49,7 +49,7 @@ export function LocationSection() {
         <div className="text-center mb-16 animate-in fade-in duration-700 fill-mode-forwards">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <MapPin className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wider">Find Us</span>
+            <span className="text-xs font-semibold text-primary uppercase tracking-wider">{t("badge")}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground">
             {t("title")}

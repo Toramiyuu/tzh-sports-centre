@@ -56,11 +56,42 @@
       "subheadline": "亚依淡羽毛球和匹克球场。在线预订，到场开打。",
       "bookCourt": "预订球场",
       "viewLessons": "查看课程",
+      "openNow": "营业至凌晨12:00",
+      "location": "槟城亚依淡",
+      "sportsList": "羽毛球 & 匹克球",
+      "scroll": "向下滚动",
       "stat": {
         "courts": "4个球场",
         "price": "RM15/小时起",
-        "hours": "营业至深夜"
+        "hours": "营业至深夜",
+        "googleRating": "Google评分",
+        "fromPerHour": "每小时起",
+        "openUntil": "营业至"
       }
+    },
+    "about": {
+      "badge": "我们的球场",
+      "title": "为球员而建",
+      "subtitle": "亚依淡的羽毛球和匹克球之家——在线预订，到场开打。",
+      "professionalCourts": "专业球场",
+      "professionalCourtsDesc": "4个球场配备优质乙烯基地板和侧装零眩光照明。",
+      "racketStringing": "球拍穿线",
+      "racketStringingDesc": "现场穿线服务，18种以上线材选择。可当日完成。",
+      "expertCoaching": "专业教练",
+      "expertCoachingDesc": "BAM认证教练，适合所有水平。提供私人和小组课程。"
+    },
+    "sports": {
+      "badge": "我们的服务",
+      "title": "两项运动，一个场地",
+      "badmintonDesc": "专业球场配备优质地板和照明。适合休闲比赛或认真训练。",
+      "pickleballDesc": "全球增长最快的运动，现在来到亚依淡。可租用球拍和球。",
+      "bookNow": "立即预订",
+      "vinylFlooring": "乙烯基地板",
+      "zeroGlareLighting": "零眩光照明",
+      "walkInsWelcome": "欢迎直接来",
+      "equipmentRental": "设备租赁",
+      "beginnerFriendly": "适合初学者",
+      "twoHrMinimum": "最少2小时"
     },
     "pricing": {
       "from": "起价",
@@ -156,21 +187,63 @@
       },
       "cta": "预订球场"
     },
+    "pricingSection": {
+      "badge": "价格",
+      "title": "简单透明的收费",
+      "popular": "热门",
+      "bookCourt": "预订球场",
+      "viewLessons": "查看课程",
+      "peakNote": "高峰: RM18/小时",
+      "pickleballNote": "最少2小时",
+      "coachingNote": "团体课RM50起。私人课RM130起。",
+      "features": {
+        "onlineBooking": "在线预订",
+        "walkInsWelcome": "欢迎直接来",
+        "vinylFlooring": "优质乙烯基地板",
+        "zeroGlareLighting": "零眩光照明",
+        "cleanBetween": "场间清洁",
+        "equipmentRental": "设备租赁",
+        "beginnerFriendly": "适合初学者",
+        "bamCoaches": "BAM认证教练",
+        "allSkillLevels": "适合所有水平",
+        "kidsAdultGroups": "儿童及成人班",
+        "privateSessions": "提供私人课程",
+        "flexibleScheduling": "灵活排课"
+      }
+    },
     "googleReviews": {
       "title": "球员评价",
       "subtitle": "Google Maps 评分 4.7 / 5",
+      "sectionTitle": "球员评价",
+      "googleRating": "Google评分",
+      "basedOn": "基于100+位真实球员的评价。",
+      "viewOnGoogle": "在Google查看",
       "review1": "虽然很热但超级好玩！",
       "review1Time": "2个月前",
       "review2": "球场很好，氛围友好。强烈推荐！",
-      "review2Time": "9个月前",
-      "viewOnGoogle": "在 Google Maps 查看所有评价"
+      "review2Time": "9个月前"
     },
     "stringingPromo": {
+      "badge": "专业服务",
       "title": "专业球拍穿线服务",
       "description": "18+种顶级品牌球线选择。每支球拍RM33起。",
-      "cta": "查看球线"
+      "cta": "查看球线",
+      "features": {
+        "stringOptions": "18+种球线",
+        "sameDayService": "当日完成",
+        "expertTension": "专业张力",
+        "allBrands": "所有品牌"
+      }
+    },
+    "shopPromo": {
+      "badge": "专业商店",
+      "title": "为比赛做好准备",
+      "description": "浏览我们的球拍、球鞋、球包和配件系列。线上线下均可购买。",
+      "browseCta": "浏览商店",
+      "products": "件商品"
     },
     "location": {
+      "badge": "找到我们",
       "title": "我们的位置",
       "address": {
         "title": "地址",

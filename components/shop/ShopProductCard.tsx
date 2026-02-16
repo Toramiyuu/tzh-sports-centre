@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -13,7 +14,7 @@ interface ShopProductCardProps {
   onViewDetails: (product: ShopProduct) => void
 }
 
-export function ShopProductCard({ product, onViewDetails }: ShopProductCardProps) {
+export const ShopProductCard = memo(function ShopProductCard({ product, onViewDetails }: ShopProductCardProps) {
   const t = useTranslations('shop')
 
   return (
@@ -27,6 +28,7 @@ export function ShopProductCard({ product, onViewDetails }: ShopProductCardProps
           src={product.image}
           alt={product.fullName}
           fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           onError={(e) => {
             const target = e.target as HTMLImageElement
@@ -105,4 +107,4 @@ export function ShopProductCard({ product, onViewDetails }: ShopProductCardProps
       </CardContent>
     </Card>
   )
-}
+})

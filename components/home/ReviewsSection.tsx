@@ -43,7 +43,7 @@ export function ReviewsSection() {
             <span className="text-xs font-semibold text-primary uppercase tracking-wider">{t("subtitle")}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground">
-            What Players Say
+            {t("sectionTitle")}
           </h2>
         </div>
 
@@ -57,7 +57,7 @@ export function ReviewsSection() {
               </div>
               <div>
                 <div className="text-3xl font-bold">4.7</div>
-                <div className="text-white/70 text-sm">Google Rating</div>
+                <div className="text-white/70 text-sm">{t("googleRating")}</div>
               </div>
             </div>
             <div className="flex gap-1 mb-4">
@@ -65,14 +65,14 @@ export function ReviewsSection() {
                 <Star key={j} className={`h-5 w-5 ${j < 5 ? "fill-white text-white" : "fill-white/30 text-white/30"}`} />
               ))}
             </div>
-            <p className="text-white/80 text-sm mb-5">Based on 100+ verified reviews from real players.</p>
+            <p className="text-white/80 text-sm mb-5">{t("basedOn")}</p>
             <a
               href="https://maps.app.goo.gl/6id7KLMbwohP7o9J6"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-white/80 transition-colors"
             >
-              View on Google <ArrowRight className="h-4 w-4" />
+              {t("viewOnGoogle")} <ArrowRight className="h-4 w-4" />
             </a>
           </div>
 
@@ -91,7 +91,7 @@ export function ReviewsSection() {
                 {Array.from({ length: 5 }).map((_, j) => (
                   <Star
                     key={j}
-                    className={`h-4 w-4 ${j < review.stars ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"}`}
+                    className={`h-4 w-4 ${j < review.stars ? "fill-amber-400 text-amber-400" : "fill-muted text-muted"}`}
                   />
                 ))}
               </div>

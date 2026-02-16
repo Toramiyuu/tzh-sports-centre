@@ -16,6 +16,7 @@ export function HeroSection() {
           src="/images/hero-bg.jpg"
           alt="TZH Sports Centre"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />
@@ -27,11 +28,11 @@ export function HeroSection() {
         {/* Status badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm mb-8 animate-in fade-in duration-700 fill-mode-forwards">
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-sm text-white/80">Open now until 12:00 AM</span>
+          <span className="text-sm text-white/80">{t("hero.openNow")}</span>
         </div>
 
         <p className="text-sm font-medium text-white/70 uppercase tracking-[0.2em] mb-6 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
-          Ayer Itam, Penang
+          {t("hero.location")}
         </p>
 
         <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-[0.95] mb-6 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
@@ -39,7 +40,7 @@ export function HeroSection() {
         </h1>
 
         <p className="text-lg md:text-xl text-white/70 uppercase tracking-[0.15em] mb-4 animate-in fade-in duration-700 delay-300 fill-mode-forwards">
-          Badminton &amp; Pickleball
+          {t("hero.sportsList")}
         </p>
 
         <p className="text-base text-white/60 mb-10 max-w-lg mx-auto animate-in fade-in duration-700 delay-400 fill-mode-forwards">
@@ -65,7 +66,7 @@ export function HeroSection() {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-in fade-in duration-700 delay-700 fill-mode-forwards">
-        <span className="text-xs text-white/50 uppercase tracking-[0.2em]">Scroll</span>
+        <span className="text-xs text-white/50 uppercase tracking-[0.2em]">{t("hero.scroll")}</span>
         <div className="w-px h-8 bg-white/30" />
       </div>
     </section>

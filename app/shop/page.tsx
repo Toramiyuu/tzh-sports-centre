@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useCallback, Suspense, lazy } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { ShopHero } from '@/components/shop/ShopHero'
 import { ShopCategoryTabs } from '@/components/shop/ShopCategoryTabs'
 import { ShopProductCard } from '@/components/shop/ShopProductCard'
@@ -93,6 +93,7 @@ function ShopContent() {
       setSelectedCategory('all')
     }
   }, [categoryParam])
+  const prefersReducedMotion = useReducedMotion()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedProduct, setSelectedProduct] = useState<ShopProduct | null>(
     null
@@ -173,6 +174,21 @@ function ShopContent() {
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Store',
+          name: 'TZH Sports Centre Pro Shop',
+          description: 'Badminton and pickleball equipment — rackets, shoes, bags, and accessories from top brands.',
+          url: 'https://tzh-sports-centre.vercel.app/shop',
+          currenciesAccepted: 'MYR',
+          parentOrganization: {
+            '@type': 'SportsActivityLocation',
+            name: 'TZH Sports Centre',
+          },
+        }) }}
+      />
       {/* Hero Section */}
       <ShopHero />
 
@@ -243,9 +259,9 @@ function ShopContent() {
                 {filteredProducts.map((product, index) => (
                   <motion.div
                     key={product.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.4) }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.4, delay: prefersReducedMotion ? 0 : Math.min(index * 0.05, 0.4) }}
                   >
                     <ShopProductCard
                       product={product}

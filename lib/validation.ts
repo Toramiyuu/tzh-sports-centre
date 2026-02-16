@@ -58,11 +58,12 @@ export function validateSport(sport: string | undefined | null): 'badminton' | '
 }
 
 /**
- * Validates that a date is not in the past
+ * Validates that a date is not in the past and not more than maxDays in the future
  * @param dateString - ISO date string or Date
  * @param allowToday - if true, today is valid
+ * @param maxDays - maximum days in the future (default 90)
  */
-export function validateFutureDate(dateString: string | Date | undefined | null, allowToday = true): Date | null {
+export function validateFutureDate(dateString: string | Date | undefined | null, allowToday = true, maxDays = 90): Date | null {
   if (!dateString) return null
 
   try {
@@ -86,6 +87,13 @@ export function validateFutureDate(dateString: string | Date | undefined | null,
       if (inputDate <= today) {
         return null
       }
+    }
+
+    // Check maximum future date
+    const maxDate = new Date(today)
+    maxDate.setDate(maxDate.getDate() + maxDays)
+    if (inputDate > maxDate) {
+      return null
     }
 
     return date

@@ -7,29 +7,31 @@ import { useTranslations } from "next-intl";
 export function AboutSection() {
   const t = useTranslations("home");
 
+  const tAbout = useTranslations("home.about");
+
   const features = [
     {
       icon: Trophy,
-      title: "Professional Courts",
-      description: "4 courts with quality vinyl flooring and side-mounted lighting with zero glare.",
+      title: tAbout("professionalCourts"),
+      description: tAbout("professionalCourtsDesc"),
     },
     {
       icon: Wrench,
-      title: "Racket Stringing",
-      description: "On-site stringing service with 18+ string options. Same-day turnaround available.",
+      title: tAbout("racketStringing"),
+      description: tAbout("racketStringingDesc"),
     },
     {
       icon: GraduationCap,
-      title: "Expert Coaching",
-      description: "BAM-certified coaches for all levels. Private and group sessions available.",
+      title: tAbout("expertCoaching"),
+      description: tAbout("expertCoachingDesc"),
     },
   ];
 
   const stats = [
     { icon: Trophy, value: "4", label: t("hero.stat.courts") },
-    { icon: Star, value: "4.7", label: "Google Rating" },
-    { icon: Zap, value: "RM15", label: "From / Hour" },
-    { icon: Clock, value: "12AM", label: "Open Until" },
+    { icon: Star, value: "4.7", label: t("hero.stat.googleRating") },
+    { icon: Zap, value: "RM15", label: t("hero.stat.fromPerHour") },
+    { icon: Clock, value: "12AM", label: t("hero.stat.openUntil") },
   ];
 
   return (
@@ -38,13 +40,13 @@ export function AboutSection() {
         {/* Header */}
         <div className="text-center mb-16 animate-in fade-in duration-700 fill-mode-forwards">
           <p className="text-sm font-medium text-primary uppercase tracking-[0.2em] mb-4">
-            Our Courts
+            {tAbout("badge")}
           </p>
           <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
-            Built for Players
+            {tAbout("title")}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Ayer Itam&apos;s home for badminton and pickleball — book online, show up, and play.
+            {tAbout("subtitle")}
           </p>
         </div>
 
@@ -57,6 +59,7 @@ export function AboutSection() {
                 src="/images/facility-interior.jpg"
                 alt="TZH Sports Centre courts"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
               />
             </div>

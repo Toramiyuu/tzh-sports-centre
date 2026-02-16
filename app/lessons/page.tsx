@@ -149,8 +149,38 @@ export default function LessonsPage() {
     )
   }
 
+  const lessonsJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: 'Badminton Coaching at TZH Sports Centre',
+    description: 'BAM-certified badminton coaching for all levels. Private and group sessions available in Ayer Itam, Penang.',
+    provider: {
+      '@type': 'SportsActivityLocation',
+      name: 'TZH Sports Centre',
+      url: 'https://tzh-sports-centre.vercel.app',
+    },
+    hasCourseInstance: [
+      {
+        '@type': 'CourseInstance',
+        name: 'Private 1-to-1 Coaching',
+        courseMode: 'onsite',
+        offers: { '@type': 'Offer', price: '130', priceCurrency: 'MYR' },
+      },
+      {
+        '@type': 'CourseInstance',
+        name: 'Group Kids Class (monthly)',
+        courseMode: 'onsite',
+        offers: { '@type': 'Offer', price: '50', priceCurrency: 'MYR' },
+      },
+    ],
+  }
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(lessonsJsonLd) }}
+      />
       {/* Hero Section */}
       <section className="pt-32 pb-16 md:pt-40 md:pb-24 bg-background relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

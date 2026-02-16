@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 
 export function SportsSection() {
   const t = useTranslations("home.availableSports");
+  const tSports = useTranslations("home.sports");
 
   const sports = [
     {
@@ -16,8 +17,8 @@ export function SportsSection() {
       price: t("badminton.price"),
       image: "/images/badminton-action.jpg",
       href: "/booking",
-      description: "Professional courts with quality flooring and lighting. Perfect for casual games or serious training.",
-      highlights: ["Vinyl Flooring", "Zero-Glare Lighting", "Walk-ins Welcome"],
+      description: tSports("badmintonDesc"),
+      highlights: [tSports("vinylFlooring"), tSports("zeroGlareLighting"), tSports("walkInsWelcome")],
     },
     {
       name: t("pickleball.name"),
@@ -25,8 +26,8 @@ export function SportsSection() {
       price: t("pickleball.price"),
       image: "/images/pickleball.jpg",
       href: "/booking?sport=pickleball",
-      description: "The fastest-growing sport in the world, now in Ayer Itam. Paddles and balls available for rent.",
-      highlights: ["Equipment Rental", "Beginner Friendly", "2hr Minimum"],
+      description: tSports("pickleballDesc"),
+      highlights: [tSports("equipmentRental"), tSports("beginnerFriendly"), tSports("twoHrMinimum")],
     },
   ];
 
@@ -37,10 +38,10 @@ export function SportsSection() {
         <div className="text-center mb-16 md:mb-20 animate-in fade-in duration-700 fill-mode-forwards">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <Zap className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wider">What We Offer</span>
+            <span className="text-xs font-semibold text-primary uppercase tracking-wider">{tSports("badge")}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground">
-            Two Sports, One Venue
+            {tSports("title")}
           </h2>
         </div>
 
@@ -57,6 +58,7 @@ export function SportsSection() {
                   src={sport.image}
                   alt={sport.name}
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
@@ -96,7 +98,7 @@ export function SportsSection() {
                 {/* CTA */}
                 <Link href={sport.href}>
                   <Button className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg group/btn">
-                    Book Now
+                    {tSports("bookNow")}
                     <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
                 </Link>

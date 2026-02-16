@@ -56,11 +56,42 @@
       "subheadline": "Badminton & pickleball courts in Ayer Itam. Book online, show up, play.",
       "bookCourt": "Book a Court",
       "viewLessons": "View Lessons",
+      "openNow": "Open now until 12:00 AM",
+      "location": "Ayer Itam, Penang",
+      "sportsList": "Badminton & Pickleball",
+      "scroll": "Scroll",
       "stat": {
         "courts": "4 Courts",
         "price": "From RM15/hr",
-        "hours": "Open Late"
+        "hours": "Open Late",
+        "googleRating": "Google Rating",
+        "fromPerHour": "From / Hour",
+        "openUntil": "Open Until"
       }
+    },
+    "about": {
+      "badge": "Our Courts",
+      "title": "Built for Players",
+      "subtitle": "Ayer Itam's home for badminton and pickleball — book online, show up, and play.",
+      "professionalCourts": "Professional Courts",
+      "professionalCourtsDesc": "4 courts with quality vinyl flooring and side-mounted lighting with zero glare.",
+      "racketStringing": "Racket Stringing",
+      "racketStringingDesc": "On-site stringing service with 18+ string options. Same-day turnaround available.",
+      "expertCoaching": "Expert Coaching",
+      "expertCoachingDesc": "BAM-certified coaches for all levels. Private and group sessions available."
+    },
+    "sports": {
+      "badge": "What We Offer",
+      "title": "Two Sports, One Venue",
+      "badmintonDesc": "Professional courts with quality flooring and lighting. Perfect for casual games or serious training.",
+      "pickleballDesc": "The fastest-growing sport in the world, now in Ayer Itam. Paddles and balls available for rent.",
+      "bookNow": "Book Now",
+      "vinylFlooring": "Vinyl Flooring",
+      "zeroGlareLighting": "Zero-Glare Lighting",
+      "walkInsWelcome": "Walk-ins Welcome",
+      "equipmentRental": "Equipment Rental",
+      "beginnerFriendly": "Beginner Friendly",
+      "twoHrMinimum": "2hr Minimum"
     },
     "pricing": {
       "from": "From",
@@ -156,21 +187,63 @@
       },
       "cta": "Book a Court"
     },
+    "pricingSection": {
+      "badge": "Pricing",
+      "title": "Simple, Transparent Rates",
+      "popular": "Popular",
+      "bookCourt": "Book Court",
+      "viewLessons": "View Lessons",
+      "peakNote": "Peak: RM18/hr",
+      "pickleballNote": "2hr minimum",
+      "coachingNote": "Group classes from RM50. Private from RM130.",
+      "features": {
+        "onlineBooking": "Online booking",
+        "walkInsWelcome": "Walk-ins welcome",
+        "vinylFlooring": "Quality vinyl flooring",
+        "zeroGlareLighting": "Zero-glare lighting",
+        "cleanBetween": "Clean between sessions",
+        "equipmentRental": "Equipment rental",
+        "beginnerFriendly": "Beginner friendly",
+        "bamCoaches": "BAM-certified coaches",
+        "allSkillLevels": "All skill levels",
+        "kidsAdultGroups": "Kids & adult groups",
+        "privateSessions": "Private sessions available",
+        "flexibleScheduling": "Flexible scheduling"
+      }
+    },
     "googleReviews": {
       "title": "What Our Players Say",
       "subtitle": "Rated 4.7 out of 5 on Google Maps",
+      "sectionTitle": "What Players Say",
+      "googleRating": "Google Rating",
+      "basedOn": "Based on 100+ verified reviews from real players.",
+      "viewOnGoogle": "View on Google",
       "review1": "So hot but fun as hell!",
       "review1Time": "2 months ago",
       "review2": "Great courts and friendly atmosphere. Highly recommend!",
-      "review2Time": "9 months ago",
-      "viewOnGoogle": "View all reviews on Google Maps"
+      "review2Time": "9 months ago"
     },
     "stringingPromo": {
+      "badge": "Professional Service",
       "title": "Professional Racket Stringing",
       "description": "18+ string options from top brands. Prices from RM33 per racket.",
-      "cta": "View Strings"
+      "cta": "View Strings",
+      "features": {
+        "stringOptions": "18+ String Options",
+        "sameDayService": "Same-Day Service",
+        "expertTension": "Expert Tension",
+        "allBrands": "All Brands"
+      }
+    },
+    "shopPromo": {
+      "badge": "Pro Shop",
+      "title": "Gear Up for Your Game",
+      "description": "Browse our collection of rackets, shoes, bags, and accessories from TZH and top brands. Available in-store and online.",
+      "browseCta": "Browse Shop",
+      "products": "products"
     },
     "location": {
+      "badge": "Find Us",
       "title": "Where to Find Us",
       "address": {
         "title": "Address",
