@@ -7,7 +7,8 @@ import { SessionProvider } from '@/components/SessionProvider'
 import { I18nProvider } from '@/components/I18nProvider'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { Toaster } from 'sonner'
-import { WhatsAppButton } from '@/components/WhatsAppButton'
+import { ChatBot } from '@/components/ChatBot'
+import { StickyBookingCTA } from '@/components/StickyBookingCTA'
 import { LoadingScreen } from '@/components/LoadingScreen'
 
 const geistSans = Geist({
@@ -155,7 +156,8 @@ export default function RootLayout({
                 <Navbar />
                 <main id="main-content" className="flex-1">{children}</main>
                 <Footer />
-                <WhatsAppButton />
+                <ChatBot />
+                <StickyBookingCTA />
             </SessionProvider>
           </I18nProvider>
         </ThemeProvider>

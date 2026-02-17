@@ -52,6 +52,7 @@
   "home": {
     "hero": {
       "socialProof": "Google 4.7 星评分",
+      "noAccount": "无需注册 — 可直接以访客身份预订",
       "headline": "两项运动。一键预订。开打。",
       "subheadline": "亚依淡羽毛球和匹克球场。在线预订，到场开打。",
       "bookCourt": "预订球场",
@@ -263,6 +264,13 @@
         "bookingsLabel": "球场预订:",
         "lessonsLabel": "课程咨询:"
       }
+    },
+    "courtStatus": {
+      "title": "球场实时状态",
+      "loading": "正在检查可用性...",
+      "slotsAvailable": "{count, plural, one {# 个空位} other {# 个空位}}",
+      "fullyBooked": "已满",
+      "closed": "已关闭"
     }
   },
   "booking": {
@@ -1556,5 +1564,20 @@
     "agreeCheckbox": "我已阅读并同意",
     "termsLink": "条款与细则",
     "mustAgree": "您必须同意条款与细则才能继续。"
+  },
+  "chatbot": {
+    "title": "TZH 体育中心",
+    "subtitle": "随时为您解答！",
+    "welcome": "您好！有什么可以帮您的？可以问我关于球场预订、价格、营业时间等问题。",
+    "placeholder": "输入您的消息...",
+    "send": "发送",
+    "close": "关闭聊天",
+    "open": "打开聊天",
+    "quick": {
+      "pricing": "价格是多少？",
+      "hours": "营业时间？",
+      "location": "你们在哪里？",
+      "booking": "如何预订？"
+    }
   }
 }
