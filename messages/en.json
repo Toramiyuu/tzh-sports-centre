@@ -52,6 +52,7 @@
   "home": {
     "hero": {
       "socialProof": "4.7 stars on Google",
+      "noAccount": "No account needed — book as a guest",
       "headline": "Two Sports. One Tap. Game On.",
       "subheadline": "Badminton & pickleball courts in Ayer Itam. Book online, show up, play.",
       "bookCourt": "Book a Court",
@@ -263,6 +264,13 @@
         "bookingsLabel": "Court Bookings:",
         "lessonsLabel": "Lessons:"
       }
+    },
+    "courtStatus": {
+      "title": "Live Court Status",
+      "loading": "Checking availability...",
+      "slotsAvailable": "{count, plural, one {# slot free} other {# slots free}}",
+      "fullyBooked": "Fully booked",
+      "closed": "Closed"
     },
     "footer": "© 2025 TZH Sports Centre"
   },
@@ -1554,5 +1562,20 @@
     "agreeCheckbox": "I have read and agree to the",
     "termsLink": "Terms & Conditions",
     "mustAgree": "You must agree to the Terms & Conditions to proceed."
+  },
+  "chatbot": {
+    "title": "TZH Sports Centre",
+    "subtitle": "Ask us anything!",
+    "welcome": "Hi! How can I help you today? Ask me about court bookings, pricing, hours, or anything else.",
+    "placeholder": "Type your message...",
+    "send": "Send",
+    "close": "Close chat",
+    "open": "Open chat",
+    "quick": {
+      "pricing": "What are the prices?",
+      "hours": "What are your hours?",
+      "location": "Where are you located?",
+      "booking": "How do I book?"
+    }
   }
 }

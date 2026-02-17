@@ -41,6 +41,7 @@
   "home": {
     "hero": {
       "socialProof": "4.7 bintang di Google",
+      "noAccount": "Tiada akaun diperlukan — tempah sebagai tetamu",
       "headline": "Dua Sukan. Satu Ketik. Jom Main.",
       "subheadline": "Gelanggang badminton dan pickleball di Ayer Itam. Tempah online, hadir, main.",
       "bookCourt": "Tempah Gelanggang",
@@ -252,6 +253,13 @@
         "bookingsLabel": "Tempahan Gelanggang:",
         "lessonsLabel": "Kelas:"
       }
+    },
+    "courtStatus": {
+      "title": "Status Gelanggang",
+      "loading": "Menyemak ketersediaan...",
+      "slotsAvailable": "{count, plural, one {# slot kosong} other {# slot kosong}}",
+      "fullyBooked": "Penuh",
+      "closed": "Tutup"
     },
     "footer": "© 2025 TZH Sports Centre"
   },
@@ -1542,5 +1550,20 @@
     "agreeCheckbox": "Saya telah membaca dan bersetuju dengan",
     "termsLink": "Terma & Syarat",
     "mustAgree": "Anda mesti bersetuju dengan Terma & Syarat untuk meneruskan."
+  },
+  "chatbot": {
+    "title": "TZH Sports Centre",
+    "subtitle": "Tanya kami apa sahaja!",
+    "welcome": "Hai! Bagaimana saya boleh membantu anda hari ini? Tanya tentang tempahan gelanggang, harga, waktu operasi, atau apa sahaja.",
+    "placeholder": "Taip mesej anda...",
+    "send": "Hantar",
+    "close": "Tutup chat",
+    "open": "Buka chat",
+    "quick": {
+      "pricing": "Berapakah harganya?",
+      "hours": "Waktu operasi?",
+      "location": "Di mana lokasi anda?",
+      "booking": "Bagaimana hendak menempah?"
+    }
   }
 }
