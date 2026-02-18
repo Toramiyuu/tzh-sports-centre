@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -123,6 +124,7 @@ export function ShopProductDialog({
       >
         <DialogHeader className="sr-only">
           <DialogTitle>{product.fullName}</DialogTitle>
+          <DialogDescription>{product.description || product.fullName}</DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-rows-[2fr_3fr] lg:grid-rows-1 lg:grid-cols-2 h-full overflow-hidden">

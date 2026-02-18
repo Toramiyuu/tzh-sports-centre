@@ -135,6 +135,7 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
+                autoComplete="new-password"
                 className="rounded-lg border-border bg-background text-foreground"
               />
             </div>
@@ -148,6 +149,7 @@ export default function RegisterPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
+                autoComplete="new-password"
                 className="rounded-lg border-border bg-background text-foreground"
               />
             </div>

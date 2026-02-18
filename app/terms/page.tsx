@@ -40,7 +40,7 @@ export default function TermsPage() {
             {t('pageSubtitle')}
           </p>
           <p className="text-sm text-muted-foreground/60 mt-2">
-            {t('lastUpdated')}: February 2025
+            {t('lastUpdated')}: February 2026
           </p>
         </div>
       </section>
@@ -91,7 +91,6 @@ export default function TermsPage() {
   )
 }
 
-// Helper to check which sections have optional keys
 function hasKey(section: string, key: string): boolean {
   const extras: Record<string, string[]> = {
     coaching: ['extra'],
