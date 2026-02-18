@@ -152,7 +152,7 @@
       "pickleball": {
         "name": "Pickleball",
         "courts": "4 courts",
-        "price": "RM25/hr (2hr min)"
+        "price": "RM25/hr"
       }
     },
     "info": {
@@ -267,8 +267,7 @@
     },
     "courtStatus": {
       "title": "Live Court Status",
-      "loading": "Checking availability...",
-      "slotsAvailable": "{count, plural, one {# slot free} other {# slots free}}",
+      "available": "Available",
       "fullyBooked": "Fully booked",
       "closed": "Closed"
     },
@@ -1403,7 +1402,8 @@
       "whatsappHint": "Click to chat with us on WhatsApp",
       "availableColors": "Available Colors",
       "availableSizes": "Available Sizes",
-      "specifications": "Specifications"
+      "specifications": "Specifications",
+      "relatedProducts": "You may also like"
     },
     "cart": {
       "title": "Shopping Cart",

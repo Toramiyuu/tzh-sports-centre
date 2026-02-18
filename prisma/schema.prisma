@@ -388,6 +388,7 @@ model ShopProduct {
   image       String
   images      Json?
   colors      Json?
+  colorImages Json?    @map("color_images")
   sizes       Json?
   inStock     Boolean  @default(true) @map("in_stock")
   stockCount  Int      @default(0) @map("stock_count")

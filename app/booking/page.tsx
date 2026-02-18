@@ -695,13 +695,16 @@ function BookingPageContent() {
                 <Clock className="w-5 h-5 text-muted-foreground" />
               </div>
               <div>
-                <p className="font-semibold text-lg text-foreground">
-                  {sport === 'badminton' ? (
-                    <>RM15/hr before 6PM <span className="text-muted-foreground">•</span> RM18/hr after 6PM</>
-                  ) : (
-                    <>RM25/hr all day</>
-                  )}
-                </p>
+                {sport === 'badminton' ? (
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-sm font-semibold">RM15/hr</span>
+                    <span className="text-xs text-muted-foreground">before 6PM</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 text-sm font-semibold">RM18/hr</span>
+                    <span className="text-xs text-muted-foreground">after 6PM</span>
+                  </div>
+                ) : (
+                  <p className="font-semibold text-lg text-foreground">RM25/hr</p>
+                )}
               </div>
             </div>
             <div className="px-4 py-2 rounded-full bg-primary text-white">
@@ -832,7 +835,7 @@ function BookingPageContent() {
 
         {/* Right: Booking Summary */}
         <div className="lg:col-span-1">
-          <Card className="sticky top-20 sm:top-24 animate-in fade-in slide-in-from-right-4 duration-500 fill-mode-forwards">
+          <Card className="sticky top-20 sm:top-24 max-h-[calc(100vh-6rem)] overflow-y-auto animate-in fade-in slide-in-from-right-4 duration-500 fill-mode-forwards">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="w-5 h-5" />
@@ -998,26 +1001,6 @@ function BookingPageContent() {
                 </div>
               )}
 
-              {/* Operating Hours - inside the sticky card */}
-              <div className="mt-6 pt-4 border-t border-border">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium text-foreground">{tHome('info.hours.title')}</p>
-                      <p className="text-muted-foreground">{tHome('info.hours.weekdays')}</p>
-                      <p className="text-muted-foreground">{tHome('info.hours.weekends')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <User className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium text-foreground">{tHome('info.contact.title')}</p>
-                      <p className="text-muted-foreground"><a href="tel:+60116868508" className="hover:text-foreground transition-colors">011-6868 8508</a></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>

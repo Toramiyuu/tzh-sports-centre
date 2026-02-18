@@ -1,5 +1,3 @@
-// Shop Product Catalog Configuration
-// This is separate from /lib/stringing-config.ts which handles stringing services
 
 export interface ShopProduct {
   id: string
@@ -8,12 +6,13 @@ export interface ShopProduct {
   brand: string
   name: string
   fullName: string
-  price: number // in RM
+  price: number
   description?: string
   specs?: Record<string, string>
   image: string
   images?: string[]
   colors?: string[]
+  colorImages?: Record<string, string>
   sizes?: string[]
   inStock: boolean
   featured?: boolean
@@ -25,7 +24,7 @@ export interface ShopCategory {
   id: ShopCategoryId
   name: string
   nameZh: string
-  icon: string // Lucide icon name
+  icon: string
   description: string
 }
 
@@ -81,10 +80,8 @@ export const SHOP_CATEGORIES: ShopCategory[] = [
   },
 ]
 
-// WhatsApp number for orders
 export const SHOP_WHATSAPP_NUMBER = '60116868508'
 
-// Generate WhatsApp order link
 export function getWhatsAppOrderLink(product: ShopProduct): string {
   const message = encodeURIComponent(
     `Hi TZH! I'm interested in ordering:\n🏸 ${product.fullName} - RM${product.price}\nCategory: ${getCategoryName(product.category)}\n\nPlease let me know about availability!`
@@ -92,24 +89,20 @@ export function getWhatsAppOrderLink(product: ShopProduct): string {
   return `https://wa.me/${SHOP_WHATSAPP_NUMBER}?text=${message}`
 }
 
-// Get category display name
 export function getCategoryName(categoryId: ShopCategoryId): string {
   const category = SHOP_CATEGORIES.find(c => c.id === categoryId)
   return category?.name || categoryId
 }
 
-// Get category by ID
 export function getCategory(categoryId: ShopCategoryId): ShopCategory | undefined {
   return SHOP_CATEGORIES.find(c => c.id === categoryId)
 }
 
-// Filter products by category
 export function filterByCategory(products: ShopProduct[], categoryId: ShopCategoryId | 'all'): ShopProduct[] {
   if (categoryId === 'all') return products
   return products.filter(p => p.category === categoryId)
 }
 
-// Filter products by search query
 export function searchProducts(products: ShopProduct[], query: string): ShopProduct[] {
   const lowerQuery = query.toLowerCase().trim()
   if (!lowerQuery) return products
@@ -121,32 +114,26 @@ export function searchProducts(products: ShopProduct[], query: string): ShopProd
   )
 }
 
-// Filter products by brands
 export function filterByBrands(products: ShopProduct[], brands: string[]): ShopProduct[] {
   if (brands.length === 0) return products
   return products.filter(p => brands.includes(p.brand))
 }
 
-// Filter products by price range
 export function filterByPriceRange(products: ShopProduct[], min: number, max: number): ShopProduct[] {
   return products.filter(p => p.price >= min && p.price <= max)
 }
 
-// Get all unique brands from products
 export function getAllBrands(products: ShopProduct[]): string[] {
   const brands = new Set(products.map(p => p.brand))
   return Array.from(brands).sort()
 }
 
-// Get featured products
 export function getFeaturedProducts(products: ShopProduct[]): ShopProduct[] {
   return products.filter(p => p.featured && p.inStock)
 }
 
-// Product catalog - placeholder data
 // TODO: Replace images with actual product photos
 export const SHOP_PRODUCTS: ShopProduct[] = [
-  // ==================== RACKETS ====================
   {
     id: 'racket-001',
     category: 'rackets',
@@ -240,7 +227,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     inStock: true,
   },
 
-  // ==================== SHOES ====================
   {
     id: 'shoes-001',
     category: 'shoes',
@@ -315,7 +301,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     inStock: true,
   },
 
-  // ==================== BAGS ====================
   {
     id: 'bags-001',
     category: 'bags',
@@ -386,7 +371,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     inStock: true,
   },
 
-  // ==================== CLOTHING ====================
   {
     id: 'clothing-001',
     category: 'clothing',
@@ -460,7 +444,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     inStock: true,
   },
 
-  // ==================== GRIPS ====================
   {
     id: 'grips-001',
     category: 'grips',
@@ -531,7 +514,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     inStock: true,
   },
 
-  // ==================== ACCESSORIES ====================
   {
     id: 'acc-001',
     category: 'accessories',
@@ -657,7 +639,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     inStock: true,
   },
 
-  // ==================== PICKLEBALL ====================
   {
     id: 'pickle-001',
     category: 'pickleball',
@@ -751,7 +732,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
   },
 ]
 
-// Get price range for products
 export function getPriceRange(products: ShopProduct[]): { min: number; max: number } {
   if (products.length === 0) return { min: 0, max: 1000 }
   const prices = products.map(p => p.price)

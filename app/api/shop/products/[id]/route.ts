@@ -3,7 +3,6 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 
-// GET /api/shop/products/[id] - get single product by productId
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -37,7 +36,6 @@ export async function GET(
   }
 }
 
-// PUT /api/shop/products/[id] - update product (admin only)
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -55,7 +53,6 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
 
-    // Find by productId or cuid
     const existing = await prisma.shopProduct.findFirst({
       where: {
         OR: [
@@ -86,6 +83,7 @@ export async function PUT(
         ...(body.image !== undefined && { image: body.image }),
         ...(body.images !== undefined && { images: body.images }),
         ...(body.colors !== undefined && { colors: body.colors }),
+        ...(body.colorImages !== undefined && { colorImages: body.colorImages }),
         ...(body.sizes !== undefined && { sizes: body.sizes }),
         ...(body.inStock !== undefined && { inStock: body.inStock }),
         ...(body.stockCount !== undefined && { stockCount: body.stockCount }),
@@ -103,7 +101,6 @@ export async function PUT(
   }
 }
 
-// DELETE /api/shop/products/[id] - delete product (admin only)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

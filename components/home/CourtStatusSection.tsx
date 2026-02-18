@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Activity, RefreshCw } from 'lucide-react'
+import { Activity } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 
@@ -41,12 +41,6 @@ function addHours(time: string, hours: number): string {
   return `${newH.toString().padStart(2, '0')}:${newM.toString().padStart(2, '0')}`
 }
 
-function formatTime(time: string): string {
-  const [h, m] = time.split(':').map(Number)
-  const period = h >= 12 ? 'PM' : 'AM'
-  const displayH = h === 0 ? 12 : h > 12 ? h - 12 : h
-  return `${displayH}:${m.toString().padStart(2, '0')} ${period}`
-}
 
 export function CourtStatusSection() {
   const t = useTranslations('home.courtStatus')
@@ -75,18 +69,7 @@ export function CourtStatusSection() {
     return () => clearInterval(interval)
   }, [fetchStatus])
 
-  if (loading) {
-    return (
-      <section className="py-8 bg-background">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-center gap-2 text-muted-foreground">
-            <RefreshCw className="w-4 h-4 animate-spin" />
-            <span className="text-sm">{t('loading')}</span>
-          </div>
-        </div>
-      </section>
-    )
-  }
+  if (loading) return null
 
   if (error || courts.length === 0) return null
 
@@ -97,9 +80,10 @@ export function CourtStatusSection() {
     const upcomingSlots = slots.filter(
       (s) => !s.isPast && s.slotTime >= now && s.slotTime < twoHoursLater
     )
-    const availableCount = upcomingSlots.filter((s) => s.available).length
     const totalUpcoming = upcomingSlots.length
-    return { court, availableCount, totalUpcoming }
+    // Court is free if the current (first upcoming) slot is available
+    const isFreeNow = upcomingSlots.length > 0 && upcomingSlots[0].available
+    return { court, totalUpcoming, isFreeNow }
   })
 
   // If no upcoming slots at all (outside operating hours), don't show
@@ -107,7 +91,7 @@ export function CourtStatusSection() {
   if (!hasAnySlots) return null
 
   return (
-    <section className="py-8 md:py-12 bg-background">
+    <section className="py-8 md:py-12 bg-background animate-in fade-in duration-500 fill-mode-forwards">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -119,20 +103,21 @@ export function CourtStatusSection() {
               {t('title')}
             </h2>
           </div>
-          <span className="text-xs text-muted-foreground">
-            {formatTime(now)} – {formatTime(twoHoursLater)}
-          </span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {courtStatuses.map(({ court, availableCount, totalUpcoming }) => {
-            const isFree = availableCount > 0
+          {courtStatuses.map(({ court, totalUpcoming, isFreeNow }) => {
+            const statusText = totalUpcoming === 0
+              ? t('closed')
+              : isFreeNow
+                ? t('available')
+                : t('fullyBooked')
             return (
               <Link
                 key={court.id}
-                href="/booking"
+                href={`/booking?court=${court.id}`}
                 className={`relative rounded-xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-md ${
-                  isFree
+                  isFreeNow
                     ? 'border-green-500/30 bg-green-500/5 hover:border-green-500/50'
                     : 'border-border bg-card hover:border-border'
                 }`}
@@ -140,19 +125,15 @@ export function CourtStatusSection() {
                 <div className="flex items-center gap-2 mb-2">
                   <span
                     className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
-                      isFree ? 'bg-green-500' : 'bg-red-500'
+                      isFreeNow ? 'bg-green-500' : 'bg-red-500'
                     }`}
                   />
                   <span className="text-sm font-semibold text-foreground truncate">
                     {court.name}
                   </span>
                 </div>
-                <p className={`text-xs ${isFree ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
-                  {totalUpcoming === 0
-                    ? t('closed')
-                    : isFree
-                      ? t('slotsAvailable', { count: availableCount })
-                      : t('fullyBooked')}
+                <p className={`text-xs ${isFreeNow ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
+                  {statusText}
                 </p>
               </Link>
             )

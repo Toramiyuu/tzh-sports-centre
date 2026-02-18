@@ -23,7 +23,7 @@ export function PricingSection() {
       name: t("pickleball.title"),
       price: "RM25",
       unit: "/hr",
-      note: "2hr minimum",
+      note: "All hours",
       popular: true,
       features: ["Online booking", "Equipment rental", "Beginner friendly", "Quality vinyl flooring", "Zero-glare lighting"],
       href: "/booking?sport=pickleball",

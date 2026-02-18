@@ -7,10 +7,10 @@ import Image from "next/image";
 
 export function ShopSection() {
   const categories = [
-    { name: "Rackets", image: "/images/shop/rackets/tzh-r-ninja-stealth-x.jpg", count: "20+" },
-    { name: "Shoes", image: "/images/shop/shoes/tzh-s-court-ace-pro.jpg", count: "15+" },
-    { name: "Bags", image: "/images/shop/bags/tzh-b-elite-tour-6r.jpg", count: "10+" },
-    { name: "Accessories", image: "/images/shop/grips/tzh-g-pro-overgrip-3pk.jpg", count: "30+" },
+    { name: "Rackets", image: "/images/shop/rackets/harimau.jpg", count: "20+" },
+    { name: "Shoes", image: "/images/shop/shoes/xingkong.jpg", count: "15+" },
+    { name: "Bags", image: "/images/shop/bags/909.jpg", count: "10+" },
+    { name: "Accessories", image: "/images/shop/grips/7cpro.jpg", count: "30+" },
   ];
 
   return (

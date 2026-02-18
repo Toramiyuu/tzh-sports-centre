@@ -55,6 +55,7 @@ interface ShopProduct {
   image: string
   images: string[] | null
   colors: string[] | null
+  colorImages: Record<string, string> | null
   sizes: string[] | null
   inStock: boolean
   stockCount: number
@@ -90,13 +91,11 @@ export default function ShopContent() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [stockFilter, setStockFilter] = useState<string>('all')
 
-  // Dialog states
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<ShopProduct | null>(null)
 
-  // Form state
   const [formData, setFormData] = useState(EMPTY_PRODUCT)
 
   const fetchProducts = useCallback(async () => {
