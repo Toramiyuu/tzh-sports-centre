@@ -152,7 +152,7 @@
       "pickleball": {
         "name": "匹克球",
         "courts": "4个球场",
-        "price": "RM25/小时 (最少2小时)"
+        "price": "RM25/小时"
       }
     },
     "info": {
@@ -267,8 +267,7 @@
     },
     "courtStatus": {
       "title": "球场实时状态",
-      "loading": "正在检查可用性...",
-      "slotsAvailable": "{count, plural, one {# 个空位} other {# 个空位}}",
+      "available": "可用",
       "fullyBooked": "已满",
       "closed": "已关闭"
     }
@@ -1405,7 +1404,8 @@
       "whatsappHint": "点击在 WhatsApp 上与我们联系",
       "availableColors": "可选颜色",
       "availableSizes": "可选尺码",
-      "specifications": "规格参数"
+      "specifications": "规格参数",
+      "relatedProducts": "你可能还喜欢"
     },
     "cart": {
       "title": "购物车",

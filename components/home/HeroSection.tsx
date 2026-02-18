@@ -57,7 +57,7 @@ export function HeroSection() {
           <Link href="/lessons">
             <Button
               variant="outline"
-              className="h-12 px-6 sm:px-8 text-sm font-medium uppercase tracking-wider border-white/40 text-white bg-transparent hover:bg-white/10 dark:bg-transparent dark:hover:bg-white/10 rounded-full"
+              className="h-12 px-6 sm:px-8 text-sm font-medium uppercase tracking-wider border-white/40 text-white hover:text-white bg-transparent hover:bg-white/10 dark:bg-transparent dark:hover:bg-white/10 rounded-full"
             >
               {t("hero.viewLessons")}
             </Button>

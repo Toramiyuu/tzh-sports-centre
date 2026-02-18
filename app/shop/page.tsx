@@ -22,7 +22,6 @@ const StringingPage = lazy(() => import('@/app/stringing/page'))
 
 const validCategories = SHOP_CATEGORIES.map((c) => c.id)
 
-// Map database product to ShopProduct interface
 function mapDbProduct(dbProduct: Record<string, unknown>): ShopProduct {
   return {
     id: dbProduct.productId as string,
@@ -37,6 +36,7 @@ function mapDbProduct(dbProduct: Record<string, unknown>): ShopProduct {
     image: dbProduct.image as string,
     images: (dbProduct.images as string[]) || undefined,
     colors: (dbProduct.colors as string[]) || undefined,
+    colorImages: (dbProduct.colorImages as Record<string, string>) || undefined,
     sizes: (dbProduct.sizes as string[]) || undefined,
     inStock: dbProduct.inStock as boolean,
     featured: dbProduct.featured as boolean | undefined,
@@ -47,7 +47,6 @@ function ShopContent() {
   const t = useTranslations('shop')
   const searchParams = useSearchParams()
 
-  // Get initial category from URL
   const categoryParam = searchParams.get('category')
   const initialCategory: ShopCategoryId | 'all' | 'stringing' =
     categoryParam === 'stringing'
@@ -56,14 +55,12 @@ function ShopContent() {
         ? (categoryParam as ShopCategoryId)
         : 'all'
 
-  // State
   const [allProducts, setAllProducts] = useState<ShopProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState<
     ShopCategoryId | 'all' | 'stringing'
   >(initialCategory)
 
-  // Fetch products from API
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true)
@@ -83,7 +80,6 @@ function ShopContent() {
     fetchProducts()
   }, [fetchProducts])
 
-  // Update category when URL changes
   useEffect(() => {
     if (categoryParam === 'stringing') {
       setSelectedCategory('stringing')
@@ -100,13 +96,11 @@ function ShopContent() {
   )
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  // Get price range for all products
   const priceRangeObj = useMemo(() => getPriceRange(allProducts), [allProducts])
   const priceRange: [number, number] = [priceRangeObj.min, priceRangeObj.max]
   const [selectedPriceRange, setSelectedPriceRange] =
     useState<[number, number]>(priceRange)
 
-  // Reset price range when products load
   useEffect(() => {
     if (allProducts.length > 0) {
       const range = getPriceRange(allProducts)
@@ -114,11 +108,9 @@ function ShopContent() {
     }
   }, [allProducts])
 
-  // Filter products
   const filteredProducts = useMemo(() => {
     let products = allProducts
 
-    // Category filter
     if (selectedCategory === 'all') {
       products = products.filter(p => p.inStock)
       products.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
@@ -126,12 +118,10 @@ function ShopContent() {
       products = products.filter(p => p.category === selectedCategory)
     }
 
-    // Search filter
     if (searchQuery) {
       products = searchProducts(products, searchQuery)
     }
 
-    // Price range filter
     if (
       selectedPriceRange[0] !== priceRange[0] ||
       selectedPriceRange[1] !== priceRange[1]
@@ -152,7 +142,6 @@ function ShopContent() {
     priceRange,
   ])
 
-  // Calculate active filter count
   const activeFilterCount = useMemo(() => {
     if (
       selectedPriceRange[0] !== priceRange[0] ||

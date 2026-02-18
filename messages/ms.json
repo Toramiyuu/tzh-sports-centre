@@ -141,7 +141,7 @@
       "pickleball": {
         "name": "Pickleball",
         "courts": "4 gelanggang",
-        "price": "RM25/jam (min 2jam)"
+        "price": "RM25/jam"
       }
     },
     "info": {
@@ -256,8 +256,7 @@
     },
     "courtStatus": {
       "title": "Status Gelanggang",
-      "loading": "Menyemak ketersediaan...",
-      "slotsAvailable": "{count, plural, one {# slot kosong} other {# slot kosong}}",
+      "available": "Tersedia",
       "fullyBooked": "Penuh",
       "closed": "Tutup"
     },
@@ -1391,7 +1390,8 @@
       "whatsappHint": "Klik untuk bersembang di WhatsApp",
       "availableColors": "Warna Tersedia",
       "availableSizes": "Saiz Tersedia",
-      "specifications": "Spesifikasi"
+      "specifications": "Spesifikasi",
+      "relatedProducts": "Anda mungkin juga suka"
     },
     "cart": {
       "title": "Troli Beli-belah",

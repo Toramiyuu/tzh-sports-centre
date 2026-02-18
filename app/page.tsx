@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { CourtStatusSection } from "@/components/home/CourtStatusSection";
 import { AboutSection } from "@/components/home/AboutSection";
@@ -11,6 +12,9 @@ import { ShopSection } from "@/components/home/ShopSection";
 import { LocationSection } from "@/components/home/LocationSection";
 
 export default function Home() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="min-h-screen bg-background">
       <HeroSection />

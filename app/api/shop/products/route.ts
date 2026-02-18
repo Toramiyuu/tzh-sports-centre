@@ -3,7 +3,6 @@ import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 
-// GET /api/shop/products - list products with optional filters
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -59,7 +58,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/shop/products - create product (admin only)
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()
@@ -74,7 +72,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const {
       productId, category, subcategory, brand, name, fullName,
-      price, description, specs, image, images, colors, sizes,
+      price, description, specs, image, images, colors, colorImages, sizes,
       inStock, stockCount, featured,
     } = body
 
@@ -99,6 +97,7 @@ export async function POST(request: NextRequest) {
         image,
         images: images || null,
         colors: colors || null,
+        colorImages: colorImages || null,
         sizes: sizes || null,
         inStock: inStock ?? true,
         stockCount: stockCount ?? 0,

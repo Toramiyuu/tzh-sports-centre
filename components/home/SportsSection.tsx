@@ -27,7 +27,7 @@ export function SportsSection() {
       image: "/images/pickleball.jpg",
       href: "/booking?sport=pickleball",
       description: tSports("pickleballDesc"),
-      highlights: [tSports("equipmentRental"), tSports("beginnerFriendly"), tSports("twoHrMinimum")],
+      highlights: [tSports("equipmentRental"), tSports("beginnerFriendly"), tSports("zeroGlareLighting")],
     },
   ];
 
