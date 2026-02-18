@@ -237,7 +237,7 @@ function ReceiptContent() {
                 Generated on {format(new Date(), 'MMMM d, yyyy h:mm a')}
               </p>
               <p className="mt-4">Thank you for booking with TZH Sports Centre!</p>
-              <p className="text-xs mt-2">Contact: <a href="tel:+60116868508">011-6868 8508</a></p>
+              <p className="text-xs mt-2">Contact: <a href="tel:+601168688508">011-6868 8508</a></p>
             </div>
           </CardContent>
         </Card>

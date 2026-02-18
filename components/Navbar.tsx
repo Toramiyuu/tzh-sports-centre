@@ -9,7 +9,7 @@ import {
   Sun,
   X,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import { UserMenu } from '@/components/UserMenu'
 import { isAdmin } from '@/lib/admin'
@@ -18,8 +18,11 @@ import { useTranslations } from 'next-intl'
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
   const { data: session, status } = useSession()
+
+  useEffect(() => setMounted(true), [])
   const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin)
   const t = useTranslations('nav')
 
@@ -97,7 +100,7 @@ export function Navbar() {
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {mounted && theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
             <LanguageSwitcher />
             {status === 'loading' ? (
@@ -200,7 +203,7 @@ export function Navbar() {
                 className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                 aria-label="Toggle theme"
               >
-                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {mounted && theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
               <LanguageSwitcher />
             </div>

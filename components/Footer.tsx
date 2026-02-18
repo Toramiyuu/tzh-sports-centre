@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
-import { Facebook, Instagram, Youtube, MapPin, Phone, Clock } from 'lucide-react'
+import { MapPin, Phone, Clock } from 'lucide-react'
 
 export function Footer() {
   const { data: session } = useSession()
@@ -25,39 +25,6 @@ export function Footer() {
             <p className="text-sm text-muted-foreground leading-relaxed mb-6">
               {t('description')}
             </p>
-            {/* Social Media Icons */}
-            <div className="flex items-center gap-3">
-              <a
-                href="#"
-                aria-label="Facebook"
-                className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all duration-200"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all duration-200"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                aria-label="TikTok"
-                className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all duration-200"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.84a4.84 4.84 0 0 1-1-.15z" />
-                </svg>
-              </a>
-              <a
-                href="#"
-                aria-label="YouTube"
-                className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all duration-200"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-            </div>
           </div>
 
           {/* Quick Links */}
@@ -149,7 +116,7 @@ export function Footer() {
                   <Phone className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
                   <div>
                     <p className="text-xs text-muted-foreground/70 mb-0.5">{t('courtBookings')}</p>
-                    <a href="tel:+60116868508" className="font-medium text-foreground hover:text-primary transition-colors">
+                    <a href="tel:+601168688508" className="font-medium text-foreground hover:text-primary transition-colors">
                       011-6868 8508
                     </a>
                   </div>
@@ -158,7 +125,7 @@ export function Footer() {
                   <Phone className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
                   <div>
                     <p className="text-xs text-muted-foreground/70 mb-0.5">{t('lessonsEnquiry')}</p>
-                    <a href="tel:+60117575508" className="font-medium text-foreground hover:text-primary transition-colors">
+                    <a href="tel:+601175758508" className="font-medium text-foreground hover:text-primary transition-colors">
                       011-7575 8508
                     </a>
                   </div>

@@ -83,7 +83,7 @@ export default function RootLayout({
               name: 'TZH Sports Centre',
               description: 'Badminton and pickleball courts available for booking in Ayer Itam, Penang. Professional coaching and racket stringing services.',
               url: 'https://tzh-sports-centre.vercel.app',
-              telephone: '+60116868508',
+              telephone: '+601168688508',
               address: {
                 '@type': 'PostalAddress',
                 streetAddress: 'Jalan Sekolah La Salle',
@@ -132,6 +132,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} antialiased min-h-screen flex flex-col`}
+        suppressHydrationWarning
       >
         <ThemeProvider>
           <I18nProvider>

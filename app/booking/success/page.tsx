@@ -78,7 +78,6 @@ function SuccessContent() {
 
         setPaymentData(data)
 
-        // Celebrate successful payment!
         if (data.status === 'paid') {
           celebrateBooking()
         }
@@ -238,7 +237,7 @@ function SuccessContent() {
           <ul className="text-sm text-foreground space-y-1">
             <li>Please arrive 10 minutes before your booking time</li>
             <li>Bring your own rackets and shuttlecocks</li>
-            <li>Contact us at <a href="tel:+60116868508" className="underline">011-6868 8508</a> for any changes</li>
+            <li>Contact us at <a href="tel:+601168688508" className="underline">011-6868 8508</a> for any changes</li>
           </ul>
         </div>
       </div>

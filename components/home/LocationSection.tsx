@@ -35,8 +35,8 @@ export function LocationSection() {
       title: t("contact.title"),
       content: (
         <>
-          {t("contact.bookingsLabel")} <a href="tel:+60116868508" className="text-foreground hover:text-primary transition-colors">011-6868 8508</a><br />
-          {t("contact.lessonsLabel")} <a href="tel:+60117575508" className="text-foreground hover:text-primary transition-colors">011-7575 8508</a>
+          {t("contact.bookingsLabel")} <a href="tel:+601168688508" className="text-foreground hover:text-primary transition-colors">011-6868 8508</a><br />
+          {t("contact.lessonsLabel")} <a href="tel:+601175758508" className="text-foreground hover:text-primary transition-colors">011-7575 8508</a>
         </>
       ),
     },

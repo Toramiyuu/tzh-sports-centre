@@ -47,7 +47,6 @@ interface StockInfo {
   colors: ColorStock[]
 }
 
-// String Card Component with hover flip animation
 function StringCard({
   string,
   onSelect,
@@ -84,7 +83,6 @@ function StringCard({
         {/* Image Container - shows front or back based on hover */}
         <div className="h-40 relative bg-secondary rounded-t-lg overflow-hidden">
           {!isHovered ? (
-            // Front - Product Image
             string.image ? (
               <img
                 src={string.image}
@@ -108,7 +106,6 @@ function StringCard({
               </div>
             )
           ) : (
-            // Back - Stats/Specifications
             <div className="h-full w-full bg-card flex items-center justify-center">
               {string.backImage ? (
                 <img
@@ -173,7 +170,7 @@ function StringCard({
                 ))}
               </div>
               <span className="text-xs text-muted-foreground ml-1">
-                {availableColors.length} {colorsAvailableLabel}
+                {availableColors.length} {availableColors.length === 1 ? 'color available' : colorsAvailableLabel}
               </span>
             </div>
           )}
@@ -214,12 +211,10 @@ export default function StringingPage() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [stockStatus, setStockStatus] = useState<Record<string, StockInfo>>({})
 
-  // Color selection dialog state
   const [colorDialogOpen, setColorDialogOpen] = useState(false)
   const [selectedString, setSelectedString] = useState<StringProduct | null>(null)
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
 
-  // Fetch stock status on mount
   useEffect(() => {
     const fetchStockStatus = async () => {
       try {
@@ -238,7 +233,6 @@ export default function StringingPage() {
   const brands = getUniqueBrands()
   const { min: minPrice, max: maxPrice } = getPriceRange()
 
-  // Initialize price range on mount
   useState(() => {
     setPriceRange([minPrice, maxPrice])
   })
@@ -270,19 +264,16 @@ export default function StringingPage() {
     const stock = stockStatus[stringProduct.id]
     const availableColors = stock?.colors?.filter((c) => c.inStock) || []
 
-    // If no colors are set up, go directly to checkout
     if (availableColors.length === 0) {
       router.push(`/stringing/checkout?string=${stringProduct.id}`)
       return
     }
 
-    // If only one color available, auto-select it
     if (availableColors.length === 1) {
       router.push(`/stringing/checkout?string=${stringProduct.id}&color=${encodeURIComponent(availableColors[0].color)}`)
       return
     }
 
-    // Multiple colors - show selection dialog
     setSelectedString(stringProduct)
     setSelectedColor(null)
     setColorDialogOpen(true)
@@ -293,12 +284,10 @@ export default function StringingPage() {
     router.push(`/stringing/checkout?string=${selectedString.id}&color=${encodeURIComponent(selectedColor)}`)
   }
 
-  // Get available colors for selected string
   const availableColors = selectedString
     ? stockStatus[selectedString.id]?.colors?.filter((c) => c.inStock) || []
     : []
 
-  // Filters JSX - defined as variable to avoid component recreation issues
   const filtersContent = (
     <div className="space-y-6">
       {/* Search */}
