@@ -6,7 +6,6 @@ import { calculateBookingAmount } from '@/lib/recurring-booking-utils'
 import { validateMalaysianPhone, validateEmail, validateSport, validateFutureDate, sanitiseText } from '@/lib/validation'
 import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 
-// GET - Fetch user's bookings
 export async function GET() {
   try {
     const session = await auth()
@@ -41,7 +40,6 @@ export async function GET() {
   }
 }
 
-// POST - Create a new booking (guest, logged-in user, or admin test)
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request.headers)
   const { success } = checkRateLimit(`booking:${ip}`, RATE_LIMITS.booking)
@@ -57,7 +55,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { slots, date, sport, isTestBooking, isGuestBooking, guestName, guestPhone, guestEmail, payAtCounter, paymentMethod, paymentUserConfirmed, receiptUrl } = body
 
-    // Validate common required fields
     if (!slots || !Array.isArray(slots) || slots.length === 0) {
       return NextResponse.json(
         { error: 'No slots selected' },
@@ -72,7 +69,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate sport type
     const validatedSport = validateSport(sport)
     if (!validatedSport) {
       return NextResponse.json(
@@ -81,7 +77,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate booking date is not in the past
     const validatedDate = validateFutureDate(date)
     if (!validatedDate) {
       return NextResponse.json(
@@ -90,7 +85,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Determine booking type and validate accordingly
     let userId: string | null = null
     let bookingGuestName: string | null = null
     let bookingGuestPhone: string | null = null
@@ -99,7 +93,6 @@ export async function POST(request: NextRequest) {
     let paymentStatus = 'pending'
 
     if (isGuestBooking || paymentMethod === 'tng' || paymentMethod === 'duitnow') {
-      // Guest booking or TNG payment - no login required for guests
       if (!guestName && !session?.user?.name) {
         return NextResponse.json(
           { error: 'Name is required for bookings' },
@@ -107,7 +100,6 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Phone is required for guest/TNG bookings for contact purposes
       const phone = guestPhone?.trim() || null
       if (!phone && !session?.user?.id) {
         return NextResponse.json(
@@ -116,7 +108,6 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Validate phone number format if provided
       if (phone) {
         const validatedPhone = validateMalaysianPhone(phone)
         if (!validatedPhone) {
@@ -128,7 +119,6 @@ export async function POST(request: NextRequest) {
         bookingGuestPhone = validatedPhone
       }
 
-      // Validate email format if provided
       if (guestEmail?.trim()) {
         const validatedEmail = validateEmail(guestEmail)
         if (!validatedEmail) {
@@ -144,19 +134,15 @@ export async function POST(request: NextRequest) {
 
       bookingGuestName = sanitiseText(guestName) || session?.user?.name || null
 
-      // Set userId if logged in
       if (session?.user?.id) {
         userId = session.user.id
       }
 
-      // If paying at counter, TNG, or DuitNow, confirm the booking but mark payment as pending
       if (payAtCounter || paymentMethod === 'tng' || paymentMethod === 'duitnow') {
         bookingStatus = 'confirmed'
-        paymentStatus = 'pending' // Will pay at counter or via QR payment (manual verification)
+        paymentStatus = 'pending'
       }
-      // Otherwise, booking stays pending until online payment completes
     } else if (isTestBooking) {
-      // Admin test booking
       if (!session?.user?.id) {
         return NextResponse.json(
           { error: 'Unauthorized' },
@@ -171,9 +157,8 @@ export async function POST(request: NextRequest) {
       }
       userId = session.user.id
       bookingStatus = 'confirmed'
-      paymentStatus = 'paid' // Test bookings are free
+      paymentStatus = 'paid'
     } else {
-      // Regular logged-in user booking
       if (!session?.user?.id) {
         return NextResponse.json(
           { error: 'Please log in or book as a guest' },
@@ -181,7 +166,6 @@ export async function POST(request: NextRequest) {
         )
       }
       userId = session.user.id
-      // Booking stays pending until payment completes
       bookingStatus = 'pending'
       paymentStatus = 'pending'
     }
@@ -189,18 +173,7 @@ export async function POST(request: NextRequest) {
     const bookingDate = new Date(date)
     const dayOfWeek = bookingDate.getDay()
 
-    // Check all conflicts in parallel for performance
-    const [existingBookings, recurringConflicts, lessonSessions] = await Promise.all([
-      prisma.booking.findMany({
-        where: {
-          bookingDate,
-          status: { in: ['pending', 'confirmed'] },
-          OR: slots.map((slot: { courtId: number; slotTime: string }) => ({
-            courtId: slot.courtId,
-            startTime: slot.slotTime,
-          })),
-        },
-      }),
+    const [recurringConflicts, lessonSessions] = await Promise.all([
       prisma.recurringBooking.findMany({
         where: {
           dayOfWeek,
@@ -225,13 +198,6 @@ export async function POST(request: NextRequest) {
       }),
     ])
 
-    if (existingBookings.length > 0) {
-      return NextResponse.json(
-        { error: 'One or more slots are no longer available' },
-        { status: 409 }
-      )
-    }
-
     const recurringSlotSet = new Set(
       recurringConflicts.map(r => `${r.courtId}-${r.startTime}`)
     )
@@ -248,7 +214,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check for lesson conflicts using time overlap (lessons may not align with 30-min slot grid)
     const hasLessonConflict = slots.some(
       (slot: { courtId: number; slotTime: string }) => {
         const slotEnd = getEndTime(slot.slotTime)
@@ -268,56 +233,73 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create bookings for each slot sequentially (works with Neon pooler)
-    const createdBookings = []
-    for (const slot of slots as { courtId: number; slotTime: string }[]) {
-      const endTime = getEndTime(slot.slotTime)
-      const totalAmount = calculateBookingAmount(slot.slotTime, endTime, validatedSport)
-      try {
-        const booking = await prisma.booking.create({
-          data: {
-            userId,
-            courtId: slot.courtId,
-            sport: validatedSport,
+    let createdBookings
+    try {
+      createdBookings = await prisma.$transaction(async (tx) => {
+        const existingBookings = await tx.booking.findMany({
+          where: {
             bookingDate,
-            startTime: slot.slotTime,
-            endTime,
-            totalAmount,
-            status: bookingStatus,
-            paymentStatus,
-            paymentMethod: paymentMethod || null,
-            paymentUserConfirmed: paymentUserConfirmed || false,
-            paymentScreenshotUrl: receiptUrl || null,
-            guestName: bookingGuestName,
-            guestPhone: bookingGuestPhone,
-            guestEmail: bookingGuestEmail,
-          },
-          include: {
-            court: true,
+            status: { in: ['pending', 'confirmed'] },
+            OR: slots.map((slot: { courtId: number; slotTime: string }) => ({
+              courtId: slot.courtId,
+              startTime: slot.slotTime,
+            })),
           },
         })
-        createdBookings.push(booking)
-      } catch (error: unknown) {
-        // Handle unique constraint violation (race condition - slot just booked by someone else)
-        if (
-          error &&
-          typeof error === 'object' &&
-          'code' in error &&
-          error.code === 'P2002'
-        ) {
-          // Clean up any already-created bookings from this batch
-          if (createdBookings.length > 0) {
-            await prisma.booking.deleteMany({
-              where: { id: { in: createdBookings.map(b => b.id) } },
-            })
-          }
-          return NextResponse.json(
-            { error: 'This slot was just booked by someone else. Please select another time.' },
-            { status: 409 }
-          )
+
+        if (existingBookings.length > 0) {
+          throw new Error('SLOT_CONFLICT')
         }
-        throw error
+
+        const bookings = []
+        for (const slot of slots as { courtId: number; slotTime: string }[]) {
+          const endTime = getEndTime(slot.slotTime)
+          const totalAmount = calculateBookingAmount(slot.slotTime, endTime, validatedSport)
+          const booking = await tx.booking.create({
+            data: {
+              userId,
+              courtId: slot.courtId,
+              sport: validatedSport,
+              bookingDate,
+              startTime: slot.slotTime,
+              endTime,
+              totalAmount,
+              status: bookingStatus,
+              paymentStatus,
+              paymentMethod: paymentMethod || null,
+              paymentUserConfirmed: paymentUserConfirmed || false,
+              paymentScreenshotUrl: receiptUrl || null,
+              guestName: bookingGuestName,
+              guestPhone: bookingGuestPhone,
+              guestEmail: bookingGuestEmail,
+            },
+            include: {
+              court: true,
+            },
+          })
+          bookings.push(booking)
+        }
+        return bookings
+      })
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message === 'SLOT_CONFLICT') {
+        return NextResponse.json(
+          { error: 'One or more slots are no longer available' },
+          { status: 409 }
+        )
       }
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        (error as { code: string }).code === 'P2002'
+      ) {
+        return NextResponse.json(
+          { error: 'This slot was just booked by someone else. Please select another time.' },
+          { status: 409 }
+        )
+      }
+      throw error
     }
 
     return NextResponse.json(
@@ -343,7 +325,6 @@ function timeToMinutes(time: string): number {
   return hours * 60 + minutes
 }
 
-// Helper to calculate end time (30 minutes after start)
 function getEndTime(startTime: string): string {
   const [hours, minutes] = startTime.split(':').map(Number)
   let endMinutes = minutes + 30
