@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -12,6 +13,9 @@ import {
   CreditCard,
   Repeat,
   CalendarX2,
+  Camera,
+  Loader2,
+  X,
 } from "lucide-react";
 import { PersonalInfoTab } from "@/components/profile/PersonalInfoTab";
 import { BookingsTab } from "@/components/profile/BookingsTab";
@@ -40,6 +44,7 @@ interface UserProfile {
   creditBalance: number;
   createdAt: string;
   isMember: boolean;
+  avatarUrl: string | null;
   notifyBookingConfirm: boolean;
   notifyBookingReminder: boolean;
   notifyCancellation: boolean;
@@ -73,6 +78,63 @@ function ProfileContent() {
   );
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowed.includes(file.type)) {
+      toast.error("Please upload a JPG, PNG, or WebP image");
+      return;
+    }
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("Image must be under 3MB");
+      return;
+    }
+
+    setAvatarUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload/avatar", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok && data.avatarUrl) {
+        setProfile((prev) =>
+          prev ? { ...prev, avatarUrl: data.avatarUrl } : prev,
+        );
+        toast.success("Profile picture updated");
+      } else {
+        toast.error(data.error || "Failed to upload");
+      }
+    } catch {
+      toast.error("Failed to upload");
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  const handleAvatarRemove = async () => {
+    setAvatarUploading(true);
+    try {
+      const res = await fetch("/api/upload/avatar", { method: "DELETE" });
+      if (res.ok) {
+        setProfile((prev) => (prev ? { ...prev, avatarUrl: null } : prev));
+        toast.success("Profile picture removed");
+      } else {
+        toast.error("Failed to remove");
+      }
+    } catch {
+      toast.error("Failed to remove");
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -177,8 +239,45 @@ function ProfileContent() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold">
-              {profile?.name?.charAt(0).toUpperCase() || "U"}
+            <div className="relative group">
+              {profile?.avatarUrl ? (
+                <>
+                  <Image
+                    src={`${profile.avatarUrl}?v=${Date.now()}`}
+                    alt={profile.name}
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 rounded-full object-cover"
+                    unoptimized
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAvatarRemove}
+                    disabled={avatarUploading}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-white rounded-full items-center justify-center hidden group-hover:flex"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </>
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold">
+                  {profile?.name?.charAt(0).toUpperCase() || "U"}
+                </div>
+              )}
+              <label className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                {avatarUploading ? (
+                  <Loader2 className="w-5 h-5 text-white animate-spin" />
+                ) : (
+                  <Camera className="w-5 h-5 text-white" />
+                )}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                  disabled={avatarUploading}
+                />
+              </label>
             </div>
             <div>
               <h1 className="text-2xl font-semibold text-foreground">

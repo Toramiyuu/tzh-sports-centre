@@ -1,14 +1,14 @@
-import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import { sendEmail, getEmailVerificationEmail } from '@/lib/email'
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { sendEmail, getEmailVerificationEmail } from "@/lib/email";
 
 export async function GET() {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
@@ -23,62 +23,65 @@ export async function GET() {
         creditBalance: true,
         createdAt: true,
         isMember: true,
+        avatarUrl: true,
         notifyBookingConfirm: true,
         notifyBookingReminder: true,
         notifyCancellation: true,
         notifyLessonUpdates: true,
       },
-    })
+    });
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Convert BigInt uid to 3-digit string for JSON serialization
     return NextResponse.json({
       ...user,
-      uid: user.uid.toString().padStart(3, '0'),
-    })
+      uid: user.uid.toString().padStart(3, "0"),
+    });
   } catch (error) {
-    console.error('Profile fetch error:', error)
-    return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 })
+    console.error("Profile fetch error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch profile" },
+      { status: 500 },
+    );
   }
 }
 
 export async function PATCH(request: Request) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { name, phone, email, emergencyContact } = body
+    const body = await request.json();
+    const { name, phone, email, emergencyContact } = body;
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-    })
+    });
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check if email is being changed
-    let emailVerificationSent = false
+    let emailVerificationSent = false;
     if (email && email !== user.email) {
-      // Check if email is already taken
       const existingUser = await prisma.user.findUnique({
         where: { email },
-      })
+      });
 
       if (existingUser) {
-        return NextResponse.json({ error: 'Email already in use' }, { status: 400 })
+        return NextResponse.json(
+          { error: "Email already in use" },
+          { status: 400 },
+        );
       }
 
-      // Generate verification token
-      const verifyToken = crypto.randomUUID()
-      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      const verifyToken = crypto.randomUUID();
+      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
       await prisma.user.update({
         where: { id: user.id },
@@ -87,37 +90,40 @@ export async function PATCH(request: Request) {
           emailVerifyToken: verifyToken,
           emailVerifyExpiry: expiry,
         },
-      })
+      });
 
-      // Send verification email to the new address
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-      const verifyUrl = `${appUrl}/api/verify-email?token=${verifyToken}`
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      const verifyUrl = `${appUrl}/api/verify-email?token=${verifyToken}`;
       const emailTemplate = getEmailVerificationEmail({
-        userName: user.name || 'User',
+        userName: user.name || "User",
         verifyUrl,
-      })
-      await sendEmail({ to: email, ...emailTemplate })
-      emailVerificationSent = true
+      });
+      await sendEmail({ to: email, ...emailTemplate });
+      emailVerificationSent = true;
     }
 
-    // Check if phone is being changed and is unique
     if (phone && phone !== user.phone) {
       const existingPhone = await prisma.user.findUnique({
         where: { phone },
-      })
+      });
 
       if (existingPhone && existingPhone.id !== user.id) {
-        return NextResponse.json({ error: 'Phone number already in use' }, { status: 400 })
+        return NextResponse.json(
+          { error: "Phone number already in use" },
+          { status: 400 },
+        );
       }
     }
 
-    // Update profile (except email which requires verification)
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: {
         name: name || user.name,
         phone: phone || user.phone,
-        emergencyContact: emergencyContact !== undefined ? emergencyContact : user.emergencyContact,
+        emergencyContact:
+          emergencyContact !== undefined
+            ? emergencyContact
+            : user.emergencyContact,
       },
       select: {
         id: true,
@@ -128,11 +134,14 @@ export async function PATCH(request: Request) {
         creditBalance: true,
         createdAt: true,
       },
-    })
+    });
 
-    return NextResponse.json({ ...updatedUser, emailVerificationSent })
+    return NextResponse.json({ ...updatedUser, emailVerificationSent });
   } catch (error) {
-    console.error('Profile update error:', error)
-    return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 })
+    console.error("Profile update error:", error);
+    return NextResponse.json(
+      { error: "Failed to update profile" },
+      { status: 500 },
+    );
   }
 }

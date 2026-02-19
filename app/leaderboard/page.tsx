@@ -9,10 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Trophy, RefreshCw, Loader2, Medal } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 interface LeaderboardEntry {
   rank: number;
   playerName: string;
+  avatarUrl: string | null;
   attendancePoints: number;
   gamesPoints: number;
   winsPoints: number;
@@ -110,7 +112,21 @@ export default function LeaderboardPage() {
               <div className="flex items-end justify-center gap-3 sm:gap-4 pt-6 pb-2">
                 {/* 2nd place */}
                 <div className="flex flex-col items-center w-28 sm:w-32">
-                  <Medal className="w-6 h-6 text-gray-400 mb-2" />
+                  {leaderboard[1].avatarUrl ? (
+                    <Image
+                      src={leaderboard[1].avatarUrl}
+                      alt={leaderboard[1].playerName}
+                      width={48}
+                      height={48}
+                      className="w-12 h-12 rounded-full object-cover mb-1"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-gray-400/20 flex items-center justify-center text-gray-400 font-bold text-lg mb-1">
+                      {leaderboard[1].playerName.charAt(0)}
+                    </div>
+                  )}
+                  <Medal className="w-6 h-6 text-gray-400 mb-1" />
                   <p className="font-semibold text-sm sm:text-base text-foreground text-center truncate w-full">
                     {leaderboard[1].playerName}
                   </p>
@@ -127,7 +143,21 @@ export default function LeaderboardPage() {
 
                 {/* 1st place */}
                 <div className="flex flex-col items-center w-32 sm:w-36">
-                  <Medal className="w-8 h-8 text-yellow-500 mb-2" />
+                  {leaderboard[0].avatarUrl ? (
+                    <Image
+                      src={leaderboard[0].avatarUrl}
+                      alt={leaderboard[0].playerName}
+                      width={56}
+                      height={56}
+                      className="w-14 h-14 rounded-full object-cover mb-1"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-500 font-bold text-xl mb-1">
+                      {leaderboard[0].playerName.charAt(0)}
+                    </div>
+                  )}
+                  <Medal className="w-8 h-8 text-yellow-500 mb-1" />
                   <p className="font-bold text-base sm:text-lg text-foreground text-center truncate w-full">
                     {leaderboard[0].playerName}
                   </p>
@@ -146,7 +176,21 @@ export default function LeaderboardPage() {
 
                 {/* 3rd place */}
                 <div className="flex flex-col items-center w-28 sm:w-32">
-                  <Medal className="w-6 h-6 text-amber-700 mb-2" />
+                  {leaderboard[2].avatarUrl ? (
+                    <Image
+                      src={leaderboard[2].avatarUrl}
+                      alt={leaderboard[2].playerName}
+                      width={48}
+                      height={48}
+                      className="w-12 h-12 rounded-full object-cover mb-1"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-amber-700/20 flex items-center justify-center text-amber-700 font-bold text-lg mb-1">
+                      {leaderboard[2].playerName.charAt(0)}
+                    </div>
+                  )}
+                  <Medal className="w-6 h-6 text-amber-700 mb-1" />
                   <p className="font-semibold text-sm sm:text-base text-foreground text-center truncate w-full">
                     {leaderboard[2].playerName}
                   </p>

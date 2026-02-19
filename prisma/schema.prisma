@@ -28,6 +28,7 @@ model User {
   pendingEmail          String?            @map("pending_email")
   emailVerifyToken      String?            @map("email_verify_token")
   emailVerifyExpiry     DateTime?          @map("email_verify_expiry")
+  avatarUrl             String?            @map("avatar_url")
   deletedAt             DateTime?          @map("deleted_at")
   bookings              Booking[]
   lessonRequests        LessonRequest[]

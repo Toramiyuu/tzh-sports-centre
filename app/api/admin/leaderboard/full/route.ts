@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
         user: {
           select: {
             name: true,
+            avatarUrl: true,
             playerProfile: { select: { group: true } },
           },
         },
@@ -49,6 +50,7 @@ export async function GET(request: NextRequest) {
       rank: index + 1,
       userId: r.userId,
       playerName: r.user.name,
+      avatarUrl: r.user.avatarUrl,
       group: r.user.playerProfile?.group ?? "ACTIVE",
       month: r.month,
       attendancePoints: r.attendancePoints,

@@ -28,6 +28,7 @@ interface LeaderboardEntry {
   rank: number;
   userId: string;
   playerName: string;
+  avatarUrl: string | null;
   group: string;
   month: string;
   attendancePoints: number;

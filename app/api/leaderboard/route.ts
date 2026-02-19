@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       where: { month },
       include: {
         user: {
-          select: { name: true },
+          select: { name: true, avatarUrl: true },
         },
       },
       orderBy: { totalPoints: "desc" },
@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
     const leaderboard = records.map((r, index) => ({
       rank: index + 1,
       playerName: r.user.name,
+      avatarUrl: r.user.avatarUrl,
       attendancePoints: r.attendancePoints,
       gamesPoints: r.gamesPoints,
       winsPoints: r.winsPoints,
