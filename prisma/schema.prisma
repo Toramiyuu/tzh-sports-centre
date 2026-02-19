@@ -38,6 +38,8 @@ model User {
   stringingOrders       StringingOrder[]
   lessonSessions        LessonSession[]    @relation("StudentLessons")
   shopOrders            ShopOrder[]
+  absences              Absence[]
+  replacementCredits    ReplacementCredit[]
 
   @@map("users")
 }
@@ -181,6 +183,7 @@ model LessonSession {
   updatedAt   DateTime @updatedAt @map("updated_at")
   court       Court    @relation(fields: [courtId], references: [id])
   students    User[]   @relation("StudentLessons")
+  absences    Absence[]
 
   @@map("lesson_sessions")
 }
@@ -448,4 +451,63 @@ model ShopOrder {
   @@index([userId])
   @@index([status])
   @@map("shop_orders")
+}
+
+// ─── Absence System ───────────────────────────────────────────────────────────
+
+enum AbsenceType {
+  APPLY        // ≥7 days notice → earns replacement credit
+  LATE_NOTICE  // 3-6 days notice → no credit
+  ABSENT       // <3 days or no-show → no credit
+  MEDICAL      // Pending admin review
+}
+
+enum AbsenceStatus {
+  APPROVED        // Auto-approved (APPLY type)
+  RECORDED        // Auto-recorded (LATE_NOTICE / ABSENT)
+  PENDING_REVIEW  // Awaiting admin decision (MEDICAL)
+  REVIEWED        // Admin has decided
+}
+
+model Absence {
+  id                String        @id @default(cuid())
+  userId            String        @map("user_id")
+  user              User          @relation(fields: [userId], references: [id])
+  lessonSessionId   String        @map("lesson_session_id")
+  lessonSession     LessonSession @relation(fields: [lessonSessionId], references: [id])
+  type              AbsenceType
+  status            AbsenceStatus @default(APPROVED)
+  reason            String?
+  proofUrl          String?       @map("proof_url")
+  adminNotes        String?       @map("admin_notes")
+  creditAwarded     Boolean       @default(false) @map("credit_awarded")
+  reviewedBy        String?       @map("reviewed_by")
+  reviewedAt        DateTime?     @map("reviewed_at")
+  lessonDate        DateTime      @map("lesson_date")
+  appliedAt         DateTime      @default(now()) @map("applied_at")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  replacementCredit ReplacementCredit?
+
+  @@unique([userId, lessonSessionId])
+  @@index([userId])
+  @@index([lessonSessionId])
+  @@index([type])
+  @@index([status])
+  @@map("absences")
+}
+
+model ReplacementCredit {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id])
+  absenceId   String    @unique @map("absence_id")
+  absence     Absence   @relation(fields: [absenceId], references: [id])
+  usedAt      DateTime? @map("used_at")
+  expiresAt   DateTime  @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("replacement_credits")
 }

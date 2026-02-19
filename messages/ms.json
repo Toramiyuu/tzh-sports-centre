@@ -315,7 +315,8 @@
       "lessons": "Kelas",
       "racket": "Raket",
       "recurring": "Berulang",
-      "settings": "Tetapan"
+      "settings": "Tetapan",
+      "absences": "Ketidakhadiran"
     },
     "recurring": {
       "noBookings": "Tiada tempahan berulang",
@@ -784,7 +785,7 @@
       "filtered": "Ditapis",
       "bookings": "tempahan",
       "booking": "tempahan",
-      "recurringBookings": "Tempahan Berulang",
+      "recurringBookings": "tempahan berulang",
       "cancelBooking": "Batal Tempahan",
       "cancelBookings": "Batal Tempahan",
       "keepBooking": "Kekalkan Tempahan",
@@ -828,7 +829,6 @@
       "editRecurring": "Edit Tempahan Berulang",
       "editRecurringDescription": "Ubah tetapan tempahan berulang. Perubahan hanya berlaku untuk kejadian akan datang.",
       "dayOfWeek": "Hari dalam Minggu",
-      "court": "Gelanggang",
       "saveChanges": "Simpan Perubahan",
       "orEnterGuest": "Atau masukkan butiran tetamu (untuk pengguna tidak berdaftar)",
       "assignToAccount": "Tugaskan ke Akaun",
@@ -846,7 +846,6 @@
       "deleteSelected": "Padam Pilihan",
       "confirmDeleteTitle": "Sahkan Pemadaman",
       "confirmDeleteDescription": "Adakah anda pasti mahu memadam {count} tempahan? Tindakan ini tidak boleh dibatalkan.",
-      "recurringBookings": "tempahan berulang",
       "regularBookings": "tempahan biasa",
       "deleteAll": "Padam Semua"
     },
@@ -1162,6 +1161,10 @@
       "descriptionPlaceholder": "Penerangan produk...",
       "optional": "Pilihan",
       "stockCount": "Kuantiti"
+    },
+    "absences": {
+      "title": "Pengurusan Ketidakhadiran",
+      "description": "Semak ketidakhadiran perubatan dan pantau kehadiran pelajar"
     }
   },
   "updates": {
@@ -1564,6 +1567,84 @@
       "hours": "Waktu operasi?",
       "location": "Di mana lokasi anda?",
       "booking": "Bagaimana hendak menempah?"
+    }
+  },
+  "absence": {
+    "errors": {
+      "loadFailed": "Gagal memuatkan data ketidakhadiran",
+      "submitFailed": "Gagal menghantar ketidakhadiran",
+      "uploadFailed": "Gagal memuat naik fail bukti"
+    },
+    "submitSuccess": "Ketidakhadiran berjaya dihantar",
+    "credits": {
+      "title": "Kredit Gantian",
+      "badge": "Kredit Gantian",
+      "expires": "Tamat"
+    },
+    "calendar": {
+      "title": "Kalendar Ketidakhadiran"
+    },
+    "upcoming": {
+      "title": "Kelas Akan Datang",
+      "empty": "Tiada kelas akan datang",
+      "applyButton": "Mohon Ketidakhadiran",
+      "notifyButton": "Maklum Ketidakhadiran"
+    },
+    "history": {
+      "title": "Sejarah Ketidakhadiran",
+      "empty": "Tiada rekod ketidakhadiran"
+    },
+    "types": {
+      "APPLY": "Mohon",
+      "LATE_NOTICE": "Notis Lewat",
+      "ABSENT": "Tidak Hadir",
+      "MEDICAL": "Sakit"
+    },
+    "statuses": {
+      "APPROVED": "Diluluskan",
+      "RECORDED": "Direkodkan",
+      "PENDING_REVIEW": "Menunggu Semakan",
+      "REVIEWED": "Disemak"
+    },
+    "dialog": {
+      "title": "Hantar Ketidakhadiran",
+      "reason": "Sebab",
+      "reasonPlaceholder": "Pilihan: nyatakan sebab ketidakhadiran...",
+      "isMedical": "Ini adalah cuti sakit (MC)",
+      "proof": "Muat Naik Bukti MC",
+      "proofOptional": "Bukti adalah pilihan tetapi disarankan untuk semakan perubatan",
+      "cancel": "Batal",
+      "submit": "Hantar"
+    },
+    "admin": {
+      "title": "Pengurusan Ketidakhadiran",
+      "description": "Semak ketidakhadiran perubatan dan pantau kehadiran pelajar",
+      "reviewSuccess": "Semakan berjaya dihantar",
+      "stats": {
+        "totalThisMonth": "Jumlah Bulan Ini",
+        "pendingReviews": "Menunggu Semakan",
+        "creditsAwarded": "Kredit Diberikan",
+        "mostCommonType": "Jenis Paling Kerap",
+        "perStudent": "Ketidakhadiran Mengikut Pelajar Bulan Ini"
+      },
+      "pending": {
+        "title": "Semakan Perubatan Tertunggu",
+        "viewProof": "Lihat Bukti",
+        "review": "Semak"
+      },
+      "table": {
+        "title": "Semua Ketidakhadiran",
+        "allTypes": "Semua Jenis",
+        "allStatuses": "Semua Status",
+        "empty": "Tiada rekod ketidakhadiran"
+      },
+      "dialog": {
+        "title": "Semak Ketidakhadiran Perubatan",
+        "adminNotes": "Nota Pentadbir",
+        "adminNotesPlaceholder": "Pilihan: tambah nota untuk pelajar...",
+        "approve": "Luluskan Kredit",
+        "deny": "Tolak Kredit"
+      }
     }
   }
 }

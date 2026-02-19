@@ -1,52 +1,67 @@
-import { auth } from '@/lib/auth'
-import { isAdmin } from '@/lib/admin'
-import { redirect } from 'next/navigation'
-import { Shield, Calendar, Users, Wrench, ShoppingBag, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
+import { auth } from "@/lib/auth";
+import { isAdmin } from "@/lib/admin";
+import { redirect } from "next/navigation";
+import {
+  Shield,
+  Calendar,
+  Users,
+  Wrench,
+  ShoppingBag,
+  ArrowRight,
+  CalendarX2,
+} from "lucide-react";
+import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 export default async function AdminPage() {
-  const session = await auth()
-  const t = await getTranslations('admin')
+  const session = await auth();
+  const t = await getTranslations("admin");
 
   if (!session?.user) {
-    redirect('/auth/login?callbackUrl=/admin')
+    redirect("/auth/login?callbackUrl=/admin");
   }
 
   if (!isAdmin(session.user.email, session.user.isAdmin)) {
-    redirect('/')
+    redirect("/");
   }
 
   const adminFeatures = [
     {
-      titleKey: 'bookingsLessons.title',
-      descriptionKey: 'bookingsLessons.description',
+      titleKey: "bookingsLessons.title",
+      descriptionKey: "bookingsLessons.description",
       icon: Calendar,
-      href: '/admin/bookings-lessons',
-      iconBg: 'bg-primary/10 text-primary',
+      href: "/admin/bookings-lessons",
+      iconBg: "bg-primary/10 text-primary",
     },
     {
-      titleKey: 'membersAccounts.title',
-      descriptionKey: 'membersAccounts.description',
+      titleKey: "membersAccounts.title",
+      descriptionKey: "membersAccounts.description",
       icon: Users,
-      href: '/admin/members-accounts',
-      iconBg: 'bg-primary/15 text-primary',
+      href: "/admin/members-accounts",
+      iconBg: "bg-primary/15 text-primary",
     },
     {
-      titleKey: 'trainingOrders.title',
-      descriptionKey: 'trainingOrders.description',
+      titleKey: "trainingOrders.title",
+      descriptionKey: "trainingOrders.description",
       icon: Wrench,
-      href: '/admin/stringing',
-      iconBg: 'bg-primary/10 text-primary',
+      href: "/admin/stringing",
+      iconBg: "bg-primary/10 text-primary",
     },
     {
-      titleKey: 'shopInventory.title',
-      descriptionKey: 'shopInventory.description',
+      titleKey: "shopInventory.title",
+      descriptionKey: "shopInventory.description",
       icon: ShoppingBag,
-      href: '/admin/shop',
-      iconBg: 'bg-primary/15 text-primary',
+      href: "/admin/shop",
+      iconBg: "bg-primary/15 text-primary",
     },
-  ]
+    {
+      titleKey: "absences.title",
+      descriptionKey: "absences.description",
+      icon: CalendarX2,
+      href: "/admin/absences",
+      iconBg: "bg-primary/10 text-primary",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,9 +73,11 @@ export default async function AdminPage() {
             Admin Panel
           </div>
           <h1 className="text-3xl font-bold text-foreground">
-            {t('welcome', { name: session.user.name || '' })}
+            {t("welcome", { name: session.user.name || "" })}
           </h1>
-          <p className="text-muted-foreground mt-1">Manage your sports centre from here.</p>
+          <p className="text-muted-foreground mt-1">
+            Manage your sports centre from here.
+          </p>
         </div>
 
         {/* Cards Grid */}
@@ -68,7 +85,9 @@ export default async function AdminPage() {
           {adminFeatures.map((feature) => (
             <Link key={feature.href} href={feature.href} className="group">
               <div className="relative flex items-start gap-4 p-6 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${feature.iconBg}`}>
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${feature.iconBg}`}
+                >
                   <feature.icon className="w-6 h-6" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -86,5 +105,5 @@ export default async function AdminPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

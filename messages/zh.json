@@ -325,7 +325,8 @@
       "lessons": "课程",
       "racket": "球拍",
       "recurring": "固定预订",
-      "settings": "设置"
+      "settings": "设置",
+      "absences": "缺席记录"
     },
     "recurring": {
       "noBookings": "暂无固定预订",
@@ -728,7 +729,6 @@
       "editRecurring": "编辑固定预订",
       "editRecurringDescription": "修改固定预订设置。更改仅适用于未来的预订。",
       "dayOfWeek": "星期几",
-      "court": "球场",
       "saveChanges": "保存更改",
       "orEnterGuest": "或输入访客信息（非注册用户）",
       "assignToAccount": "分配给账户",
@@ -746,7 +746,6 @@
       "deleteSelected": "删除所选",
       "confirmDeleteTitle": "确认删除",
       "confirmDeleteDescription": "确定要删除 {count} 个预订吗？此操作无法撤销。",
-      "recurringBookings": "固定预订",
       "regularBookings": "普通预订",
       "deleteAll": "全部删除"
     },
@@ -1058,6 +1057,10 @@
       "descriptionPlaceholder": "商品描述...",
       "optional": "可选",
       "stockCount": "数量"
+    },
+    "absences": {
+      "title": "缺席管理",
+      "description": "审核病假缺席并跟踪学生出勤情况"
     }
   },
   "updates": {
@@ -1578,6 +1581,84 @@
       "hours": "营业时间？",
       "location": "你们在哪里？",
       "booking": "如何预订？"
+    }
+  },
+  "absence": {
+    "errors": {
+      "loadFailed": "加载缺席数据失败",
+      "submitFailed": "提交缺席申请失败",
+      "uploadFailed": "上传证明文件失败"
+    },
+    "submitSuccess": "缺席申请提交成功",
+    "credits": {
+      "title": "替补课时",
+      "badge": "替补课时",
+      "expires": "到期"
+    },
+    "calendar": {
+      "title": "缺席日历"
+    },
+    "upcoming": {
+      "title": "即将到来的课程",
+      "empty": "没有即将到来的课程",
+      "applyButton": "申请缺席",
+      "notifyButton": "缺席通知"
+    },
+    "history": {
+      "title": "缺席记录",
+      "empty": "没有缺席记录"
+    },
+    "types": {
+      "APPLY": "申请缺席",
+      "LATE_NOTICE": "晚通知",
+      "ABSENT": "缺席",
+      "MEDICAL": "病假"
+    },
+    "statuses": {
+      "APPROVED": "已批准",
+      "RECORDED": "已记录",
+      "PENDING_REVIEW": "待审核",
+      "REVIEWED": "已审核"
+    },
+    "dialog": {
+      "title": "提交缺席申请",
+      "reason": "原因",
+      "reasonPlaceholder": "可选：说明缺席原因...",
+      "isMedical": "这是病假（附病假条）",
+      "proof": "上传病假证明",
+      "proofOptional": "证明为可选，但建议提供以便病假审核",
+      "cancel": "取消",
+      "submit": "提交"
+    },
+    "admin": {
+      "title": "缺席管理",
+      "description": "审核病假缺席并跟踪学生出勤情况",
+      "reviewSuccess": "审核已提交成功",
+      "stats": {
+        "totalThisMonth": "本月总计",
+        "pendingReviews": "待审核",
+        "creditsAwarded": "已授予课时",
+        "mostCommonType": "最常见类型",
+        "perStudent": "本月各学生缺席情况"
+      },
+      "pending": {
+        "title": "待审核病假",
+        "viewProof": "查看证明",
+        "review": "审核"
+      },
+      "table": {
+        "title": "所有缺席记录",
+        "allTypes": "所有类型",
+        "allStatuses": "所有状态",
+        "empty": "没有缺席记录"
+      },
+      "dialog": {
+        "title": "审核病假缺席",
+        "adminNotes": "管理员备注",
+        "adminNotesPlaceholder": "可选：为学生添加备注...",
+        "approve": "批准课时",
+        "deny": "拒绝课时"
+      }
     }
   }
 }

@@ -1,45 +1,49 @@
-'use client'
+"use client";
 
-import { Suspense, useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { toast } from 'sonner'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Suspense, useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import {
   User,
   CalendarDays,
   GraduationCap,
   Settings,
-  Loader2,
   CreditCard,
   Repeat,
-} from 'lucide-react'
-import { PersonalInfoTab } from '@/components/profile/PersonalInfoTab'
-import { BookingsTab } from '@/components/profile/BookingsTab'
-import { RecurringTab } from '@/components/profile/RecurringTab'
-import { LessonsTab } from '@/components/profile/LessonsTab'
-import { SettingsTab } from '@/components/profile/SettingsTab'
-import { SkeletonProfile } from '@/components/ui/skeleton'
-import { useTranslations } from 'next-intl'
+  CalendarX2,
+} from "lucide-react";
+import { PersonalInfoTab } from "@/components/profile/PersonalInfoTab";
+import { BookingsTab } from "@/components/profile/BookingsTab";
+import { RecurringTab } from "@/components/profile/RecurringTab";
+import { LessonsTab } from "@/components/profile/LessonsTab";
+import { AbsencesTab } from "@/components/profile/AbsencesTab";
+import { SettingsTab } from "@/components/profile/SettingsTab";
+import { SkeletonProfile } from "@/components/ui/skeleton";
+import { useTranslations } from "next-intl";
 
-type TabType = 'personal' | 'bookings' | 'recurring' | 'lessons' | 'settings'
+type TabType =
+  | "personal"
+  | "bookings"
+  | "recurring"
+  | "lessons"
+  | "absences"
+  | "settings";
 
 interface UserProfile {
-  id: string
-  uid: string
-  name: string
-  email: string
-  phone: string
-  emergencyContact: string | null
-  creditBalance: number
-  createdAt: string
-  isMember: boolean
-  notifyBookingConfirm: boolean
-  notifyBookingReminder: boolean
-  notifyCancellation: boolean
-  notifyLessonUpdates: boolean
+  id: string;
+  uid: string;
+  name: string;
+  email: string;
+  phone: string;
+  emergencyContact: string | null;
+  creditBalance: number;
+  createdAt: string;
+  isMember: boolean;
+  notifyBookingConfirm: boolean;
+  notifyBookingReminder: boolean;
+  notifyCancellation: boolean;
+  notifyLessonUpdates: boolean;
 }
 
 export default function ProfilePage() {
@@ -47,85 +51,125 @@ export default function ProfilePage() {
     <Suspense>
       <ProfileContent />
     </Suspense>
-  )
+  );
 }
 
 function ProfileContent() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const t = useTranslations('profile')
-  const [activeTab, setActiveTab] = useState<TabType>('personal')
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const t = useTranslations("profile");
+  const tabParam = searchParams.get("tab") as TabType | null;
+  const validTabs: TabType[] = [
+    "personal",
+    "bookings",
+    "recurring",
+    "lessons",
+    "absences",
+    "settings",
+  ];
+  const [activeTab, setActiveTab] = useState<TabType>(
+    tabParam && validTabs.includes(tabParam) ? tabParam : "personal",
+  );
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/login?callbackUrl=/profile')
+    if (status === "unauthenticated") {
+      router.push("/auth/login?callbackUrl=/profile");
     }
-  }, [status, router])
+  }, [status, router]);
 
-  // Handle email verification redirect
   useEffect(() => {
-    const verify = searchParams.get('verify')
-    if (!verify) return
-    const messages: Record<string, { type: 'success' | 'error'; text: string }> = {
-      success: { type: 'success', text: 'Email verified successfully! Your email has been updated.' },
-      expired: { type: 'error', text: 'Verification link has expired. Please request a new one from your profile.' },
-      taken: { type: 'error', text: 'That email address is already in use by another account.' },
-      error: { type: 'error', text: 'Something went wrong during verification. Please try again.' },
-    }
-    const msg = messages[verify]
+    const verify = searchParams.get("verify");
+    if (!verify) return;
+    const messages: Record<
+      string,
+      { type: "success" | "error"; text: string }
+    > = {
+      success: {
+        type: "success",
+        text: "Email verified successfully! Your email has been updated.",
+      },
+      expired: {
+        type: "error",
+        text: "Verification link has expired. Please request a new one from your profile.",
+      },
+      taken: {
+        type: "error",
+        text: "That email address is already in use by another account.",
+      },
+      error: {
+        type: "error",
+        text: "Something went wrong during verification. Please try again.",
+      },
+    };
+    const msg = messages[verify];
     if (msg) {
-      if (msg.type === 'success') toast.success(msg.text, { duration: 6000 })
-      else toast.error(msg.text, { duration: 6000 })
+      if (msg.type === "success") toast.success(msg.text, { duration: 6000 });
+      else toast.error(msg.text, { duration: 6000 });
     }
-    // Clean URL without triggering navigation
-    router.replace('/profile', { scroll: false })
-  }, [searchParams, router])
+    router.replace("/profile", { scroll: false });
+  }, [searchParams, router]);
 
   useEffect(() => {
     if (session?.user) {
-      fetchProfile()
+      fetchProfile();
     }
-  }, [session])
+  }, [session]);
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch('/api/profile')
-      const data = await res.json()
+      const res = await fetch("/api/profile");
+      const data = await res.json();
       if (res.ok) {
-        setProfile(data)
+        setProfile(data);
       } else {
-        console.error('Profile fetch failed:', data.error)
+        console.error("Profile fetch failed:", data.error);
       }
     } catch (error) {
-      console.error('Failed to fetch profile:', error)
+      console.error("Failed to fetch profile:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  if (status === 'loading' || loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
         <SkeletonProfile />
       </div>
-    )
+    );
   }
 
   if (!session?.user) {
-    return null
+    return null;
   }
 
-  // Build tabs dynamically - only show Lessons tab for members
   const tabs = [
-    { id: 'personal' as TabType, label: t('tabs.personal'), icon: User },
-    { id: 'bookings' as TabType, label: t('tabs.bookings'), icon: CalendarDays },
-    { id: 'recurring' as TabType, label: t('tabs.recurring'), icon: Repeat },
-    ...(profile?.isMember ? [{ id: 'lessons' as TabType, label: t('tabs.lessons'), icon: GraduationCap }] : []),
-    { id: 'settings' as TabType, label: t('tabs.settings'), icon: Settings },
-  ]
+    { id: "personal" as TabType, label: t("tabs.personal"), icon: User },
+    {
+      id: "bookings" as TabType,
+      label: t("tabs.bookings"),
+      icon: CalendarDays,
+    },
+    { id: "recurring" as TabType, label: t("tabs.recurring"), icon: Repeat },
+    ...(profile?.isMember
+      ? [
+          {
+            id: "lessons" as TabType,
+            label: t("tabs.lessons"),
+            icon: GraduationCap,
+          },
+          {
+            id: "absences" as TabType,
+            label: t("tabs.absences"),
+            icon: CalendarX2,
+          },
+        ]
+      : []),
+    { id: "settings" as TabType, label: t("tabs.settings"), icon: Settings },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -134,10 +178,12 @@ function ProfileContent() {
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold">
-              {profile?.name?.charAt(0).toUpperCase() || 'U'}
+              {profile?.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <div>
-              <h1 className="text-2xl font-semibold text-foreground">{profile?.name}</h1>
+              <h1 className="text-2xl font-semibold text-foreground">
+                {profile?.name}
+              </h1>
               <p className="text-muted-foreground">{profile?.email}</p>
             </div>
           </div>
@@ -146,7 +192,9 @@ function ProfileContent() {
           {profile && profile.creditBalance > 0 && (
             <div className="inline-flex items-center gap-2 bg-accent text-muted-foreground px-4 py-2 rounded-full">
               <CreditCard className="w-4 h-4" />
-              <span className="font-medium">{t('credits.balance')}: RM{profile.creditBalance.toFixed(2)}</span>
+              <span className="font-medium">
+                {t("credits.balance")}: RM{profile.creditBalance.toFixed(2)}
+              </span>
             </div>
           )}
         </div>
@@ -154,49 +202,51 @@ function ProfileContent() {
         {/* Tabs */}
         <div className="flex gap-2 mb-6 border-b border-border overflow-x-auto">
           {tabs.map((tab) => {
-            const Icon = tab.icon
+            const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 font-medium whitespace-nowrap border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? 'border-primary text-foreground'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                    ? "border-primary text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <Icon className="w-4 h-4" />
                 {tab.label}
               </button>
-            )
+            );
           })}
         </div>
 
         {/* Tab Content */}
         <div>
-          {activeTab === 'personal' && (
-            profile ? (
+          {activeTab === "personal" &&
+            (profile ? (
               <PersonalInfoTab profile={profile} onUpdate={fetchProfile} />
             ) : (
-              <div className="text-center py-8 text-muted-foreground">{t('loadingProfile')}</div>
-            )
+              <div className="text-center py-8 text-muted-foreground">
+                {t("loadingProfile")}
+              </div>
+            ))}
+          {activeTab === "bookings" && (
+            <BookingsTab
+              creditBalance={profile?.creditBalance || 0}
+              onCreditUpdate={fetchProfile}
+            />
           )}
-          {activeTab === 'bookings' && (
-            <BookingsTab creditBalance={profile?.creditBalance || 0} onCreditUpdate={fetchProfile} />
-          )}
-          {activeTab === 'recurring' && (
-            <RecurringTab />
-          )}
-          {activeTab === 'lessons' && profile?.isMember && (
-            <LessonsTab />
-          )}
-          {activeTab === 'settings' && (
-            profile ? (
+          {activeTab === "recurring" && <RecurringTab />}
+          {activeTab === "lessons" && profile?.isMember && <LessonsTab />}
+          {activeTab === "absences" && profile?.isMember && <AbsencesTab />}
+          {activeTab === "settings" &&
+            (profile ? (
               <SettingsTab profile={profile} onUpdate={fetchProfile} />
             ) : (
-              <div className="text-center py-8 text-muted-foreground">{t('loadingSettings')}</div>
-            )
-          )}
+              <div className="text-center py-8 text-muted-foreground">
+                {t("loadingSettings")}
+              </div>
+            ))}
         </div>
 
         {/* UID Display - Bottom Right */}
@@ -207,5 +257,5 @@ function ProfileContent() {
         )}
       </div>
     </div>
-  )
+  );
 }

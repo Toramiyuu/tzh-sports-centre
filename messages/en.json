@@ -326,7 +326,8 @@
       "lessons": "Lessons",
       "racket": "Racket",
       "recurring": "Recurring",
-      "settings": "Settings"
+      "settings": "Settings",
+      "absences": "Absences"
     },
     "recurring": {
       "noBookings": "No recurring bookings",
@@ -795,7 +796,7 @@
       "filtered": "Filtered",
       "bookings": "bookings",
       "booking": "booking",
-      "recurringBookings": "Recurring Bookings",
+      "recurringBookings": "recurring booking(s)",
       "cancelBooking": "Cancel Booking",
       "cancelBookings": "Cancel Bookings",
       "keepBooking": "Keep Booking",
@@ -839,7 +840,6 @@
       "editRecurring": "Edit Recurring Booking",
       "editRecurringDescription": "Modify the recurring booking settings. Changes apply to future occurrences only.",
       "dayOfWeek": "Day of Week",
-      "court": "Court",
       "saveChanges": "Save Changes",
       "orEnterGuest": "Or enter guest details (for non-registered users)",
       "assignToAccount": "Assign to Account",
@@ -857,7 +857,6 @@
       "deleteSelected": "Delete Selected",
       "confirmDeleteTitle": "Confirm Deletion",
       "confirmDeleteDescription": "Are you sure you want to delete {count} booking(s)? This action cannot be undone.",
-      "recurringBookings": "recurring booking(s)",
       "regularBookings": "regular booking(s)",
       "deleteAll": "Delete All"
     },
@@ -1049,7 +1048,7 @@
         "lessonType": "Lesson Type",
         "selectType": "Select type",
         "court": "Court",
-        "selectCourt": "Select court",
+        "selectCourt": "Select Court",
         "startTime": "Start Time",
         "selectTime": "Select time",
         "students": "Students",
@@ -1061,7 +1060,6 @@
         "minDuration": "min {hours}hr",
         "approveRequest": "Approve Lesson Request",
         "selectCourtForLesson": "Select an available court for this lesson",
-        "selectCourt": "Select Court",
         "available": "Available",
         "booked": "Booked",
         "selected": "Selected",
@@ -1174,6 +1172,10 @@
       "descriptionPlaceholder": "Product description...",
       "optional": "Optional",
       "stockCount": "Qty"
+    },
+    "absences": {
+      "title": "Absence Management",
+      "description": "Review medical absences and track student attendance"
     }
   },
   "updates": {
@@ -1576,6 +1578,84 @@
       "hours": "What are your hours?",
       "location": "Where are you located?",
       "booking": "How do I book?"
+    }
+  },
+  "absence": {
+    "errors": {
+      "loadFailed": "Failed to load absence data",
+      "submitFailed": "Failed to submit absence",
+      "uploadFailed": "Failed to upload proof file"
+    },
+    "submitSuccess": "Absence submitted successfully",
+    "credits": {
+      "title": "Replacement Credits",
+      "badge": "Replacement Credit",
+      "expires": "Expires"
+    },
+    "calendar": {
+      "title": "Absence Calendar"
+    },
+    "upcoming": {
+      "title": "Upcoming Lessons",
+      "empty": "No upcoming lessons",
+      "applyButton": "Apply Absence",
+      "notifyButton": "Notify Absence"
+    },
+    "history": {
+      "title": "Absence History",
+      "empty": "No absence records"
+    },
+    "types": {
+      "APPLY": "Apply",
+      "LATE_NOTICE": "Late Notice",
+      "ABSENT": "Absent",
+      "MEDICAL": "Medical"
+    },
+    "statuses": {
+      "APPROVED": "Approved",
+      "RECORDED": "Recorded",
+      "PENDING_REVIEW": "Pending Review",
+      "REVIEWED": "Reviewed"
+    },
+    "dialog": {
+      "title": "Submit Absence",
+      "reason": "Reason",
+      "reasonPlaceholder": "Optional: explain why you are absent...",
+      "isMedical": "This is a medical absence (MC)",
+      "proof": "Upload MC Proof",
+      "proofOptional": "Proof is optional but recommended for medical review",
+      "cancel": "Cancel",
+      "submit": "Submit"
+    },
+    "admin": {
+      "title": "Absence Management",
+      "description": "Review medical absences and track student attendance",
+      "reviewSuccess": "Review submitted successfully",
+      "stats": {
+        "totalThisMonth": "Total This Month",
+        "pendingReviews": "Pending Reviews",
+        "creditsAwarded": "Credits Awarded",
+        "mostCommonType": "Most Common Type",
+        "perStudent": "Absences by Student This Month"
+      },
+      "pending": {
+        "title": "Pending Medical Reviews",
+        "viewProof": "View Proof",
+        "review": "Review"
+      },
+      "table": {
+        "title": "All Absences",
+        "allTypes": "All Types",
+        "allStatuses": "All Statuses",
+        "empty": "No absences found"
+      },
+      "dialog": {
+        "title": "Review Medical Absence",
+        "adminNotes": "Admin Notes",
+        "adminNotesPlaceholder": "Optional: add notes for the student...",
+        "approve": "Approve Credit",
+        "deny": "Deny Credit"
+      }
     }
   }
 }
