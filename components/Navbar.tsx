@@ -1,30 +1,25 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { signOut, useSession } from 'next-auth/react'
-import { Button } from '@/components/ui/button'
-import {
-  Menu,
-  Moon,
-  Sun,
-  X,
-} from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { useTheme } from 'next-themes'
-import { UserMenu } from '@/components/UserMenu'
-import { isAdmin } from '@/lib/admin'
-import { LanguageSwitcher } from '@/components/LanguageSwitcher'
-import { useTranslations } from 'next-intl'
+import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Menu, Moon, Sun, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
+import { UserMenu } from "@/components/UserMenu";
+import { isAdmin } from "@/lib/admin";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 export function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
-  const { data: session, status } = useSession()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const { data: session, status } = useSession();
 
-  useEffect(() => setMounted(true), [])
-  const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin)
-  const t = useTranslations('nav')
+  useEffect(() => setMounted(true), []);
+  const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin);
+  const t = useTranslations("nav");
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
@@ -51,28 +46,36 @@ export function Navbar() {
               href="/booking"
               className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              🏸 {t('booking')}
+              🏸 {t("booking")}
             </Link>
             <Link
               href="/lessons"
               className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              📖 {t('lessons')}
+              📖 {t("lessons")}
             </Link>
 
             <Link
               href="/shop"
               className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              🛒 {t('shop')}
+              🛒 {t("shop")}
             </Link>
 
+            {session?.user && (
+              <Link
+                href="/leaderboard"
+                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                🏆 {t("leaderboard")}
+              </Link>
+            )}
             {session?.user && (
               <Link
                 href="/member"
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                👤 {t('member')}
+                👤 {t("member")}
               </Link>
             )}
             {session?.user && (
@@ -80,7 +83,7 @@ export function Navbar() {
                 href="/updates"
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                📢 {t('updates')}
+                📢 {t("updates")}
               </Link>
             )}
             {userIsAdmin && (
@@ -88,7 +91,7 @@ export function Navbar() {
                 href="/admin"
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                ⚙️ {t('admin')}
+                ⚙️ {t("admin")}
               </Link>
             )}
           </div>
@@ -96,14 +99,18 @@ export function Navbar() {
           {/* Auth Section */}
           <div className="hidden md:flex items-center gap-3">
             <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               aria-label="Toggle theme"
             >
-              {mounted && theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {mounted && theme === "dark" ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )}
             </button>
             <LanguageSwitcher />
-            {status === 'loading' ? (
+            {status === "loading" ? (
               <div className="w-8 h-8 rounded-full bg-card animate-pulse" />
             ) : session?.user ? (
               <UserMenu />
@@ -114,12 +121,12 @@ export function Navbar() {
                     variant="ghost"
                     className="text-sm text-muted-foreground hover:text-foreground hover:bg-white/10"
                   >
-                    {t('login')}
+                    {t("login")}
                   </Button>
                 </Link>
                 <Link href="/auth/register">
                   <Button className="text-sm bg-primary hover:bg-primary/90 text-white rounded-full px-4">
-                    {t('signup')}
+                    {t("signup")}
                   </Button>
                 </Link>
               </>
@@ -151,14 +158,14 @@ export function Navbar() {
               className="block py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
-              🏸 {t('booking')}
+              🏸 {t("booking")}
             </Link>
             <Link
               href="/lessons"
               className="block py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
-              📖 {t('lessons')}
+              📖 {t("lessons")}
             </Link>
 
             <Link
@@ -166,16 +173,25 @@ export function Navbar() {
               className="block py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
-              🛒 {t('shop')}
+              🛒 {t("shop")}
             </Link>
 
+            {session?.user && (
+              <Link
+                href="/leaderboard"
+                className="block py-2 text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                🏆 {t("leaderboard")}
+              </Link>
+            )}
             {session?.user && (
               <Link
                 href="/member"
                 className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                👤 {t('member')}
+                👤 {t("member")}
               </Link>
             )}
             {session?.user && (
@@ -184,7 +200,7 @@ export function Navbar() {
                 className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                📢 {t('updates')}
+                📢 {t("updates")}
               </Link>
             )}
             {userIsAdmin && (
@@ -193,17 +209,21 @@ export function Navbar() {
                 className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                ⚙️ {t('admin')}
+                ⚙️ {t("admin")}
               </Link>
             )}
             <hr className="my-3 border-border" />
             <div className="py-2 flex items-center gap-3">
               <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                 aria-label="Toggle theme"
               >
-                {mounted && theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {mounted && theme === "dark" ? (
+                  <Sun className="w-4 h-4" />
+                ) : (
+                  <Moon className="w-4 h-4" />
+                )}
               </button>
               <LanguageSwitcher />
             </div>
@@ -215,12 +235,12 @@ export function Navbar() {
                 </div>
                 <button
                   onClick={() => {
-                    setMobileMenuOpen(false)
-                    signOut({ callbackUrl: '/' })
+                    setMobileMenuOpen(false);
+                    signOut({ callbackUrl: "/" });
                   }}
                   className="block py-2 text-red-600 hover:text-red-500"
                 >
-                  {t('logout')}
+                  {t("logout")}
                 </button>
               </>
             ) : (
@@ -230,14 +250,14 @@ export function Navbar() {
                   className="block py-2 text-muted-foreground hover:text-foreground"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {t('login')}
+                  {t("login")}
                 </Link>
                 <Link
                   href="/auth/register"
                   className="block py-2 text-foreground font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {t('signup')}
+                  {t("signup")}
                 </Link>
               </>
             )}
@@ -245,5 +265,5 @@ export function Navbar() {
         </div>
       )}
     </nav>
-  )
+  );
 }
