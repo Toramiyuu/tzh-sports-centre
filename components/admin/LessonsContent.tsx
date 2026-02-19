@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { format } from 'date-fns'
-import { Calendar } from '@/components/ui/calendar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -16,14 +16,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select";
 import {
   GraduationCap,
   Clock,
@@ -42,9 +42,9 @@ import {
   Square,
   Pencil,
   X,
-} from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import TrialRequestsContent from '@/components/admin/TrialRequestsContent'
+} from "lucide-react";
+import { useTranslations } from "next-intl";
+import TrialRequestsContent from "@/components/admin/TrialRequestsContent";
 import {
   LESSON_TYPES,
   getLessonType,
@@ -54,742 +54,833 @@ import {
   getDurationOptions,
   getPricePerPerson,
   type LessonTypeConfig,
-} from '@/lib/lesson-config'
+} from "@/lib/lesson-config";
 
-const DAYS_OF_WEEK_KEYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+const DAYS_OF_WEEK_KEYS = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+];
 
-// Generate time slots from 9 AM to 11 PM in 30-min increments
 const TIME_SLOTS = Array.from({ length: 29 }, (_, i) => {
-  const hour = Math.floor(i / 2) + 9
-  const minutes = i % 2 === 0 ? '00' : '30'
-  const slotTime = `${hour.toString().padStart(2, '0')}:${minutes}`
-  const ampm = hour < 12 ? 'AM' : 'PM'
-  const displayHour = hour <= 12 ? hour : hour - 12
-  return { slotTime, displayName: `${displayHour}:${minutes} ${ampm}` }
-})
+  const hour = Math.floor(i / 2) + 9;
+  const minutes = i % 2 === 0 ? "00" : "30";
+  const slotTime = `${hour.toString().padStart(2, "0")}:${minutes}`;
+  const ampm = hour < 12 ? "AM" : "PM";
+  const displayHour = hour <= 12 ? hour : hour - 12;
+  return { slotTime, displayName: `${displayHour}:${minutes} ${ampm}` };
+});
 
-// Format time slot to show 30-min range (e.g., "9:00 AM" -> "9:00 - 9:30 AM")
 const formatTimeRange = (displayName: string): string => {
-  const match = displayName.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
-  if (!match) return displayName
+  const match = displayName.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return displayName;
 
-  const hour = parseInt(match[1])
-  const minutes = parseInt(match[2])
-  const period = match[3].toUpperCase()
+  const hour = parseInt(match[1]);
+  const minutes = parseInt(match[2]);
+  const period = match[3].toUpperCase();
 
-  // Calculate end time (30 minutes later)
-  let endMinutes = minutes + 30
-  let endHour = hour
-  let endPeriod = period
+  let endMinutes = minutes + 30;
+  let endHour = hour;
+  let endPeriod = period;
 
   if (endMinutes >= 60) {
-    endMinutes = 0
-    endHour = hour + 1
-    if (hour === 11 && period === 'AM') {
-      endPeriod = 'PM'
-    } else if (hour === 11 && period === 'PM') {
-      endPeriod = 'AM'
+    endMinutes = 0;
+    endHour = hour + 1;
+    if (hour === 11 && period === "AM") {
+      endPeriod = "PM";
+    } else if (hour === 11 && period === "PM") {
+      endPeriod = "AM";
     } else if (hour === 12) {
-      endHour = 1
+      endHour = 1;
     }
   }
 
-  const startStr = `${hour}:${minutes.toString().padStart(2, '0')}`
-  const endStr = `${endHour}:${endMinutes.toString().padStart(2, '0')}`
-  return `${startStr} - ${endStr} ${endPeriod}`
-}
+  const startStr = `${hour}:${minutes.toString().padStart(2, "0")}`;
+  const endStr = `${endHour}:${endMinutes.toString().padStart(2, "0")}`;
+  return `${startStr} - ${endStr} ${endPeriod}`;
+};
 
 interface CoachAvailability {
-  id: string
-  dayOfWeek: number
-  startTime: string
-  endTime: string
-  isRecurring: boolean
+  id: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  isRecurring: boolean;
 }
 
 interface Member {
-  id: string
-  uid: string
-  name: string
-  phone: string
-  skillLevel: string | null
+  id: string;
+  uid: string;
+  name: string;
+  phone: string;
+  skillLevel: string | null;
 }
 
 interface Court {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 interface LessonSession {
-  id: string
-  courtId: number
-  lessonDate: string
-  startTime: string
-  endTime: string
-  lessonType: string
-  duration: number
-  price: number
-  status: string
-  notes: string | null
-  court: Court
-  students: Member[]
+  id: string;
+  courtId: number;
+  lessonDate: string;
+  startTime: string;
+  endTime: string;
+  lessonType: string;
+  duration: number;
+  price: number;
+  status: string;
+  notes: string | null;
+  court: Court;
+  students: Member[];
 }
 
 interface LessonRequest {
-  id: string
-  requestedDate: string
-  requestedTime: string
-  lessonType: string
-  requestedDuration: number
-  status: string
-  adminNotes: string | null
-  suggestedTime: string | null
-  createdAt: string
+  id: string;
+  requestedDate: string;
+  requestedTime: string;
+  lessonType: string;
+  requestedDuration: number;
+  status: string;
+  adminNotes: string | null;
+  suggestedTime: string | null;
+  createdAt: string;
   member: {
-    id: string
-    name: string
-    email: string
-    phone: string
-    skillLevel: string | null
-  }
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    skillLevel: string | null;
+  };
 }
 
 interface BookingSlot {
-  courtId: number
-  startTime: string
-  guestName?: string
-  userName?: string
-  isRecurring?: boolean
-  recurringLabel?: string
+  courtId: number;
+  startTime: string;
+  guestName?: string;
+  userName?: string;
+  isRecurring?: boolean;
+  recurringLabel?: string;
 }
 
 interface LessonsContentProps {
-  initialTab?: 'schedule' | 'availability' | 'billing' | 'requests'
+  initialTab?: "schedule" | "availability" | "billing" | "requests";
 }
 
-export default function LessonsContent({ initialTab = 'schedule' }: LessonsContentProps) {
-  const { data: session, status } = useSession()
-  const t = useTranslations('admin.lessonManagement')
-  const tAdmin = useTranslations('admin')
-  const tDays = useTranslations('days')
+export default function LessonsContent({
+  initialTab = "schedule",
+}: LessonsContentProps) {
+  const { data: session, status } = useSession();
+  const t = useTranslations("admin.lessonManagement");
+  const tAdmin = useTranslations("admin");
+  const tDays = useTranslations("days");
 
-  // Create translated DAYS_OF_WEEK array
-  const DAYS_OF_WEEK = DAYS_OF_WEEK_KEYS.map(key => tDays(key))
+  const DAYS_OF_WEEK = DAYS_OF_WEEK_KEYS.map((key) => tDays(key));
 
-  const [loading, setLoading] = useState(true)
-  const [actionLoading, setActionLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState<'schedule' | 'availability' | 'billing' | 'requests'>(initialTab)
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<
+    "schedule" | "availability" | "billing" | "requests"
+  >(initialTab);
 
-  // Data states
-  const [coachAvailability, setCoachAvailability] = useState<CoachAvailability[]>([])
-  const [members, setMembers] = useState<Member[]>([])
-  const [courts, setCourts] = useState<Court[]>([])
-  const [lessons, setLessons] = useState<LessonSession[]>([])
-  const [lessonRequests, setLessonRequests] = useState<LessonRequest[]>([])
-  const [bookedSlots, setBookedSlots] = useState<BookingSlot[]>([])
+  const [coachAvailability, setCoachAvailability] = useState<
+    CoachAvailability[]
+  >([]);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [courts, setCourts] = useState<Court[]>([]);
+  const [lessons, setLessons] = useState<LessonSession[]>([]);
+  const [lessonRequests, setLessonRequests] = useState<LessonRequest[]>([]);
+  const [bookedSlots, setBookedSlots] = useState<BookingSlot[]>([]);
 
-  // Calendar & Filter states
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const [billingMonth, setBillingMonth] = useState(format(new Date(), 'yyyy-MM'))
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [billingMonth, setBillingMonth] = useState(
+    format(new Date(), "yyyy-MM"),
+  );
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  // Dialog states
-  const [availabilityDialogOpen, setAvailabilityDialogOpen] = useState(false)
-  const [lessonDialogOpen, setLessonDialogOpen] = useState(false)
-  const [approveDialogOpen, setApproveDialogOpen] = useState(false)
-  const [requestDetailsDialogOpen, setRequestDetailsDialogOpen] = useState(false)
-  const [selectedRequest, setSelectedRequest] = useState<LessonRequest | null>(null)
-  const [approveCourtId, setApproveCourtId] = useState<number | null>(null)
-  const [courtAvailability, setCourtAvailability] = useState<Record<number, boolean>>({})
-  const [loadingAvailability, setLoadingAvailability] = useState(false)
+  const [availabilityDialogOpen, setAvailabilityDialogOpen] = useState(false);
+  const [lessonDialogOpen, setLessonDialogOpen] = useState(false);
+  const [approveDialogOpen, setApproveDialogOpen] = useState(false);
+  const [requestDetailsDialogOpen, setRequestDetailsDialogOpen] =
+    useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<LessonRequest | null>(
+    null,
+  );
+  const [approveCourtId, setApproveCourtId] = useState<number | null>(null);
+  const [courtAvailability, setCourtAvailability] = useState<
+    Record<number, boolean>
+  >({});
+  const [loadingAvailability, setLoadingAvailability] = useState(false);
 
-  // Form states for availability
-  const [availDays, setAvailDays] = useState<number[]>([])
-  const [availStartTime, setAvailStartTime] = useState('')
-  const [availEndTime, setAvailEndTime] = useState('')
+  const [availDays, setAvailDays] = useState<number[]>([]);
+  const [availStartTime, setAvailStartTime] = useState("");
+  const [availEndTime, setAvailEndTime] = useState("");
 
-  // Select mode states for availability
-  const [availSelectMode, setAvailSelectMode] = useState(false)
-  const [selectedAvailIds, setSelectedAvailIds] = useState<string[]>([])
+  const [availSelectMode, setAvailSelectMode] = useState(false);
+  const [selectedAvailIds, setSelectedAvailIds] = useState<string[]>([]);
 
-  // Edit availability dialog states
-  const [editAvailDialogOpen, setEditAvailDialogOpen] = useState(false)
-  const [editingAvail, setEditingAvail] = useState<CoachAvailability | null>(null)
-  const [editAvailDay, setEditAvailDay] = useState<number>(0)
-  const [editAvailStartTime, setEditAvailStartTime] = useState('')
-  const [editAvailEndTime, setEditAvailEndTime] = useState('')
+  const [editAvailDialogOpen, setEditAvailDialogOpen] = useState(false);
+  const [editingAvail, setEditingAvail] = useState<CoachAvailability | null>(
+    null,
+  );
+  const [editAvailDay, setEditAvailDay] = useState<number>(0);
+  const [editAvailStartTime, setEditAvailStartTime] = useState("");
+  const [editAvailEndTime, setEditAvailEndTime] = useState("");
 
-  // Suggest time dialog states
-  const [suggestTimeDialogOpen, setSuggestTimeDialogOpen] = useState(false)
-  const [suggestDate, setSuggestDate] = useState<Date | undefined>(undefined)
-  const [suggestTime, setSuggestTime] = useState('')
-  const [suggestNotes, setSuggestNotes] = useState('')
+  const [suggestTimeDialogOpen, setSuggestTimeDialogOpen] = useState(false);
+  const [suggestDate, setSuggestDate] = useState<Date | undefined>(undefined);
+  const [suggestTime, setSuggestTime] = useState("");
+  const [suggestNotes, setSuggestNotes] = useState("");
 
-  // Form states for lesson
-  const [lessonCourtId, setLessonCourtId] = useState<number | null>(null)
-  const [lessonStartTime, setLessonStartTime] = useState('')
-  const [lessonType, setLessonType] = useState('')
-  const [lessonDuration, setLessonDuration] = useState<number>(1.5)
-  const [lessonStudentIds, setLessonStudentIds] = useState<string[]>([])
-  const [lessonNotes, setLessonNotes] = useState('')
-  const [studentSearch, setStudentSearch] = useState('')
+  const [lessonCourtId, setLessonCourtId] = useState<number | null>(null);
+  const [lessonStartTime, setLessonStartTime] = useState("");
+  const [lessonType, setLessonType] = useState("");
+  const [lessonDuration, setLessonDuration] = useState<number>(1.5);
+  const [lessonStudentIds, setLessonStudentIds] = useState<string[]>([]);
+  const [lessonNotes, setLessonNotes] = useState("");
+  const [studentSearch, setStudentSearch] = useState("");
+  const [lessonTeacherId, setLessonTeacherId] = useState<string>("");
+  const [activeTeachers, setActiveTeachers] = useState<
+    { id: string; name: string }[]
+  >([]);
 
   const fetchData = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const [availRes, membersRes, courtsRes, lessonsRes, requestsRes] = await Promise.all([
-        fetch('/api/admin/coach-availability'),
-        fetch('/api/admin/members'),
-        fetch('/api/courts'),
-        fetch(`/api/admin/lessons?date=${format(selectedDate, 'yyyy-MM-dd')}`),
-        fetch('/api/admin/lesson-requests'),
-      ])
+      const [
+        availRes,
+        membersRes,
+        courtsRes,
+        lessonsRes,
+        requestsRes,
+        staffRes,
+      ] = await Promise.all([
+        fetch("/api/admin/coach-availability"),
+        fetch("/api/admin/members"),
+        fetch("/api/courts"),
+        fetch(`/api/admin/lessons?date=${format(selectedDate, "yyyy-MM-dd")}`),
+        fetch("/api/admin/lesson-requests"),
+        fetch("/api/admin/staff"),
+      ]);
 
-      const [availData, membersData, courtsData, lessonsData, requestsData] = await Promise.all([
+      const [
+        availData,
+        membersData,
+        courtsData,
+        lessonsData,
+        requestsData,
+        staffData,
+      ] = await Promise.all([
         availRes.json(),
         membersRes.json(),
         courtsRes.json(),
         lessonsRes.json(),
         requestsRes.json(),
-      ])
+        staffRes.json(),
+      ]);
 
-      setCoachAvailability(availData.availability || [])
-      setMembers(membersData.members || [])
-      setCourts(courtsData.courts || [])
-      setLessons(lessonsData.lessons || [])
-      setLessonRequests(requestsData.requests || [])
+      setCoachAvailability(availData.availability || []);
+      setMembers(membersData.members || []);
+      setCourts(courtsData.courts || []);
+      setLessons(lessonsData.lessons || []);
+      setLessonRequests(requestsData.requests || []);
+      setActiveTeachers(
+        (staffData.teachers || []).map((t: { id: string; name: string }) => ({
+          id: t.id,
+          name: t.name,
+        })),
+      );
     } catch (error) {
-      console.error('Error fetching data:', error)
+      console.error("Error fetching data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch('/api/admin/lesson-requests')
-      const data = await res.json()
-      setLessonRequests(data.requests || [])
+      const res = await fetch("/api/admin/lesson-requests");
+      const data = await res.json();
+      setLessonRequests(data.requests || []);
     } catch (error) {
-      console.error('Error fetching requests:', error)
+      console.error("Error fetching requests:", error);
     }
-  }
+  };
 
-  const handleRequestAction = async (requestId: string, status: string, adminNotes?: string, suggestedTime?: string, courtId?: number) => {
-    setActionLoading(true)
+  const handleRequestAction = async (
+    requestId: string,
+    status: string,
+    adminNotes?: string,
+    suggestedTime?: string,
+    courtId?: number,
+  ) => {
+    setActionLoading(true);
     try {
-      const res = await fetch('/api/admin/lesson-requests', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ requestId, status, adminNotes, suggestedTime, courtId }),
-      })
+      const res = await fetch("/api/admin/lesson-requests", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          requestId,
+          status,
+          adminNotes,
+          suggestedTime,
+          courtId,
+        }),
+      });
       if (res.ok) {
-        fetchRequests()
-        // If approving, also refresh lessons for the schedule tab
-        if (status === 'approved') {
-          fetchLessonsForDate()
+        fetchRequests();
+        if (status === "approved") {
+          fetchLessonsForDate();
         }
       } else {
-        const data = await res.json()
-        alert(data.error || 'Failed to update request')
+        const data = await res.json();
+        alert(data.error || "Failed to update request");
       }
     } catch (error) {
-      console.error('Error updating request:', error)
+      console.error("Error updating request:", error);
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
   const openApproveDialog = async (request: LessonRequest) => {
-    setSelectedRequest(request)
-    setApproveCourtId(null)
-    setApproveDialogOpen(true)
-    setLoadingAvailability(true)
+    setSelectedRequest(request);
+    setApproveCourtId(null);
+    setApproveDialogOpen(true);
+    setLoadingAvailability(true);
 
-    // Fetch availability for the requested date and time
     try {
-      const dateStr = format(new Date(request.requestedDate), 'yyyy-MM-dd')
-      const res = await fetch(`/api/availability?date=${dateStr}`)
-      const data = await res.json()
+      const dateStr = format(new Date(request.requestedDate), "yyyy-MM-dd");
+      const res = await fetch(`/api/availability?date=${dateStr}`);
+      const data = await res.json();
 
-      // Check which courts are available at the requested time
-      // Use the requestedDuration from the request
-      const duration = request.requestedDuration || 1.5
-      const slotsNeeded = duration * 2 // 30-min slots
+      const duration = request.requestedDuration || 1.5;
+      const slotsNeeded = duration * 2;
 
-      const availability: Record<number, boolean> = {}
+      const availability: Record<number, boolean> = {};
 
-      // Also check existing lessons for conflicts
-      const lessonsRes = await fetch(`/api/admin/lessons?date=${dateStr}`)
-      const lessonsData = await lessonsRes.json()
-      const existingLessons = lessonsData.lessons || []
+      const lessonsRes = await fetch(`/api/admin/lessons?date=${dateStr}`);
+      const lessonsData = await lessonsRes.json();
+      const existingLessons = lessonsData.lessons || [];
 
-      // Calculate the end time for the requested lesson
-      const [startHours, startMinutes] = request.requestedTime.split(':').map(Number)
-      const durationMinutes = duration * 60
-      const endTotalMinutes = startHours * 60 + startMinutes + durationMinutes
-      const endHours = Math.floor(endTotalMinutes / 60)
-      const endMinutes = endTotalMinutes % 60
-      const requestedEndTime = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`
+      const [startHours, startMinutes] = request.requestedTime
+        .split(":")
+        .map(Number);
+      const durationMinutes = duration * 60;
+      const endTotalMinutes = startHours * 60 + startMinutes + durationMinutes;
+      const endHours = Math.floor(endTotalMinutes / 60);
+      const endMinutes = endTotalMinutes % 60;
+      const requestedEndTime = `${endHours.toString().padStart(2, "0")}:${endMinutes.toString().padStart(2, "0")}`;
 
-      // Check each court
       if (data.courts) {
         data.courts.forEach((court: { id: number }) => {
-          // First, check if there's a booking conflict using availability data
-          let hasBookingConflict = false
-          const courtAvailData = data.availability?.find((ca: { court: { id: number } }) => ca.court.id === court.id)
+          let hasBookingConflict = false;
+          const courtAvailData = data.availability?.find(
+            (ca: { court: { id: number } }) => ca.court.id === court.id,
+          );
 
           if (courtAvailData) {
-            const startIdx = courtAvailData.slots.findIndex((s: { slotTime: string }) => s.slotTime === request.requestedTime)
+            const startIdx = courtAvailData.slots.findIndex(
+              (s: { slotTime: string }) => s.slotTime === request.requestedTime,
+            );
             if (startIdx !== -1) {
-              // Time slot exists in booking hours - check availability
-              for (let i = 0; i < slotsNeeded && startIdx + i < courtAvailData.slots.length; i++) {
+              for (
+                let i = 0;
+                i < slotsNeeded && startIdx + i < courtAvailData.slots.length;
+                i++
+              ) {
                 if (!courtAvailData.slots[startIdx + i].available) {
-                  hasBookingConflict = true
-                  break
+                  hasBookingConflict = true;
+                  break;
                 }
               }
             }
-            // If slot not found, it's outside booking hours (before 3 PM) - no booking conflict
           }
 
-          // Second, check for lesson conflicts
-          let hasLessonConflict = false
-          existingLessons.forEach((lesson: { courtId: number; startTime: string; endTime: string; status: string }) => {
-            if (lesson.courtId === court.id && lesson.status === 'scheduled') {
-              // Check time overlap
-              const lessonStart = lesson.startTime
-              const lessonEnd = lesson.endTime
-              // Overlap if: requestedStart < lessonEnd AND requestedEnd > lessonStart
-              if (request.requestedTime < lessonEnd && requestedEndTime > lessonStart) {
-                hasLessonConflict = true
+          let hasLessonConflict = false;
+          existingLessons.forEach(
+            (lesson: {
+              courtId: number;
+              startTime: string;
+              endTime: string;
+              status: string;
+            }) => {
+              if (
+                lesson.courtId === court.id &&
+                lesson.status === "scheduled"
+              ) {
+                const lessonStart = lesson.startTime;
+                const lessonEnd = lesson.endTime;
+                if (
+                  request.requestedTime < lessonEnd &&
+                  requestedEndTime > lessonStart
+                ) {
+                  hasLessonConflict = true;
+                }
               }
-            }
-          })
+            },
+          );
 
-          availability[court.id] = !hasBookingConflict && !hasLessonConflict
-        })
+          availability[court.id] = !hasBookingConflict && !hasLessonConflict;
+        });
       }
 
-      setCourtAvailability(availability)
+      setCourtAvailability(availability);
     } catch (error) {
-      console.error('Error fetching availability:', error)
-      // On error, default all courts to available
-      const defaultAvail: Record<number, boolean> = {}
-      courts.forEach(c => { defaultAvail[c.id] = true })
-      setCourtAvailability(defaultAvail)
+      console.error("Error fetching availability:", error);
+      const defaultAvail: Record<number, boolean> = {};
+      courts.forEach((c) => {
+        defaultAvail[c.id] = true;
+      });
+      setCourtAvailability(defaultAvail);
     } finally {
-      setLoadingAvailability(false)
+      setLoadingAvailability(false);
     }
-  }
+  };
 
   const handleApproveWithCourt = async () => {
-    if (!selectedRequest || !approveCourtId) return
-    await handleRequestAction(selectedRequest.id, 'approved', undefined, undefined, approveCourtId)
-    setApproveDialogOpen(false)
-    setSelectedRequest(null)
-    setApproveCourtId(null)
-    setCourtAvailability({})
-  }
+    if (!selectedRequest || !approveCourtId) return;
+    await handleRequestAction(
+      selectedRequest.id,
+      "approved",
+      undefined,
+      undefined,
+      approveCourtId,
+    );
+    setApproveDialogOpen(false);
+    setSelectedRequest(null);
+    setApproveCourtId(null);
+    setCourtAvailability({});
+  };
 
   const fetchLessonsForDate = async () => {
     try {
-      const dateStr = format(selectedDate, 'yyyy-MM-dd')
-      // Fetch both lessons and bookings in parallel
+      const dateStr = format(selectedDate, "yyyy-MM-dd");
       const [lessonsRes, bookingsRes] = await Promise.all([
         fetch(`/api/admin/lessons?date=${dateStr}`),
         fetch(`/api/admin/bookings?date=${dateStr}`),
-      ])
+      ]);
 
-      const lessonsData = await lessonsRes.json()
-      const bookingsData = await bookingsRes.json()
+      const lessonsData = await lessonsRes.json();
+      const bookingsData = await bookingsRes.json();
 
-      setLessons(lessonsData.lessons || [])
+      setLessons(lessonsData.lessons || []);
 
-      // Extract booked slots from bookings data
-      const slots: BookingSlot[] = []
+      const slots: BookingSlot[] = [];
 
-      // Regular bookings
       if (bookingsData.bookings) {
-        bookingsData.bookings.forEach((booking: { courtId: number; startTime: string; guestName?: string; user?: { name: string } }) => {
-          slots.push({
-            courtId: booking.courtId,
-            startTime: booking.startTime,
-            guestName: booking.guestName,
-            userName: booking.user?.name,
-          })
-        })
+        bookingsData.bookings.forEach(
+          (booking: {
+            courtId: number;
+            startTime: string;
+            guestName?: string;
+            user?: { name: string };
+          }) => {
+            slots.push({
+              courtId: booking.courtId,
+              startTime: booking.startTime,
+              guestName: booking.guestName,
+              userName: booking.user?.name,
+            });
+          },
+        );
       }
 
-      // Recurring bookings
       if (bookingsData.recurringBookings) {
-        bookingsData.recurringBookings.forEach((recurring: { courtId: number; startTime: string; label?: string; guestName?: string; user?: { name: string } }) => {
-          slots.push({
-            courtId: recurring.courtId,
-            startTime: recurring.startTime,
-            guestName: recurring.guestName,
-            userName: recurring.user?.name,
-            isRecurring: true,
-            recurringLabel: recurring.label,
-          })
-        })
+        bookingsData.recurringBookings.forEach(
+          (recurring: {
+            courtId: number;
+            startTime: string;
+            label?: string;
+            guestName?: string;
+            user?: { name: string };
+          }) => {
+            slots.push({
+              courtId: recurring.courtId,
+              startTime: recurring.startTime,
+              guestName: recurring.guestName,
+              userName: recurring.user?.name,
+              isRecurring: true,
+              recurringLabel: recurring.label,
+            });
+          },
+        );
       }
 
-      setBookedSlots(slots)
+      setBookedSlots(slots);
     } catch (error) {
-      console.error('Error fetching lessons:', error)
+      console.error("Error fetching lessons:", error);
     }
-  }
+  };
 
   const fetchBillingData = async () => {
     try {
-      const res = await fetch(`/api/admin/lessons?month=${billingMonth}`)
-      const data = await res.json()
-      setLessons(data.lessons || [])
+      const res = await fetch(`/api/admin/lessons?month=${billingMonth}`);
+      const data = await res.json();
+      setLessons(data.lessons || []);
     } catch (error) {
-      console.error('Error fetching billing data:', error)
+      console.error("Error fetching billing data:", error);
     }
-  }
+  };
 
-  // Create a map of lessons by court and time slot for grid view
   const createLessonMap = () => {
-    const map: Record<string, LessonSession> = {}
-    lessons.filter(l => l.status !== 'cancelled').forEach((lesson) => {
-      // For each lesson, mark all 30-min slots it occupies
-      const startIdx = TIME_SLOTS.findIndex(s => s.slotTime === lesson.startTime)
-      const endIdx = TIME_SLOTS.findIndex(s => s.slotTime === lesson.endTime)
-      if (startIdx !== -1) {
-        const endIndex = endIdx !== -1 ? endIdx : TIME_SLOTS.length
-        for (let i = startIdx; i < endIndex; i++) {
-          const key = `${lesson.courtId}-${TIME_SLOTS[i].slotTime}`
-          map[key] = lesson
+    const map: Record<string, LessonSession> = {};
+    lessons
+      .filter((l) => l.status !== "cancelled")
+      .forEach((lesson) => {
+        const startIdx = TIME_SLOTS.findIndex(
+          (s) => s.slotTime === lesson.startTime,
+        );
+        const endIdx = TIME_SLOTS.findIndex(
+          (s) => s.slotTime === lesson.endTime,
+        );
+        if (startIdx !== -1) {
+          const endIndex = endIdx !== -1 ? endIdx : TIME_SLOTS.length;
+          for (let i = startIdx; i < endIndex; i++) {
+            const key = `${lesson.courtId}-${TIME_SLOTS[i].slotTime}`;
+            map[key] = lesson;
+          }
         }
-      }
-    })
-    return map
-  }
+      });
+    return map;
+  };
 
-  // Create a map of bookings by court and time slot for grid view
   const createBookingMap = () => {
-    const map: Record<string, BookingSlot> = {}
+    const map: Record<string, BookingSlot> = {};
     bookedSlots.forEach((slot) => {
-      const key = `${slot.courtId}-${slot.startTime}`
-      map[key] = slot
-    })
-    return map
-  }
+      const key = `${slot.courtId}-${slot.startTime}`;
+      map[key] = slot;
+    });
+    return map;
+  };
 
-  const lessonMap = createLessonMap()
-  const bookingMap = createBookingMap()
+  const lessonMap = createLessonMap();
+  const bookingMap = createBookingMap();
 
-  // Open add lesson dialog with pre-selected court and time
   const openAddLessonDialog = (courtId: number, slotTime: string) => {
-    setLessonCourtId(courtId)
-    setLessonStartTime(slotTime)
-    setStudentSearch('')
-    setLessonDialogOpen(true)
-  }
+    setLessonCourtId(courtId);
+    setLessonStartTime(slotTime);
+    setStudentSearch("");
+    setLessonDialogOpen(true);
+  };
 
   useEffect(() => {
     if (session?.user) {
-      fetchData()
+      fetchData();
     }
-  }, [session])
+  }, [session]);
 
   useEffect(() => {
-    if (activeTab === 'schedule') {
-      fetchLessonsForDate()
-    } else if (activeTab === 'billing') {
-      fetchBillingData()
+    if (activeTab === "schedule") {
+      fetchLessonsForDate();
+    } else if (activeTab === "billing") {
+      fetchBillingData();
     }
-  }, [selectedDate, billingMonth, activeTab])
+  }, [selectedDate, billingMonth, activeTab]);
 
   const handleAddAvailability = async () => {
     if (availDays.length === 0 || !availStartTime || !availEndTime) {
-      alert('Please select days, start time, and end time')
-      return
+      alert("Please select days, start time, and end time");
+      return;
     }
 
-    setActionLoading(true)
+    setActionLoading(true);
     try {
-      const res = await fetch('/api/admin/coach-availability', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/coach-availability", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           daysOfWeek: availDays,
           startTime: availStartTime,
           endTime: availEndTime,
           isRecurring: true,
         }),
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
 
       if (res.ok) {
-        setAvailabilityDialogOpen(false)
-        setAvailDays([])
-        setAvailStartTime('')
-        setAvailEndTime('')
-        fetchData()
+        setAvailabilityDialogOpen(false);
+        setAvailDays([]);
+        setAvailStartTime("");
+        setAvailEndTime("");
+        fetchData();
       } else {
-        alert(data.error || 'Failed to add availability')
+        alert(data.error || "Failed to add availability");
       }
     } catch (error) {
-      console.error('Error adding availability:', error)
-      alert('Failed to add availability. Please try again.')
+      console.error("Error adding availability:", error);
+      alert("Failed to add availability. Please try again.");
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
   const handleDeleteAvailability = async (id: string) => {
-    setActionLoading(true)
+    setActionLoading(true);
     try {
-      await fetch('/api/admin/coach-availability', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/admin/coach-availability", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
-      })
-      fetchData()
+      });
+      fetchData();
     } catch (error) {
-      console.error('Error deleting availability:', error)
+      console.error("Error deleting availability:", error);
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
   const handleBulkDeleteAvailability = async () => {
-    if (selectedAvailIds.length === 0) return
-    if (!confirm(`Are you sure you want to delete ${selectedAvailIds.length} availability slot(s)?`)) return
-
-    setActionLoading(true)
-    try {
-      // Delete each selected availability
-      await Promise.all(
-        selectedAvailIds.map(id =>
-          fetch('/api/admin/coach-availability', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id }),
-          })
-        )
+    if (selectedAvailIds.length === 0) return;
+    if (
+      !confirm(
+        `Are you sure you want to delete ${selectedAvailIds.length} availability slot(s)?`,
       )
-      setSelectedAvailIds([])
-      setAvailSelectMode(false)
-      fetchData()
+    )
+      return;
+
+    setActionLoading(true);
+    try {
+      await Promise.all(
+        selectedAvailIds.map((id) =>
+          fetch("/api/admin/coach-availability", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+          }),
+        ),
+      );
+      setSelectedAvailIds([]);
+      setAvailSelectMode(false);
+      fetchData();
     } catch (error) {
-      console.error('Error bulk deleting availability:', error)
+      console.error("Error bulk deleting availability:", error);
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
   const openEditAvailDialog = (avail: CoachAvailability) => {
-    setEditingAvail(avail)
-    setEditAvailDay(avail.dayOfWeek)
-    setEditAvailStartTime(avail.startTime)
-    setEditAvailEndTime(avail.endTime)
-    setEditAvailDialogOpen(true)
-  }
+    setEditingAvail(avail);
+    setEditAvailDay(avail.dayOfWeek);
+    setEditAvailStartTime(avail.startTime);
+    setEditAvailEndTime(avail.endTime);
+    setEditAvailDialogOpen(true);
+  };
 
   const handleEditAvailability = async () => {
-    if (!editingAvail || !editAvailStartTime || !editAvailEndTime) return
+    if (!editingAvail || !editAvailStartTime || !editAvailEndTime) return;
 
-    setActionLoading(true)
+    setActionLoading(true);
     try {
-      const res = await fetch('/api/admin/coach-availability', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/coach-availability", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: editingAvail.id,
           dayOfWeek: editAvailDay,
           startTime: editAvailStartTime,
           endTime: editAvailEndTime,
         }),
-      })
+      });
 
       if (res.ok) {
-        setEditAvailDialogOpen(false)
-        setEditingAvail(null)
-        fetchData()
+        setEditAvailDialogOpen(false);
+        setEditingAvail(null);
+        fetchData();
       } else {
-        const data = await res.json()
-        alert(data.error || 'Failed to update availability')
+        const data = await res.json();
+        alert(data.error || "Failed to update availability");
       }
     } catch (error) {
-      console.error('Error updating availability:', error)
+      console.error("Error updating availability:", error);
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
   const toggleAvailSelection = (id: string) => {
-    setSelectedAvailIds(prev =>
-      prev.includes(id)
-        ? prev.filter(i => i !== id)
-        : [...prev, id]
-    )
-  }
+    setSelectedAvailIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+    );
+  };
 
   const toggleAllAvailSelection = () => {
     if (selectedAvailIds.length === coachAvailability.length) {
-      setSelectedAvailIds([])
+      setSelectedAvailIds([]);
     } else {
-      setSelectedAvailIds(coachAvailability.map(a => a.id))
+      setSelectedAvailIds(coachAvailability.map((a) => a.id));
     }
-  }
+  };
 
   const handleAddLesson = async () => {
-    if (!lessonCourtId || !lessonStartTime || !lessonType || lessonStudentIds.length === 0) return
+    if (
+      !lessonCourtId ||
+      !lessonStartTime ||
+      !lessonType ||
+      lessonStudentIds.length === 0
+    )
+      return;
 
-    setActionLoading(true)
+    setActionLoading(true);
     try {
-      const res = await fetch('/api/admin/lessons', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/lessons", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           courtId: lessonCourtId,
-          lessonDate: format(selectedDate, 'yyyy-MM-dd'),
+          lessonDate: format(selectedDate, "yyyy-MM-dd"),
           startTime: lessonStartTime,
           lessonType,
           duration: lessonDuration,
           studentIds: lessonStudentIds,
           notes: lessonNotes || null,
+          teacherId:
+            lessonTeacherId && lessonTeacherId !== "none"
+              ? lessonTeacherId
+              : null,
         }),
-      })
+      });
 
       if (res.ok) {
-        setLessonDialogOpen(false)
-        setLessonCourtId(null)
-        setLessonStartTime('')
-        setLessonType('')
-        setLessonDuration(1.5)
-        setLessonStudentIds([])
-        setLessonNotes('')
-        fetchLessonsForDate()
+        setLessonDialogOpen(false);
+        setLessonCourtId(null);
+        setLessonStartTime("");
+        setLessonType("");
+        setLessonDuration(1.5);
+        setLessonStudentIds([]);
+        setLessonNotes("");
+        setLessonTeacherId("");
+        fetchLessonsForDate();
       } else {
-        const data = await res.json()
-        alert(data.error || 'Failed to create lesson')
+        const data = await res.json();
+        alert(data.error || "Failed to create lesson");
       }
     } catch (error) {
-      console.error('Error adding lesson:', error)
+      console.error("Error adding lesson:", error);
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
   const handleCancelLesson = async (lessonId: string) => {
-    if (!confirm('Are you sure you want to cancel this lesson?')) return
+    if (!confirm("Are you sure you want to cancel this lesson?")) return;
 
-    setActionLoading(true)
+    setActionLoading(true);
     try {
-      await fetch('/api/admin/lessons', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/admin/lessons", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lessonId }),
-      })
-      fetchLessonsForDate()
+      });
+      fetchLessonsForDate();
     } catch (error) {
-      console.error('Error cancelling lesson:', error)
+      console.error("Error cancelling lesson:", error);
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
   const handleMarkCompleted = async (lessonId: string) => {
-    setActionLoading(true)
+    setActionLoading(true);
     try {
-      await fetch('/api/admin/lessons', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lessonId, status: 'completed' }),
-      })
-      if (activeTab === 'schedule') {
-        fetchLessonsForDate()
+      await fetch("/api/admin/lessons", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lessonId, status: "completed" }),
+      });
+      if (activeTab === "schedule") {
+        fetchLessonsForDate();
       } else {
-        fetchBillingData()
+        fetchBillingData();
       }
     } catch (error) {
-      console.error('Error updating lesson:', error)
+      console.error("Error updating lesson:", error);
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
-  // Calculate billing per member for the selected month
   const getBillingByMember = () => {
-    const billing: Record<string, { member: Member; lessons: LessonSession[]; total: number }> = {}
+    const billing: Record<
+      string,
+      { member: Member; lessons: LessonSession[]; total: number }
+    > = {};
 
     lessons
-      .filter(l => l.status === 'completed')
-      .forEach(lesson => {
-        const pricePerStudent = lesson.price / lesson.students.length
-        lesson.students.forEach(student => {
+      .filter((l) => l.status === "completed")
+      .forEach((lesson) => {
+        const pricePerStudent = lesson.price / lesson.students.length;
+        lesson.students.forEach((student) => {
           if (!billing[student.id]) {
-            billing[student.id] = { member: student, lessons: [], total: 0 }
+            billing[student.id] = { member: student, lessons: [], total: 0 };
           }
-          billing[student.id].lessons.push(lesson)
-          billing[student.id].total += pricePerStudent
-        })
-      })
+          billing[student.id].lessons.push(lesson);
+          billing[student.id].total += pricePerStudent;
+        });
+      });
 
-    return Object.values(billing).sort((a, b) => b.total - a.total)
-  }
+    return Object.values(billing).sort((a, b) => b.total - a.total);
+  };
 
-  const getLessonTypeInfo = (type: string): LessonTypeConfig | undefined => getLessonType(type)
+  const getLessonTypeInfo = (type: string): LessonTypeConfig | undefined =>
+    getLessonType(type);
 
-  // Get pending/changed requests for the selected date
   const getPendingRequestsForDate = () => {
-    const selectedDateStr = format(selectedDate, 'yyyy-MM-dd')
-    return lessonRequests.filter(r => {
-      const requestDateStr = format(new Date(r.requestedDate), 'yyyy-MM-dd')
-      // Include both pending AND changed (coach suggested different time)
-      return (r.status === 'pending' || r.status === 'changed') && requestDateStr === selectedDateStr
-    })
-  }
+    const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
+    return lessonRequests.filter((r) => {
+      const requestDateStr = format(new Date(r.requestedDate), "yyyy-MM-dd");
+      return (
+        (r.status === "pending" || r.status === "changed") &&
+        requestDateStr === selectedDateStr
+      );
+    });
+  };
 
-  // Build a map of requests by time slot for grid display
-  const requestMap: Record<string, LessonRequest> = {}
-  const requestSkipSlots = new Set<string>() // Slots that should be skipped (covered by rowSpan)
+  const requestMap: Record<string, LessonRequest> = {};
+  const requestSkipSlots = new Set<string>();
 
-  getPendingRequestsForDate().forEach(request => {
-    requestMap[request.requestedTime] = request
+  getPendingRequestsForDate().forEach((request) => {
+    requestMap[request.requestedTime] = request;
 
-    // Calculate which slots this request covers (for rowSpan skipping)
-    const slotsCount = Math.round(request.requestedDuration * 2)
-    const [startHour, startMin] = request.requestedTime.split(':').map(Number)
-    let totalMinutes = startHour * 60 + startMin
+    const slotsCount = Math.round(request.requestedDuration * 2);
+    const [startHour, startMin] = request.requestedTime.split(":").map(Number);
+    let totalMinutes = startHour * 60 + startMin;
 
-    // Skip the first slot (that's where the card renders), mark the rest as skip
     for (let i = 1; i < slotsCount; i++) {
-      totalMinutes += 30 // Each slot is 30 minutes
-      const skipHour = Math.floor(totalMinutes / 60)
-      const skipMin = totalMinutes % 60
-      const skipTime = `${skipHour.toString().padStart(2, '0')}:${skipMin.toString().padStart(2, '0')}`
-      requestSkipSlots.add(skipTime)
+      totalMinutes += 30;
+      const skipHour = Math.floor(totalMinutes / 60);
+      const skipMin = totalMinutes % 60;
+      const skipTime = `${skipHour.toString().padStart(2, "0")}:${skipMin.toString().padStart(2, "0")}`;
+      requestSkipSlots.add(skipTime);
     }
-  })
+  });
 
-  // Handler to open request details dialog
   const openRequestDetailsDialog = (request: LessonRequest) => {
-    setSelectedRequest(request)
-    setRequestDetailsDialogOpen(true)
-  }
+    setSelectedRequest(request);
+    setRequestDetailsDialogOpen(true);
+  };
 
-  // Handler to approve from details dialog (opens court selection)
   const handleApproveFromDetails = () => {
-    setRequestDetailsDialogOpen(false)
+    setRequestDetailsDialogOpen(false);
     if (selectedRequest) {
-      openApproveDialog(selectedRequest)
+      openApproveDialog(selectedRequest);
     }
-  }
+  };
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
       </div>
-    )
+    );
   }
 
   return (
@@ -798,37 +889,37 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
           <Button
-            variant={activeTab === 'schedule' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('schedule')}
+            variant={activeTab === "schedule" ? "default" : "outline"}
+            onClick={() => setActiveTab("schedule")}
           >
             <CalendarDays className="w-4 h-4 mr-2" />
-            {t('tabs.schedule')}
+            {t("tabs.schedule")}
           </Button>
           <Button
-            variant={activeTab === 'availability' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('availability')}
+            variant={activeTab === "availability" ? "default" : "outline"}
+            onClick={() => setActiveTab("availability")}
           >
             <Clock className="w-4 h-4 mr-2" />
-            {t('tabs.availability')}
+            {t("tabs.availability")}
           </Button>
           <Button
-            variant={activeTab === 'billing' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('billing')}
+            variant={activeTab === "billing" ? "default" : "outline"}
+            onClick={() => setActiveTab("billing")}
           >
             <DollarSign className="w-4 h-4 mr-2" />
-            {t('tabs.billing')}
+            {t("tabs.billing")}
           </Button>
           <Button
-            variant={activeTab === 'requests' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('requests')}
+            variant={activeTab === "requests" ? "default" : "outline"}
+            onClick={() => setActiveTab("requests")}
           >
             <Users className="w-4 h-4 mr-2" />
-            {t('tabs.trialRequests')}
+            {t("tabs.trialRequests")}
           </Button>
         </div>
         <Button onClick={fetchData} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
-          {tAdmin('refresh')}
+          {tAdmin("refresh")}
         </Button>
       </div>
 
@@ -840,7 +931,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
       ) : (
         <>
           {/* Schedule Tab */}
-          {activeTab === 'schedule' && (
+          {activeTab === "schedule" && (
             <div className="space-y-6">
               {/* Top Section: Date Selection and View Toggle */}
               <div className="flex flex-col lg:flex-row gap-6">
@@ -849,7 +940,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center gap-2">
                       <CalendarDays className="w-5 h-5" />
-                      {t('scheduled.selectDate')}
+                      {t("scheduled.selectDate")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -868,27 +959,31 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                     <div className="flex items-center justify-between">
                       <CardTitle className="flex items-center gap-2">
                         <GraduationCap className="w-5 h-5" />
-                        {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                        {format(selectedDate, "EEEE, MMMM d, yyyy")}
                         <Badge variant="outline" className="ml-2">
-                          {lessons.filter(l => l.status !== 'cancelled').length} {t('scheduled.lessons')}
+                          {
+                            lessons.filter((l) => l.status !== "cancelled")
+                              .length
+                          }{" "}
+                          {t("scheduled.lessons")}
                         </Badge>
                       </CardTitle>
                       <div className="flex items-center gap-2">
                         {/* View Mode Toggle */}
                         <div className="flex items-center border rounded-lg p-1">
                           <Button
-                            variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                            variant={viewMode === "grid" ? "default" : "ghost"}
                             size="sm"
-                            onClick={() => setViewMode('grid')}
+                            onClick={() => setViewMode("grid")}
                             className="h-8"
                           >
                             <LayoutGrid className="w-4 h-4 mr-1" />
                             Grid
                           </Button>
                           <Button
-                            variant={viewMode === 'list' ? 'default' : 'ghost'}
+                            variant={viewMode === "list" ? "default" : "ghost"}
                             size="sm"
-                            onClick={() => setViewMode('list')}
+                            onClick={() => setViewMode("list")}
                             className="h-8"
                           >
                             <List className="w-4 h-4 mr-1" />
@@ -897,21 +992,21 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                         </div>
                         <Button
                           onClick={() => {
-                            setLessonCourtId(null)
-                            setLessonStartTime('')
-                            setStudentSearch('')
-                            setLessonDialogOpen(true)
+                            setLessonCourtId(null);
+                            setLessonStartTime("");
+                            setStudentSearch("");
+                            setLessonDialogOpen(true);
                           }}
                           disabled={members.length === 0}
                         >
                           <Plus className="w-4 h-4 mr-2" />
-                          {t('scheduled.addLesson')}
+                          {t("scheduled.addLesson")}
                         </Button>
                       </div>
                     </div>
                     {members.length === 0 && (
                       <p className="text-xs text-foreground mt-2">
-                        {t('scheduled.addMembersFirst')}
+                        {t("scheduled.addMembersFirst")}
                       </p>
                     )}
                   </CardHeader>
@@ -921,7 +1016,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               {/* Grid/List View */}
               <Card>
                 <CardContent className="pt-6">
-                  {viewMode === 'grid' ? (
+                  {viewMode === "grid" ? (
                     /* Grid View */
                     <div className="overflow-x-auto">
                       <table className="w-full border-collapse">
@@ -950,26 +1045,35 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                         </thead>
                         <tbody>
                           {TIME_SLOTS.map((slot, idx) => {
-                            // Check if this slot has any lesson starting here (to show the full lesson card)
                             const lessonStartsHere = lessons.filter(
-                              l => l.status !== 'cancelled' && l.startTime === slot.slotTime
-                            )
+                              (l) =>
+                                l.status !== "cancelled" &&
+                                l.startTime === slot.slotTime,
+                            );
 
                             return (
-                              <tr key={slot.slotTime} className={idx % 2 === 0 ? 'bg-secondary' : ''}>
+                              <tr
+                                key={slot.slotTime}
+                                className={idx % 2 === 0 ? "bg-secondary" : ""}
+                              >
                                 <td className="p-2 text-sm font-medium text-foreground border-b border-border whitespace-nowrap">
                                   {formatTimeRange(slot.displayName)}
                                 </td>
                                 {courts.map((court) => {
-                                  const key = `${court.id}-${slot.slotTime}`
-                                  const lesson = lessonMap[key]
-                                  const isLessonStart = lesson && lesson.startTime === slot.slotTime
+                                  const key = `${court.id}-${slot.slotTime}`;
+                                  const lesson = lessonMap[key];
+                                  const isLessonStart =
+                                    lesson &&
+                                    lesson.startTime === slot.slotTime;
 
                                   if (lesson) {
-                                    // Only render the lesson card on the first slot
                                     if (isLessonStart) {
-                                      const typeInfo = getLessonTypeInfo(lesson.lessonType)
-                                      const slotsCount = Math.round(lesson.duration * 2)
+                                      const typeInfo = getLessonTypeInfo(
+                                        lesson.lessonType,
+                                      );
+                                      const slotsCount = Math.round(
+                                        lesson.duration * 2,
+                                      );
                                       return (
                                         <td
                                           key={court.id}
@@ -978,15 +1082,18 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                         >
                                           <div
                                             className={`p-2 rounded text-xs h-full ${
-                                              lesson.status === 'completed'
-                                                ? 'bg-green-100 border border-green-300'
-                                                : 'bg-purple-100 border border-purple-300'
+                                              lesson.status === "completed"
+                                                ? "bg-green-100 border border-green-300"
+                                                : "bg-purple-100 border border-purple-300"
                                             }`}
                                           >
                                             <div className="flex items-center gap-1 font-medium flex-wrap">
                                               <GraduationCap className="w-3 h-3 text-purple-700" />
-                                              <span className="text-purple-600">{typeInfo?.label}</span>
-                                              {lesson.status === 'completed' && (
+                                              <span className="text-purple-600">
+                                                {typeInfo?.label}
+                                              </span>
+                                              {lesson.status ===
+                                                "completed" && (
                                                 <Badge className="text-[10px] px-1 py-0 bg-green-100 text-green-700 border-0">
                                                   Done
                                                 </Badge>
@@ -994,19 +1101,26 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                             </div>
                                             <div className="text-muted-foreground mt-1">
                                               <Users className="w-3 h-3 inline mr-1" />
-                                              {lesson.students.map(s => s.name).join(', ')}
+                                              {lesson.students
+                                                .map((s) => s.name)
+                                                .join(", ")}
                                             </div>
                                             <div className="text-muted-foreground mt-1">
                                               <Clock className="w-3 h-3 inline mr-1" />
-                                              {lesson.duration}hr • RM{lesson.price}
+                                              {lesson.duration}hr • RM
+                                              {lesson.price}
                                             </div>
-                                            {lesson.status === 'scheduled' && (
+                                            {lesson.status === "scheduled" && (
                                               <div className="flex gap-1 mt-2">
                                                 <Button
                                                   variant="ghost"
                                                   size="sm"
                                                   className="h-6 text-green-700 hover:text-green-600 hover:bg-green-100 flex-1"
-                                                  onClick={() => handleMarkCompleted(lesson.id)}
+                                                  onClick={() =>
+                                                    handleMarkCompleted(
+                                                      lesson.id,
+                                                    )
+                                                  }
                                                   disabled={actionLoading}
                                                 >
                                                   <Check className="w-3 h-3 mr-1" />
@@ -1016,7 +1130,11 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                                   variant="ghost"
                                                   size="sm"
                                                   className="h-6 text-red-600 hover:text-red-500 hover:bg-red-50"
-                                                  onClick={() => handleCancelLesson(lesson.id)}
+                                                  onClick={() =>
+                                                    handleCancelLesson(
+                                                      lesson.id,
+                                                    )
+                                                  }
                                                   disabled={actionLoading}
                                                 >
                                                   <Trash2 className="w-3 h-3" />
@@ -1025,62 +1143,83 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                             )}
                                           </div>
                                         </td>
-                                      )
+                                      );
                                     }
-                                    // Skip cells that are part of a multi-slot lesson
-                                    return null
+                                    return null;
                                   } else {
-                                    // Check if slot has a booking
-                                    const bookingKey = `${court.id}-${slot.slotTime}`
-                                    const booking = bookingMap[bookingKey]
+                                    const bookingKey = `${court.id}-${slot.slotTime}`;
+                                    const booking = bookingMap[bookingKey];
 
                                     if (booking) {
-                                      // Show booked slot
                                       return (
-                                        <td key={court.id} className="p-1 border-b border-border">
+                                        <td
+                                          key={court.id}
+                                          className="p-1 border-b border-border"
+                                        >
                                           <div className="w-full h-10 flex items-center justify-center bg-secondary border border-border rounded text-xs text-muted-foreground">
                                             {booking.isRecurring ? (
-                                              <span title={booking.recurringLabel || 'Recurring booking'}>
-                                                {booking.recurringLabel || 'Recurring'}
+                                              <span
+                                                title={
+                                                  booking.recurringLabel ||
+                                                  "Recurring booking"
+                                                }
+                                              >
+                                                {booking.recurringLabel ||
+                                                  "Recurring"}
                                               </span>
                                             ) : (
-                                              <span title={booking.guestName || booking.userName || 'Booked'}>
+                                              <span
+                                                title={
+                                                  booking.guestName ||
+                                                  booking.userName ||
+                                                  "Booked"
+                                                }
+                                              >
                                                 Booked
                                               </span>
                                             )}
                                           </div>
                                         </td>
-                                      )
+                                      );
                                     }
 
-                                    // Empty slot - show add button
                                     return (
-                                      <td key={court.id} className="p-1 border-b border-border">
+                                      <td
+                                        key={court.id}
+                                        className="p-1 border-b border-border"
+                                      >
                                         <Button
                                           variant="outline"
                                           size="sm"
                                           className="w-full h-10 border-dashed text-muted-foreground/70 hover:text-muted-foreground"
-                                          onClick={() => openAddLessonDialog(court.id, slot.slotTime)}
+                                          onClick={() =>
+                                            openAddLessonDialog(
+                                              court.id,
+                                              slot.slotTime,
+                                            )
+                                          }
                                           disabled={members.length === 0}
                                         >
                                           <Plus className="w-4 h-4" />
                                         </Button>
                                       </td>
-                                    )
+                                    );
                                   }
                                 })}
                                 {/* Requests column cell */}
                                 {(() => {
-                                  // Check if this slot should be skipped (covered by a rowSpan)
                                   if (requestSkipSlots.has(slot.slotTime)) {
-                                    return null
+                                    return null;
                                   }
 
-                                  const request = requestMap[slot.slotTime]
+                                  const request = requestMap[slot.slotTime];
                                   if (request) {
-                                    const typeInfo = getLessonTypeInfo(request.lessonType)
-                                    const slotsCount = Math.round(request.requestedDuration * 2)
-                                    // Render request card with rowSpan
+                                    const typeInfo = getLessonTypeInfo(
+                                      request.lessonType,
+                                    );
+                                    const slotsCount = Math.round(
+                                      request.requestedDuration * 2,
+                                    );
                                     return (
                                       <td
                                         className="p-1 border-b border-border"
@@ -1088,32 +1227,40 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                       >
                                         <div
                                           className="p-2 rounded text-xs h-full bg-orange-50 border border-orange-300 cursor-pointer hover:bg-orange-100 transition-colors"
-                                          onClick={() => openRequestDetailsDialog(request)}
+                                          onClick={() =>
+                                            openRequestDetailsDialog(request)
+                                          }
                                         >
                                           <div className="flex items-center gap-1 font-medium flex-wrap">
                                             <Users className="w-3 h-3 text-orange-700" />
-                                            <span className="text-orange-600">{request.member.name}</span>
+                                            <span className="text-orange-600">
+                                              {request.member.name}
+                                            </span>
                                           </div>
                                           <div className="text-muted-foreground mt-1">
-                                            {typeInfo?.label} ({request.requestedDuration}hr)
+                                            {typeInfo?.label} (
+                                            {request.requestedDuration}hr)
                                           </div>
                                           <div className="text-green-700 font-medium mt-1">
-                                            RM{getLessonPrice(request.lessonType, request.requestedDuration)}
+                                            RM
+                                            {getLessonPrice(
+                                              request.lessonType,
+                                              request.requestedDuration,
+                                            )}
                                           </div>
                                         </div>
                                       </td>
-                                    )
+                                    );
                                   }
 
-                                  // Empty request slot - just show empty cell
                                   return (
                                     <td className="p-1 border-b border-border">
                                       <div className="w-full h-10" />
                                     </td>
-                                  )
+                                  );
                                 })()}
                               </tr>
-                            )
+                            );
                           })}
                         </tbody>
                       </table>
@@ -1121,57 +1268,75 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                   ) : (
                     /* List View */
                     <>
-                      {lessons.filter(l => l.status !== 'cancelled').length === 0 ? (
+                      {lessons.filter((l) => l.status !== "cancelled")
+                        .length === 0 ? (
                         <div className="text-center py-12 text-muted-foreground">
                           No lessons scheduled for this date
                         </div>
                       ) : (
                         <div className="space-y-3">
                           {lessons
-                            .filter(l => l.status !== 'cancelled')
-                            .sort((a, b) => a.startTime.localeCompare(b.startTime))
+                            .filter((l) => l.status !== "cancelled")
+                            .sort((a, b) =>
+                              a.startTime.localeCompare(b.startTime),
+                            )
                             .map((lesson) => {
-                              const typeInfo = getLessonTypeInfo(lesson.lessonType)
+                              const typeInfo = getLessonTypeInfo(
+                                lesson.lessonType,
+                              );
                               return (
                                 <div
                                   key={lesson.id}
                                   className={`p-4 rounded-lg border ${
-                                    lesson.status === 'completed'
-                                      ? 'bg-green-50 border-green-300'
-                                      : 'bg-purple-50 border-purple-300'
+                                    lesson.status === "completed"
+                                      ? "bg-green-50 border-green-300"
+                                      : "bg-purple-50 border-purple-300"
                                   }`}
                                 >
                                   <div className="flex items-start justify-between">
                                     <div>
                                       <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-medium text-foreground">{typeInfo?.label}</span>
-                                        <Badge variant="outline">{lesson.court.name}</Badge>
-                                        {lesson.status === 'completed' && (
-                                          <Badge className="bg-green-600">Completed</Badge>
+                                        <span className="font-medium text-foreground">
+                                          {typeInfo?.label}
+                                        </span>
+                                        <Badge variant="outline">
+                                          {lesson.court.name}
+                                        </Badge>
+                                        {lesson.status === "completed" && (
+                                          <Badge className="bg-green-600">
+                                            Completed
+                                          </Badge>
                                         )}
                                       </div>
                                       <div className="text-sm text-muted-foreground">
                                         <Clock className="w-3 h-3 inline mr-1" />
-                                        {lesson.startTime} - {lesson.endTime} ({lesson.duration}hr)
+                                        {lesson.startTime} - {lesson.endTime} (
+                                        {lesson.duration}hr)
                                       </div>
                                       <div className="text-sm text-muted-foreground mt-1">
                                         <Users className="w-3 h-3 inline mr-1" />
-                                        {lesson.students.map(s => s.name).join(', ')}
+                                        {lesson.students
+                                          .map((s) => s.name)
+                                          .join(", ")}
                                       </div>
                                       <div className="text-sm font-medium mt-1 text-foreground">
-                                        RM{lesson.price} ({lesson.students.length > 1
+                                        RM{lesson.price} (
+                                        {lesson.students.length > 1
                                           ? `RM${(lesson.price / lesson.students.length).toFixed(0)} each`
-                                          : 'total'})
+                                          : "total"}
+                                        )
                                       </div>
                                     </div>
                                     <div className="flex gap-2">
-                                      {lesson.status === 'scheduled' && (
+                                      {lesson.status === "scheduled" && (
                                         <>
                                           <Button
                                             variant="outline"
                                             size="sm"
                                             className="text-green-700"
-                                            onClick={() => handleMarkCompleted(lesson.id)}
+                                            onClick={() =>
+                                              handleMarkCompleted(lesson.id)
+                                            }
                                             disabled={actionLoading}
                                           >
                                             <Check className="w-4 h-4" />
@@ -1180,7 +1345,9 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                             variant="outline"
                                             size="sm"
                                             className="text-red-600"
-                                            onClick={() => handleCancelLesson(lesson.id)}
+                                            onClick={() =>
+                                              handleCancelLesson(lesson.id)
+                                            }
                                             disabled={actionLoading}
                                           >
                                             <Trash2 className="w-4 h-4" />
@@ -1190,7 +1357,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                     </div>
                                   </div>
                                 </div>
-                              )
+                              );
                             })}
                         </div>
                       )}
@@ -1202,7 +1369,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           )}
 
           {/* Availability Tab */}
-          {activeTab === 'availability' && (
+          {activeTab === "availability" && (
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -1215,7 +1382,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                           size="sm"
                           onClick={toggleAllAvailSelection}
                         >
-                          {selectedAvailIds.length === coachAvailability.length ? (
+                          {selectedAvailIds.length ===
+                          coachAvailability.length ? (
                             <>
                               <CheckSquare className="w-4 h-4 mr-2" />
                               Deselect All
@@ -1242,8 +1410,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            setAvailSelectMode(false)
-                            setSelectedAvailIds([])
+                            setAvailSelectMode(false);
+                            setSelectedAvailIds([]);
                           }}
                         >
                           <X className="w-4 h-4 mr-2" />
@@ -1279,18 +1447,20 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                 ) : (
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {coachAvailability.map((avail) => {
-                      const isSelected = selectedAvailIds.includes(avail.id)
+                      const isSelected = selectedAvailIds.includes(avail.id);
                       return (
                         <div
                           key={avail.id}
                           className={`p-4 rounded-lg border transition-all ${
                             availSelectMode
                               ? isSelected
-                                ? 'bg-primary/30 border-primary ring-2 ring-primary'
-                                : 'bg-primary/30 border-border hover:border-primary cursor-pointer'
-                              : 'bg-primary/30 border-border'
+                                ? "bg-primary/30 border-primary ring-2 ring-primary"
+                                : "bg-primary/30 border-border hover:border-primary cursor-pointer"
+                              : "bg-primary/30 border-border"
                           }`}
-                          onClick={() => availSelectMode && toggleAvailSelection(avail.id)}
+                          onClick={() =>
+                            availSelectMode && toggleAvailSelection(avail.id)
+                          }
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex items-start gap-3">
@@ -1304,12 +1474,16 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                 </div>
                               )}
                               <div>
-                                <div className="font-medium text-foreground">{DAYS_OF_WEEK[avail.dayOfWeek]}</div>
+                                <div className="font-medium text-foreground">
+                                  {DAYS_OF_WEEK[avail.dayOfWeek]}
+                                </div>
                                 <div className="text-sm text-muted-foreground">
                                   {avail.startTime} - {avail.endTime}
                                 </div>
                                 {avail.isRecurring && (
-                                  <Badge variant="outline" className="mt-1">Weekly</Badge>
+                                  <Badge variant="outline" className="mt-1">
+                                    Weekly
+                                  </Badge>
                                 )}
                               </div>
                             </div>
@@ -1320,8 +1494,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                   size="sm"
                                   className="text-foreground hover:text-foreground hover:bg-primary/30"
                                   onClick={(e) => {
-                                    e.stopPropagation()
-                                    openEditAvailDialog(avail)
+                                    e.stopPropagation();
+                                    openEditAvailDialog(avail);
                                   }}
                                   disabled={actionLoading}
                                 >
@@ -1332,8 +1506,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                                   size="sm"
                                   className="text-red-600 hover:text-red-500 hover:bg-red-50"
                                   onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleDeleteAvailability(avail.id)
+                                    e.stopPropagation();
+                                    handleDeleteAvailability(avail.id);
                                   }}
                                   disabled={actionLoading}
                                 >
@@ -1343,7 +1517,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                             )}
                           </div>
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 )}
@@ -1352,7 +1526,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           )}
 
           {/* Billing Tab */}
-          {activeTab === 'billing' && (
+          {activeTab === "billing" && (
             <div className="space-y-6">
               <Card>
                 <CardHeader>
@@ -1373,49 +1547,74 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {getBillingByMember().map(({ member, lessons: memberLessons, total }) => (
-                        <div
-                          key={member.id}
-                          className="p-4 rounded-lg border border-border bg-secondary"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-lg text-foreground">{member.name}</span>
-                                <Badge variant="outline">{member.phone}</Badge>
+                      {getBillingByMember().map(
+                        ({ member, lessons: memberLessons, total }) => (
+                          <div
+                            key={member.id}
+                            className="p-4 rounded-lg border border-border bg-secondary"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-lg text-foreground">
+                                    {member.name}
+                                  </span>
+                                  <Badge variant="outline">
+                                    {member.phone}
+                                  </Badge>
+                                </div>
+                                <div className="mt-2 space-y-1">
+                                  {memberLessons.map((lesson) => {
+                                    const typeInfo = getLessonTypeInfo(
+                                      lesson.lessonType,
+                                    );
+                                    const pricePerStudent =
+                                      lesson.price / lesson.students.length;
+                                    return (
+                                      <div
+                                        key={lesson.id}
+                                        className="text-sm text-muted-foreground flex justify-between"
+                                      >
+                                        <span>
+                                          {format(
+                                            new Date(lesson.lessonDate),
+                                            "MMM d",
+                                          )}{" "}
+                                          - {typeInfo?.label} ({lesson.duration}
+                                          hr)
+                                        </span>
+                                        <span>
+                                          RM{pricePerStudent.toFixed(0)}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </div>
-                              <div className="mt-2 space-y-1">
-                                {memberLessons.map((lesson) => {
-                                  const typeInfo = getLessonTypeInfo(lesson.lessonType)
-                                  const pricePerStudent = lesson.price / lesson.students.length
-                                  return (
-                                    <div key={lesson.id} className="text-sm text-muted-foreground flex justify-between">
-                                      <span>
-                                        {format(new Date(lesson.lessonDate), 'MMM d')} - {typeInfo?.label} ({lesson.duration}hr)
-                                      </span>
-                                      <span>RM{pricePerStudent.toFixed(0)}</span>
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-2xl font-bold text-foreground">
-                                RM{total.toFixed(0)}
-                              </div>
-                              <div className="text-sm text-muted-foreground">
-                                {memberLessons.length} lesson{memberLessons.length !== 1 ? 's' : ''}
+                              <div className="text-right">
+                                <div className="text-2xl font-bold text-foreground">
+                                  RM{total.toFixed(0)}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                  {memberLessons.length} lesson
+                                  {memberLessons.length !== 1 ? "s" : ""}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ),
+                      )}
 
                       <div className="border-t pt-4">
                         <div className="flex justify-between items-center">
-                          <span className="text-lg font-medium">Total Revenue</span>
+                          <span className="text-lg font-medium">
+                            Total Revenue
+                          </span>
                           <span className="text-2xl font-bold">
-                            RM{getBillingByMember().reduce((sum, b) => sum + b.total, 0).toFixed(0)}
+                            RM
+                            {getBillingByMember()
+                              .reduce((sum, b) => sum + b.total, 0)
+                              .toFixed(0)}
                           </span>
                         </div>
                       </div>
@@ -1427,15 +1626,15 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           )}
 
           {/* Trial Requests Tab */}
-          {activeTab === 'requests' && (
-            <TrialRequestsContent />
-          )}
-
+          {activeTab === "requests" && <TrialRequestsContent />}
         </>
       )}
 
       {/* Add Availability Dialog */}
-      <Dialog open={availabilityDialogOpen} onOpenChange={setAvailabilityDialogOpen}>
+      <Dialog
+        open={availabilityDialogOpen}
+        onOpenChange={setAvailabilityDialogOpen}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Coach Availability</DialogTitle>
@@ -1451,13 +1650,13 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                   <Button
                     key={idx}
                     type="button"
-                    variant={availDays.includes(idx) ? 'default' : 'outline'}
+                    variant={availDays.includes(idx) ? "default" : "outline"}
                     size="sm"
                     onClick={() => {
                       if (availDays.includes(idx)) {
-                        setAvailDays(availDays.filter(d => d !== idx))
+                        setAvailDays(availDays.filter((d) => d !== idx));
                       } else {
-                        setAvailDays([...availDays, idx])
+                        setAvailDays([...availDays, idx]);
                       }
                     }}
                   >
@@ -1469,7 +1668,10 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Start Time</Label>
-                <Select value={availStartTime} onValueChange={setAvailStartTime}>
+                <Select
+                  value={availStartTime}
+                  onValueChange={setAvailStartTime}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select start" />
                   </SelectTrigger>
@@ -1489,25 +1691,39 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                     <SelectValue placeholder="Select end" />
                   </SelectTrigger>
                   <SelectContent>
-                    {TIME_SLOTS.filter(s => s.slotTime > availStartTime).map((slot) => (
-                      <SelectItem key={slot.slotTime} value={slot.slotTime}>
-                        {slot.displayName}
-                      </SelectItem>
-                    ))}
+                    {TIME_SLOTS.filter((s) => s.slotTime > availStartTime).map(
+                      (slot) => (
+                        <SelectItem key={slot.slotTime} value={slot.slotTime}>
+                          {slot.displayName}
+                        </SelectItem>
+                      ),
+                    )}
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAvailabilityDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setAvailabilityDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button
               onClick={handleAddAvailability}
-              disabled={actionLoading || availDays.length === 0 || !availStartTime || !availEndTime}
+              disabled={
+                actionLoading ||
+                availDays.length === 0 ||
+                !availStartTime ||
+                !availEndTime
+              }
             >
-              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add Availability'}
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Add Availability"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1519,7 +1735,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           <DialogHeader>
             <DialogTitle>Schedule Lesson</DialogTitle>
             <DialogDescription>
-              Schedule a lesson for {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+              Schedule a lesson for {format(selectedDate, "EEEE, MMMM d, yyyy")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -1529,9 +1745,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                 <Select
                   value={lessonType}
                   onValueChange={(v) => {
-                    setLessonType(v)
-                    // Auto-select default duration for this type
-                    setLessonDuration(getDefaultDuration(v))
+                    setLessonType(v);
+                    setLessonDuration(getDefaultDuration(v));
                   }}
                 >
                   <SelectTrigger>
@@ -1542,13 +1757,24 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                       <SelectItem key={type.value} value={type.value}>
                         <div className="flex items-center gap-2">
                           <span>{type.label}</span>
-                          {type.billingType === 'monthly' ? (
-                            <Badge variant="outline" className="text-xs bg-purple-50 text-purple-600 border-purple-300">
+                          {type.billingType === "monthly" ? (
+                            <Badge
+                              variant="outline"
+                              className="text-xs bg-purple-50 text-purple-600 border-purple-300"
+                            >
                               RM{type.pricing as number}/mo
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-300">
-                              From RM{Object.values(type.pricing as Record<number, number>)[0]}
+                            <Badge
+                              variant="outline"
+                              className="text-xs bg-green-50 text-green-700 border-green-300"
+                            >
+                              From RM
+                              {
+                                Object.values(
+                                  type.pricing as Record<number, number>,
+                                )[0]
+                              }
                             </Badge>
                           )}
                         </div>
@@ -1579,12 +1805,17 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                       <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
                     <SelectContent>
-                      {lessonType && getDurationOptions(lessonType).map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value.toString()}>
-                          {opt.label} - RM{opt.price}
-                          {opt.pricePerPerson && ` (RM${opt.pricePerPerson}/person)`}
-                        </SelectItem>
-                      ))}
+                      {lessonType &&
+                        getDurationOptions(lessonType).map((opt) => (
+                          <SelectItem
+                            key={opt.value}
+                            value={opt.value.toString()}
+                          >
+                            {opt.label} - RM{opt.price}
+                            {opt.pricePerPerson &&
+                              ` (RM${opt.pricePerPerson}/person)`}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 )}
@@ -1597,36 +1828,59 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-sm text-muted-foreground">
-                      {isMonthlyBilling(lessonType) ? 'Monthly Price' : 'Session Price'}
+                      {isMonthlyBilling(lessonType)
+                        ? "Monthly Price"
+                        : "Session Price"}
                     </span>
                     {(() => {
-                      const typeConfig = getLessonType(lessonType)
-                      const perPersonPrice = getPricePerPerson(lessonType, lessonDuration)
-                      const totalPrice = getLessonPrice(lessonType, lessonDuration)
-                      const showPerPerson = perPersonPrice && typeConfig && typeConfig.maxStudents > 1 && !isMonthlyBilling(lessonType)
+                      const typeConfig = getLessonType(lessonType);
+                      const perPersonPrice = getPricePerPerson(
+                        lessonType,
+                        lessonDuration,
+                      );
+                      const totalPrice = getLessonPrice(
+                        lessonType,
+                        lessonDuration,
+                      );
+                      const showPerPerson =
+                        perPersonPrice &&
+                        typeConfig &&
+                        typeConfig.maxStudents > 1 &&
+                        !isMonthlyBilling(lessonType);
 
                       if (showPerPerson) {
                         return (
                           <div>
                             <p className="font-bold text-xl text-foreground">
-                              RM{perPersonPrice} <span className="text-sm font-normal">/ person</span>
+                              RM{perPersonPrice}{" "}
+                              <span className="text-sm font-normal">
+                                / person
+                              </span>
                             </p>
-                            <p className="text-xs text-muted-foreground">(Total: RM{totalPrice})</p>
+                            <p className="text-xs text-muted-foreground">
+                              (Total: RM{totalPrice})
+                            </p>
                           </div>
-                        )
+                        );
                       }
 
                       return (
                         <p className="font-bold text-xl text-foreground">
                           RM{totalPrice}
-                          {isMonthlyBilling(lessonType) && <span className="text-sm font-normal">/month</span>}
+                          {isMonthlyBilling(lessonType) && (
+                            <span className="text-sm font-normal">/month</span>
+                          )}
                         </p>
-                      )
+                      );
                     })()}
                   </div>
                   <div className="text-right text-sm text-muted-foreground">
-                    <p>Max {getLessonType(lessonType)?.maxStudents} student(s)</p>
-                    {!isMonthlyBilling(lessonType) && <p>{lessonDuration} hours</p>}
+                    <p>
+                      Max {getLessonType(lessonType)?.maxStudents} student(s)
+                    </p>
+                    {!isMonthlyBilling(lessonType) && (
+                      <p>{lessonDuration} hours</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1636,7 +1890,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               <div>
                 <Label>Court</Label>
                 <Select
-                  value={lessonCourtId?.toString() || ''}
+                  value={lessonCourtId?.toString() || ""}
                   onValueChange={(v) => setLessonCourtId(parseInt(v))}
                 >
                   <SelectTrigger>
@@ -1653,7 +1907,10 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               </div>
               <div>
                 <Label>Start Time</Label>
-                <Select value={lessonStartTime} onValueChange={setLessonStartTime}>
+                <Select
+                  value={lessonStartTime}
+                  onValueChange={setLessonStartTime}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select time" />
                   </SelectTrigger>
@@ -1669,6 +1926,26 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
             </div>
 
             <div>
+              <Label>Teacher (Optional)</Label>
+              <Select
+                value={lessonTeacherId}
+                onValueChange={setLessonTeacherId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="No teacher assigned" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No teacher</SelectItem>
+                  {activeTeachers.map((teacher) => (
+                    <SelectItem key={teacher.id} value={teacher.id}>
+                      {teacher.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
               <Label>Students</Label>
               <div className="mt-2">
                 <Input
@@ -1680,20 +1957,20 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {members
                     .filter((member) => {
-                      if (!studentSearch) return true
-                      const search = studentSearch.toLowerCase()
+                      if (!studentSearch) return true;
+                      const search = studentSearch.toLowerCase();
                       return (
                         member.name.toLowerCase().includes(search) ||
                         member.uid.toLowerCase().includes(search)
-                      )
+                      );
                     })
                     .map((member) => (
                       <label
                         key={member.id}
                         className={`flex items-center gap-2 p-2 rounded border cursor-pointer ${
                           lessonStudentIds.includes(member.id)
-                            ? 'bg-primary/30 border-primary'
-                            : 'bg-card border-border'
+                            ? "bg-primary/30 border-primary"
+                            : "bg-card border-border"
                         }`}
                       >
                         <input
@@ -1701,29 +1978,42 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                           checked={lessonStudentIds.includes(member.id)}
                           onChange={(e) => {
                             if (e.target.checked) {
-                              setLessonStudentIds([...lessonStudentIds, member.id])
+                              setLessonStudentIds([
+                                ...lessonStudentIds,
+                                member.id,
+                              ]);
                             } else {
-                              setLessonStudentIds(lessonStudentIds.filter(id => id !== member.id))
+                              setLessonStudentIds(
+                                lessonStudentIds.filter(
+                                  (id) => id !== member.id,
+                                ),
+                              );
                             }
                           }}
                           className="rounded"
                         />
-                        <span className="text-xs text-muted-foreground/70">#{member.uid}</span>
+                        <span className="text-xs text-muted-foreground/70">
+                          #{member.uid}
+                        </span>
                         <span className="text-foreground">{member.name}</span>
                         {member.skillLevel && (
-                          <Badge variant="outline" className="text-xs">{member.skillLevel}</Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {member.skillLevel}
+                          </Badge>
                         )}
                       </label>
                     ))}
                   {members.filter((member) => {
-                    if (!studentSearch) return true
-                    const search = studentSearch.toLowerCase()
+                    if (!studentSearch) return true;
+                    const search = studentSearch.toLowerCase();
                     return (
                       member.name.toLowerCase().includes(search) ||
                       member.uid.toLowerCase().includes(search)
-                    )
+                    );
                   }).length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-2">No members found</p>
+                    <p className="text-sm text-muted-foreground text-center py-2">
+                      No members found
+                    </p>
                   )}
                 </div>
               </div>
@@ -1739,7 +2029,10 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setLessonDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setLessonDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -1752,7 +2045,11 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                 lessonStudentIds.length === 0
               }
             >
-              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Schedule Lesson'}
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Schedule Lesson"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1773,15 +2070,31 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               <div className="p-4 bg-primary/30 rounded-lg border border-border">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-semibold text-lg text-foreground">{selectedRequest.member.name}</p>
+                    <p className="font-semibold text-lg text-foreground">
+                      {selectedRequest.member.name}
+                    </p>
                     <p className="text-sm text-muted-foreground">
-                      {selectedRequest.lessonType.replace('-', ' ')} lesson ({selectedRequest.requestedDuration}hr)
+                      {selectedRequest.lessonType.replace("-", " ")} lesson (
+                      {selectedRequest.requestedDuration}hr)
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-foreground">{format(new Date(selectedRequest.requestedDate), 'EEE, MMM d')}</p>
-                    <p className="text-lg font-bold text-foreground">{selectedRequest.requestedTime}</p>
-                    <p className="text-sm font-medium text-green-700">RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</p>
+                    <p className="font-medium text-foreground">
+                      {format(
+                        new Date(selectedRequest.requestedDate),
+                        "EEE, MMM d",
+                      )}
+                    </p>
+                    <p className="text-lg font-bold text-foreground">
+                      {selectedRequest.requestedTime}
+                    </p>
+                    <p className="text-sm font-medium text-green-700">
+                      RM
+                      {getLessonPrice(
+                        selectedRequest.lessonType,
+                        selectedRequest.requestedDuration,
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1796,32 +2109,42 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {courts.map((court) => {
-                      const isAvailable = courtAvailability[court.id] !== false
-                      const isSelected = approveCourtId === court.id
+                      const isAvailable = courtAvailability[court.id] !== false;
+                      const isSelected = approveCourtId === court.id;
                       return (
                         <button
                           key={court.id}
-                          onClick={() => isAvailable && setApproveCourtId(court.id)}
+                          onClick={() =>
+                            isAvailable && setApproveCourtId(court.id)
+                          }
                           disabled={!isAvailable}
                           className={`p-4 rounded-lg border-2 transition-all ${
                             !isAvailable
-                              ? 'bg-secondary border-border cursor-not-allowed opacity-60'
+                              ? "bg-secondary border-border cursor-not-allowed opacity-60"
                               : isSelected
-                              ? 'bg-green-100 border-green-500 ring-2 ring-green-500'
-                              : 'bg-card border-border hover:border-green-600 hover:bg-green-100'
+                                ? "bg-green-100 border-green-500 ring-2 ring-green-500"
+                                : "bg-card border-border hover:border-green-600 hover:bg-green-100"
                           }`}
                         >
-                          <p className={`font-semibold ${isSelected ? 'text-green-700' : 'text-foreground'}`}>
+                          <p
+                            className={`font-semibold ${isSelected ? "text-green-700" : "text-foreground"}`}
+                          >
                             {court.name}
                           </p>
-                          <p className={`text-sm mt-1 ${
-                            !isAvailable
-                              ? 'text-red-600'
+                          <p
+                            className={`text-sm mt-1 ${
+                              !isAvailable
+                                ? "text-red-600"
+                                : isSelected
+                                  ? "text-green-700"
+                                  : "text-muted-foreground"
+                            }`}
+                          >
+                            {!isAvailable
+                              ? "Booked"
                               : isSelected
-                              ? 'text-green-700'
-                              : 'text-muted-foreground'
-                          }`}>
-                            {!isAvailable ? 'Booked' : isSelected ? 'Selected' : 'Available'}
+                                ? "Selected"
+                                : "Available"}
                           </p>
                           {isSelected && (
                             <div className="mt-2">
@@ -1829,7 +2152,7 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                             </div>
                           )}
                         </button>
-                      )
+                      );
                     })}
                   </div>
                 )}
@@ -1839,17 +2162,33 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               {approveCourtId && (
                 <div className="p-3 bg-green-50 rounded-lg border border-green-300">
                   <p className="text-sm text-green-600">
-                    <strong>{courts.find(c => c.id === approveCourtId)?.name}</strong> will be booked for{' '}
-                    <strong>{selectedRequest.member.name}</strong> on{' '}
-                    <strong>{format(new Date(selectedRequest.requestedDate), 'MMM d')}</strong> at{' '}
-                    <strong>{selectedRequest.requestedTime}</strong> ({selectedRequest.requestedDuration}hr) - <strong>RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}</strong>
+                    <strong>
+                      {courts.find((c) => c.id === approveCourtId)?.name}
+                    </strong>{" "}
+                    will be booked for{" "}
+                    <strong>{selectedRequest.member.name}</strong> on{" "}
+                    <strong>
+                      {format(new Date(selectedRequest.requestedDate), "MMM d")}
+                    </strong>{" "}
+                    at <strong>{selectedRequest.requestedTime}</strong> (
+                    {selectedRequest.requestedDuration}hr) -{" "}
+                    <strong>
+                      RM
+                      {getLessonPrice(
+                        selectedRequest.lessonType,
+                        selectedRequest.requestedDuration,
+                      )}
+                    </strong>
                   </p>
                 </div>
               )}
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setApproveDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setApproveDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -1857,7 +2196,11 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               disabled={actionLoading || !approveCourtId}
               className="bg-green-600 hover:bg-green-700"
             >
-              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Approve & Schedule'}
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Approve & Schedule"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1894,7 +2237,10 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Start Time</Label>
-                <Select value={editAvailStartTime} onValueChange={setEditAvailStartTime}>
+                <Select
+                  value={editAvailStartTime}
+                  onValueChange={setEditAvailStartTime}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select start" />
                   </SelectTrigger>
@@ -1909,12 +2255,17 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               </div>
               <div>
                 <Label>End Time</Label>
-                <Select value={editAvailEndTime} onValueChange={setEditAvailEndTime}>
+                <Select
+                  value={editAvailEndTime}
+                  onValueChange={setEditAvailEndTime}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select end" />
                   </SelectTrigger>
                   <SelectContent>
-                    {TIME_SLOTS.filter(s => s.slotTime > editAvailStartTime).map((slot) => (
+                    {TIME_SLOTS.filter(
+                      (s) => s.slotTime > editAvailStartTime,
+                    ).map((slot) => (
                       <SelectItem key={slot.slotTime} value={slot.slotTime}>
                         {slot.displayName}
                       </SelectItem>
@@ -1925,21 +2276,33 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditAvailDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setEditAvailDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button
               onClick={handleEditAvailability}
-              disabled={actionLoading || !editAvailStartTime || !editAvailEndTime}
+              disabled={
+                actionLoading || !editAvailStartTime || !editAvailEndTime
+              }
             >
-              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
+              {actionLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Save Changes"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Request Details Dialog */}
-      <Dialog open={requestDetailsDialogOpen} onOpenChange={setRequestDetailsDialogOpen}>
+      <Dialog
+        open={requestDetailsDialogOpen}
+        onOpenChange={setRequestDetailsDialogOpen}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Lesson Request Details</DialogTitle>
@@ -1953,12 +2316,19 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               <div className="p-4 bg-orange-50 rounded-lg border border-orange-300">
                 <div className="flex items-center gap-2 mb-2">
                   <Users className="w-5 h-5 text-orange-700" />
-                  <span className="font-semibold text-lg text-foreground">{selectedRequest.member.name}</span>
+                  <span className="font-semibold text-lg text-foreground">
+                    {selectedRequest.member.name}
+                  </span>
                 </div>
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <p><strong>Phone:</strong> {selectedRequest.member.phone}</p>
+                  <p>
+                    <strong>Phone:</strong> {selectedRequest.member.phone}
+                  </p>
                   {selectedRequest.member.skillLevel && (
-                    <p><strong>Skill Level:</strong> {selectedRequest.member.skillLevel}</p>
+                    <p>
+                      <strong>Skill Level:</strong>{" "}
+                      {selectedRequest.member.skillLevel}
+                    </p>
                   )}
                 </div>
               </div>
@@ -1968,32 +2338,49 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Date:</span>
                   <span className="font-medium text-foreground">
-                    {format(new Date(selectedRequest.requestedDate), 'EEEE, MMM d, yyyy')}
+                    {format(
+                      new Date(selectedRequest.requestedDate),
+                      "EEEE, MMM d, yyyy",
+                    )}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Time:</span>
-                  <span className="font-medium text-foreground">{selectedRequest.requestedTime}</span>
+                  <span className="font-medium text-foreground">
+                    {selectedRequest.requestedTime}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Type:</span>
-                  <span className="font-medium text-foreground">{getLessonTypeInfo(selectedRequest.lessonType)?.label}</span>
+                  <span className="font-medium text-foreground">
+                    {getLessonTypeInfo(selectedRequest.lessonType)?.label}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Duration:</span>
-                  <span className="font-medium text-foreground">{selectedRequest.requestedDuration} hour(s)</span>
+                  <span className="font-medium text-foreground">
+                    {selectedRequest.requestedDuration} hour(s)
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Price:</span>
                   <span className="font-medium text-green-700">
-                    RM{getLessonPrice(selectedRequest.lessonType, selectedRequest.requestedDuration)}
+                    RM
+                    {getLessonPrice(
+                      selectedRequest.lessonType,
+                      selectedRequest.requestedDuration,
+                    )}
                   </span>
                 </div>
               </div>
 
               {/* Request timestamp */}
               <p className="text-xs text-muted-foreground/70">
-                Requested on {format(new Date(selectedRequest.createdAt), 'MMM d, yyyy h:mm a')}
+                Requested on{" "}
+                {format(
+                  new Date(selectedRequest.createdAt),
+                  "MMM d, yyyy h:mm a",
+                )}
               </p>
             </div>
           )}
@@ -2002,10 +2389,14 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               variant="outline"
               className="text-red-600 border-red-300 hover:bg-red-50"
               onClick={() => {
-                const notes = prompt('Reason for rejection (optional):')
+                const notes = prompt("Reason for rejection (optional):");
                 if (selectedRequest) {
-                  handleRequestAction(selectedRequest.id, 'rejected', notes || undefined)
-                  setRequestDetailsDialogOpen(false)
+                  handleRequestAction(
+                    selectedRequest.id,
+                    "rejected",
+                    notes || undefined,
+                  );
+                  setRequestDetailsDialogOpen(false);
                 }
               }}
               disabled={actionLoading}
@@ -2016,12 +2407,11 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
             <Button
               variant="outline"
               onClick={() => {
-                // Open suggest time dialog with current request's date/time as defaults
                 if (selectedRequest) {
-                  setSuggestDate(new Date(selectedRequest.requestedDate))
-                  setSuggestTime(selectedRequest.requestedTime)
-                  setSuggestNotes('')
-                  setSuggestTimeDialogOpen(true)
+                  setSuggestDate(new Date(selectedRequest.requestedDate));
+                  setSuggestTime(selectedRequest.requestedTime);
+                  setSuggestNotes("");
+                  setSuggestTimeDialogOpen(true);
                 }
               }}
               disabled={actionLoading}
@@ -2042,7 +2432,10 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
       </Dialog>
 
       {/* Suggest Time Dialog */}
-      <Dialog open={suggestTimeDialogOpen} onOpenChange={setSuggestTimeDialogOpen}>
+      <Dialog
+        open={suggestTimeDialogOpen}
+        onOpenChange={setSuggestTimeDialogOpen}
+      >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -2050,7 +2443,8 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
               Suggest Alternative Time
             </DialogTitle>
             <DialogDescription>
-              Suggest a different date and time for this lesson request. The member will be notified.
+              Suggest a different date and time for this lesson request. The
+              member will be notified.
             </DialogDescription>
           </DialogHeader>
 
@@ -2058,14 +2452,22 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
             {/* Original Request Info */}
             {selectedRequest && (
               <div className="p-3 bg-secondary rounded-lg border border-border">
-                <p className="text-sm text-muted-foreground mb-1">Original request:</p>
+                <p className="text-sm text-muted-foreground mb-1">
+                  Original request:
+                </p>
                 <p className="font-medium text-foreground">
-                  {format(new Date(selectedRequest.requestedDate), 'EEEE, MMMM d, yyyy')} at{' '}
+                  {format(
+                    new Date(selectedRequest.requestedDate),
+                    "EEEE, MMMM d, yyyy",
+                  )}{" "}
+                  at{" "}
                   {(() => {
-                    const [h, m] = selectedRequest.requestedTime.split(':').map(Number)
-                    const period = h >= 12 ? 'PM' : 'AM'
-                    const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h
-                    return `${displayHour}:${m.toString().padStart(2, '0')} ${period}`
+                    const [h, m] = selectedRequest.requestedTime
+                      .split(":")
+                      .map(Number);
+                    const period = h >= 12 ? "PM" : "AM";
+                    const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
+                    return `${displayHour}:${m.toString().padStart(2, "0")} ${period}`;
                   })()}
                 </p>
               </div>
@@ -2079,7 +2481,9 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
                   mode="single"
                   selected={suggestDate}
                   onSelect={setSuggestDate}
-                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                  disabled={(date) =>
+                    date < new Date(new Date().setHours(0, 0, 0, 0))
+                  }
                   className="mx-auto"
                 />
               </div>
@@ -2115,14 +2519,16 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
             {/* Preview */}
             {suggestDate && suggestTime && (
               <div className="p-3 bg-primary/30 rounded-lg border border-border">
-                <p className="text-sm text-foreground mb-1">New suggested time:</p>
+                <p className="text-sm text-foreground mb-1">
+                  New suggested time:
+                </p>
                 <p className="font-medium text-primary">
-                  {format(suggestDate, 'EEEE, MMMM d, yyyy')} at{' '}
+                  {format(suggestDate, "EEEE, MMMM d, yyyy")} at{" "}
                   {(() => {
-                    const [h, m] = suggestTime.split(':').map(Number)
-                    const period = h >= 12 ? 'PM' : 'AM'
-                    const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h
-                    return `${displayHour}:${m.toString().padStart(2, '0')} ${period}`
+                    const [h, m] = suggestTime.split(":").map(Number);
+                    const period = h >= 12 ? "PM" : "AM";
+                    const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
+                    return `${displayHour}:${m.toString().padStart(2, "0")} ${period}`;
                   })()}
                 </p>
               </div>
@@ -2130,31 +2536,36 @@ export default function LessonsContent({ initialTab = 'schedule' }: LessonsConte
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSuggestTimeDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setSuggestTimeDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button
               onClick={() => {
                 if (selectedRequest && suggestDate && suggestTime) {
-                  const suggestedDateTime = `${format(suggestDate, 'yyyy-MM-dd')} ${suggestTime}`
+                  const suggestedDateTime = `${format(suggestDate, "yyyy-MM-dd")} ${suggestTime}`;
                   handleRequestAction(
                     selectedRequest.id,
-                    'changed',
+                    "changed",
                     suggestNotes || undefined,
-                    suggestedDateTime
-                  )
-                  setSuggestTimeDialogOpen(false)
-                  setRequestDetailsDialogOpen(false)
+                    suggestedDateTime,
+                  );
+                  setSuggestTimeDialogOpen(false);
+                  setRequestDetailsDialogOpen(false);
                 }
               }}
               disabled={actionLoading || !suggestDate || !suggestTime}
             >
-              {actionLoading && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+              {actionLoading && (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              )}
               Send Suggestion
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

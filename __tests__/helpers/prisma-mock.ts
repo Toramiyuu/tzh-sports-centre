@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { vi } from "vitest";
 
 /**
  * Create a mock Prisma model with all CRUD methods stubbed
@@ -18,7 +18,7 @@ export function createMockPrismaModel() {
     count: vi.fn(),
     aggregate: vi.fn(),
     groupBy: vi.fn(),
-  }
+  };
 }
 
 /**
@@ -45,10 +45,21 @@ export function createMockPrismaClient() {
     notification: createMockPrismaModel(),
     trialRequest: createMockPrismaModel(),
     auditLog: createMockPrismaModel(),
+    absence: createMockPrismaModel(),
+    replacementCredit: createMockPrismaModel(),
+    replacementBooking: createMockPrismaModel(),
+    gameSession: createMockPrismaModel(),
+    sessionAttendance: createMockPrismaModel(),
+    match: createMockPrismaModel(),
+    matchPlayer: createMockPrismaModel(),
+    playerPoints: createMockPrismaModel(),
+    playerProfile: createMockPrismaModel(),
+    teacher: createMockPrismaModel(),
+    teacherPayRate: createMockPrismaModel(),
     $transaction: vi.fn(),
     $queryRaw: vi.fn(),
     $executeRaw: vi.fn(),
     $connect: vi.fn(),
     $disconnect: vi.fn(),
-  }
+  };
 }

@@ -1061,6 +1061,38 @@
     "absences": {
       "title": "缺席管理",
       "description": "审核病假缺席并跟踪学生出勤情况"
+    },
+    "staff": {
+      "title": "员工与教练",
+      "description": "管理教练、薪资标准和月度收入",
+      "tabs": {
+        "teachers": "教练",
+        "paySummary": "薪资汇总"
+      },
+      "addTeacher": "添加教练",
+      "editTeacher": "编辑教练",
+      "teacherName": "姓名",
+      "phone": "电话",
+      "linkedUser": "关联用户",
+      "status": "状态",
+      "active": "在职",
+      "inactive": "停用",
+      "payRates": "薪资标准",
+      "lessonType": "课程类型",
+      "rate": "费率 (RM)",
+      "addRate": "添加费率",
+      "noTeachers": "未找到教练",
+      "noRates": "未配置薪资标准",
+      "month": "月份",
+      "totalSessions": "总课时",
+      "totalPay": "总薪资",
+      "earnings": "收入",
+      "noData": "该月无薪资数据",
+      "searchTeachers": "搜索教练...",
+      "confirmDeactivate": "确定要停用此教练吗？",
+      "teacher": "教练",
+      "optional": "可选",
+      "none": "无"
     }
   },
   "updates": {
@@ -1659,6 +1691,106 @@
         "approve": "批准课时",
         "deny": "拒绝课时"
       }
+    }
+  },
+  "replacement": {
+    "title": "替补课程",
+    "bookButton": "预订替补课",
+    "availableSessions": "可选课程",
+    "slotsAvailable": "{available}/{max} 名额",
+    "confirmTitle": "确认替补预订",
+    "confirmMessage": "使用1个替补学分加入此课程？",
+    "creditToUse": "使用学分",
+    "expiresOn": "到期 {date}",
+    "bookSuccess": "替补课程预订成功",
+    "cancelConfirm": "取消此替补预订？",
+    "cancelWarningForfeit": "您的学分将被没收（课程在24小时内）",
+    "cancelWarningReturn": "您的学分将退还",
+    "cancelSuccess": "替补已取消",
+    "myReplacements": "我的替补课程",
+    "noCredits": "没有可用的替补学分",
+    "noSessions": "没有可选课程",
+    "noBookings": "暂无替补预订",
+    "errors": {
+      "bookFailed": "替补预订失败",
+      "cancelFailed": "取消替补失败",
+      "loadFailed": "加载替补数据失败"
+    },
+    "admin": {
+      "title": "替补预订",
+      "empty": "暂无替补预订",
+      "status": {
+        "CONFIRMED": "已确认",
+        "CANCELLED": "已取消",
+        "COMPLETED": "已完成"
+      }
+    }
+  },
+  "gamification": {
+    "sessions": {
+      "title": "比赛场次",
+      "create": "创建场次",
+      "date": "日期",
+      "court": "球场",
+      "notes": "备注",
+      "attendees": "出席人数",
+      "matches": "比赛",
+      "empty": "暂无比赛场次",
+      "notFound": "未找到比赛场次"
+    },
+    "attendance": {
+      "title": "记录出席",
+      "selectPlayers": "选择球员",
+      "record": "记录出席",
+      "recorded": "出席已记录",
+      "alreadyRecorded": "已记录"
+    },
+    "match": {
+      "title": "记录比赛",
+      "team1": "队伍 1",
+      "team2": "队伍 2",
+      "score": "比分",
+      "winner": "获胜方",
+      "matchNumber": "比赛 #{number}",
+      "recordMatch": "记录比赛",
+      "recorded": "比赛已记录",
+      "noMatches": "暂无比赛记录"
+    },
+    "leaderboard": {
+      "title": "排行榜",
+      "rank": "排名",
+      "player": "球员",
+      "attendance": "出席",
+      "games": "比赛",
+      "wins": "胜场",
+      "bonus": "奖励",
+      "total": "总分",
+      "month": "月份",
+      "empty": "本月暂无积分记录"
+    },
+    "playerGroups": {
+      "title": "球员分组",
+      "group": "组别",
+      "override": "手动覆盖",
+      "winRate": "胜率",
+      "totalGames": "总比赛数",
+      "totalWins": "总胜场数",
+      "elite": "精英",
+      "active": "活跃",
+      "updateGroup": "更新分组",
+      "updated": "球员分组已更新",
+      "empty": "暂无球员资料"
+    },
+    "errors": {
+      "sessionNotFound": "未找到比赛场次",
+      "playerNotAttending": "该球员未出席此场次",
+      "invalidScore": "无效比分",
+      "scoresEqual": "比分不能相同——每场比赛必须有赢家",
+      "invalidTeamSize": "每队必须正好有 2 名球员",
+      "duplicatePlayers": "队伍间有重复球员",
+      "invalidGroup": "无效的分组值",
+      "profileNotFound": "未找到球员资料",
+      "invalidMonth": "无效的月份格式"
     }
   }
 }

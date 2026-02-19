@@ -1176,6 +1176,38 @@
     "absences": {
       "title": "Absence Management",
       "description": "Review medical absences and track student attendance"
+    },
+    "staff": {
+      "title": "Staff & Teachers",
+      "description": "Manage teachers, pay rates, and monthly earnings",
+      "tabs": {
+        "teachers": "Teachers",
+        "paySummary": "Pay Summary"
+      },
+      "addTeacher": "Add Teacher",
+      "editTeacher": "Edit Teacher",
+      "teacherName": "Name",
+      "phone": "Phone",
+      "linkedUser": "Linked User",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "payRates": "Pay Rates",
+      "lessonType": "Lesson Type",
+      "rate": "Rate (RM)",
+      "addRate": "Add Rate",
+      "noTeachers": "No teachers found",
+      "noRates": "No pay rates configured",
+      "month": "Month",
+      "totalSessions": "Total Sessions",
+      "totalPay": "Total Pay",
+      "earnings": "Earnings",
+      "noData": "No pay data for this month",
+      "searchTeachers": "Search teachers...",
+      "confirmDeactivate": "Are you sure you want to deactivate this teacher?",
+      "teacher": "Teacher",
+      "optional": "Optional",
+      "none": "None"
     }
   },
   "updates": {
@@ -1656,6 +1688,106 @@
         "approve": "Approve Credit",
         "deny": "Deny Credit"
       }
+    }
+  },
+  "replacement": {
+    "title": "Replacement Bookings",
+    "bookButton": "Book Replacement",
+    "availableSessions": "Available Sessions",
+    "slotsAvailable": "{available}/{max} spots",
+    "confirmTitle": "Confirm Replacement Booking",
+    "confirmMessage": "Use 1 replacement credit to join this session?",
+    "creditToUse": "Credit to use",
+    "expiresOn": "Expires {date}",
+    "bookSuccess": "Replacement booked successfully",
+    "cancelConfirm": "Cancel this replacement booking?",
+    "cancelWarningForfeit": "Your credit will be forfeited (session is within 24 hours)",
+    "cancelWarningReturn": "Your credit will be returned",
+    "cancelSuccess": "Replacement cancelled",
+    "myReplacements": "My Replacement Sessions",
+    "noCredits": "No replacement credits available",
+    "noSessions": "No available sessions",
+    "noBookings": "No replacement bookings yet",
+    "errors": {
+      "bookFailed": "Failed to book replacement",
+      "cancelFailed": "Failed to cancel replacement",
+      "loadFailed": "Failed to load replacement data"
+    },
+    "admin": {
+      "title": "Replacement Bookings",
+      "empty": "No replacement bookings",
+      "status": {
+        "CONFIRMED": "Confirmed",
+        "CANCELLED": "Cancelled",
+        "COMPLETED": "Completed"
+      }
+    }
+  },
+  "gamification": {
+    "sessions": {
+      "title": "Game Sessions",
+      "create": "Create Session",
+      "date": "Date",
+      "court": "Court",
+      "notes": "Notes",
+      "attendees": "Attendees",
+      "matches": "Matches",
+      "empty": "No game sessions yet",
+      "notFound": "Game session not found"
+    },
+    "attendance": {
+      "title": "Record Attendance",
+      "selectPlayers": "Select Players",
+      "record": "Record Attendance",
+      "recorded": "Attendance recorded",
+      "alreadyRecorded": "Already recorded"
+    },
+    "match": {
+      "title": "Record Match",
+      "team1": "Team 1",
+      "team2": "Team 2",
+      "score": "Score",
+      "winner": "Winner",
+      "matchNumber": "Match #{number}",
+      "recordMatch": "Record Match",
+      "recorded": "Match recorded",
+      "noMatches": "No matches recorded"
+    },
+    "leaderboard": {
+      "title": "Leaderboard",
+      "rank": "Rank",
+      "player": "Player",
+      "attendance": "Attendance",
+      "games": "Games",
+      "wins": "Wins",
+      "bonus": "Bonus",
+      "total": "Total",
+      "month": "Month",
+      "empty": "No points recorded for this month"
+    },
+    "playerGroups": {
+      "title": "Player Groups",
+      "group": "Group",
+      "override": "Override",
+      "winRate": "Win Rate",
+      "totalGames": "Total Games",
+      "totalWins": "Total Wins",
+      "elite": "Elite",
+      "active": "Active",
+      "updateGroup": "Update Group",
+      "updated": "Player group updated",
+      "empty": "No player profiles yet"
+    },
+    "errors": {
+      "sessionNotFound": "Game session not found",
+      "playerNotAttending": "Player does not have attendance for this session",
+      "invalidScore": "Invalid score",
+      "scoresEqual": "Scores cannot be equal — every match must have a winner",
+      "invalidTeamSize": "Each team must have exactly 2 players",
+      "duplicatePlayers": "Duplicate players across teams",
+      "invalidGroup": "Invalid group value",
+      "profileNotFound": "Player profile not found",
+      "invalidMonth": "Invalid month format"
     }
   }
 }

@@ -1,4 +1,4 @@
-import { AbsenceType } from "@prisma/client";
+import { AbsenceType, PlayerGroup } from "@prisma/client";
 
 /**
  * Validates Malaysian phone number format
@@ -165,4 +165,61 @@ export function sanitiseText(input: string | undefined | null): string | null {
     .replace(/\s+/g, " ")
     .trim();
   return cleaned || null;
+}
+
+/**
+ * Validates a month string in YYYY-MM format
+ * @returns cleaned month string or null if invalid
+ */
+export function validateMonth(input: string | undefined | null): string | null {
+  if (!input) return null;
+  const pattern = /^\d{4}-(0[1-9]|1[0-2])$/;
+  if (!pattern.test(input)) return null;
+  return input;
+}
+
+/**
+ * Validates a team number (1 or 2 for doubles)
+ * @returns 1 or 2, or null if invalid
+ */
+export function validateTeam(input: number | undefined | null): 1 | 2 | null {
+  if (input === 1 || input === 2) return input;
+  return null;
+}
+
+/**
+ * Validates a player group string against the PlayerGroup enum
+ * @returns PlayerGroup value or null if invalid
+ */
+export function validatePlayerGroup(
+  input: string | undefined | null,
+): PlayerGroup | null {
+  if (!input) return null;
+  const valid: string[] = Object.values(PlayerGroup);
+  if (!valid.includes(input)) return null;
+  return input as PlayerGroup;
+}
+
+/**
+ * Validates a teacher name (1-100 chars, trimmed)
+ * @returns trimmed name or null if invalid
+ */
+export function validateTeacherName(
+  name: string | undefined | null,
+): string | null {
+  if (!name) return null;
+  const trimmed = name.trim();
+  if (trimmed.length < 1 || trimmed.length > 100) return null;
+  return trimmed;
+}
+
+/**
+ * Validates a pay rate (positive number, max 10000)
+ * @returns number or null if invalid
+ */
+export function validatePayRate(rate: unknown): number | null {
+  if (rate === undefined || rate === null) return null;
+  const num = Number(rate);
+  if (isNaN(num) || num <= 0 || num > 10000) return null;
+  return num;
 }

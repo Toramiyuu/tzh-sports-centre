@@ -10,32 +10,18 @@ import { isAdmin } from "@/lib/admin";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 
-const AbsencesContent = dynamic(
-  () => import("@/components/admin/AbsencesContent"),
-  {
-    loading: () => (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-      </div>
-    ),
-  },
-);
+const StaffContent = dynamic(() => import("@/components/admin/StaffContent"), {
+  loading: () => (
+    <div className="flex items-center justify-center py-12">
+      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+    </div>
+  ),
+});
 
-const ReplacementBookingsTable = dynamic(
-  () => import("@/components/admin/ReplacementBookingsTable"),
-  {
-    loading: () => (
-      <div className="flex items-center justify-center py-8">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-      </div>
-    ),
-  },
-);
-
-function AbsencesPageContent() {
+function StaffPageContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const t = useTranslations("absence");
+  const t = useTranslations("admin.staff");
 
   useEffect(() => {
     if (status === "loading") return;
@@ -63,22 +49,17 @@ function AbsencesPageContent() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {t("admin.title")}
-            </h1>
-            <p className="text-muted-foreground">{t("admin.description")}</p>
+            <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
+            <p className="text-muted-foreground">{t("description")}</p>
           </div>
         </div>
-        <AbsencesContent />
-        <div className="mt-8">
-          <ReplacementBookingsTable />
-        </div>
+        <StaffContent />
       </div>
     </div>
   );
 }
 
-export default function AbsencesPage() {
+export default function StaffPage() {
   return (
     <Suspense
       fallback={
@@ -87,7 +68,7 @@ export default function AbsencesPage() {
         </div>
       }
     >
-      <AbsencesPageContent />
+      <StaffPageContent />
     </Suspense>
   );
 }

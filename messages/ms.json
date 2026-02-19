@@ -1165,6 +1165,38 @@
     "absences": {
       "title": "Pengurusan Ketidakhadiran",
       "description": "Semak ketidakhadiran perubatan dan pantau kehadiran pelajar"
+    },
+    "staff": {
+      "title": "Kakitangan & Jurulatih",
+      "description": "Urus jurulatih, kadar gaji, dan pendapatan bulanan",
+      "tabs": {
+        "teachers": "Jurulatih",
+        "paySummary": "Ringkasan Gaji"
+      },
+      "addTeacher": "Tambah Jurulatih",
+      "editTeacher": "Edit Jurulatih",
+      "teacherName": "Nama",
+      "phone": "Telefon",
+      "linkedUser": "Pengguna Berkaitan",
+      "status": "Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "payRates": "Kadar Gaji",
+      "lessonType": "Jenis Pelajaran",
+      "rate": "Kadar (RM)",
+      "addRate": "Tambah Kadar",
+      "noTeachers": "Tiada jurulatih ditemui",
+      "noRates": "Tiada kadar gaji dikonfigurasi",
+      "month": "Bulan",
+      "totalSessions": "Jumlah Sesi",
+      "totalPay": "Jumlah Gaji",
+      "earnings": "Pendapatan",
+      "noData": "Tiada data gaji untuk bulan ini",
+      "searchTeachers": "Cari jurulatih...",
+      "confirmDeactivate": "Adakah anda pasti mahu menyahaktifkan jurulatih ini?",
+      "teacher": "Jurulatih",
+      "optional": "Pilihan",
+      "none": "Tiada"
     }
   },
   "updates": {
@@ -1645,6 +1677,106 @@
         "approve": "Luluskan Kredit",
         "deny": "Tolak Kredit"
       }
+    }
+  },
+  "replacement": {
+    "title": "Tempahan Gantian",
+    "bookButton": "Tempah Gantian",
+    "availableSessions": "Sesi Tersedia",
+    "slotsAvailable": "{available}/{max} tempat",
+    "confirmTitle": "Sahkan Tempahan Gantian",
+    "confirmMessage": "Guna 1 kredit gantian untuk sertai sesi ini?",
+    "creditToUse": "Kredit digunakan",
+    "expiresOn": "Tamat {date}",
+    "bookSuccess": "Gantian berjaya ditempah",
+    "cancelConfirm": "Batal tempahan gantian ini?",
+    "cancelWarningForfeit": "Kredit anda akan dilucutkan (sesi dalam 24 jam)",
+    "cancelWarningReturn": "Kredit anda akan dikembalikan",
+    "cancelSuccess": "Gantian dibatalkan",
+    "myReplacements": "Sesi Gantian Saya",
+    "noCredits": "Tiada kredit gantian tersedia",
+    "noSessions": "Tiada sesi tersedia",
+    "noBookings": "Belum ada tempahan gantian",
+    "errors": {
+      "bookFailed": "Gagal menempah gantian",
+      "cancelFailed": "Gagal membatal gantian",
+      "loadFailed": "Gagal memuatkan data gantian"
+    },
+    "admin": {
+      "title": "Tempahan Gantian",
+      "empty": "Tiada tempahan gantian",
+      "status": {
+        "CONFIRMED": "Disahkan",
+        "CANCELLED": "Dibatalkan",
+        "COMPLETED": "Selesai"
+      }
+    }
+  },
+  "gamification": {
+    "sessions": {
+      "title": "Sesi Permainan",
+      "create": "Cipta Sesi",
+      "date": "Tarikh",
+      "court": "Gelanggang",
+      "notes": "Nota",
+      "attendees": "Kehadiran",
+      "matches": "Perlawanan",
+      "empty": "Tiada sesi permainan lagi",
+      "notFound": "Sesi permainan tidak dijumpai"
+    },
+    "attendance": {
+      "title": "Rekod Kehadiran",
+      "selectPlayers": "Pilih Pemain",
+      "record": "Rekod Kehadiran",
+      "recorded": "Kehadiran direkodkan",
+      "alreadyRecorded": "Sudah direkodkan"
+    },
+    "match": {
+      "title": "Rekod Perlawanan",
+      "team1": "Pasukan 1",
+      "team2": "Pasukan 2",
+      "score": "Skor",
+      "winner": "Pemenang",
+      "matchNumber": "Perlawanan #{number}",
+      "recordMatch": "Rekod Perlawanan",
+      "recorded": "Perlawanan direkodkan",
+      "noMatches": "Tiada perlawanan direkodkan"
+    },
+    "leaderboard": {
+      "title": "Papan Pendahulu",
+      "rank": "Kedudukan",
+      "player": "Pemain",
+      "attendance": "Kehadiran",
+      "games": "Permainan",
+      "wins": "Kemenangan",
+      "bonus": "Bonus",
+      "total": "Jumlah",
+      "month": "Bulan",
+      "empty": "Tiada mata direkodkan untuk bulan ini"
+    },
+    "playerGroups": {
+      "title": "Kumpulan Pemain",
+      "group": "Kumpulan",
+      "override": "Ganti Manual",
+      "winRate": "Kadar Kemenangan",
+      "totalGames": "Jumlah Permainan",
+      "totalWins": "Jumlah Kemenangan",
+      "elite": "Elit",
+      "active": "Aktif",
+      "updateGroup": "Kemaskini Kumpulan",
+      "updated": "Kumpulan pemain dikemaskini",
+      "empty": "Tiada profil pemain lagi"
+    },
+    "errors": {
+      "sessionNotFound": "Sesi permainan tidak dijumpai",
+      "playerNotAttending": "Pemain tidak hadir untuk sesi ini",
+      "invalidScore": "Skor tidak sah",
+      "scoresEqual": "Skor tidak boleh sama — setiap perlawanan mesti ada pemenang",
+      "invalidTeamSize": "Setiap pasukan mesti ada tepat 2 pemain",
+      "duplicatePlayers": "Pemain berulang antara pasukan",
+      "invalidGroup": "Nilai kumpulan tidak sah",
+      "profileNotFound": "Profil pemain tidak dijumpai",
+      "invalidMonth": "Format bulan tidak sah"
     }
   }
 }

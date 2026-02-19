@@ -9,6 +9,7 @@ import {
   ShoppingBag,
   ArrowRight,
   CalendarX2,
+  GraduationCap,
 } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -60,6 +61,13 @@ export default async function AdminPage() {
       icon: CalendarX2,
       href: "/admin/absences",
       iconBg: "bg-primary/10 text-primary",
+    },
+    {
+      titleKey: "staff.title",
+      descriptionKey: "staff.description",
+      icon: GraduationCap,
+      href: "/admin/staff",
+      iconBg: "bg-primary/15 text-primary",
     },
   ];
 

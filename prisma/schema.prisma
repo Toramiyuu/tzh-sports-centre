@@ -40,6 +40,13 @@ model User {
   shopOrders            ShopOrder[]
   absences              Absence[]
   replacementCredits    ReplacementCredit[]
+  replacementBookings   ReplacementBooking[]
+  gameSessions          GameSession[]
+  sessionAttendances    SessionAttendance[]
+  matchPlayers          MatchPlayer[]
+  playerPoints          PlayerPoints[]
+  playerProfile         PlayerProfile?
+  teacher               Teacher?
 
   @@map("users")
 }
@@ -53,6 +60,7 @@ model Court {
   bookings          Booking[]
   lessonSessions    LessonSession[]
   recurringBookings RecurringBooking[]
+  gameSessions      GameSession[]
 
   @@map("courts")
 }
@@ -168,23 +176,27 @@ model CoachAvailability {
 }
 
 model LessonSession {
-  id          String   @id @default(cuid())
-  courtId     Int      @map("court_id")
-  lessonDate  DateTime @map("lesson_date")
-  startTime   String   @map("start_time")
-  endTime     String   @map("end_time")
-  lessonType  String   @map("lesson_type")
-  billingType String   @default("per_session") @map("billing_type")
-  duration    Float
-  price       Float
-  status      String   @default("scheduled")
-  notes       String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  court       Court    @relation(fields: [courtId], references: [id])
-  students    User[]   @relation("StudentLessons")
-  absences    Absence[]
+  id                   String               @id @default(cuid())
+  courtId              Int                  @map("court_id")
+  teacherId            String?              @map("teacher_id")
+  lessonDate           DateTime             @map("lesson_date")
+  startTime            String               @map("start_time")
+  endTime              String               @map("end_time")
+  lessonType           String               @map("lesson_type")
+  billingType          String               @default("per_session") @map("billing_type")
+  duration             Float
+  price                Float
+  status               String               @default("scheduled")
+  notes                String?
+  createdAt            DateTime             @default(now()) @map("created_at")
+  updatedAt            DateTime             @updatedAt @map("updated_at")
+  court                Court                @relation(fields: [courtId], references: [id])
+  teacher              Teacher?             @relation(fields: [teacherId], references: [id])
+  students             User[]               @relation("StudentLessons")
+  absences             Absence[]
+  replacementBookings  ReplacementBooking[]
 
+  @@index([teacherId])
   @@map("lesson_sessions")
 }
 
@@ -498,16 +510,177 @@ model Absence {
 }
 
 model ReplacementCredit {
-  id          String    @id @default(cuid())
-  userId      String    @map("user_id")
-  user        User      @relation(fields: [userId], references: [id])
-  absenceId   String    @unique @map("absence_id")
-  absence     Absence   @relation(fields: [absenceId], references: [id])
-  usedAt      DateTime? @map("used_at")
-  expiresAt   DateTime  @map("expires_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id                  String              @id @default(cuid())
+  userId              String              @map("user_id")
+  user                User                @relation(fields: [userId], references: [id])
+  absenceId           String              @unique @map("absence_id")
+  absence             Absence             @relation(fields: [absenceId], references: [id])
+  usedAt              DateTime?           @map("used_at")
+  expiresAt           DateTime            @map("expires_at")
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+  replacementBooking  ReplacementBooking?
 
   @@index([userId])
   @@map("replacement_credits")
+}
+
+// ─── Replacement Booking System ───────────────────────────────────────────────
+
+enum ReplacementBookingStatus {
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model ReplacementBooking {
+  id                  String                    @id @default(cuid())
+  userId              String                    @map("user_id")
+  user                User                      @relation(fields: [userId], references: [id])
+  replacementCreditId String                    @unique @map("replacement_credit_id")
+  replacementCredit   ReplacementCredit         @relation(fields: [replacementCreditId], references: [id])
+  lessonSessionId     String                    @map("lesson_session_id")
+  lessonSession       LessonSession             @relation(fields: [lessonSessionId], references: [id])
+  status              ReplacementBookingStatus  @default(CONFIRMED)
+  createdAt           DateTime                  @default(now()) @map("created_at")
+  updatedAt           DateTime                  @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([lessonSessionId])
+  @@map("replacement_bookings")
+}
+
+// ─── Staff / Teacher System ──────────────────────────────────────────────────
+
+model Teacher {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String?  @unique @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
+  phone     String?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  payRates       TeacherPayRate[]
+  lessonSessions LessonSession[]
+
+  @@map("teachers")
+}
+
+model TeacherPayRate {
+  id         String   @id @default(cuid())
+  teacherId  String   @map("teacher_id")
+  teacher    Teacher  @relation(fields: [teacherId], references: [id])
+  lessonType String   @map("lesson_type")
+  rate       Float
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([teacherId, lessonType])
+  @@map("teacher_pay_rates")
+}
+
+// ─── Gamification System ──────────────────────────────────────────────────────
+
+enum PlayerGroup {
+  ELITE
+  ACTIVE
+}
+
+model GameSession {
+  id          String              @id @default(cuid())
+  date        DateTime
+  courtId     Int?                @map("court_id")
+  court       Court?              @relation(fields: [courtId], references: [id])
+  notes       String?
+  createdBy   String              @map("created_by")
+  createdByUser User              @relation(fields: [createdBy], references: [id])
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+  attendances SessionAttendance[]
+  matches     Match[]
+
+  @@index([date])
+  @@map("game_sessions")
+}
+
+model SessionAttendance {
+  id        String      @id @default(cuid())
+  sessionId String      @map("session_id")
+  session   GameSession @relation(fields: [sessionId], references: [id])
+  userId    String      @map("user_id")
+  user      User        @relation(fields: [userId], references: [id])
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@unique([sessionId, userId])
+  @@index([userId])
+  @@map("session_attendances")
+}
+
+model Match {
+  id          String        @id @default(cuid())
+  sessionId   String        @map("session_id")
+  session     GameSession   @relation(fields: [sessionId], references: [id])
+  matchNumber Int           @map("match_number")
+  team1Score  Int           @map("team1_score")
+  team2Score  Int           @map("team2_score")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  players     MatchPlayer[]
+
+  @@unique([sessionId, matchNumber])
+  @@index([sessionId])
+  @@map("matches")
+}
+
+model MatchPlayer {
+  id        String  @id @default(cuid())
+  matchId   String  @map("match_id")
+  match     Match   @relation(fields: [matchId], references: [id])
+  userId    String  @map("user_id")
+  user      User    @relation(fields: [userId], references: [id])
+  team      Int
+  isWinner  Boolean @map("is_winner")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([matchId])
+  @@index([userId])
+  @@map("match_players")
+}
+
+model PlayerPoints {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  user              User     @relation(fields: [userId], references: [id])
+  month             String   // YYYY-MM format
+  attendancePoints  Float    @default(0) @map("attendance_points")
+  gamesPoints       Float    @default(0) @map("games_points")
+  winsPoints        Float    @default(0) @map("wins_points")
+  bonusPoints       Float    @default(0) @map("bonus_points")
+  totalPoints       Float    @default(0) @map("total_points")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, month])
+  @@index([month])
+  @@map("player_points")
+}
+
+model PlayerProfile {
+  id               String      @id @default(cuid())
+  userId           String      @unique @map("user_id")
+  user             User        @relation(fields: [userId], references: [id])
+  group            PlayerGroup @default(ACTIVE)
+  groupOverride    Boolean     @default(false) @map("group_override")
+  winRate          Float       @default(0) @map("win_rate")
+  totalGames       Int         @default(0) @map("total_games")
+  totalWins        Int         @default(0) @map("total_wins")
+  currentStreak    Int         @default(0) @map("current_streak")
+  bestStreak       Int         @default(0) @map("best_streak")
+  consecutiveWeeks Int         @default(0) @map("consecutive_weeks")
+  lastSessionDate  DateTime?   @map("last_session_date")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+
+  @@map("player_profiles")
 }
