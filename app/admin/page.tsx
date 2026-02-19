@@ -10,6 +10,7 @@ import {
   ArrowRight,
   CalendarX2,
   GraduationCap,
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -68,6 +69,13 @@ export default async function AdminPage() {
       icon: GraduationCap,
       href: "/admin/staff",
       iconBg: "bg-primary/15 text-primary",
+    },
+    {
+      titleKey: "leaderboard.title",
+      descriptionKey: "leaderboard.description",
+      icon: Trophy,
+      href: "/admin/leaderboard",
+      iconBg: "bg-primary/10 text-primary",
     },
   ];
 

@@ -1166,6 +1166,10 @@
       "title": "Pengurusan Ketidakhadiran",
       "description": "Semak ketidakhadiran perubatan dan pantau kehadiran pelajar"
     },
+    "leaderboard": {
+      "title": "Papan Pendahulu",
+      "description": "Lihat kedudukan pemain bulanan dan mata"
+    },
     "staff": {
       "title": "Kakitangan & Jurulatih",
       "description": "Urus jurulatih, kadar gaji, dan pendapatan bulanan",

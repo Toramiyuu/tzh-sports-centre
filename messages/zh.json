@@ -1062,6 +1062,10 @@
       "title": "缺席管理",
       "description": "审核病假缺席并跟踪学生出勤情况"
     },
+    "leaderboard": {
+      "title": "排行榜",
+      "description": "查看每月球员排名和积分"
+    },
     "staff": {
       "title": "员工与教练",
       "description": "管理教练、薪资标准和月度收入",

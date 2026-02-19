@@ -1177,6 +1177,10 @@
       "title": "Absence Management",
       "description": "Review medical absences and track student attendance"
     },
+    "leaderboard": {
+      "title": "Leaderboard",
+      "description": "View monthly player rankings and points"
+    },
     "staff": {
       "title": "Staff & Teachers",
       "description": "Manage teachers, pay rates, and monthly earnings",
