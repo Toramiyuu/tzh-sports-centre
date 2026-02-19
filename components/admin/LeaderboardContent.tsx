@@ -14,6 +14,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Trophy, RefreshCw, Loader2, Medal, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -51,6 +58,7 @@ export default function LeaderboardContent() {
   const [selectedUserId, setSelectedUserId] = useState("");
   const [pointsAmount, setPointsAmount] = useState("");
   const [pointsReason, setPointsReason] = useState("");
+  const [pointsCategory, setPointsCategory] = useState("bonus");
   const [awarding, setAwarding] = useState(false);
 
   const fetchLeaderboard = useCallback(async () => {
@@ -74,6 +82,7 @@ export default function LeaderboardContent() {
     setSelectedUserId("");
     setPointsAmount("");
     setPointsReason("");
+    setPointsCategory("bonus");
     setMemberSearch("");
     setPointsDialogOpen(true);
     if (members.length === 0) {
@@ -95,6 +104,7 @@ export default function LeaderboardContent() {
           userId: selectedUserId,
           points: Number(pointsAmount),
           month,
+          category: pointsCategory,
           reason: pointsReason || null,
         }),
       });
@@ -330,6 +340,20 @@ export default function LeaderboardContent() {
               </div>
             </div>
             <div>
+              <Label>Category</Label>
+              <Select value={pointsCategory} onValueChange={setPointsCategory}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="attendance">{t("attendance")}</SelectItem>
+                  <SelectItem value="games">{t("games")}</SelectItem>
+                  <SelectItem value="wins">{t("wins")}</SelectItem>
+                  <SelectItem value="bonus">{t("bonus")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <Label>Points</Label>
               <Input
                 type="number"
@@ -338,7 +362,7 @@ export default function LeaderboardContent() {
                 placeholder="e.g. 5 or -2"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Positive to add, negative to deduct
+                Positive to add, negative to deduct (whole numbers only)
               </p>
             </div>
             <div>

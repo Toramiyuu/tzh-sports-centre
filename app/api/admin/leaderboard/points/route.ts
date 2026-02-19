@@ -4,6 +4,16 @@ import { isAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { validateMonth } from "@/lib/validation";
 
+const VALID_CATEGORIES = ["attendance", "games", "wins", "bonus"] as const;
+type PointCategory = (typeof VALID_CATEGORIES)[number];
+
+const CATEGORY_FIELD: Record<PointCategory, string> = {
+  attendance: "attendancePoints",
+  games: "gamesPoints",
+  wins: "winsPoints",
+  bonus: "bonusPoints",
+};
+
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
@@ -15,7 +25,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { userId, points, month: monthRaw, reason } = body;
+    const {
+      userId,
+      points,
+      month: monthRaw,
+      reason,
+      category: categoryRaw,
+    } = body;
 
     if (!userId || typeof userId !== "string") {
       return NextResponse.json(
@@ -24,12 +40,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (typeof points !== "number" || points === 0) {
+    if (
+      typeof points !== "number" ||
+      points === 0 ||
+      !Number.isInteger(points)
+    ) {
       return NextResponse.json(
-        { error: "points must be a non-zero number" },
+        { error: "points must be a non-zero integer" },
         { status: 400 },
       );
     }
+
+    const category: PointCategory =
+      categoryRaw && VALID_CATEGORIES.includes(categoryRaw)
+        ? categoryRaw
+        : "bonus";
 
     let month: string;
     if (monthRaw) {
@@ -55,16 +80,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    const field = CATEGORY_FIELD[category];
+
     const record = await prisma.playerPoints.upsert({
       where: { userId_month: { userId, month } },
       update: {
-        bonusPoints: { increment: points },
+        [field]: { increment: points },
         totalPoints: { increment: points },
       },
       create: {
         userId,
         month,
-        bonusPoints: points,
+        [field]: points,
         totalPoints: points,
       },
     });
@@ -73,7 +100,7 @@ export async function POST(request: NextRequest) {
       success: true,
       playerName: user.name,
       month,
-      bonusPoints: record.bonusPoints,
+      category,
       totalPoints: record.totalPoints,
       reason: reason || null,
     });

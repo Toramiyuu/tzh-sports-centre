@@ -7,7 +7,7 @@ type TxClient = Omit<
 
 const POINTS = {
   ATTENDANCE: 1.0,
-  GAME_PLAYED: 0.5,
+  GAME_PLAYED: 1,
   GAME_WON: 1.0,
   STREAK_BONUS: 0,
 } as const;
