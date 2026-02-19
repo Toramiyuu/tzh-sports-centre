@@ -1757,7 +1757,8 @@
       "bonus": "Bonus",
       "total": "Jumlah",
       "month": "Bulan",
-      "empty": "Tiada mata direkodkan untuk bulan ini"
+      "empty": "Tiada mata direkodkan untuk bulan ini",
+      "givePoints": "Beri Mata"
     },
     "playerGroups": {
       "title": "Kumpulan Pemain",

@@ -59,7 +59,11 @@ export async function recalculateMonthlyPoints(
   const attendancePoints = attendanceCount * POINTS.ATTENDANCE;
   const gamesPoints = gamesPlayed * POINTS.GAME_PLAYED;
   const winsPoints = gamesWon * POINTS.GAME_WON;
-  const bonusPoints = POINTS.STREAK_BONUS;
+  const existing = await tx.playerPoints.findUnique({
+    where: { userId_month: { userId, month } },
+    select: { bonusPoints: true },
+  });
+  const bonusPoints = existing?.bonusPoints ?? 0;
   const totalPoints = attendancePoints + gamesPoints + winsPoints + bonusPoints;
 
   await tx.playerPoints.upsert({

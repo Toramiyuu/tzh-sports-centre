@@ -1768,7 +1768,8 @@
       "bonus": "Bonus",
       "total": "Total",
       "month": "Month",
-      "empty": "No points recorded for this month"
+      "empty": "No points recorded for this month",
+      "givePoints": "Give Points"
     },
     "playerGroups": {
       "title": "Player Groups",

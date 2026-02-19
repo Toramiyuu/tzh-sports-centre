@@ -6,7 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Trophy, RefreshCw, Loader2, Medal } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Trophy, RefreshCw, Loader2, Medal, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface LeaderboardEntry {
@@ -22,6 +30,12 @@ interface LeaderboardEntry {
   totalPoints: number;
 }
 
+interface Member {
+  id: string;
+  name: string;
+  uid: string;
+}
+
 export default function LeaderboardContent() {
   const t = useTranslations("gamification.leaderboard");
   const [loading, setLoading] = useState(true);
@@ -30,6 +44,14 @@ export default function LeaderboardContent() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
+
+  const [pointsDialogOpen, setPointsDialogOpen] = useState(false);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [memberSearch, setMemberSearch] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const [pointsAmount, setPointsAmount] = useState("");
+  const [pointsReason, setPointsReason] = useState("");
+  const [awarding, setAwarding] = useState(false);
 
   const fetchLeaderboard = useCallback(async () => {
     setLoading(true);
@@ -47,6 +69,54 @@ export default function LeaderboardContent() {
   useEffect(() => {
     fetchLeaderboard();
   }, [fetchLeaderboard]);
+
+  const openPointsDialog = () => {
+    setSelectedUserId("");
+    setPointsAmount("");
+    setPointsReason("");
+    setMemberSearch("");
+    setPointsDialogOpen(true);
+    if (members.length === 0) {
+      fetch("/api/admin/members")
+        .then((r) => r.json())
+        .then((data) => setMembers(data.members || []))
+        .catch(() => {});
+    }
+  };
+
+  const handleAwardPoints = async () => {
+    if (!selectedUserId || !pointsAmount) return;
+    setAwarding(true);
+    try {
+      const res = await fetch("/api/admin/leaderboard/points", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: selectedUserId,
+          points: Number(pointsAmount),
+          month,
+          reason: pointsReason || null,
+        }),
+      });
+      if (res.ok) {
+        setPointsDialogOpen(false);
+        fetchLeaderboard();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to award points");
+      }
+    } catch (error) {
+      console.error("Error awarding points:", error);
+    } finally {
+      setAwarding(false);
+    }
+  };
+
+  const filteredMembers = members.filter((m) => {
+    if (!memberSearch) return true;
+    const s = memberSearch.toLowerCase();
+    return m.name.toLowerCase().includes(s) || m.uid.toLowerCase().includes(s);
+  });
 
   const getRankDisplay = (rank: number) => {
     if (rank === 1) return <Medal className="w-5 h-5 text-yellow-500" />;
@@ -91,6 +161,10 @@ export default function LeaderboardContent() {
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </Button>
         </div>
+        <Button size="sm" onClick={openPointsDialog}>
+          <Plus className="w-4 h-4 mr-1" />
+          {t("givePoints")}
+        </Button>
       </div>
 
       {leaderboard.length === 0 ? (
@@ -219,6 +293,85 @@ export default function LeaderboardContent() {
           </Card>
         </>
       )}
+
+      {/* Give Points Dialog */}
+      <Dialog open={pointsDialogOpen} onOpenChange={setPointsDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("givePoints")}</DialogTitle>
+            <DialogDescription>
+              Award bonus points to a player for the selected month
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>{t("player")}</Label>
+              <Input
+                placeholder="Search by name or UID..."
+                value={memberSearch}
+                onChange={(e) => setMemberSearch(e.target.value)}
+                className="mb-2"
+              />
+              <div className="space-y-1 max-h-40 overflow-y-auto">
+                {filteredMembers.slice(0, 20).map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setSelectedUserId(m.id)}
+                    className={`w-full text-left px-3 py-2 rounded text-sm ${
+                      selectedUserId === m.id
+                        ? "bg-primary text-white"
+                        : "bg-card border border-border hover:bg-muted"
+                    }`}
+                  >
+                    {m.name} <span className="opacity-60">#{m.uid}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label>Points</Label>
+              <Input
+                type="number"
+                value={pointsAmount}
+                onChange={(e) => setPointsAmount(e.target.value)}
+                placeholder="e.g. 5 or -2"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Positive to add, negative to deduct
+              </p>
+            </div>
+            <div>
+              <Label>Reason (optional)</Label>
+              <Input
+                value={pointsReason}
+                onChange={(e) => setPointsReason(e.target.value)}
+                placeholder="e.g. Tournament winner"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setPointsDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAwardPoints}
+              disabled={
+                !selectedUserId ||
+                !pointsAmount ||
+                Number(pointsAmount) === 0 ||
+                awarding
+              }
+            >
+              {awarding && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Award Points
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

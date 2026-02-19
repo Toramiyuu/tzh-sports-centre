@@ -1771,7 +1771,8 @@
       "bonus": "奖励",
       "total": "总分",
       "month": "月份",
-      "empty": "本月暂无积分记录"
+      "empty": "本月暂无积分记录",
+      "givePoints": "奖励积分"
     },
     "playerGroups": {
       "title": "球员分组",
