@@ -55,15 +55,6 @@ export default function LeaderboardPage() {
     if (session?.user) fetchLeaderboard();
   }, [session, fetchLeaderboard]);
 
-  const getRankDisplay = (rank: number) => {
-    if (rank === 1) return <Medal className="w-5 h-5 text-yellow-500" />;
-    if (rank === 2) return <Medal className="w-5 h-5 text-gray-400" />;
-    if (rank === 3) return <Medal className="w-5 h-5 text-amber-700" />;
-    return (
-      <span className="text-sm font-medium text-muted-foreground">{rank}</span>
-    );
-  };
-
   if (status === "loading" || (loading && leaderboard.length === 0)) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -114,107 +105,92 @@ export default function LeaderboardPage() {
           </Card>
         ) : (
           <div className="space-y-6">
-            {/* Top 3 podium */}
+            {/* Podium: 2nd - 1st - 3rd */}
             {leaderboard.length >= 3 && (
-              <div className="grid gap-4 sm:grid-cols-3">
-                {leaderboard.slice(0, 3).map((entry) => (
-                  <Card
-                    key={entry.rank}
-                    className={
-                      entry.rank === 1
-                        ? "border-yellow-500/50 bg-yellow-500/5"
-                        : entry.rank === 2
-                          ? "border-gray-400/50 bg-gray-400/5"
-                          : "border-amber-700/50 bg-amber-700/5"
-                    }
-                  >
-                    <CardContent className="pt-6 text-center">
-                      <div className="flex justify-center mb-2">
-                        {getRankDisplay(entry.rank)}
-                      </div>
-                      <p className="font-semibold text-lg text-foreground">
-                        {entry.playerName}
-                      </p>
-                      <p className="text-3xl font-bold text-primary mt-3">
-                        {entry.totalPoints}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {t("total")} pts
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className="flex items-end justify-center gap-3 sm:gap-4 pt-6 pb-2">
+                {/* 2nd place */}
+                <div className="flex flex-col items-center w-28 sm:w-32">
+                  <Medal className="w-6 h-6 text-gray-400 mb-2" />
+                  <p className="font-semibold text-sm sm:text-base text-foreground text-center truncate w-full">
+                    {leaderboard[1].playerName}
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold text-primary mt-1">
+                    {leaderboard[1].totalPoints}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("total")} pts
+                  </p>
+                  <div className="w-full h-24 sm:h-28 bg-gray-400/15 rounded-t-lg mt-3 flex items-center justify-center">
+                    <span className="text-3xl font-bold text-gray-400">2</span>
+                  </div>
+                </div>
+
+                {/* 1st place */}
+                <div className="flex flex-col items-center w-32 sm:w-36">
+                  <Medal className="w-8 h-8 text-yellow-500 mb-2" />
+                  <p className="font-bold text-base sm:text-lg text-foreground text-center truncate w-full">
+                    {leaderboard[0].playerName}
+                  </p>
+                  <p className="text-2xl sm:text-3xl font-bold text-primary mt-1">
+                    {leaderboard[0].totalPoints}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("total")} pts
+                  </p>
+                  <div className="w-full h-32 sm:h-40 bg-yellow-500/15 rounded-t-lg mt-3 flex items-center justify-center">
+                    <span className="text-4xl font-bold text-yellow-500">
+                      1
+                    </span>
+                  </div>
+                </div>
+
+                {/* 3rd place */}
+                <div className="flex flex-col items-center w-28 sm:w-32">
+                  <Medal className="w-6 h-6 text-amber-700 mb-2" />
+                  <p className="font-semibold text-sm sm:text-base text-foreground text-center truncate w-full">
+                    {leaderboard[2].playerName}
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold text-primary mt-1">
+                    {leaderboard[2].totalPoints}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("total")} pts
+                  </p>
+                  <div className="w-full h-16 sm:h-20 bg-amber-700/15 rounded-t-lg mt-3 flex items-center justify-center">
+                    <span className="text-3xl font-bold text-amber-700">3</span>
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* Full table */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border text-muted-foreground">
-                        <th className="text-left py-2 font-medium w-16">
-                          {t("rank")}
-                        </th>
-                        <th className="text-left py-2 font-medium">
-                          {t("player")}
-                        </th>
-                        <th className="text-center py-2 font-medium">
-                          {t("attendance")}
-                        </th>
-                        <th className="text-center py-2 font-medium">
-                          {t("games")}
-                        </th>
-                        <th className="text-center py-2 font-medium">
-                          {t("wins")}
-                        </th>
-                        <th className="text-center py-2 font-medium">
-                          {t("bonus")}
-                        </th>
-                        <th className="text-right py-2 font-medium">
-                          {t("total")}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {leaderboard.map((entry) => (
-                        <tr
-                          key={entry.rank}
-                          className={`border-b border-border/50 ${
-                            entry.rank <= 3 ? "font-medium" : ""
-                          }`}
-                        >
-                          <td className="py-3">
-                            <div className="flex items-center justify-center w-8 h-8">
-                              {getRankDisplay(entry.rank)}
-                            </div>
-                          </td>
-                          <td className="py-3 text-foreground">
-                            {entry.playerName}
-                          </td>
-                          <td className="py-3 text-center">
-                            {entry.attendancePoints}
-                          </td>
-                          <td className="py-3 text-center">
-                            {entry.gamesPoints}
-                          </td>
-                          <td className="py-3 text-center">
-                            {entry.winsPoints}
-                          </td>
-                          <td className="py-3 text-center">
-                            {entry.bonusPoints}
-                          </td>
-                          <td className="py-3 text-right font-bold text-primary">
-                            {entry.totalPoints}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
+            {/* List from 4th onwards */}
+            {leaderboard.length > 3 && (
+              <Card>
+                <CardContent className="pt-4 pb-2">
+                  <div className="divide-y divide-border/50">
+                    {leaderboard.slice(3).map((entry) => (
+                      <div
+                        key={entry.rank}
+                        className="flex items-center py-3 gap-3"
+                      >
+                        <span className="w-8 text-center text-sm font-medium text-muted-foreground">
+                          {entry.rank}
+                        </span>
+                        <span className="flex-1 text-foreground font-medium truncate">
+                          {entry.playerName}
+                        </span>
+                        <span className="font-bold text-primary">
+                          {entry.totalPoints}{" "}
+                          <span className="text-xs font-normal text-muted-foreground">
+                            pts
+                          </span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
       </div>
