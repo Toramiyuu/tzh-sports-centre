@@ -41,18 +41,18 @@ export function ShopCategoryTabs({
   return (
     <div className="sticky top-16 z-30 bg-background/95 backdrop-blur-sm border-b border-border py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex flex-wrap justify-center gap-1.5">
           {/* All category */}
           <button
             onClick={() => onCategoryChange("all")}
             className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all",
+              "flex items-center gap-1.5 px-3 py-2 rounded-full font-medium text-xs whitespace-nowrap transition-all",
               selectedCategory === "all"
                 ? "bg-primary text-white shadow-lg shadow-primary/25"
                 : "bg-card text-muted-foreground hover:bg-accent hover:text-foreground border border-border",
             )}
           >
-            <LayoutGrid className="w-4 h-4" />
+            <LayoutGrid className="w-3.5 h-3.5" />
             {t("categories.all")}
           </button>
 
@@ -64,13 +64,13 @@ export function ShopCategoryTabs({
                 key={category.id}
                 onClick={() => onCategoryChange(category.id)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all",
+                  "flex items-center gap-1.5 px-3 py-2 rounded-full font-medium text-xs whitespace-nowrap transition-all",
                   selectedCategory === category.id
                     ? "bg-primary text-white shadow-lg shadow-primary/25"
                     : "bg-card text-muted-foreground hover:bg-accent hover:text-foreground border border-border",
                 )}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-3.5 h-3.5" />
                 {t(`categories.${category.id}`)}
               </button>
             );
@@ -80,13 +80,13 @@ export function ShopCategoryTabs({
           <button
             onClick={() => onCategoryChange("stringing")}
             className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all",
+              "flex items-center gap-1.5 px-3 py-2 rounded-full font-medium text-xs whitespace-nowrap transition-all",
               selectedCategory === "stringing"
                 ? "bg-primary text-white shadow-lg shadow-primary/25"
                 : "bg-card text-muted-foreground hover:bg-accent hover:text-foreground border border-border",
             )}
           >
-            <Wrench className="w-4 h-4" />
+            <Wrench className="w-3.5 h-3.5" />
             {t("categories.stringing")}
           </button>
         </div>
