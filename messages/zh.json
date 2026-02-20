@@ -1098,6 +1098,30 @@
       "teacher": "教练",
       "optional": "可选",
       "none": "无"
+    },
+    "lessonTypes": {
+      "title": "课程类型",
+      "description": "管理课程类型和定价",
+      "add": "添加课程类型",
+      "addTitle": "添加课程类型",
+      "addDescription": "创建新的课程类型和定价",
+      "editTitle": "编辑课程类型",
+      "editDescription": "更新课程类型详情",
+      "name": "名称",
+      "namePlaceholder": "例如：一对一私教",
+      "billingType": "计费方式",
+      "perSession": "按课时",
+      "perMonth": "按月",
+      "price": "价格",
+      "maxStudents": "最大学员数",
+      "showInactive": "显示已停用",
+      "empty": "暂无课程类型",
+      "inactive": "已停用",
+      "activate": "启用",
+      "deactivate": "停用",
+      "cancel": "取消",
+      "save": "保存",
+      "create": "创建"
     }
   },
   "updates": {

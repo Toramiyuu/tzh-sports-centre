@@ -56,6 +56,7 @@ export function createMockPrismaClient() {
     playerProfile: createMockPrismaModel(),
     teacher: createMockPrismaModel(),
     teacherPayRate: createMockPrismaModel(),
+    lessonType: createMockPrismaModel(),
     $transaction: vi.fn(),
     $queryRaw: vi.fn(),
     $executeRaw: vi.fn(),

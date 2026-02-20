@@ -11,6 +11,7 @@ import {
   CalendarX2,
   GraduationCap,
   Trophy,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -76,6 +77,13 @@ export default async function AdminPage() {
       icon: Trophy,
       href: "/admin/leaderboard",
       iconBg: "bg-primary/10 text-primary",
+    },
+    {
+      titleKey: "lessonTypes.title",
+      descriptionKey: "lessonTypes.description",
+      icon: BookOpen,
+      href: "/admin/lesson-types",
+      iconBg: "bg-primary/15 text-primary",
     },
   ];
 

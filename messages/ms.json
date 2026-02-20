@@ -1202,6 +1202,30 @@
       "teacher": "Jurulatih",
       "optional": "Pilihan",
       "none": "Tiada"
+    },
+    "lessonTypes": {
+      "title": "Jenis Kelas",
+      "description": "Urus jenis kelas dan harga",
+      "add": "Tambah Jenis Kelas",
+      "addTitle": "Tambah Jenis Kelas",
+      "addDescription": "Cipta jenis kelas baru dengan harga",
+      "editTitle": "Edit Jenis Kelas",
+      "editDescription": "Kemas kini butiran jenis kelas",
+      "name": "Nama",
+      "namePlaceholder": "cth. 1-to-1 Peribadi",
+      "billingType": "Jenis Bil",
+      "perSession": "Setiap Sesi",
+      "perMonth": "Setiap Bulan",
+      "price": "Harga",
+      "maxStudents": "Pelajar Maks",
+      "showInactive": "Tunjuk tidak aktif",
+      "empty": "Tiada jenis kelas ditemui",
+      "inactive": "Tidak Aktif",
+      "activate": "Aktifkan",
+      "deactivate": "Nyahaktif",
+      "cancel": "Batal",
+      "save": "Simpan",
+      "create": "Cipta"
     }
   },
   "updates": {

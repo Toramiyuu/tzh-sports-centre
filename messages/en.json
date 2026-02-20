@@ -1213,6 +1213,30 @@
       "teacher": "Teacher",
       "optional": "Optional",
       "none": "None"
+    },
+    "lessonTypes": {
+      "title": "Lesson Types",
+      "description": "Manage lesson types and pricing",
+      "add": "Add Lesson Type",
+      "addTitle": "Add Lesson Type",
+      "addDescription": "Create a new lesson type with pricing",
+      "editTitle": "Edit Lesson Type",
+      "editDescription": "Update lesson type details",
+      "name": "Name",
+      "namePlaceholder": "e.g. 1-to-1 Private",
+      "billingType": "Billing Type",
+      "perSession": "Per Session",
+      "perMonth": "Per Month",
+      "price": "Price",
+      "maxStudents": "Max Students",
+      "showInactive": "Show inactive",
+      "empty": "No lesson types found",
+      "inactive": "Inactive",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create"
     }
   },
   "updates": {
