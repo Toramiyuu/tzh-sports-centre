@@ -61,6 +61,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.isAdmin = (user as Record<string, unknown>).isAdmin ?? false;
         token.isMember = (user as Record<string, unknown>).isMember ?? false;
         token.isTrainee = (user as Record<string, unknown>).isTrainee ?? false;
+      } else if (token.id && token.isMember === undefined) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { isMember: true, isTrainee: true },
+        });
+        token.isMember = dbUser?.isMember ?? false;
+        token.isTrainee = dbUser?.isTrainee ?? false;
       }
       return token;
     },

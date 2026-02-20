@@ -959,6 +959,7 @@
       "search": "Search by name, email or phone...",
       "noUsersMatch": "No users match your search",
       "noMembersYet": "No training members yet",
+      "noTraineesYet": "No trainees yet. Add trainees from the \"All Users\" tab.",
       "noUsersYet": "No registered users yet",
       "lessonsCompleted": "lessons completed",
       "skillLevel": "Skill Level",

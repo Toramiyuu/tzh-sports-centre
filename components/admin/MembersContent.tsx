@@ -70,7 +70,9 @@ export default function MembersContent() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"members" | "all">("members");
+  const [activeTab, setActiveTab] = useState<"members" | "trainees" | "all">(
+    "members",
+  );
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -149,7 +151,13 @@ export default function MembersContent() {
   };
 
   const allUsers = [...members, ...nonMembers];
-  const displayUsers = activeTab === "members" ? members : allUsers;
+  const trainees = allUsers.filter((u) => u.isTrainee);
+  const displayUsers =
+    activeTab === "members"
+      ? members
+      : activeTab === "trainees"
+        ? trainees
+        : allUsers;
 
   const filteredUsers = displayUsers.filter((user) => {
     const query = searchQuery.toLowerCase();
@@ -251,6 +259,13 @@ export default function MembersContent() {
           {t("membersTab")} ({members.length})
         </Button>
         <Button
+          variant={activeTab === "trainees" ? "default" : "outline"}
+          onClick={() => setActiveTab("trainees")}
+        >
+          <Star className="w-4 h-4 mr-2" />
+          {t("trainee")} ({trainees.length})
+        </Button>
+        <Button
           variant={activeTab === "all" ? "default" : "outline"}
           onClick={() => setActiveTab("all")}
         >
@@ -280,10 +295,16 @@ export default function MembersContent() {
           <CardTitle className="flex items-center gap-2">
             {activeTab === "members" ? (
               <GraduationCap className="w-5 h-5" />
+            ) : activeTab === "trainees" ? (
+              <Star className="w-5 h-5" />
             ) : (
               <Users className="w-5 h-5" />
             )}
-            {activeTab === "members" ? t("membersTab") : t("allUsersTab")}
+            {activeTab === "members"
+              ? t("membersTab")
+              : activeTab === "trainees"
+                ? t("trainee")
+                : t("allUsersTab")}
             <Badge variant="secondary" className="ml-2">
               {filteredUsers.length}
             </Badge>
@@ -300,7 +321,9 @@ export default function MembersContent() {
                 ? t("noUsersMatch")
                 : activeTab === "members"
                   ? t("noMembersYet")
-                  : t("noUsersYet")}
+                  : activeTab === "trainees"
+                    ? t("noTraineesYet")
+                    : t("noUsersYet")}
             </div>
           ) : (
             <div className="space-y-3">
