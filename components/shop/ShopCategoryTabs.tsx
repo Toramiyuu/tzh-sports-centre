@@ -41,7 +41,7 @@ export function ShopCategoryTabs({
   return (
     <div className="sticky top-16 z-30 bg-background/95 backdrop-blur-sm border-b border-border py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide scroll-smooth snap-x snap-mandatory">
+        <div className="flex flex-wrap gap-2">
           {/* All category */}
           <button
             onClick={() => onCategoryChange("all")}
