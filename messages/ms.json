@@ -35,6 +35,7 @@
     "myBookings": "Tempahan Saya",
     "myRacket": "Raket Saya",
     "member": "Ahli",
+    "trainingSchedule": "Jadual Latihan",
     "updates": "Kemas Kini",
     "shop": "Kedai & Tali",
     "leaderboard": "Papan Pendahulu"
@@ -952,7 +953,10 @@
       "skillLevel": "Tahap Kemahiran",
       "beginner": "Pemula",
       "intermediate": "Pertengahan",
-      "advanced": "Mahir"
+      "advanced": "Mahir",
+      "trainee": "Pelatih",
+      "addTrainee": "Tambah Pelatih",
+      "removeTrainee": "Buang Pelatih"
     },
     "lessonManagement": {
       "title": "Pengurusan Kelas",
@@ -1795,7 +1799,9 @@
       "total": "Jumlah",
       "month": "Bulan",
       "empty": "Tiada mata direkodkan untuk bulan ini",
-      "givePoints": "Beri Mata"
+      "givePoints": "Beri Mata",
+      "membersOnly": "Ahli Sahaja",
+      "membersOnlyDesc": "Papan pendahulu hanya tersedia untuk ahli TZH. Hubungi kami untuk mengetahui tentang keahlian."
     },
     "playerGroups": {
       "title": "Kumpulan Pemain",

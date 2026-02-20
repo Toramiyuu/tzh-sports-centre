@@ -47,6 +47,7 @@
     "myBookings": "我的预订",
     "myRacket": "我的球拍",
     "member": "会员",
+    "trainingSchedule": "训练日程",
     "updates": "更新日志",
     "leaderboard": "排行榜"
   },
@@ -852,7 +853,10 @@
       "lessonsCompleted": "已完成课程",
       "beginner": "初学者",
       "intermediate": "中级",
-      "advanced": "高级"
+      "advanced": "高级",
+      "trainee": "学员",
+      "addTrainee": "添加学员",
+      "removeTrainee": "移除学员"
     },
     "lessonManagement": {
       "title": "课程管理",
@@ -1809,7 +1813,9 @@
       "total": "总分",
       "month": "月份",
       "empty": "本月暂无积分记录",
-      "givePoints": "奖励积分"
+      "givePoints": "奖励积分",
+      "membersOnly": "仅限会员",
+      "membersOnlyDesc": "排行榜仅限TZH会员查看。请联系我们了解会员详情。"
     },
     "playerGroups": {
       "title": "球员分组",

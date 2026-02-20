@@ -4,20 +4,25 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Menu, Moon, Sun, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { UserMenu } from "@/components/UserMenu";
 import { isAdmin } from "@/lib/admin";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 
+const emptySubscribe = () => () => {};
+
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
   const { theme, setTheme } = useTheme();
   const { data: session, status } = useSession();
 
-  useEffect(() => setMounted(true), []);
   const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin);
   const t = useTranslations("nav");
 
@@ -62,7 +67,7 @@ export function Navbar() {
               🛒 {t("shop")}
             </Link>
 
-            {session?.user && (
+            {session?.user?.isMember && (
               <Link
                 href="/leaderboard"
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -70,12 +75,12 @@ export function Navbar() {
                 🏆 {t("leaderboard")}
               </Link>
             )}
-            {session?.user && (
+            {session?.user?.isTrainee && (
               <Link
-                href="/member"
+                href="/training"
                 className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                👤 {t("member")}
+                👤 {t("trainingSchedule")}
               </Link>
             )}
             {session?.user && (
@@ -176,7 +181,7 @@ export function Navbar() {
               🛒 {t("shop")}
             </Link>
 
-            {session?.user && (
+            {session?.user?.isMember && (
               <Link
                 href="/leaderboard"
                 className="block py-2 text-muted-foreground hover:text-foreground"
@@ -185,13 +190,13 @@ export function Navbar() {
                 🏆 {t("leaderboard")}
               </Link>
             )}
-            {session?.user && (
+            {session?.user?.isTrainee && (
               <Link
-                href="/member"
+                href="/training"
                 className="block py-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                👤 {t("member")}
+                👤 {t("trainingSchedule")}
               </Link>
             )}
             {session?.user && (

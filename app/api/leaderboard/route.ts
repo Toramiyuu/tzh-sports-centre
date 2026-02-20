@@ -6,8 +6,17 @@ import { validateMonth } from "@/lib/validation";
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { isMember: true },
+    });
+
+    if (!user?.isMember) {
+      return NextResponse.json({ error: "Members only" }, { status: 403 });
     }
 
     const monthParam = request.nextUrl.searchParams.get("month");

@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select";
 import {
   Users,
   UserPlus,
@@ -24,129 +24,156 @@ import {
   GraduationCap,
   RefreshCw,
   Star,
-} from 'lucide-react'
-import { useTranslations } from 'next-intl'
+} from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface User {
-  id: string
-  uid: string
-  name: string
-  email: string
-  phone: string
-  isMember: boolean
-  skillLevel: string | null
-  createdAt: string
+  id: string;
+  uid: string;
+  name: string;
+  email: string;
+  phone: string;
+  isMember: boolean;
+  isTrainee: boolean;
+  skillLevel: string | null;
+  createdAt: string;
   _count: {
-    lessonSessions: number
-  }
+    lessonSessions: number;
+  };
 }
 
 export default function MembersContent() {
-  const { data: session, status } = useSession()
-  const t = useTranslations('admin.membersList')
-  const tAdmin = useTranslations('admin')
+  const { data: session, status } = useSession();
+  const t = useTranslations("admin.membersList");
+  const tAdmin = useTranslations("admin");
 
   const SKILL_LEVELS = [
-    { value: 'beginner', label: t('beginner'), color: 'bg-green-100 text-green-700' },
-    { value: 'intermediate', label: t('intermediate'), color: 'bg-blue-100 text-blue-700' },
-    { value: 'advanced', label: t('advanced'), color: 'bg-purple-100 text-purple-700' },
-  ]
+    {
+      value: "beginner",
+      label: t("beginner"),
+      color: "bg-green-100 text-green-700",
+    },
+    {
+      value: "intermediate",
+      label: t("intermediate"),
+      color: "bg-blue-100 text-blue-700",
+    },
+    {
+      value: "advanced",
+      label: t("advanced"),
+      color: "bg-purple-100 text-purple-700",
+    },
+  ];
 
-  const [members, setMembers] = useState<User[]>([])
-  const [nonMembers, setNonMembers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
-  const [updating, setUpdating] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeTab, setActiveTab] = useState<'members' | 'all'>('members')
+  const [members, setMembers] = useState<User[]>([]);
+  const [nonMembers, setNonMembers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<"members" | "all">("members");
 
   const fetchUsers = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await fetch('/api/admin/members')
-      const data = await res.json()
+      const res = await fetch("/api/admin/members");
+      const data = await res.json();
       if (res.ok) {
-        setMembers(data.members || [])
-        setNonMembers(data.nonMembers || [])
+        setMembers(data.members || []);
+        setNonMembers(data.nonMembers || []);
       }
     } catch (error) {
-      console.error('Error fetching users:', error)
+      console.error("Error fetching users:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (session?.user) {
-      fetchUsers()
+      fetchUsers();
     }
-  }, [session])
+  }, [session]);
+
+  const toggleTrainee = async (userId: string, currentStatus: boolean) => {
+    setUpdating(userId);
+    try {
+      const res = await fetch("/api/admin/members", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, isTrainee: !currentStatus }),
+      });
+      if (res.ok) {
+        fetchUsers();
+      }
+    } catch (error) {
+      console.error("Error updating trainee:", error);
+    } finally {
+      setUpdating(null);
+    }
+  };
 
   const toggleMember = async (userId: string, currentStatus: boolean) => {
-    setUpdating(userId)
+    setUpdating(userId);
     try {
-      const res = await fetch('/api/admin/members', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/members", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, isMember: !currentStatus }),
-      })
+      });
       if (res.ok) {
-        fetchUsers()
+        fetchUsers();
       }
     } catch (error) {
-      console.error('Error updating member:', error)
+      console.error("Error updating member:", error);
     } finally {
-      setUpdating(null)
+      setUpdating(null);
     }
-  }
+  };
 
   const updateSkillLevel = async (userId: string, skillLevel: string) => {
-    setUpdating(userId)
+    setUpdating(userId);
     try {
-      const res = await fetch('/api/admin/members', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/members", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, skillLevel }),
-      })
+      });
       if (res.ok) {
-        fetchUsers()
+        fetchUsers();
       }
     } catch (error) {
-      console.error('Error updating skill level:', error)
+      console.error("Error updating skill level:", error);
     } finally {
-      setUpdating(null)
+      setUpdating(null);
     }
-  }
+  };
 
-  const allUsers = [...members, ...nonMembers]
-  const displayUsers = activeTab === 'members' ? members : allUsers
+  const allUsers = [...members, ...nonMembers];
+  const displayUsers = activeTab === "members" ? members : allUsers;
 
   const filteredUsers = displayUsers.filter((user) => {
-    const query = searchQuery.toLowerCase()
+    const query = searchQuery.toLowerCase();
     return (
       user.uid.includes(query) ||
       user.name.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query) ||
       user.phone.toLowerCase().includes(query) ||
       user.uid.includes(query)
-    )
-  })
+    );
+  });
 
   const getSkillBadge = (skillLevel: string | null) => {
-    const skill = SKILL_LEVELS.find(s => s.value === skillLevel)
-    if (!skill) return null
-    return (
-      <Badge className={`${skill.color} border-0`}>
-        {skill.label}
-      </Badge>
-    )
-  }
+    const skill = SKILL_LEVELS.find((s) => s.value === skillLevel);
+    if (!skill) return null;
+    return <Badge className={`${skill.color} border-0`}>{skill.label}</Badge>;
+  };
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
       </div>
-    )
+    );
   }
 
   return (
@@ -155,7 +182,7 @@ export default function MembersContent() {
       <div className="flex justify-end mb-6">
         <Button onClick={fetchUsers} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
-          {tAdmin('refresh')}
+          {tAdmin("refresh")}
         </Button>
       </div>
 
@@ -168,8 +195,12 @@ export default function MembersContent() {
                 <GraduationCap className="w-5 h-5 text-foreground" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">{members.length}</p>
-                <p className="text-sm text-muted-foreground">{t('activeMembers')}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {members.length}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {t("activeMembers")}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -184,7 +215,9 @@ export default function MembersContent() {
                 <p className="text-2xl font-bold text-green-700">
                   {members.reduce((sum, m) => sum + m._count.lessonSessions, 0)}
                 </p>
-                <p className="text-sm text-muted-foreground">{t('totalLessons')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("totalLessons")}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -196,8 +229,12 @@ export default function MembersContent() {
                 <Users className="w-5 h-5 text-purple-700" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-purple-700">{allUsers.length}</p>
-                <p className="text-sm text-muted-foreground">{t('totalRegisteredUsers')}</p>
+                <p className="text-2xl font-bold text-purple-700">
+                  {allUsers.length}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {t("totalRegisteredUsers")}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -207,18 +244,18 @@ export default function MembersContent() {
       {/* Tabs */}
       <div className="flex gap-2 mb-4">
         <Button
-          variant={activeTab === 'members' ? 'default' : 'outline'}
-          onClick={() => setActiveTab('members')}
+          variant={activeTab === "members" ? "default" : "outline"}
+          onClick={() => setActiveTab("members")}
         >
           <GraduationCap className="w-4 h-4 mr-2" />
-          {t('membersTab')} ({members.length})
+          {t("membersTab")} ({members.length})
         </Button>
         <Button
-          variant={activeTab === 'all' ? 'default' : 'outline'}
-          onClick={() => setActiveTab('all')}
+          variant={activeTab === "all" ? "default" : "outline"}
+          onClick={() => setActiveTab("all")}
         >
           <Users className="w-4 h-4 mr-2" />
-          {t('allUsersTab')} ({allUsers.length})
+          {t("allUsersTab")} ({allUsers.length})
         </Button>
       </div>
 
@@ -228,7 +265,7 @@ export default function MembersContent() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              placeholder={t('search')}
+              placeholder={t("search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -241,12 +278,12 @@ export default function MembersContent() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            {activeTab === 'members' ? (
+            {activeTab === "members" ? (
               <GraduationCap className="w-5 h-5" />
             ) : (
               <Users className="w-5 h-5" />
             )}
-            {activeTab === 'members' ? t('membersTab') : t('allUsersTab')}
+            {activeTab === "members" ? t("membersTab") : t("allUsersTab")}
             <Badge variant="secondary" className="ml-2">
               {filteredUsers.length}
             </Badge>
@@ -260,10 +297,10 @@ export default function MembersContent() {
           ) : filteredUsers.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               {searchQuery
-                ? t('noUsersMatch')
-                : activeTab === 'members'
-                ? t('noMembersYet')
-                : t('noUsersYet')}
+                ? t("noUsersMatch")
+                : activeTab === "members"
+                  ? t("noMembersYet")
+                  : t("noUsersYet")}
             </div>
           ) : (
             <div className="space-y-3">
@@ -272,8 +309,8 @@ export default function MembersContent() {
                   key={user.id}
                   className={`p-4 rounded-lg border transition-colors ${
                     user.isMember
-                      ? 'bg-primary/20 border-primary'
-                      : 'bg-secondary border-border'
+                      ? "bg-primary/20 border-primary"
+                      : "bg-secondary border-border"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -282,11 +319,20 @@ export default function MembersContent() {
                         <Badge variant="outline" className="font-mono text-xs">
                           #{user.uid}
                         </Badge>
-                        <span className="font-medium text-foreground">{user.name}</span>
-                        <span className="text-xs font-mono text-muted-foreground/70">#{user.uid}</span>
+                        <span className="font-medium text-foreground">
+                          {user.name}
+                        </span>
+                        <span className="text-xs font-mono text-muted-foreground/70">
+                          #{user.uid}
+                        </span>
                         {user.isMember && (
                           <Badge className="bg-primary text-white border-0">
-                            {t('membersTab')}
+                            {t("membersTab")}
+                          </Badge>
+                        )}
+                        {user.isTrainee && (
+                          <Badge className="bg-orange-100 text-orange-700 border-0">
+                            {t("trainee")}
                           </Badge>
                         )}
                         {user.isMember && getSkillBadge(user.skillLevel)}
@@ -303,7 +349,7 @@ export default function MembersContent() {
                         {user.isMember && (
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <GraduationCap className="w-4 h-4 flex-shrink-0" />
-                            {user._count.lessonSessions} {t('lessonsCompleted')}
+                            {user._count.lessonSessions} {t("lessonsCompleted")}
                           </div>
                         )}
                       </div>
@@ -312,12 +358,14 @@ export default function MembersContent() {
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {user.isMember && (
                         <Select
-                          value={user.skillLevel || ''}
-                          onValueChange={(value) => updateSkillLevel(user.id, value)}
+                          value={user.skillLevel || ""}
+                          onValueChange={(value) =>
+                            updateSkillLevel(user.id, value)
+                          }
                           disabled={updating === user.id}
                         >
                           <SelectTrigger className="w-[140px] bg-card border-border">
-                            <SelectValue placeholder={t('skillLevel')} />
+                            <SelectValue placeholder={t("skillLevel")} />
                           </SelectTrigger>
                           <SelectContent>
                             {SKILL_LEVELS.map((level) => (
@@ -330,13 +378,34 @@ export default function MembersContent() {
                       )}
 
                       <Button
-                        variant={user.isMember ? 'outline' : 'default'}
+                        variant={user.isTrainee ? "outline" : "default"}
+                        size="sm"
+                        onClick={() => toggleTrainee(user.id, user.isTrainee)}
+                        disabled={updating === user.id}
+                        className={
+                          user.isTrainee
+                            ? "text-orange-600 border-orange-300 hover:bg-orange-100"
+                            : "bg-orange-500 hover:bg-orange-600 text-white"
+                        }
+                      >
+                        {updating === user.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : user.isTrainee ? (
+                          <>{t("removeTrainee")}</>
+                        ) : (
+                          <>{t("addTrainee")}</>
+                        )}
+                      </Button>
+
+                      <Button
+                        variant={user.isMember ? "outline" : "default"}
                         size="sm"
                         onClick={() => toggleMember(user.id, user.isMember)}
                         disabled={updating === user.id}
-                        className={user.isMember
-                          ? 'text-red-600 border-red-300 hover:bg-red-100'
-                          : 'bg-primary hover:bg-primary'
+                        className={
+                          user.isMember
+                            ? "text-red-600 border-red-300 hover:bg-red-100"
+                            : "bg-primary hover:bg-primary"
                         }
                       >
                         {updating === user.id ? (
@@ -344,12 +413,12 @@ export default function MembersContent() {
                         ) : user.isMember ? (
                           <>
                             <UserMinus className="w-4 h-4 mr-1" />
-                            {t('remove')}
+                            {t("remove")}
                           </>
                         ) : (
                           <>
                             <UserPlus className="w-4 h-4 mr-1" />
-                            {t('addMember')}
+                            {t("addMember")}
                           </>
                         )}
                       </Button>
@@ -362,5 +431,5 @@ export default function MembersContent() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

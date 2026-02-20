@@ -23,6 +23,7 @@ export async function GET() {
         creditBalance: true,
         createdAt: true,
         isMember: true,
+        isTrainee: true,
         avatarUrl: true,
         notifyBookingConfirm: true,
         notifyBookingReminder: true,

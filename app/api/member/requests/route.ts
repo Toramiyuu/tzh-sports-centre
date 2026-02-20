@@ -12,10 +12,10 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { id: true, isMember: true },
+      select: { id: true, isTrainee: true },
     });
 
-    if (!user || !user.isMember) {
+    if (!user || !user.isTrainee) {
       return NextResponse.json({ error: "Not a member" }, { status: 403 });
     }
 
@@ -44,10 +44,10 @@ export async function POST(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { id: true, isMember: true },
+      select: { id: true, isTrainee: true },
     });
 
-    if (!user || !user.isMember) {
+    if (!user || !user.isTrainee) {
       return NextResponse.json({ error: "Not a member" }, { status: 403 });
     }
 
@@ -152,10 +152,10 @@ export async function PATCH(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { id: true, isMember: true },
+      select: { id: true, isTrainee: true },
     });
 
-    if (!user || !user.isMember) {
+    if (!user || !user.isTrainee) {
       return NextResponse.json({ error: "Not a member" }, { status: 403 });
     }
 
@@ -237,10 +237,10 @@ export async function DELETE(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { id: true, isMember: true },
+      select: { id: true, isTrainee: true },
     });
 
-    if (!user || !user.isMember) {
+    if (!user || !user.isTrainee) {
       return NextResponse.json({ error: "Not a member" }, { status: 403 });
     }
 

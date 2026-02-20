@@ -1,43 +1,46 @@
-import NextAuth from 'next-auth'
-import Credentials from 'next-auth/providers/credentials'
-import bcrypt from 'bcryptjs'
-import { prisma } from './prisma'
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { prisma } from "./prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
-      name: 'credentials',
+      name: "credentials",
       credentials: {
-        identifier: { label: 'Email or Phone', type: 'text' },
-        password: { label: 'Password', type: 'password' },
+        identifier: { label: "Email or Phone", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.identifier || !credentials?.password) {
-          return null
+          return null;
         }
 
-        const identifier = credentials.identifier as string
-        const password = credentials.password as string
+        const identifier = credentials.identifier as string;
+        const password = credentials.password as string;
 
-        // Check if identifier is email or phone
-        const isEmail = identifier.includes('@')
+        const isEmail = identifier.includes("@");
 
         const user = await prisma.user.findFirst({
           where: isEmail
             ? { email: identifier }
-            : { phone: identifier.replace(/\D/g, '') }, // Strip non-digits for phone
-        })
+            : { phone: identifier.replace(/\D/g, "") },
+        });
 
         if (!user || !user.passwordHash) {
-          console.warn(`[AUTH] Failed login: user not found for ${isEmail ? 'email' : 'phone'} "${identifier}"`)
-          return null
+          console.warn(
+            `[AUTH] Failed login: user not found for ${isEmail ? "email" : "phone"} "${identifier}"`,
+          );
+          return null;
         }
 
-        const passwordMatch = await bcrypt.compare(password, user.passwordHash)
+        const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
         if (!passwordMatch) {
-          console.warn(`[AUTH] Failed login: wrong password for user ${user.email} (id: ${user.id})`)
-          return null
+          console.warn(
+            `[AUTH] Failed login: wrong password for user ${user.email} (id: ${user.id})`,
+          );
+          return null;
         }
 
         return {
@@ -45,31 +48,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           name: user.name,
           isAdmin: user.isAdmin,
-        }
+          isMember: user.isMember,
+          isTrainee: user.isTrainee,
+        };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
-        token.isAdmin = (user as Record<string, unknown>).isAdmin ?? false
+        token.id = user.id;
+        token.isAdmin = (user as Record<string, unknown>).isAdmin ?? false;
+        token.isMember = (user as Record<string, unknown>).isMember ?? false;
+        token.isTrainee = (user as Record<string, unknown>).isTrainee ?? false;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (session.user && token.id) {
-        session.user.id = token.id as string
-        session.user.isAdmin = token.isAdmin as boolean
+        session.user.id = token.id as string;
+        session.user.isAdmin = token.isAdmin as boolean;
+        session.user.isMember = token.isMember as boolean;
+        session.user.isTrainee = token.isTrainee as boolean;
       }
-      return session
+      return session;
     },
   },
   pages: {
-    signIn: '/auth/login',
+    signIn: "/auth/login",
   },
   session: {
-    strategy: 'jwt',
-    maxAge: 8 * 60 * 60, // 8 hours
+    strategy: "jwt",
+    maxAge: 8 * 60 * 60,
   },
-})
+});

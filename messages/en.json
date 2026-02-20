@@ -47,6 +47,7 @@
     "myBookings": "My Bookings",
     "myRacket": "My Racket",
     "member": "Member",
+    "trainingSchedule": "Training Schedule",
     "updates": "Updates",
     "leaderboard": "Leaderboard"
   },
@@ -963,7 +964,10 @@
       "skillLevel": "Skill Level",
       "beginner": "Beginner",
       "intermediate": "Intermediate",
-      "advanced": "Advanced"
+      "advanced": "Advanced",
+      "trainee": "Trainee",
+      "addTrainee": "Add Trainee",
+      "removeTrainee": "Remove Trainee"
     },
     "lessonManagement": {
       "title": "Lesson Management",
@@ -1806,7 +1810,9 @@
       "total": "Total",
       "month": "Month",
       "empty": "No points recorded for this month",
-      "givePoints": "Give Points"
+      "givePoints": "Give Points",
+      "membersOnly": "Members Only",
+      "membersOnlyDesc": "The leaderboard is available exclusively to TZH members. Contact us to learn about membership."
     },
     "playerGroups": {
       "title": "Player Groups",

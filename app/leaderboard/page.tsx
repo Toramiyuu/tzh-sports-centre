@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Trophy, RefreshCw, Loader2, Medal } from "lucide-react";
+import { Trophy, RefreshCw, Loader2, Medal, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
@@ -61,6 +61,22 @@ export default function LeaderboardPage() {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!session?.user?.isMember) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8 text-center">
+          <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h2 className="text-2xl font-semibold text-foreground mb-2">
+            {t("membersOnly")}
+          </h2>
+          <p className="text-muted-foreground mb-6">{t("membersOnlyDesc")}</p>
+        </div>
       </div>
     );
   }

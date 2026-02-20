@@ -44,6 +44,7 @@ interface UserProfile {
   creditBalance: number;
   createdAt: string;
   isMember: boolean;
+  isTrainee: boolean;
   avatarUrl: string | null;
   notifyBookingConfirm: boolean;
   notifyBookingReminder: boolean;
@@ -216,7 +217,7 @@ function ProfileContent() {
       icon: CalendarDays,
     },
     { id: "recurring" as TabType, label: t("tabs.recurring"), icon: Repeat },
-    ...(profile?.isMember
+    ...(profile?.isTrainee
       ? [
           {
             id: "lessons" as TabType,
@@ -336,8 +337,8 @@ function ProfileContent() {
             />
           )}
           {activeTab === "recurring" && <RecurringTab />}
-          {activeTab === "lessons" && profile?.isMember && <LessonsTab />}
-          {activeTab === "absences" && profile?.isMember && <AbsencesTab />}
+          {activeTab === "lessons" && profile?.isTrainee && <LessonsTab />}
+          {activeTab === "absences" && profile?.isTrainee && <AbsencesTab />}
           {activeTab === "settings" &&
             (profile ? (
               <SettingsTab profile={profile} onUpdate={fetchProfile} />

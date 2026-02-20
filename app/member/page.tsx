@@ -1,7 +1,5 @@
-'use client'
-
-import { MemberDashboard } from '@/components/member/MemberDashboard'
+import { redirect } from "next/navigation";
 
 export default function MemberPage() {
-  return <MemberDashboard />
+  redirect("/training");
 }

@@ -1,27 +1,24 @@
-import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
-// GET - Fetch member's lessons
 export async function GET() {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user and check if they're a member
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { id: true, isMember: true },
-    })
+      select: { id: true, isTrainee: true },
+    });
 
-    if (!user || !user.isMember) {
-      return NextResponse.json({ error: 'Not a member' }, { status: 403 })
+    if (!user || !user.isTrainee) {
+      return NextResponse.json({ error: "Not a trainee" }, { status: 403 });
     }
 
-    // Get member's lessons
     const lessons = await prisma.lessonSession.findMany({
       where: {
         students: {
@@ -37,18 +34,15 @@ export async function GET() {
           },
         },
       },
-      orderBy: [
-        { lessonDate: 'desc' },
-        { startTime: 'asc' },
-      ],
-    })
+      orderBy: [{ lessonDate: "desc" }, { startTime: "asc" }],
+    });
 
-    return NextResponse.json({ lessons })
+    return NextResponse.json({ lessons });
   } catch (error) {
-    console.error('Error fetching member lessons:', error)
+    console.error("Error fetching member lessons:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch lessons' },
-      { status: 500 }
-    )
+      { error: "Failed to fetch lessons" },
+      { status: 500 },
+    );
   }
 }
