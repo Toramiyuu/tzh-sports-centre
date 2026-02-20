@@ -1,26 +1,31 @@
-'use client'
+"use client";
 
-import { useState, useMemo, useEffect, useCallback, Suspense, lazy } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { useTranslations } from 'next-intl'
-import { motion, useReducedMotion } from 'framer-motion'
-import { ShopHero } from '@/components/shop/ShopHero'
-import { ShopCategoryTabs } from '@/components/shop/ShopCategoryTabs'
-import { ShopProductCard } from '@/components/shop/ShopProductCard'
-import { ShopProductDialog } from '@/components/shop/ShopProductDialog'
-import { ShopFilters } from '@/components/shop/ShopFilters'
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  Suspense,
+  lazy,
+} from "react";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { motion, useReducedMotion } from "framer-motion";
+import { ShopHero } from "@/components/shop/ShopHero";
+import { ShopCategoryTabs } from "@/components/shop/ShopCategoryTabs";
+import { ShopProductCard } from "@/components/shop/ShopProductCard";
+import { ShopProductDialog } from "@/components/shop/ShopProductDialog";
+import { ShopFilters } from "@/components/shop/ShopFilters";
 import {
   ShopProduct,
   ShopCategoryId,
   SHOP_CATEGORIES,
-  filterByPriceRange,
-  getPriceRange,
   searchProducts,
-} from '@/lib/shop-config'
+} from "@/lib/shop-config";
 
-const StringingPage = lazy(() => import('@/app/stringing/page'))
+const StringingPage = lazy(() => import("@/app/stringing/page"));
 
-const validCategories = SHOP_CATEGORIES.map((c) => c.id)
+const validCategories = SHOP_CATEGORIES.map((c) => c.id);
 
 function mapDbProduct(dbProduct: Record<string, unknown>): ShopProduct {
   return {
@@ -40,143 +45,111 @@ function mapDbProduct(dbProduct: Record<string, unknown>): ShopProduct {
     sizes: (dbProduct.sizes as string[]) || undefined,
     inStock: dbProduct.inStock as boolean,
     featured: dbProduct.featured as boolean | undefined,
-  }
+  };
 }
 
 function ShopContent() {
-  const t = useTranslations('shop')
-  const searchParams = useSearchParams()
+  const t = useTranslations("shop");
+  const searchParams = useSearchParams();
 
-  const categoryParam = searchParams.get('category')
-  const initialCategory: ShopCategoryId | 'all' | 'stringing' =
-    categoryParam === 'stringing'
-      ? 'stringing'
-      : categoryParam && validCategories.includes(categoryParam as ShopCategoryId)
+  const categoryParam = searchParams.get("category");
+  const initialCategory: ShopCategoryId | "all" | "stringing" =
+    categoryParam === "stringing"
+      ? "stringing"
+      : categoryParam &&
+          validCategories.includes(categoryParam as ShopCategoryId)
         ? (categoryParam as ShopCategoryId)
-        : 'all'
+        : "all";
 
-  const [allProducts, setAllProducts] = useState<ShopProduct[]>([])
-  const [loading, setLoading] = useState(true)
+  const [allProducts, setAllProducts] = useState<ShopProduct[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<
-    ShopCategoryId | 'all' | 'stringing'
-  >(initialCategory)
+    ShopCategoryId | "all" | "stringing"
+  >(initialCategory);
 
   const fetchProducts = useCallback(async () => {
     try {
-      setLoading(true)
-      const res = await fetch('/api/shop/products')
+      setLoading(true);
+      const res = await fetch("/api/shop/products");
       if (res.ok) {
-        const data = await res.json()
-        setAllProducts(data.map(mapDbProduct))
+        const data = await res.json();
+        setAllProducts(data.map(mapDbProduct));
       }
     } catch (error) {
-      console.error('Failed to fetch products:', error)
+      console.error("Failed to fetch products:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    fetchProducts()
-  }, [fetchProducts])
+    fetchProducts();
+  }, [fetchProducts]);
 
   useEffect(() => {
-    if (categoryParam === 'stringing') {
-      setSelectedCategory('stringing')
-    } else if (categoryParam && validCategories.includes(categoryParam as ShopCategoryId)) {
-      setSelectedCategory(categoryParam as ShopCategoryId)
+    if (categoryParam === "stringing") {
+      setSelectedCategory("stringing");
+    } else if (
+      categoryParam &&
+      validCategories.includes(categoryParam as ShopCategoryId)
+    ) {
+      setSelectedCategory(categoryParam as ShopCategoryId);
     } else if (!categoryParam) {
-      setSelectedCategory('all')
+      setSelectedCategory("all");
     }
-  }, [categoryParam])
-  const prefersReducedMotion = useReducedMotion()
-  const [searchQuery, setSearchQuery] = useState('')
+  }, [categoryParam]);
+  const prefersReducedMotion = useReducedMotion();
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<ShopProduct | null>(
-    null
-  )
-  const [dialogOpen, setDialogOpen] = useState(false)
-
-  const priceRangeObj = useMemo(() => getPriceRange(allProducts), [allProducts])
-  const priceRange: [number, number] = [priceRangeObj.min, priceRangeObj.max]
-  const [selectedPriceRange, setSelectedPriceRange] =
-    useState<[number, number]>(priceRange)
-
-  useEffect(() => {
-    if (allProducts.length > 0) {
-      const range = getPriceRange(allProducts)
-      setSelectedPriceRange([range.min, range.max])
-    }
-  }, [allProducts])
+    null,
+  );
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const filteredProducts = useMemo(() => {
-    let products = allProducts
+    let products = allProducts;
 
-    if (selectedCategory === 'all') {
-      products = products.filter(p => p.inStock)
-      products.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+    if (selectedCategory === "all") {
+      products = products.filter((p) => p.inStock);
+      products.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     } else {
-      products = products.filter(p => p.category === selectedCategory)
+      products = products.filter((p) => p.category === selectedCategory);
     }
 
     if (searchQuery) {
-      products = searchProducts(products, searchQuery)
+      products = searchProducts(products, searchQuery);
     }
 
-    if (
-      selectedPriceRange[0] !== priceRange[0] ||
-      selectedPriceRange[1] !== priceRange[1]
-    ) {
-      products = filterByPriceRange(
-        products,
-        selectedPriceRange[0],
-        selectedPriceRange[1]
-      )
-    }
-
-    return products
-  }, [
-    allProducts,
-    selectedCategory,
-    searchQuery,
-    selectedPriceRange,
-    priceRange,
-  ])
-
-  const activeFilterCount = useMemo(() => {
-    if (
-      selectedPriceRange[0] !== priceRange[0] ||
-      selectedPriceRange[1] !== priceRange[1]
-    )
-      return 1
-    return 0
-  }, [selectedPriceRange, priceRange])
+    return products;
+  }, [allProducts, selectedCategory, searchQuery]);
 
   const handleViewDetails = (product: ShopProduct) => {
-    setSelectedProduct(product)
-    setDialogOpen(true)
-  }
+    setSelectedProduct(product);
+    setDialogOpen(true);
+  };
 
   const handleClearFilters = () => {
-    setSelectedPriceRange(priceRange)
-    setSearchQuery('')
-  }
+    setSearchQuery("");
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'Store',
-          name: 'TZH Sports Centre Pro Shop',
-          description: 'Badminton and pickleball equipment — rackets, shoes, bags, and accessories from top brands.',
-          url: 'https://tzh-sports-centre.vercel.app/shop',
-          currenciesAccepted: 'MYR',
-          parentOrganization: {
-            '@type': 'SportsActivityLocation',
-            name: 'TZH Sports Centre',
-          },
-        }) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Store",
+            name: "TZH Sports Centre Pro Shop",
+            description:
+              "Badminton and pickleball equipment — rackets, shoes, bags, and accessories from top brands.",
+            url: "https://tzh-sports-centre.vercel.app/shop",
+            currenciesAccepted: "MYR",
+            parentOrganization: {
+              "@type": "SportsActivityLocation",
+              name: "TZH Sports Centre",
+            },
+          }),
+        }}
       />
       {/* Hero Section */}
       <ShopHero />
@@ -188,13 +161,17 @@ function ShopContent() {
       />
 
       {/* Main Content */}
-      {selectedCategory === 'stringing' ? (
+      {selectedCategory === "stringing" ? (
         /* Stringing Service Section */
-        <Suspense fallback={
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-pulse text-muted-foreground">Loading...</div>
-          </div>
-        }>
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-pulse text-muted-foreground">
+                Loading...
+              </div>
+            </div>
+          }
+        >
           <StringingPage />
         </Suspense>
       ) : (
@@ -205,25 +182,20 @@ function ShopContent() {
               <ShopFilters
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
-                priceRange={priceRange}
-                selectedPriceRange={selectedPriceRange}
-                onPriceRangeChange={setSelectedPriceRange}
-                onClearFilters={handleClearFilters}
-                activeFilterCount={activeFilterCount}
               />
             </div>
 
             {/* Results Count */}
             <div className="mb-6">
               <p className="text-sm text-muted-foreground">
-                {filteredProducts.length}{' '}
+                {filteredProducts.length}{" "}
                 {filteredProducts.length === 1
-                  ? t('results.product')
-                  : t('results.products')}
-                {selectedCategory !== 'all' && (
+                  ? t("results.product")
+                  : t("results.products")}
+                {selectedCategory !== "all" && (
                   <span>
-                    {' '}
-                    {t('results.in')} {t(`categories.${selectedCategory}`)}
+                    {" "}
+                    {t("results.in")} {t(`categories.${selectedCategory}`)}
                   </span>
                 )}
               </p>
@@ -248,9 +220,16 @@ function ShopContent() {
                 {filteredProducts.map((product, index) => (
                   <motion.div
                     key={product.id}
-                    initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+                    initial={
+                      prefersReducedMotion ? false : { opacity: 0, y: 20 }
+                    }
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.4, delay: prefersReducedMotion ? 0 : Math.min(index * 0.05, 0.4) }}
+                    transition={{
+                      duration: prefersReducedMotion ? 0 : 0.4,
+                      delay: prefersReducedMotion
+                        ? 0
+                        : Math.min(index * 0.05, 0.4),
+                    }}
                   >
                     <ShopProductCard
                       product={product}
@@ -262,13 +241,13 @@ function ShopContent() {
             ) : (
               <div className="text-center py-16">
                 <p className="text-muted-foreground text-lg mb-4">
-                  {t('results.noProducts')}
+                  {t("results.noProducts")}
                 </p>
                 <button
                   onClick={handleClearFilters}
                   className="text-foreground hover:text-foreground underline"
                 >
-                  {t('filters.clearAll')}
+                  {t("filters.clearAll")}
                 </button>
               </div>
             )}
@@ -285,20 +264,24 @@ function ShopContent() {
         </>
       )}
     </div>
-  )
+  );
 }
 
 export default function ShopPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-background">
-        <ShopHero />
-        <div className="flex items-center justify-center py-20">
-          <div className="animate-pulse text-muted-foreground">Loading...</div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background">
+          <ShopHero />
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-pulse text-muted-foreground">
+              Loading...
+            </div>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ShopContent />
     </Suspense>
-  )
+  );
 }
