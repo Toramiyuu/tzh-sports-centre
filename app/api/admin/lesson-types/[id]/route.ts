@@ -88,9 +88,31 @@ export async function PATCH(
       updates.isActive = Boolean(body.isActive);
     }
 
+    if (body.pricingTiers !== undefined && Array.isArray(body.pricingTiers)) {
+      await prisma.lessonTypePricing.deleteMany({
+        where: { lessonTypeId: id },
+      });
+      const validTiers: {
+        lessonTypeId: string;
+        duration: number;
+        price: number;
+      }[] = [];
+      for (const tier of body.pricingTiers) {
+        const d = Number(tier.duration);
+        const p = Number(tier.price);
+        if (isNaN(d) || d <= 0 || d > 10) continue;
+        if (isNaN(p) || p <= 0 || p > 100000) continue;
+        validTiers.push({ lessonTypeId: id, duration: d, price: p });
+      }
+      if (validTiers.length > 0) {
+        await prisma.lessonTypePricing.createMany({ data: validTiers });
+      }
+    }
+
     const lessonType = await prisma.lessonType.update({
       where: { id },
       data: updates,
+      include: { pricingTiers: { orderBy: { duration: "asc" } } },
     });
 
     return NextResponse.json({ lessonType });

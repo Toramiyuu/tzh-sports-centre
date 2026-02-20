@@ -186,7 +186,22 @@ model LessonType {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  pricingTiers LessonTypePricing[]
+
   @@map("lesson_types")
+}
+
+model LessonTypePricing {
+  id           String     @id @default(cuid())
+  lessonTypeId String     @map("lesson_type_id")
+  lessonType   LessonType @relation(fields: [lessonTypeId], references: [id], onDelete: Cascade)
+  duration     Float
+  price        Float
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@unique([lessonTypeId, duration])
+  @@map("lesson_type_pricing")
 }
 
 model LessonSession {

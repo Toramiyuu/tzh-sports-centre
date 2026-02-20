@@ -4,34 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Plus, Loader2, Pencil, BookOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
-
-interface LessonType {
-  id: string;
-  name: string;
-  billingType: string;
-  price: number;
-  maxStudents: number;
-  isActive: boolean;
-}
+import LessonTypeDialog, { type LessonType } from "./LessonTypeDialog";
 
 export default function LessonTypesContent() {
   const t = useTranslations("admin.lessonTypes");
@@ -40,12 +15,6 @@ export default function LessonTypesContent() {
   const [showInactive, setShowInactive] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<LessonType | null>(null);
-  const [saving, setSaving] = useState(false);
-
-  const [formName, setFormName] = useState("");
-  const [formBillingType, setFormBillingType] = useState("per_session");
-  const [formPrice, setFormPrice] = useState("");
-  const [formMaxStudents, setFormMaxStudents] = useState("1");
 
   const fetchLessonTypes = useCallback(async () => {
     setLoading(true);
@@ -69,48 +38,7 @@ export default function LessonTypesContent() {
 
   const openDialog = (lt?: LessonType) => {
     setEditing(lt || null);
-    setFormName(lt?.name || "");
-    setFormBillingType(lt?.billingType || "per_session");
-    setFormPrice(lt ? String(lt.price) : "");
-    setFormMaxStudents(lt ? String(lt.maxStudents) : "1");
     setDialogOpen(true);
-  };
-
-  const handleSave = async () => {
-    if (!formName.trim() || !formPrice) return;
-    setSaving(true);
-    try {
-      const body = {
-        name: formName.trim(),
-        billingType: formBillingType,
-        price: Number(formPrice),
-        maxStudents: Number(formMaxStudents),
-      };
-
-      const res = editing
-        ? await fetch(`/api/admin/lesson-types/${editing.id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          })
-        : await fetch("/api/admin/lesson-types", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          });
-
-      if (res.ok) {
-        setDialogOpen(false);
-        fetchLessonTypes();
-      } else {
-        const data = await res.json();
-        alert(data.error || "Failed to save");
-      }
-    } catch (error) {
-      console.error("Error saving lesson type:", error);
-    } finally {
-      setSaving(false);
-    }
   };
 
   const handleToggleActive = async (lt: LessonType) => {
@@ -120,12 +48,22 @@ export default function LessonTypesContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive: !lt.isActive }),
       });
-      if (res.ok) {
-        fetchLessonTypes();
-      }
+      if (res.ok) fetchLessonTypes();
     } catch (error) {
       console.error("Error toggling lesson type:", error);
     }
+  };
+
+  const formatPricing = (lt: LessonType) => {
+    if (lt.billingType === "monthly") {
+      return `RM${lt.price.toFixed(2)} ${t("perMonth")}`;
+    }
+    if (lt.pricingTiers && lt.pricingTiers.length > 0) {
+      return lt.pricingTiers
+        .map((tier) => `${tier.duration}hr = RM${tier.price.toFixed(2)}`)
+        .join(" · ");
+    }
+    return `RM${lt.price.toFixed(2)} ${t("perSession")}`;
   };
 
   if (loading && lessonTypes.length === 0) {
@@ -183,10 +121,7 @@ export default function LessonTypesContent() {
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">
-                      RM{lt.price.toFixed(2)}{" "}
-                      {lt.billingType === "monthly"
-                        ? t("perMonth")
-                        : t("perSession")}
+                      {formatPricing(lt)}
                       {lt.maxStudents > 1 &&
                         ` · ${t("maxStudents")}: ${lt.maxStudents}`}
                     </p>
@@ -213,79 +148,12 @@ export default function LessonTypesContent() {
           </div>
         )}
 
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>
-                {editing ? t("editTitle") : t("addTitle")}
-              </DialogTitle>
-              <DialogDescription>
-                {editing ? t("editDescription") : t("addDescription")}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label>{t("name")}</Label>
-                <Input
-                  value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
-                  placeholder={t("namePlaceholder")}
-                />
-              </div>
-              <div>
-                <Label>{t("billingType")}</Label>
-                <Select
-                  value={formBillingType}
-                  onValueChange={setFormBillingType}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="per_session">
-                      {t("perSession")}
-                    </SelectItem>
-                    <SelectItem value="monthly">{t("perMonth")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>{t("price")} (RM)</Label>
-                <Input
-                  type="number"
-                  value={formPrice}
-                  onChange={(e) => setFormPrice(e.target.value)}
-                  placeholder="e.g. 130"
-                  min="0"
-                  step="0.01"
-                />
-              </div>
-              <div>
-                <Label>{t("maxStudents")}</Label>
-                <Input
-                  type="number"
-                  value={formMaxStudents}
-                  onChange={(e) => setFormMaxStudents(e.target.value)}
-                  placeholder="1"
-                  min="1"
-                  max="50"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                {t("cancel")}
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={!formName.trim() || !formPrice || saving}
-              >
-                {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                {editing ? t("save") : t("create")}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <LessonTypeDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          editing={editing}
+          onSaved={fetchLessonTypes}
+        />
       </div>
     </div>
   );

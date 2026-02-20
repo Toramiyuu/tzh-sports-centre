@@ -1121,7 +1121,13 @@
       "deactivate": "停用",
       "cancel": "取消",
       "save": "保存",
-      "create": "创建"
+      "create": "创建",
+      "basePrice": "基本价格",
+      "durationPricing": "时长定价",
+      "addTier": "添加",
+      "noTiers": "未设置时长定价 — 将使用基本价格",
+      "hours": "小时",
+      "hrs": "小时"
     }
   },
   "updates": {

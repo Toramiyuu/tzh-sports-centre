@@ -1225,7 +1225,13 @@
       "deactivate": "Nyahaktif",
       "cancel": "Batal",
       "save": "Simpan",
-      "create": "Cipta"
+      "create": "Cipta",
+      "basePrice": "harga asas",
+      "durationPricing": "Harga Mengikut Tempoh",
+      "addTier": "Tambah",
+      "noTiers": "Tiada harga tempoh ditetapkan — harga asas akan digunakan",
+      "hours": "Jam",
+      "hrs": "jam"
     }
   },
   "updates": {

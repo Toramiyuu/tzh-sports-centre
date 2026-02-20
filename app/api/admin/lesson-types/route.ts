@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
 
     const lessonTypes = await prisma.lessonType.findMany({
       where: activeOnly ? { isActive: true } : undefined,
+      include: { pricingTiers: { orderBy: { duration: "asc" } } },
       orderBy: { name: "asc" },
     });
 
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, billingType, price, maxStudents } = body;
+    const { name, billingType, price, maxStudents, pricingTiers } = body;
 
     const validName = sanitiseText(name);
     if (!validName || validName.length > 100) {
@@ -89,13 +90,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const validTiers: { duration: number; price: number }[] = [];
+    if (pricingTiers && Array.isArray(pricingTiers)) {
+      for (const tier of pricingTiers) {
+        const d = Number(tier.duration);
+        const p = Number(tier.price);
+        if (isNaN(d) || d <= 0 || d > 10) continue;
+        if (isNaN(p) || p <= 0 || p > 100000) continue;
+        validTiers.push({ duration: d, price: p });
+      }
+    }
+
     const lessonType = await prisma.lessonType.create({
       data: {
         name: validName,
         billingType,
         price: numPrice,
         maxStudents: numMaxStudents,
+        pricingTiers:
+          validTiers.length > 0
+            ? { createMany: { data: validTiers } }
+            : undefined,
       },
+      include: { pricingTiers: { orderBy: { duration: "asc" } } },
     });
 
     return NextResponse.json({ lessonType }, { status: 201 });

@@ -1236,7 +1236,13 @@
       "deactivate": "Deactivate",
       "cancel": "Cancel",
       "save": "Save",
-      "create": "Create"
+      "create": "Create",
+      "basePrice": "base price",
+      "durationPricing": "Duration Pricing",
+      "addTier": "Add",
+      "noTiers": "No duration pricing set — base price will be used",
+      "hours": "Hours",
+      "hrs": "hr"
     }
   },
   "updates": {
