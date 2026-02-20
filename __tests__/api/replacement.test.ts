@@ -23,6 +23,10 @@ vi.mock('@/lib/prisma', () => ({
       findFirst: vi.fn(),
       update: vi.fn(),
     },
+    lessonType: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+    },
     notification: {
       create: vi.fn(),
     },
@@ -87,6 +91,9 @@ const mockBooking = {
 describe('GET /api/replacement/available', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(prisma.lessonType.findMany).mockResolvedValue([
+      { slug: 'small-adult-group', maxStudents: 6 },
+    ] as never)
   })
 
   it('returns 401 when not authenticated', async () => {
@@ -149,6 +156,7 @@ describe('GET /api/replacement/available', () => {
 describe('POST /api/replacement/book', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(prisma.lessonType.findUnique).mockResolvedValue({ slug: 'small-adult-group', maxStudents: 6 } as never)
   })
 
   it('returns 401 when not authenticated', async () => {

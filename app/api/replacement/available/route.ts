@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getLessonType } from "@/lib/lesson-config";
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,23 +32,31 @@ export async function GET(request: NextRequest) {
       where.lessonType = lessonType;
     }
 
-    const lessonSessions = await prisma.lessonSession.findMany({
-      where,
-      include: {
-        court: { select: { name: true } },
-        students: { select: { id: true } },
-        replacementBookings: {
-          where: { status: "CONFIRMED" },
-          select: { id: true },
+    const [lessonSessions, allLessonTypes] = await Promise.all([
+      prisma.lessonSession.findMany({
+        where,
+        include: {
+          court: { select: { name: true } },
+          students: { select: { id: true } },
+          replacementBookings: {
+            where: { status: "CONFIRMED" },
+            select: { id: true },
+          },
         },
-      },
-      orderBy: { lessonDate: "asc" },
-      take: 20,
-    });
+        orderBy: { lessonDate: "asc" },
+        take: 20,
+      }),
+      prisma.lessonType.findMany({
+        where: { isActive: true },
+        select: { slug: true, maxStudents: true },
+      }),
+    ]);
+
+    const lessonTypeMap = new Map(allLessonTypes.map((lt) => [lt.slug, lt]));
 
     const sessions = lessonSessions
       .map((s) => {
-        const config = getLessonType(s.lessonType);
+        const config = lessonTypeMap.get(s.lessonType);
         const maxStudents = config?.maxStudents ?? 0;
         const confirmedReplacements = s.replacementBookings.length;
         const enrolledStudents = s.students.length;

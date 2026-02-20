@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -10,48 +10,38 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Loader2, Calendar, Clock } from 'lucide-react'
-import { format } from 'date-fns'
-import { useTranslations } from 'next-intl'
-import {
-  LESSON_TYPES,
-  getLessonType,
-  getLessonPrice,
-  getDefaultDuration,
-  getDurationOptions,
-  getPricePerPerson,
-} from '@/lib/lesson-config'
-import { formatDateString } from '@/lib/timetable-utils'
-
-// Only per-session lesson types for member requests (monthly = admin only)
-const MEMBER_LESSON_TYPES = LESSON_TYPES.filter(t => t.billingType === 'per_session')
+} from "@/components/ui/select";
+import { Loader2, Calendar, Clock } from "lucide-react";
+import { format } from "date-fns";
+import { useTranslations } from "next-intl";
+import { useLessonTypes } from "@/lib/hooks/useLessonTypes";
+import { formatDateString } from "@/lib/timetable-utils";
 
 interface BookingDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  selectedDate: Date | null
-  selectedTime: string | null
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  selectedDate: Date | null;
+  selectedTime: string | null;
   onSubmit: (data: {
-    requestedDate: string
-    requestedTime: string
-    lessonType: string
-    requestedDuration: number
-  }) => Promise<boolean>
+    requestedDate: string;
+    requestedTime: string;
+    lessonType: string;
+    requestedDuration: number;
+  }) => Promise<boolean>;
 }
 
 function formatTime(time: string) {
-  const [hours, minutes] = time.split(':').map(Number)
-  const period = hours >= 12 ? 'PM' : 'AM'
-  const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours
-  return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`
+  const [hours, minutes] = time.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+  return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`;
 }
 
 export function BookingDialog({
@@ -61,113 +51,124 @@ export function BookingDialog({
   selectedTime,
   onSubmit,
 }: BookingDialogProps) {
-  const t = useTranslations('member.dialog')
-  const tCommon = useTranslations('member')
-  const tLessons = useTranslations('lessons.types')
+  const t = useTranslations("member.dialog");
+  const tLessons = useTranslations("lessons.types");
 
-  const [lessonType, setLessonType] = useState('')
-  const [duration, setDuration] = useState<number>(1.5)
-  const [submitting, setSubmitting] = useState(false)
+  const {
+    lessonTypes,
+    getLessonTypeBySlug,
+    getLessonPrice,
+    getDefaultDuration,
+    getDurationOptions,
+    getPricePerPerson,
+  } = useLessonTypes();
 
-  // Reset form when dialog opens with new selection
+  const memberLessonTypes = lessonTypes.filter(
+    (lt) => lt.billingType === "per_session",
+  );
+
+  const [lessonType, setLessonType] = useState("");
+  const [duration, setDuration] = useState<number>(1.5);
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
     if (open) {
-      setLessonType('')
-      setDuration(1.5)
+      setLessonType("");
+      setDuration(1.5);
     }
-  }, [open, selectedDate, selectedTime])
+  }, [open, selectedDate, selectedTime]);
 
   const handleTypeChange = (value: string) => {
-    setLessonType(value)
-    setDuration(getDefaultDuration(value))
-  }
+    setLessonType(value);
+    setDuration(getDefaultDuration(value));
+  };
 
   const handleSubmit = async () => {
-    if (!selectedDate || !selectedTime || !lessonType) return
+    if (!selectedDate || !selectedTime || !lessonType) return;
 
-    setSubmitting(true)
+    setSubmitting(true);
     try {
       const success = await onSubmit({
         requestedDate: formatDateString(selectedDate),
         requestedTime: selectedTime,
         lessonType,
         requestedDuration: duration,
-      })
+      });
 
       if (success) {
-        onOpenChange(false)
+        onOpenChange(false);
       }
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
-  const selectedTypeConfig = lessonType ? getLessonType(lessonType) : null
-  const durationOptions = lessonType ? getDurationOptions(lessonType) : []
-  const price = lessonType ? getLessonPrice(lessonType, duration) : 0
+  const selectedTypeConfig = lessonType
+    ? getLessonTypeBySlug(lessonType)
+    : null;
+  const durationOpts = lessonType ? getDurationOptions(lessonType) : [];
+  const price = lessonType ? getLessonPrice(lessonType, duration) : 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t('title')}</DialogTitle>
-          <DialogDescription>
-            {t('description')}
-          </DialogDescription>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Selected Date & Time Display */}
           {selectedDate && selectedTime && (
             <div className="p-3 bg-background rounded-xl border border-border">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 text-foreground">
                   <Calendar className="w-4 h-4" />
                   <span className="font-medium">
-                    {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                    {format(selectedDate, "EEEE, MMMM d, yyyy")}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-foreground">
                   <Clock className="w-4 h-4" />
-                  <span className="font-medium">{formatTime(selectedTime)}</span>
+                  <span className="font-medium">
+                    {formatTime(selectedTime)}
+                  </span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Lesson Type Selector */}
           <div className="space-y-2">
-            <Label>{t('lessonType')}</Label>
+            <Label>{t("lessonType")}</Label>
             <Select value={lessonType} onValueChange={handleTypeChange}>
               <SelectTrigger>
-                <SelectValue placeholder={t('selectLessonType')} />
+                <SelectValue placeholder={t("selectLessonType")} />
               </SelectTrigger>
               <SelectContent>
-                {MEMBER_LESSON_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {tLessons(type.value)}
+                {memberLessonTypes.map((type) => (
+                  <SelectItem key={type.slug} value={type.slug}>
+                    {tLessons(type.slug)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          {/* Duration Selector */}
-          {lessonType && durationOptions.length > 0 && (
+          {lessonType && durationOpts.length > 0 && (
             <div className="space-y-2">
-              <Label>{t('duration')}</Label>
+              <Label>{t("duration")}</Label>
               <Select
                 value={duration.toString()}
                 onValueChange={(v) => setDuration(parseFloat(v))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('selectDuration')} />
+                  <SelectValue placeholder={t("selectDuration")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {durationOptions.map((opt) => (
+                  {durationOpts.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value.toString()}>
                       {opt.label} - RM{opt.price}
-                      {opt.pricePerPerson && ` (RM${opt.pricePerPerson}/person)`}
+                      {opt.pricePerPerson &&
+                        ` (RM${opt.pricePerPerson}/person)`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -175,13 +176,13 @@ export function BookingDialog({
             </div>
           )}
 
-          {/* Price Summary */}
           {lessonType && selectedTypeConfig && (
             <div className="p-3 bg-secondary rounded-xl border border-border">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {tLessons(lessonType)} - {duration} {t('hours', { count: duration })}
+                    {tLessons(lessonType)} - {duration}{" "}
+                    {t("hours", { count: duration })}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     Max {selectedTypeConfig.maxStudents} student(s)
@@ -189,7 +190,10 @@ export function BookingDialog({
                 </div>
                 <div className="text-right">
                   {(() => {
-                    const perPersonPrice = getPricePerPerson(lessonType, duration)
+                    const perPersonPrice = getPricePerPerson(
+                      lessonType,
+                      duration,
+                    );
                     if (perPersonPrice && selectedTypeConfig.maxStudents > 1) {
                       return (
                         <>
@@ -200,13 +204,13 @@ export function BookingDialog({
                             (Total: RM{price})
                           </p>
                         </>
-                      )
+                      );
                     }
                     return (
                       <p className="text-lg font-bold text-foreground">
                         RM{price}
                       </p>
-                    )
+                    );
                   })()}
                 </div>
               </div>
@@ -215,8 +219,12 @@ export function BookingDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-full">
-            {t('cancel')}
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="rounded-full"
+          >
+            {t("cancel")}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -224,10 +232,10 @@ export function BookingDialog({
             className="bg-foreground hover:bg-foreground/90 rounded-full"
           >
             {submitting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-            {t('submit')}
+            {t("submit")}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

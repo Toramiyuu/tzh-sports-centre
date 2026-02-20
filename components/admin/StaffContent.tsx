@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Loader2, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { LESSON_TYPES } from "@/lib/lesson-config";
+import { useLessonTypes } from "@/lib/hooks/useLessonTypes";
 import StaffTeachersTab, {
   type Teacher,
   type PayRate,
@@ -30,6 +30,7 @@ import StaffPaySummaryTab, { type PaySummaryEntry } from "./StaffPaySummaryTab";
 
 export default function StaffContent() {
   const t = useTranslations("admin.staff");
+  const { lessonTypes } = useLessonTypes();
   const [activeTab, setActiveTab] = useState<"teachers" | "paySummary">(
     "teachers",
   );
@@ -287,9 +288,9 @@ export default function StaffContent() {
                         <SelectValue placeholder={t("lessonType")} />
                       </SelectTrigger>
                       <SelectContent>
-                        {LESSON_TYPES.map((lt) => (
-                          <SelectItem key={lt.value} value={lt.value}>
-                            {lt.label}
+                        {lessonTypes.map((lt) => (
+                          <SelectItem key={lt.slug} value={lt.slug}>
+                            {lt.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

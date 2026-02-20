@@ -43,7 +43,17 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, billingType, price, maxStudents, pricingTiers } = body;
+    const {
+      name,
+      slug: rawSlug,
+      description,
+      detailedDescription,
+      billingType,
+      price,
+      maxStudents,
+      sessionsPerMonth,
+      pricingTiers,
+    } = body;
 
     const validName = sanitiseText(name);
     if (!validName || validName.length > 100) {
@@ -51,6 +61,21 @@ export async function POST(request: NextRequest) {
         { error: "Name is required (1-100 characters)" },
         { status: 400 },
       );
+    }
+
+    const slug = rawSlug
+      ? String(rawSlug)
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "")
+          .slice(0, 100)
+      : validName
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
+
+    if (!slug) {
+      return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
 
     if (!billingType || !["per_session", "monthly"].includes(billingType)) {
@@ -80,12 +105,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existing = await prisma.lessonType.findUnique({
+    const existingName = await prisma.lessonType.findUnique({
       where: { name: validName },
     });
-    if (existing) {
+    if (existingName) {
       return NextResponse.json(
         { error: "A lesson type with this name already exists" },
+        { status: 400 },
+      );
+    }
+
+    const existingSlug = await prisma.lessonType.findUnique({
+      where: { slug },
+    });
+    if (existingSlug) {
+      return NextResponse.json(
+        { error: "A lesson type with this slug already exists" },
         { status: 400 },
       );
     }
@@ -101,12 +136,23 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const numSessionsPerMonth =
+      billingType === "monthly" && sessionsPerMonth
+        ? Number(sessionsPerMonth)
+        : null;
+
     const lessonType = await prisma.lessonType.create({
       data: {
         name: validName,
+        slug,
+        description: description ? sanitiseText(description) : null,
+        detailedDescription: detailedDescription
+          ? sanitiseText(detailedDescription)
+          : null,
         billingType,
         price: numPrice,
         maxStudents: numMaxStudents,
+        sessionsPerMonth: numSessionsPerMonth,
         pricingTiers:
           validTiers.length > 0
             ? { createMany: { data: validTiers } }

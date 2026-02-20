@@ -84,6 +84,50 @@ export async function PATCH(
       updates.maxStudents = num;
     }
 
+    if (body.slug !== undefined) {
+      const slug = String(body.slug)
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "")
+        .slice(0, 100);
+      if (!slug) {
+        return NextResponse.json(
+          { error: "Slug is required" },
+          { status: 400 },
+        );
+      }
+      if (slug !== existing.slug) {
+        const duplicateSlug = await prisma.lessonType.findUnique({
+          where: { slug },
+        });
+        if (duplicateSlug) {
+          return NextResponse.json(
+            { error: "A lesson type with this slug already exists" },
+            { status: 400 },
+          );
+        }
+      }
+      updates.slug = slug;
+    }
+
+    if (body.description !== undefined) {
+      updates.description = body.description
+        ? sanitiseText(body.description)
+        : null;
+    }
+
+    if (body.detailedDescription !== undefined) {
+      updates.detailedDescription = body.detailedDescription
+        ? sanitiseText(body.detailedDescription)
+        : null;
+    }
+
+    if (body.sessionsPerMonth !== undefined) {
+      updates.sessionsPerMonth = body.sessionsPerMonth
+        ? Number(body.sessionsPerMonth)
+        : null;
+    }
+
     if (body.isActive !== undefined) {
       updates.isActive = Boolean(body.isActive);
     }

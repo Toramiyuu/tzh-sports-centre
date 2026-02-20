@@ -177,14 +177,18 @@ model CoachAvailability {
 }
 
 model LessonType {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  billingType String   @default("per_session") @map("billing_type")
-  price       Float
-  maxStudents Int      @default(1) @map("max_students")
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id                  String   @id @default(cuid())
+  name                String   @unique
+  slug                String   @unique
+  description         String?
+  detailedDescription String?  @map("detailed_description")
+  billingType         String   @default("per_session") @map("billing_type")
+  price               Float
+  maxStudents         Int      @default(1) @map("max_students")
+  sessionsPerMonth    Int?     @map("sessions_per_month")
+  isActive            Boolean  @default(true) @map("is_active")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
   pricingTiers LessonTypePricing[]
 

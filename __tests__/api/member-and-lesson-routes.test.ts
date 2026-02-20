@@ -30,21 +30,14 @@ vi.mock('@/lib/prisma', () => ({
       findUnique: vi.fn(),
       update: vi.fn(),
     },
+    lessonType: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+    },
     trialRequest: {
       create: vi.fn(),
     },
   },
-}))
-
-vi.mock('@/lib/lesson-config', () => ({
-  getLessonType: vi.fn((type: string) => {
-    if (type === 'private-1on1') return { name: 'Private 1-on-1', maxStudents: 1 }
-    if (type === 'group-2') return { name: 'Group (2 students)', maxStudents: 2 }
-    return null
-  }),
-  getLessonPrice: vi.fn(() => 100),
-  getDefaultDuration: vi.fn(() => 60),
-  isMonthlyBilling: vi.fn(() => false),
 }))
 
 import { auth } from '@/lib/auth'
@@ -265,6 +258,8 @@ describe('POST /api/admin/lessons', () => {
   })
 
   it('returns 400 when lesson type is invalid', async () => {
+    vi.mocked(prisma.lessonType.findUnique).mockResolvedValue(null)
+
     const request = createMockNextRequest({
       method: 'POST',
       url: 'http://localhost:3000/api/admin/lessons',
@@ -435,6 +430,7 @@ describe('PATCH /api/admin/lesson-requests', () => {
       lessonType: 'invalid-type',
       requestedDate: new Date('2026-02-20'),
       requestedTime: '09:00',
+      requestedDuration: 1.5,
       member: {
         id: 'member-1',
         name: 'Member One',
@@ -442,6 +438,7 @@ describe('PATCH /api/admin/lesson-requests', () => {
     }
 
     vi.mocked(prisma.lessonRequest.findUnique).mockResolvedValue(mockRequest as never)
+    vi.mocked(prisma.lessonType.findUnique).mockResolvedValue(null)
 
     const request = createMockNextRequest({
       method: 'PATCH',

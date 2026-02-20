@@ -10,27 +10,28 @@ vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }))
 
-vi.mock('@/lib/lesson-config', () => ({
-  LESSON_TYPES: [
-    { value: 'private_badminton', billingType: 'per_session', maxStudents: 1 },
-    { value: 'group_badminton', billingType: 'per_session', maxStudents: 4 },
-  ],
-  getLessonType: (value: string) => {
-    if (value === 'private_badminton') return { value: 'private_badminton', maxStudents: 1, billingType: 'per_session' }
-    if (value === 'group_badminton') return { value: 'group_badminton', maxStudents: 4, billingType: 'per_session' }
-    return null
-  },
-  getLessonPrice: (type: string, duration: number) => {
-    if (type === 'private_badminton') return duration * 50
-    if (type === 'group_badminton') return duration * 40
-    return 0
-  },
-  getDefaultDuration: () => 1.5,
-  getDurationOptions: () => [
-    { value: 1, label: '1 hour', price: 50, pricePerPerson: null },
-    { value: 1.5, label: '1.5 hours', price: 75, pricePerPerson: null },
-  ],
-  getPricePerPerson: () => null,
+vi.mock('@/lib/hooks/useLessonTypes', () => ({
+  useLessonTypes: () => ({
+    lessonTypes: [
+      { slug: 'private_badminton', name: 'Private Badminton', billingType: 'per_session', maxStudents: 1, price: 75, pricingTiers: [{ duration: 1, price: 50 }, { duration: 1.5, price: 75 }] },
+      { slug: 'group_badminton', name: 'Group Badminton', billingType: 'per_session', maxStudents: 4, price: 60, pricingTiers: [{ duration: 1, price: 40 }, { duration: 1.5, price: 60 }] },
+    ],
+    loading: false,
+    error: null,
+    getLessonTypeBySlug: (slug: string) => {
+      if (slug === 'private_badminton') return { slug: 'private_badminton', name: 'Private Badminton', maxStudents: 1, billingType: 'per_session', price: 75, pricingTiers: [{ duration: 1, price: 50 }, { duration: 1.5, price: 75 }] }
+      if (slug === 'group_badminton') return { slug: 'group_badminton', name: 'Group Badminton', maxStudents: 4, billingType: 'per_session', price: 60, pricingTiers: [{ duration: 1, price: 40 }, { duration: 1.5, price: 60 }] }
+      return undefined
+    },
+    getLessonPrice: (_slug: string, duration?: number) => (duration || 1.5) * 50,
+    getDefaultDuration: () => 1.5,
+    getDurationOptions: () => [
+      { value: 1, label: '1 hour', price: 50, pricePerPerson: null },
+      { value: 1.5, label: '1.5 hours', price: 75, pricePerPerson: null },
+    ],
+    getPricePerPerson: () => null,
+    isMonthlyBilling: () => false,
+  }),
 }))
 
 vi.mock('@/lib/timetable-utils', () => ({

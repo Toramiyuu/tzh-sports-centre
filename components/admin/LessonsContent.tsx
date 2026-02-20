@@ -45,16 +45,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import TrialRequestsContent from "@/components/admin/TrialRequestsContent";
-import {
-  LESSON_TYPES,
-  getLessonType,
-  getLessonPrice,
-  getDefaultDuration,
-  isMonthlyBilling,
-  getDurationOptions,
-  getPricePerPerson,
-  type LessonTypeConfig,
-} from "@/lib/lesson-config";
+import { useLessonTypes } from "@/lib/hooks/useLessonTypes";
 
 const DAYS_OF_WEEK_KEYS = [
   "sunday",
@@ -181,6 +172,20 @@ export default function LessonsContent({
   const tDays = useTranslations("days");
 
   const DAYS_OF_WEEK = DAYS_OF_WEEK_KEYS.map((key) => tDays(key));
+
+  const {
+    lessonTypes: LESSON_TYPES,
+    getLessonTypeBySlug,
+    getLessonPrice,
+    getDefaultDuration,
+    isMonthlyBilling,
+    getDurationOptions,
+    getPricePerPerson,
+  } = useLessonTypes();
+
+  const getLessonType = getLessonTypeBySlug;
+
+  const getLessonTypeInfo = (slug: string) => getLessonTypeBySlug(slug);
 
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -830,9 +835,6 @@ export default function LessonsContent({
     return Object.values(billing).sort((a, b) => b.total - a.total);
   };
 
-  const getLessonTypeInfo = (type: string): LessonTypeConfig | undefined =>
-    getLessonType(type);
-
   const getPendingRequestsForDate = () => {
     const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
     return lessonRequests.filter((r) => {
@@ -1090,7 +1092,7 @@ export default function LessonsContent({
                                             <div className="flex items-center gap-1 font-medium flex-wrap">
                                               <GraduationCap className="w-3 h-3 text-purple-700" />
                                               <span className="text-purple-600">
-                                                {typeInfo?.label}
+                                                {typeInfo?.name}
                                               </span>
                                               {lesson.status ===
                                                 "completed" && (
@@ -1238,7 +1240,7 @@ export default function LessonsContent({
                                             </span>
                                           </div>
                                           <div className="text-muted-foreground mt-1">
-                                            {typeInfo?.label} (
+                                            {typeInfo?.name} (
                                             {request.requestedDuration}hr)
                                           </div>
                                           <div className="text-green-700 font-medium mt-1">
@@ -1297,7 +1299,7 @@ export default function LessonsContent({
                                     <div>
                                       <div className="flex items-center gap-2 mb-1">
                                         <span className="font-medium text-foreground">
-                                          {typeInfo?.label}
+                                          {typeInfo?.name}
                                         </span>
                                         <Badge variant="outline">
                                           {lesson.court.name}
@@ -1580,7 +1582,7 @@ export default function LessonsContent({
                                             new Date(lesson.lessonDate),
                                             "MMM d",
                                           )}{" "}
-                                          - {typeInfo?.label} ({lesson.duration}
+                                          - {typeInfo?.name} ({lesson.duration}
                                           hr)
                                         </span>
                                         <span>
@@ -1754,15 +1756,15 @@ export default function LessonsContent({
                   </SelectTrigger>
                   <SelectContent>
                     {LESSON_TYPES.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
+                      <SelectItem key={type.slug} value={type.slug}>
                         <div className="flex items-center gap-2">
-                          <span>{type.label}</span>
+                          <span>{type.name}</span>
                           {type.billingType === "monthly" ? (
                             <Badge
                               variant="outline"
                               className="text-xs bg-purple-50 text-purple-600 border-purple-300"
                             >
-                              RM{type.pricing as number}/mo
+                              RM{type.price}/mo
                             </Badge>
                           ) : (
                             <Badge
@@ -1770,11 +1772,11 @@ export default function LessonsContent({
                               className="text-xs bg-green-50 text-green-700 border-green-300"
                             >
                               From RM
-                              {
-                                Object.values(
-                                  type.pricing as Record<number, number>,
-                                )[0]
-                              }
+                              {type.pricingTiers.length > 0
+                                ? Math.min(
+                                    ...type.pricingTiers.map((t) => t.price),
+                                  )
+                                : type.price}
                             </Badge>
                           )}
                         </div>
@@ -2353,7 +2355,7 @@ export default function LessonsContent({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Type:</span>
                   <span className="font-medium text-foreground">
-                    {getLessonTypeInfo(selectedRequest.lessonType)?.label}
+                    {getLessonTypeInfo(selectedRequest.lessonType)?.name}
                   </span>
                 </div>
                 <div className="flex justify-between">

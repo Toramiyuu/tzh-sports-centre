@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -30,9 +31,13 @@ export interface PricingTier {
 export interface LessonType {
   id: string;
   name: string;
+  slug: string;
+  description?: string | null;
+  detailedDescription?: string | null;
   billingType: string;
   price: number;
   maxStudents: number;
+  sessionsPerMonth?: number | null;
   isActive: boolean;
   pricingTiers?: PricingTier[];
 }
@@ -44,6 +49,13 @@ interface Props {
   onSaved: () => void;
 }
 
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}
+
 export default function LessonTypeDialog({
   open,
   onOpenChange,
@@ -53,22 +65,34 @@ export default function LessonTypeDialog({
   const t = useTranslations("admin.lessonTypes");
   const [saving, setSaving] = useState(false);
   const [formName, setFormName] = useState("");
+  const [formSlug, setFormSlug] = useState("");
+  const [formDescription, setFormDescription] = useState("");
+  const [formDetailedDescription, setFormDetailedDescription] = useState("");
   const [formBillingType, setFormBillingType] = useState("per_session");
   const [formPrice, setFormPrice] = useState("");
   const [formMaxStudents, setFormMaxStudents] = useState("1");
+  const [formSessionsPerMonth, setFormSessionsPerMonth] = useState("");
   const [formTiers, setFormTiers] = useState<PricingTier[]>([]);
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
   const resetForm = (lt?: LessonType | null) => {
     setFormName(lt?.name || "");
+    setFormSlug(lt?.slug || "");
+    setFormDescription(lt?.description || "");
+    setFormDetailedDescription(lt?.detailedDescription || "");
     setFormBillingType(lt?.billingType || "per_session");
     setFormPrice(lt ? String(lt.price) : "");
     setFormMaxStudents(lt ? String(lt.maxStudents) : "1");
+    setFormSessionsPerMonth(
+      lt?.sessionsPerMonth ? String(lt.sessionsPerMonth) : "",
+    );
     setFormTiers(
-      lt?.pricingTiers?.map((t) => ({
-        duration: t.duration,
-        price: t.price,
+      lt?.pricingTiers?.map((tier) => ({
+        duration: tier.duration,
+        price: tier.price,
       })) || [],
     );
+    setSlugManuallyEdited(!!lt?.slug);
   };
 
   const handleOpenChange = (val: boolean) => {
@@ -79,6 +103,18 @@ export default function LessonTypeDialog({
   if (open && formName === "" && editing?.name) {
     resetForm(editing);
   }
+
+  const handleNameChange = (name: string) => {
+    setFormName(name);
+    if (!slugManuallyEdited && !editing) {
+      setFormSlug(generateSlug(name));
+    }
+  };
+
+  const handleSlugChange = (slug: string) => {
+    setSlugManuallyEdited(true);
+    setFormSlug(generateSlug(slug));
+  };
 
   const addTier = () => setFormTiers([...formTiers, { duration: 0, price: 0 }]);
 
@@ -101,14 +137,20 @@ export default function LessonTypeDialog({
     try {
       const body: Record<string, unknown> = {
         name: formName.trim(),
+        slug: formSlug || generateSlug(formName.trim()),
+        description: formDescription || null,
+        detailedDescription: formDetailedDescription || null,
         billingType: formBillingType,
         price: Number(formPrice),
         maxStudents: Number(formMaxStudents),
       };
       if (formBillingType === "per_session") {
         body.pricingTiers = formTiers.filter(
-          (t) => t.duration > 0 && t.price > 0,
+          (tier) => tier.duration > 0 && tier.price > 0,
         );
+      }
+      if (formBillingType === "monthly" && formSessionsPerMonth) {
+        body.sessionsPerMonth = Number(formSessionsPerMonth);
       }
 
       const res = editing
@@ -151,8 +193,39 @@ export default function LessonTypeDialog({
             <Label>{t("name")}</Label>
             <Input
               value={formName}
-              onChange={(e) => setFormName(e.target.value)}
+              onChange={(e) => handleNameChange(e.target.value)}
               placeholder={t("namePlaceholder")}
+            />
+          </div>
+          <div>
+            <Label>
+              {t("slug")}
+              <span className="text-xs text-muted-foreground ml-1">
+                ({t("slugHint")})
+              </span>
+            </Label>
+            <Input
+              value={formSlug}
+              onChange={(e) => handleSlugChange(e.target.value)}
+              placeholder="e.g. 1-to-1"
+            />
+          </div>
+          <div>
+            <Label>{t("description")}</Label>
+            <Textarea
+              value={formDescription}
+              onChange={(e) => setFormDescription(e.target.value)}
+              placeholder={t("descriptionPlaceholder")}
+              rows={2}
+            />
+          </div>
+          <div>
+            <Label>{t("detailedDescription")}</Label>
+            <Textarea
+              value={formDetailedDescription}
+              onChange={(e) => setFormDetailedDescription(e.target.value)}
+              placeholder={t("detailedDescriptionPlaceholder")}
+              rows={3}
             />
           </div>
           <div>
@@ -196,6 +269,20 @@ export default function LessonTypeDialog({
               max="50"
             />
           </div>
+
+          {formBillingType === "monthly" && (
+            <div>
+              <Label>{t("sessionsPerMonth")}</Label>
+              <Input
+                type="number"
+                value={formSessionsPerMonth}
+                onChange={(e) => setFormSessionsPerMonth(e.target.value)}
+                placeholder="e.g. 4"
+                min="1"
+                max="31"
+              />
+            </div>
+          )}
 
           {formBillingType === "per_session" && (
             <div>

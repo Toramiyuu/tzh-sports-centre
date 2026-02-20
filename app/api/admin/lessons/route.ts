@@ -2,11 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import {
-  getLessonType,
-  getLessonPrice,
-  getDefaultDuration,
-} from "@/lib/lesson-config";
 
 export async function GET(request: NextRequest) {
   try {
@@ -105,33 +100,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const lessonTypeConfig = getLessonType(lessonType);
-    if (!lessonTypeConfig) {
+    const lessonTypeRecord = await prisma.lessonType.findUnique({
+      where: { slug: lessonType },
+      include: { pricingTiers: { orderBy: { duration: "asc" } } },
+    });
+    if (!lessonTypeRecord || !lessonTypeRecord.isActive) {
       return NextResponse.json(
         { error: "Invalid lesson type" },
         { status: 400 },
       );
     }
 
-    const billingType = lessonTypeConfig.billingType;
+    const billingType = lessonTypeRecord.billingType;
+    const allowedDurations = lessonTypeRecord.pricingTiers.map(
+      (t) => t.duration,
+    );
+    const defaultDuration =
+      allowedDurations.length > 0 ? allowedDurations[0] : 1.5;
+    const lessonDuration = duration || defaultDuration;
 
-    const lessonDuration = duration || getDefaultDuration(lessonType);
-
-    if (billingType === "per_session") {
-      if (!lessonTypeConfig.allowedDurations.includes(lessonDuration)) {
+    if (billingType === "per_session" && allowedDurations.length > 0) {
+      if (!allowedDurations.includes(lessonDuration)) {
         return NextResponse.json(
           {
-            error: `Invalid duration for ${lessonTypeConfig.label}. Allowed: ${lessonTypeConfig.allowedDurations.join(", ")} hours`,
+            error: `Invalid duration for ${lessonTypeRecord.name}. Allowed: ${allowedDurations.join(", ")} hours`,
           },
           { status: 400 },
         );
       }
     }
 
-    if (studentIds.length > lessonTypeConfig.maxStudents) {
+    if (studentIds.length > lessonTypeRecord.maxStudents) {
       return NextResponse.json(
         {
-          error: `${lessonTypeConfig.label} allows maximum ${lessonTypeConfig.maxStudents} student(s)`,
+          error: `${lessonTypeRecord.name} allows maximum ${lessonTypeRecord.maxStudents} student(s)`,
         },
         { status: 400 },
       );
@@ -235,7 +237,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const price = getLessonPrice(lessonType, lessonDuration);
+    const tier = lessonTypeRecord.pricingTiers.find(
+      (t) => t.duration === lessonDuration,
+    );
+    const price = tier ? tier.price : lessonTypeRecord.price;
 
     const lesson = await prisma.lessonSession.create({
       data: {

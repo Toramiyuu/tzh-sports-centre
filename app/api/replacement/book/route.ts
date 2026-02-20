@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getLessonType } from "@/lib/lesson-config";
 
 export async function POST(request: NextRequest) {
   try {
@@ -91,8 +90,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const config = getLessonType(lessonSession.lessonType);
-    const maxStudents = config?.maxStudents ?? 0;
+    const lessonTypeRecord = await prisma.lessonType.findUnique({
+      where: { slug: lessonSession.lessonType },
+      select: { maxStudents: true },
+    });
+    const maxStudents = lessonTypeRecord?.maxStudents ?? 0;
     const usedSlots =
       lessonSession.students.length + lessonSession.replacementBookings.length;
     if (usedSlots >= maxStudents) {

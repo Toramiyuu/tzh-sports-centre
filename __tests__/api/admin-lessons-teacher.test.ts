@@ -15,6 +15,7 @@ vi.mock("@/lib/prisma", () => ({
     recurringBooking: { findFirst: vi.fn() },
     timeSlot: { findMany: vi.fn() },
     teacher: { findUnique: vi.fn() },
+    lessonType: { findUnique: vi.fn() },
   },
 }));
 
@@ -63,6 +64,7 @@ describe("Lesson API teacher support", () => {
     it("rejects non-existent teacher", async () => {
       vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
       vi.mocked(isAdmin).mockReturnValue(true);
+      vi.mocked(prisma.lessonType.findUnique).mockResolvedValue({ slug: "1-to-1", name: "1-to-1 Private", billingType: "per_session", price: 130, maxStudents: 1, isActive: true, pricingTiers: [{ duration: 1.5, price: 130 }] } as never);
       vi.mocked(prisma.teacher.findUnique).mockResolvedValue(null);
 
       const req = createMockNextRequest({
@@ -86,6 +88,7 @@ describe("Lesson API teacher support", () => {
     it("rejects inactive teacher", async () => {
       vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
       vi.mocked(isAdmin).mockReturnValue(true);
+      vi.mocked(prisma.lessonType.findUnique).mockResolvedValue({ slug: "1-to-1", name: "1-to-1 Private", billingType: "per_session", price: 130, maxStudents: 1, isActive: true, pricingTiers: [{ duration: 1.5, price: 130 }] } as never);
       vi.mocked(prisma.teacher.findUnique).mockResolvedValue({
         id: "teacher-1",
         isActive: false,
@@ -112,6 +115,7 @@ describe("Lesson API teacher support", () => {
     it("creates lesson with teacherId when teacher is valid", async () => {
       vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
       vi.mocked(isAdmin).mockReturnValue(true);
+      vi.mocked(prisma.lessonType.findUnique).mockResolvedValue({ slug: "1-to-1", name: "1-to-1 Private", billingType: "per_session", price: 130, maxStudents: 1, isActive: true, pricingTiers: [{ duration: 1.5, price: 130 }] } as never);
       vi.mocked(prisma.teacher.findUnique).mockResolvedValue({
         id: "teacher-1",
         isActive: true,

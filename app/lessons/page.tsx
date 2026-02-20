@@ -1,86 +1,82 @@
-'use client'
+"use client";
 
-import { useState, useRef } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { useState, useRef } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Users,
   Clock,
   BadgeCheck,
   Phone,
-  GraduationCap,
   Star,
-  Eye
-} from 'lucide-react'
-import Image from 'next/image'
-import { useTranslations } from 'next-intl'
-import TrialRequestForm from '@/components/TrialRequestForm'
-import { LessonDetailsModal } from '@/components/LessonDetailsModal'
-import {
-  LESSON_TYPES,
-  LessonTypeConfig,
-  getPricePerPerson,
-  getLessonPrice,
-} from '@/lib/lesson-config'
+  Eye,
+  Loader2,
+} from "lucide-react";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import TrialRequestForm from "@/components/TrialRequestForm";
+import { LessonDetailsModal } from "@/components/LessonDetailsModal";
+import { useLessonTypes, LessonTypeData } from "@/lib/hooks/useLessonTypes";
 
-// Split lesson types into private and group
-const privateLessons = LESSON_TYPES.filter(
-  t => t.billingType === 'per_session' && t.maxStudents <= 4 && t.value !== 'small-adult-group'
-)
-const groupLessons = LESSON_TYPES.filter(
-  t => t.billingType === 'monthly' || t.value === 'small-adult-group'
-)
+const popularSlugs = ["1-to-2", "large-kids"];
 
-// Popular lesson types
-const popularLessons = ['1-to-2', 'large-kids']
-
-function formatDuration(lesson: LessonTypeConfig): string {
-  if (lesson.billingType === 'monthly') {
-    return `${lesson.sessionsPerMonth} sessions/month`
+function formatDuration(lesson: LessonTypeData): string {
+  if (lesson.billingType === "monthly") {
+    return `${lesson.sessionsPerMonth} sessions/month`;
   }
-  if (lesson.allowedDurations.length === 1) {
-    return `${lesson.allowedDurations[0]} hours`
+  if (lesson.pricingTiers.length === 0) return "";
+  const durations = lesson.pricingTiers.map((t) => t.duration);
+  if (durations.length === 1) {
+    return `${durations[0]} hours`;
   }
-  return `${lesson.allowedDurations[0]}-${lesson.allowedDurations[lesson.allowedDurations.length - 1]} hours`
-}
-
-function getDisplayPrice(lesson: LessonTypeConfig): number {
-  return getLessonPrice(lesson.value)
+  return `${durations[0]}-${durations[durations.length - 1]} hours`;
 }
 
 export default function LessonsPage() {
-  const t = useTranslations('lessons')
-  const [selectedLesson, setSelectedLesson] = useState<LessonTypeConfig | null>(null)
-  const [modalOpen, setModalOpen] = useState(false)
-  const trialFormRef = useRef<HTMLDivElement>(null)
+  const t = useTranslations("lessons");
+  const { lessonTypes, loading, getLessonPrice, getPricePerPerson } =
+    useLessonTypes();
+  const [selectedLesson, setSelectedLesson] = useState<LessonTypeData | null>(
+    null,
+  );
+  const [modalOpen, setModalOpen] = useState(false);
+  const trialFormRef = useRef<HTMLDivElement>(null);
 
-  const handleLessonClick = (lesson: LessonTypeConfig) => {
-    setSelectedLesson(lesson)
-    setModalOpen(true)
-  }
+  const privateLessons = lessonTypes.filter(
+    (lt) =>
+      lt.billingType === "per_session" &&
+      lt.maxStudents <= 4 &&
+      lt.slug !== "small-adult-group",
+  );
+  const groupLessons = lessonTypes.filter(
+    (lt) => lt.billingType === "monthly" || lt.slug === "small-adult-group",
+  );
+
+  const handleLessonClick = (lesson: LessonTypeData) => {
+    setSelectedLesson(lesson);
+    setModalOpen(true);
+  };
 
   const handleRequestTrial = () => {
-    // Scroll to trial form
-    trialFormRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+    trialFormRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-  // Get translated lesson type label
-  const getLessonLabel = (lessonValue: string) => {
-    return t(`types.${lessonValue}`)
-  }
+  const getLessonLabel = (slug: string) => {
+    return t(`types.${slug}`);
+  };
 
-  const renderLessonCard = (lesson: LessonTypeConfig, colorClass: string) => {
-    const isPopular = popularLessons.includes(lesson.value)
-    const price = getDisplayPrice(lesson)
-    const perPersonPrice = getPricePerPerson(lesson.value)
-    const isMonthly = lesson.billingType === 'monthly'
+  const renderLessonCard = (lesson: LessonTypeData) => {
+    const isPopular = popularSlugs.includes(lesson.slug);
+    const price = getLessonPrice(lesson.slug);
+    const perPersonPrice = getPricePerPerson(lesson.slug);
+    const isMonthly = lesson.billingType === "monthly";
 
     return (
       <Card
-        key={lesson.value}
+        key={lesson.slug}
         className={`relative bg-background border cursor-pointer hover-lift ${
-          isPopular ? 'border-primary' : 'border-border'
+          isPopular ? "border-primary" : "border-border"
         }`}
         onClick={() => handleLessonClick(lesson)}
       >
@@ -88,7 +84,7 @@ export default function LessonsPage() {
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <Badge className="bg-primary text-white">
               <Star className="w-3 h-3 mr-1" />
-              {t('packages.popular')}
+              {t("packages.popular")}
             </Badge>
           </div>
         )}
@@ -96,37 +92,49 @@ export default function LessonsPage() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-muted-foreground" />
-              <h3 className="font-semibold text-lg text-foreground">{getLessonLabel(lesson.value)}</h3>
+              <h3 className="font-semibold text-lg text-foreground">
+                {getLessonLabel(lesson.slug)}
+              </h3>
             </div>
             <Button
               variant="ghost"
               size="sm"
               className="text-muted-foreground hover:text-foreground"
               onClick={(e) => {
-                e.stopPropagation()
-                handleLessonClick(lesson)
+                e.stopPropagation();
+                handleLessonClick(lesson);
               }}
             >
               <Eye className="w-4 h-4 mr-1" />
-              {t('packages.viewDetails')}
+              {t("packages.viewDetails")}
             </Button>
           </div>
 
           <div className="mb-4">
-            {/* Per-person pricing for group lessons */}
             {perPersonPrice && lesson.maxStudents > 1 && !isMonthly ? (
               <div>
-                <span className="text-3xl font-bold text-foreground">RM{perPersonPrice}</span>
-                <span className="text-muted-foreground text-sm"> / {t('packages.perPerson')}</span>
+                <span className="text-3xl font-bold text-foreground">
+                  RM{perPersonPrice}
+                </span>
+                <span className="text-muted-foreground text-sm">
+                  {" "}
+                  / {t("packages.perPerson")}
+                </span>
                 <div className="text-xs text-muted-foreground mt-1">
-                  ({t('packages.total')}: RM{price})
+                  ({t("packages.total")}: RM{price})
                 </div>
               </div>
             ) : (
               <div>
-                <span className="text-3xl font-bold text-foreground">RM{price}</span>
+                <span className="text-3xl font-bold text-foreground">
+                  RM{price}
+                </span>
                 <span className="text-muted-foreground text-sm">
-                  {' '}/ {isMonthly ? t('packages.perMonth') : t('packages.perSession')}
+                  {" "}
+                  /{" "}
+                  {isMonthly
+                    ? t("packages.perMonth")
+                    : t("packages.perSession")}
                 </span>
               </div>
             )}
@@ -140,40 +148,41 @@ export default function LessonsPage() {
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-muted-foreground" />
               {lesson.maxStudents === 1
-                ? t('packages.student')
-                : t('packages.maxStudents', { count: lesson.maxStudents })}
+                ? t("packages.student")
+                : t("packages.maxStudents", { count: lesson.maxStudents })}
             </div>
           </div>
         </CardContent>
       </Card>
-    )
-  }
+    );
+  };
 
   const lessonsJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Course',
-    name: 'Badminton Coaching at TZH Sports Centre',
-    description: 'BAM-certified badminton coaching for all levels. Private and group sessions available in Ayer Itam, Penang.',
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: "Badminton Coaching at TZH Sports Centre",
+    description:
+      "BAM-certified badminton coaching for all levels. Private and group sessions available in Ayer Itam, Penang.",
     provider: {
-      '@type': 'SportsActivityLocation',
-      name: 'TZH Sports Centre',
-      url: 'https://tzh-sports-centre.vercel.app',
+      "@type": "SportsActivityLocation",
+      name: "TZH Sports Centre",
+      url: "https://tzh-sports-centre.vercel.app",
     },
     hasCourseInstance: [
       {
-        '@type': 'CourseInstance',
-        name: 'Private 1-to-1 Coaching',
-        courseMode: 'onsite',
-        offers: { '@type': 'Offer', price: '130', priceCurrency: 'MYR' },
+        "@type": "CourseInstance",
+        name: "Private 1-to-1 Coaching",
+        courseMode: "onsite",
+        offers: { "@type": "Offer", price: "130", priceCurrency: "MYR" },
       },
       {
-        '@type': 'CourseInstance',
-        name: 'Group Kids Class (monthly)',
-        courseMode: 'onsite',
-        offers: { '@type': 'Offer', price: '50', priceCurrency: 'MYR' },
+        "@type": "CourseInstance",
+        name: "Group Kids Class (monthly)",
+        courseMode: "onsite",
+        offers: { "@type": "Offer", price: "50", priceCurrency: "MYR" },
       },
     ],
-  }
+  };
 
   return (
     <div>
@@ -187,16 +196,24 @@ export default function LessonsPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="max-w-xl">
               <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
-                {t('coach.certification')}
+                {t("coach.certification")}
               </p>
               <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight leading-[1.1] mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
-                {t('title')}
+                {t("title")}
               </h1>
               <p className="text-xl text-muted-foreground mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">
-                {t('subtitle')}
+                {t("subtitle")}
               </p>
-              <a href="https://wa.me/601175758508" target="_blank" rel="noopener noreferrer" className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards inline-block">
-                <Button size="lg" className="bg-primary text-white hover:bg-primary/90 rounded-full h-12 px-6">
+              <a
+                href="https://wa.me/601175758508"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards inline-block"
+              >
+                <Button
+                  size="lg"
+                  className="bg-primary text-white hover:bg-primary/90 rounded-full h-12 px-6"
+                >
                   <Phone className="w-5 h-5 mr-2" />
                   WhatsApp
                 </Button>
@@ -223,14 +240,22 @@ export default function LessonsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-12">
             <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
-              {t('packages.title')}
+              {t("packages.title")}
             </h2>
-            <p className="text-muted-foreground">{t('packages.privateSubtitle')}</p>
+            <p className="text-muted-foreground">
+              {t("packages.privateSubtitle")}
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {privateLessons.map((lesson) => renderLessonCard(lesson, 'neutral'))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {privateLessons.map((lesson) => renderLessonCard(lesson))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -239,14 +264,22 @@ export default function LessonsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-12">
             <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
-              {t('packages.groupTitle')}
+              {t("packages.groupTitle")}
             </h2>
-            <p className="text-muted-foreground">{t('packages.groupSubtitle')}</p>
+            <p className="text-muted-foreground">
+              {t("packages.groupSubtitle")}
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {groupLessons.map((lesson) => renderLessonCard(lesson, 'neutral'))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {groupLessons.map((lesson) => renderLessonCard(lesson))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -254,7 +287,6 @@ export default function LessonsPage() {
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            {/* Coach Image */}
             <div className="relative w-48 h-48 mx-auto mb-8 animate-in fade-in zoom-in-95 duration-700 fill-mode-forwards">
               <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-primary/30 shadow-xl">
                 <Image
@@ -270,25 +302,33 @@ export default function LessonsPage() {
             </div>
 
             <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4 animate-in fade-in duration-700 fill-mode-forwards">
-              {t('coach.title')}
+              {t("coach.title")}
             </h2>
             <p className="text-muted-foreground text-lg mb-8 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
-              {t('coach.bio')}
+              {t("coach.bio")}
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
               <div className="flex items-center gap-3 bg-background border border-border px-6 py-4 rounded-2xl hover-lift animate-in fade-in slide-in-from-left-4 duration-500 delay-200 fill-mode-forwards">
                 <BadgeCheck className="w-8 h-8 text-muted-foreground" />
                 <div className="text-left">
-                  <p className="font-semibold text-foreground">{t('coach.certification')}</p>
-                  <p className="text-sm text-muted-foreground">{t('coach.bam')}</p>
+                  <p className="font-semibold text-foreground">
+                    {t("coach.certification")}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("coach.bam")}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3 bg-background border border-border px-6 py-4 rounded-2xl hover-lift animate-in fade-in slide-in-from-right-4 duration-500 delay-200 fill-mode-forwards">
                 <Users className="w-8 h-8 text-muted-foreground" />
                 <div className="text-left">
-                  <p className="font-semibold text-foreground">{t('coach.experienceYears')}</p>
-                  <p className="text-sm text-muted-foreground">{t('coach.experienceDesc')}</p>
+                  <p className="font-semibold text-foreground">
+                    {t("coach.experienceYears")}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("coach.experienceDesc")}
+                  </p>
                 </div>
               </div>
             </div>
@@ -297,7 +337,7 @@ export default function LessonsPage() {
               onClick={() => handleRequestTrial()}
               className="mt-8 inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors animate-in fade-in duration-500 delay-300 fill-mode-forwards"
             >
-              {t('coach.bookTrial')}
+              {t("coach.bookTrial")}
             </button>
           </div>
         </div>
@@ -312,9 +352,11 @@ export default function LessonsPage() {
                 <div className="w-12 h-12 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
                   <BadgeCheck className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <h3 className="font-semibold text-lg text-foreground mb-2">{t('features.courtBooking.title')}</h3>
+                <h3 className="font-semibold text-lg text-foreground mb-2">
+                  {t("features.courtBooking.title")}
+                </h3>
                 <p className="text-muted-foreground text-sm">
-                  {t('features.courtBooking.description')}
+                  {t("features.courtBooking.description")}
                 </p>
               </CardContent>
             </Card>
@@ -324,9 +366,11 @@ export default function LessonsPage() {
                 <div className="w-12 h-12 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
                   <BadgeCheck className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <h3 className="font-semibold text-lg text-foreground mb-2">{t('features.shuttlecocks.title')}</h3>
+                <h3 className="font-semibold text-lg text-foreground mb-2">
+                  {t("features.shuttlecocks.title")}
+                </h3>
                 <p className="text-muted-foreground text-sm">
-                  {t('features.shuttlecocks.description')}
+                  {t("features.shuttlecocks.description")}
                 </p>
               </CardContent>
             </Card>
@@ -336,9 +380,11 @@ export default function LessonsPage() {
                 <div className="w-12 h-12 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
                   <BadgeCheck className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <h3 className="font-semibold text-lg text-foreground mb-2">{t('features.trial.title')}</h3>
+                <h3 className="font-semibold text-lg text-foreground mb-2">
+                  {t("features.trial.title")}
+                </h3>
                 <p className="text-muted-foreground text-sm">
-                  {t('features.trial.description')}
+                  {t("features.trial.description")}
                 </p>
               </CardContent>
             </Card>
@@ -361,5 +407,5 @@ export default function LessonsPage() {
         onRequestTrial={handleRequestTrial}
       />
     </div>
-  )
+  );
 }

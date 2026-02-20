@@ -1,16 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { isAdmin } from '@/lib/admin'
-import { prisma } from '@/lib/prisma'
-import { getLessonType, getLessonPrice, isMonthlyBilling } from '@/lib/lesson-config'
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { isAdmin } from "@/lib/admin";
+import { prisma } from "@/lib/prisma";
 
-// GET - Fetch all lesson requests
 export async function GET() {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const requests = await prisma.lessonRequest.findMany({
@@ -25,102 +23,95 @@ export async function GET() {
           },
         },
       },
-      orderBy: [
-        { status: 'asc' }, // pending first
-        { createdAt: 'desc' },
-      ],
-    })
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+    });
 
-    return NextResponse.json({ requests })
+    return NextResponse.json({ requests });
   } catch (error) {
-    console.error('Error fetching requests:', error)
+    console.error("Error fetching requests:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch requests' },
-      { status: 500 }
-    )
+      { error: "Failed to fetch requests" },
+      { status: 500 },
+    );
   }
 }
 
-// PATCH - Update request status (approve, reject, suggest different time)
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { requestId, status, adminNotes, suggestedTime, courtId } = body
+    const body = await request.json();
+    const { requestId, status, adminNotes, suggestedTime, courtId } = body;
 
     if (!requestId || !status) {
       return NextResponse.json(
-        { error: 'Request ID and status are required' },
-        { status: 400 }
-      )
+        { error: "Request ID and status are required" },
+        { status: 400 },
+      );
     }
 
-    const validStatuses = ['pending', 'approved', 'rejected', 'changed']
+    const validStatuses = ["pending", "approved", "rejected", "changed"];
     if (!validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: 'Invalid status' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
-    // If approving, we need a court and will create a lesson session
-    if (status === 'approved') {
+    if (status === "approved") {
       if (!courtId) {
         return NextResponse.json(
-          { error: 'Court selection is required when approving' },
-          { status: 400 }
-        )
+          { error: "Court selection is required when approving" },
+          { status: 400 },
+        );
       }
 
-      // Get the request details
       const lessonRequest = await prisma.lessonRequest.findUnique({
         where: { id: requestId },
         include: { member: true },
-      })
+      });
 
       if (!lessonRequest) {
         return NextResponse.json(
-          { error: 'Request not found' },
-          { status: 404 }
-        )
+          { error: "Request not found" },
+          { status: 404 },
+        );
       }
 
-      // Validate lesson type
-      const lessonTypeConfig = getLessonType(lessonRequest.lessonType)
-      if (!lessonTypeConfig) {
+      const lessonTypeRecord = await prisma.lessonType.findUnique({
+        where: { slug: lessonRequest.lessonType },
+        include: { pricingTiers: { orderBy: { duration: "asc" } } },
+      });
+      if (!lessonTypeRecord || !lessonTypeRecord.isActive) {
         return NextResponse.json(
-          { error: 'Invalid lesson type' },
-          { status: 400 }
-        )
+          { error: "Invalid lesson type" },
+          { status: 400 },
+        );
       }
 
-      // Use the requested duration from the member's request
-      const duration = lessonRequest.requestedDuration
-      const billingType = lessonTypeConfig.billingType
-      const price = getLessonPrice(lessonRequest.lessonType, duration)
+      const duration = lessonRequest.requestedDuration;
+      const billingType = lessonTypeRecord.billingType;
+      const tier = lessonTypeRecord.pricingTiers.find(
+        (t) => t.duration === duration,
+      );
+      const price = tier ? tier.price : lessonTypeRecord.price;
 
-      // Calculate end time based on requested duration
-      const startTime = lessonRequest.requestedTime
-      const [hours, minutes] = startTime.split(':').map(Number)
-      const durationMinutes = duration * 60
-      const endMinutes = minutes + durationMinutes
-      const endHours = hours + Math.floor(endMinutes / 60)
-      const endTime = `${endHours.toString().padStart(2, '0')}:${(endMinutes % 60).toString().padStart(2, '0')}`
+      const startTime = lessonRequest.requestedTime;
+      const [hours, minutes] = startTime.split(":").map(Number);
+      const durationMinutes = duration * 60;
+      const endMinutes = minutes + durationMinutes;
+      const endHours = hours + Math.floor(endMinutes / 60);
+      const endTime = `${endHours.toString().padStart(2, "0")}:${(endMinutes % 60).toString().padStart(2, "0")}`;
 
-      const lessonDateObj = lessonRequest.requestedDate
-      const dayOfWeek = lessonDateObj.getDay()
+      const lessonDateObj = lessonRequest.requestedDate;
+      const dayOfWeek = lessonDateObj.getDay();
 
-      // Check for regular booking conflicts
       const conflictingBookings = await prisma.booking.findFirst({
         where: {
           courtId,
           bookingDate: lessonDateObj,
-          status: { in: ['pending', 'confirmed'] },
+          status: { in: ["pending", "confirmed"] },
           OR: [
             {
               startTime: { lt: endTime },
@@ -128,23 +119,25 @@ export async function PATCH(request: NextRequest) {
             },
           ],
         },
-      })
+      });
 
       if (conflictingBookings) {
         return NextResponse.json(
-          { error: 'This time slot conflicts with an existing booking' },
-          { status: 409 }
-        )
+          { error: "This time slot conflicts with an existing booking" },
+          { status: 409 },
+        );
       }
 
-      // Check for recurring booking conflicts
-      const timeSlots = await prisma.timeSlot.findMany({ orderBy: { slotTime: 'asc' } })
-      const allSlotTimes = timeSlots.map(s => s.slotTime)
-      const startIdx = allSlotTimes.indexOf(startTime)
-      const endIdx = allSlotTimes.indexOf(endTime)
-      const lessonSlots = startIdx !== -1 && endIdx !== -1
-        ? allSlotTimes.slice(startIdx, endIdx)
-        : [startTime]
+      const timeSlots = await prisma.timeSlot.findMany({
+        orderBy: { slotTime: "asc" },
+      });
+      const allSlotTimes = timeSlots.map((s) => s.slotTime);
+      const startIdx = allSlotTimes.indexOf(startTime);
+      const endIdx = allSlotTimes.indexOf(endTime);
+      const lessonSlots =
+        startIdx !== -1 && endIdx !== -1
+          ? allSlotTimes.slice(startIdx, endIdx)
+          : [startTime];
 
       const conflictingRecurring = await prisma.recurringBooking.findFirst({
         where: {
@@ -153,26 +146,22 @@ export async function PATCH(request: NextRequest) {
           startTime: { in: lessonSlots },
           isActive: true,
           startDate: { lte: lessonDateObj },
-          OR: [
-            { endDate: null },
-            { endDate: { gte: lessonDateObj } },
-          ],
+          OR: [{ endDate: null }, { endDate: { gte: lessonDateObj } }],
         },
-      })
+      });
 
       if (conflictingRecurring) {
         return NextResponse.json(
-          { error: 'This time slot conflicts with a recurring booking' },
-          { status: 409 }
-        )
+          { error: "This time slot conflicts with a recurring booking" },
+          { status: 409 },
+        );
       }
 
-      // Check for other lesson conflicts
       const conflictingLessons = await prisma.lessonSession.findFirst({
         where: {
           courtId,
           lessonDate: lessonDateObj,
-          status: 'scheduled',
+          status: "scheduled",
           OR: [
             {
               startTime: { lt: endTime },
@@ -180,16 +169,15 @@ export async function PATCH(request: NextRequest) {
             },
           ],
         },
-      })
+      });
 
       if (conflictingLessons) {
         return NextResponse.json(
-          { error: 'This time slot conflicts with another lesson' },
-          { status: 409 }
-        )
+          { error: "This time slot conflicts with another lesson" },
+          { status: 409 },
+        );
       }
 
-      // Create the lesson session
       const lesson = await prisma.lessonSession.create({
         data: {
           courtId,
@@ -200,7 +188,7 @@ export async function PATCH(request: NextRequest) {
           billingType,
           duration,
           price,
-          status: 'scheduled',
+          status: "scheduled",
           notes: adminNotes || null,
           students: {
             connect: [{ id: lessonRequest.memberId }],
@@ -218,13 +206,12 @@ export async function PATCH(request: NextRequest) {
             },
           },
         },
-      })
+      });
 
-      // Update the request status
       const updatedRequest = await prisma.lessonRequest.update({
         where: { id: requestId },
         data: {
-          status: 'approved',
+          status: "approved",
           adminNotes: adminNotes || null,
         },
         include: {
@@ -238,9 +225,8 @@ export async function PATCH(request: NextRequest) {
             },
           },
         },
-      })
+      });
 
-      // Convert Decimal to number for JSON serialization
       const lessonResponse = {
         id: lesson.id,
         courtId: lesson.courtId,
@@ -255,15 +241,17 @@ export async function PATCH(request: NextRequest) {
         notes: lesson.notes,
         court: lesson.court,
         students: lesson.students,
-      }
+      };
 
-      return NextResponse.json({ request: updatedRequest, lesson: lessonResponse })
+      return NextResponse.json({
+        request: updatedRequest,
+        lesson: lessonResponse,
+      });
     }
 
-    // For other statuses (rejected, changed), just update the request
-    const updateData: Record<string, unknown> = { status }
-    if (adminNotes !== undefined) updateData.adminNotes = adminNotes
-    if (suggestedTime) updateData.suggestedTime = suggestedTime
+    const updateData: Record<string, unknown> = { status };
+    if (adminNotes !== undefined) updateData.adminNotes = adminNotes;
+    if (suggestedTime) updateData.suggestedTime = suggestedTime;
 
     const updatedRequest = await prisma.lessonRequest.update({
       where: { id: requestId },
@@ -279,14 +267,14 @@ export async function PATCH(request: NextRequest) {
           },
         },
       },
-    })
+    });
 
-    return NextResponse.json({ request: updatedRequest })
+    return NextResponse.json({ request: updatedRequest });
   } catch (error) {
-    console.error('Error updating request:', error)
+    console.error("Error updating request:", error);
     return NextResponse.json(
-      { error: 'Failed to update request' },
-      { status: 500 }
-    )
+      { error: "Failed to update request" },
+      { status: 500 },
+    );
   }
 }

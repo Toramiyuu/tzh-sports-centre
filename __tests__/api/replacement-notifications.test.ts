@@ -15,6 +15,7 @@ vi.mock('@/lib/prisma', () => ({
       update: vi.fn(),
     },
     lessonSession: { findFirst: vi.fn() },
+    lessonType: { findUnique: vi.fn() },
     notification: { create: vi.fn() },
     $transaction: vi.fn(),
   },
@@ -66,6 +67,7 @@ const mockBooking = {
 describe('Replacement booking notifications', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(prisma.lessonType.findUnique).mockResolvedValue({ slug: 'small-adult-group', maxStudents: 6 } as never)
   })
 
   it('creates notification with session date and credit usage on booking', async () => {
