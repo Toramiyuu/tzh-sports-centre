@@ -13,6 +13,7 @@ import {
   BookOpen,
   Users,
   MessageCircle,
+  CalendarX2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { startOfDay, isBefore } from "date-fns";
@@ -365,6 +366,14 @@ export function MemberDashboard() {
             </p>
           </div>
         </div>
+        <Button
+          variant="outline"
+          className="rounded-full gap-2"
+          onClick={() => router.push("/profile?tab=absences")}
+        >
+          <CalendarX2 className="w-4 h-4" />
+          {t("requestAbsence")}
+        </Button>
       </div>
 
       <StatsCards

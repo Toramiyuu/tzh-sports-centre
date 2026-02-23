@@ -586,6 +586,7 @@
     "title": "Member Dashboard",
     "welcome": "Welcome back, {name}",
     "requestLesson": "Request Lesson",
+    "requestAbsence": "Request Absence",
     "membersOnly": {
       "title": "Become a Training Member",
       "description": "Join our coaching program and get access to scheduled lessons, a personal timetable, and more.",

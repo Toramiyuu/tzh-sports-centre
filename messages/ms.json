@@ -575,6 +575,7 @@
     "title": "Papan Pemuka Ahli",
     "welcome": "Selamat kembali, {name}",
     "requestLesson": "Mohon Kelas",
+    "requestAbsence": "Mohon Ketidakhadiran",
     "membersOnly": {
       "title": "Jadi Ahli Latihan",
       "description": "Sertai program kejurulatihan kami dan dapatkan akses kepada kelas berjadual, jadual peribadi, dan banyak lagi.",
