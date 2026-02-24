@@ -250,39 +250,77 @@ export async function POST(request: NextRequest) {
     );
     const price = tier ? tier.price : lessonTypeRecord.price;
 
-    const lesson = await prisma.lessonSession.create({
-      data: {
-        courtId,
-        lessonDate: lessonDateObj,
-        startTime,
-        endTime,
-        lessonType,
-        billingType,
-        duration: lessonDuration,
-        price,
-        status: "scheduled",
-        notes,
-        teacherId: teacherId || null,
-        students: {
-          connect: studentIds.map((id: string) => ({ id })),
+    const lesson = await prisma.$transaction(async (tx) => {
+      const txBookingConflict = await tx.booking.findFirst({
+        where: {
+          courtId,
+          bookingDate: lessonDateObj,
+          status: { in: ["pending", "confirmed"] },
+          OR: [{ startTime: { lt: endTime }, endTime: { gt: startTime } }],
         },
-      },
-      include: {
-        court: true,
-        teacher: { select: { id: true, name: true } },
-        students: {
-          select: {
-            id: true,
-            name: true,
-            phone: true,
-            skillLevel: true,
+      });
+      if (txBookingConflict) {
+        throw new Error("BOOKING_CONFLICT");
+      }
+
+      const txLessonConflict = await tx.lessonSession.findFirst({
+        where: {
+          courtId,
+          lessonDate: lessonDateObj,
+          status: { in: ["scheduled"] },
+          OR: [{ startTime: { lt: endTime }, endTime: { gt: startTime } }],
+        },
+      });
+      if (txLessonConflict) {
+        throw new Error("LESSON_CONFLICT");
+      }
+
+      return tx.lessonSession.create({
+        data: {
+          courtId,
+          lessonDate: lessonDateObj,
+          startTime,
+          endTime,
+          lessonType,
+          billingType,
+          duration: lessonDuration,
+          price,
+          status: "scheduled",
+          notes,
+          teacherId: teacherId || null,
+          students: {
+            connect: studentIds.map((id: string) => ({ id })),
           },
         },
-      },
+        include: {
+          court: true,
+          teacher: { select: { id: true, name: true } },
+          students: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              skillLevel: true,
+            },
+          },
+        },
+      });
     });
 
     return NextResponse.json({ lesson }, { status: 201 });
   } catch (error) {
+    if (error instanceof Error && error.message === "BOOKING_CONFLICT") {
+      return NextResponse.json(
+        { error: "This time slot conflicts with an existing booking" },
+        { status: 409 },
+      );
+    }
+    if (error instanceof Error && error.message === "LESSON_CONFLICT") {
+      return NextResponse.json(
+        { error: "This time slot conflicts with another lesson" },
+        { status: 409 },
+      );
+    }
     console.error("Error creating lesson:", error);
     return NextResponse.json(
       { error: "Failed to create lesson" },
