@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { format } from "date-fns";
+import { format, startOfDay, isBefore } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -733,6 +733,12 @@ export default function LessonsContent({
       lessonStudentIds.length === 0
     )
       return;
+
+    const today = startOfDay(new Date());
+    if (isBefore(startOfDay(selectedDate), today)) {
+      alert("Cannot schedule a lesson in the past");
+      return;
+    }
 
     setActionLoading(true);
     try {

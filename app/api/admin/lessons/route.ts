@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { validateFutureDate } from "@/lib/validation";
 
 export async function GET(request: NextRequest) {
   try {
@@ -96,6 +97,13 @@ export async function POST(request: NextRequest) {
           error:
             "Court, date, time, lesson type, and at least one student are required",
         },
+        { status: 400 },
+      );
+    }
+
+    if (!validateFutureDate(lessonDate)) {
+      return NextResponse.json(
+        { error: "Lesson date cannot be in the past" },
         { status: 400 },
       );
     }
