@@ -46,31 +46,29 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-0.5 xl:gap-1">
             <Link
               href="/booking"
-              className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               🏸 {t("booking")}
             </Link>
             <Link
               href="/lessons"
-              className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               📖 {t("lessons")}
             </Link>
-
             <Link
               href="/shop"
-              className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               🛒 {t("shop")}
             </Link>
-
             {session?.user?.isMember && (
               <Link
                 href="/leaderboard"
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
               >
                 🏆 {t("leaderboard")}
               </Link>
@@ -78,7 +76,7 @@ export function Navbar() {
             {session?.user?.isTrainee && (
               <Link
                 href="/training"
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
               >
                 👤 {t("trainingSchedule")}
               </Link>
@@ -86,7 +84,7 @@ export function Navbar() {
             {session?.user?.isTeacher && (
               <Link
                 href="/teacher"
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
               >
                 📋 {t("teacherDashboard")}
               </Link>
@@ -94,7 +92,7 @@ export function Navbar() {
             {session?.user && (
               <Link
                 href="/updates"
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
               >
                 📢 {t("updates")}
               </Link>
@@ -102,7 +100,7 @@ export function Navbar() {
             {userIsAdmin && (
               <Link
                 href="/admin"
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
               >
                 ⚙️ {t("admin")}
               </Link>
@@ -110,7 +108,7 @@ export function Navbar() {
           </div>
 
           {/* Auth Section */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
@@ -147,7 +145,7 @@ export function Navbar() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center gap-1">
+          <div className="lg:hidden flex items-center gap-1">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-md text-muted-foreground hover:text-foreground"
@@ -164,7 +162,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-background border-t border-border">
+        <div className="lg:hidden bg-background border-t border-border">
           <div className="px-6 py-4 space-y-1">
             <Link
               href="/booking"

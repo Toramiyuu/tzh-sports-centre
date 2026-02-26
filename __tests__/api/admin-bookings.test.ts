@@ -26,6 +26,7 @@ vi.mock('@/lib/prisma', () => ({
     },
     lessonSession: {
       findFirst: vi.fn(),
+      findMany: vi.fn(),
     },
     court: {
       findUnique: vi.fn(),
@@ -142,6 +143,8 @@ describe('GET /api/admin/bookings', () => {
         user: { name: 'Member', phone: '0111111111', email: 'member@test.com' },
       },
     ] as never)
+
+    vi.mocked(prisma.lessonSession.findMany).mockResolvedValue([] as never)
 
     const request = createMockNextRequest({
       method: 'GET',
@@ -559,8 +562,13 @@ describe('PATCH /api/admin/bookings', () => {
   it('approves receipt and marks booking as paid/confirmed', async () => {
     vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never)
     vi.mocked(isAdmin).mockReturnValue(true)
-    vi.mocked(prisma.booking.findUnique).mockResolvedValue({ id: 'booking-1' } as never)
-    vi.mocked(prisma.booking.update).mockResolvedValue({} as never)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValue({
+      id: 'booking-1',
+      guestPhone: '0123456789',
+      bookingDate: new Date('2026-03-28'),
+      user: null,
+    } as never)
+    vi.mocked(prisma.booking.updateMany).mockResolvedValue({ count: 2 } as never)
 
     const request = createMockNextRequest({
       method: 'PATCH',
@@ -574,9 +582,13 @@ describe('PATCH /api/admin/bookings', () => {
 
     expect(json.success).toBe(true)
     expect(json.status).toBe('approved')
+    expect(json.count).toBe(2)
 
-    expect(prisma.booking.update).toHaveBeenCalledWith({
-      where: { id: 'booking-1' },
+    expect(prisma.booking.updateMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        bookingDate: new Date('2026-03-28'),
+        status: 'pending',
+      }),
       data: expect.objectContaining({
         receiptVerificationStatus: 'approved',
         verificationNotes: 'Verified',
@@ -589,8 +601,13 @@ describe('PATCH /api/admin/bookings', () => {
   it('rejects receipt and cancels booking', async () => {
     vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never)
     vi.mocked(isAdmin).mockReturnValue(true)
-    vi.mocked(prisma.booking.findUnique).mockResolvedValue({ id: 'booking-1' } as never)
-    vi.mocked(prisma.booking.update).mockResolvedValue({} as never)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValue({
+      id: 'booking-1',
+      guestPhone: '0123456789',
+      bookingDate: new Date('2026-03-28'),
+      user: null,
+    } as never)
+    vi.mocked(prisma.booking.updateMany).mockResolvedValue({ count: 1 } as never)
 
     const request = createMockNextRequest({
       method: 'PATCH',
@@ -604,9 +621,13 @@ describe('PATCH /api/admin/bookings', () => {
 
     expect(json.success).toBe(true)
     expect(json.status).toBe('rejected')
+    expect(json.count).toBe(1)
 
-    expect(prisma.booking.update).toHaveBeenCalledWith({
-      where: { id: 'booking-1' },
+    expect(prisma.booking.updateMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        bookingDate: new Date('2026-03-28'),
+        status: 'pending',
+      }),
       data: expect.objectContaining({
         receiptVerificationStatus: 'rejected',
         verificationNotes: 'Invalid receipt',
