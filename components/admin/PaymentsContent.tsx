@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
-import { useSession } from 'next-auth/react'
-import { format } from 'date-fns'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
+import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { format } from "date-fns";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -14,16 +14,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Loader2,
   Phone,
@@ -42,155 +42,168 @@ import {
   Eye,
   CheckSquare,
   Mail,
-} from 'lucide-react'
-import { isAdmin } from '@/lib/admin'
+} from "lucide-react";
+import { isAdmin } from "@/lib/admin";
 
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-]
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 interface PaymentTransaction {
-  id: string
-  amount: number
-  paymentMethod: string
-  reference: string | null
-  notes: string | null
-  recordedBy: string
-  recordedAt: string
+  id: string;
+  amount: number;
+  paymentMethod: string;
+  reference: string | null;
+  notes: string | null;
+  recordedBy: string;
+  recordedAt: string;
 }
 
 interface UserSummary {
-  userId: string
-  uid: string
-  name: string
-  email: string
-  phone: string
-  totalAmount: number
-  paidAmount: number
-  unpaidAmount: number
-  totalHours: number
-  bookingsCount: number
-  regularBookings: number
-  recurringBookings: number
-  status: 'unpaid' | 'partial' | 'paid' | 'no-bookings'
-  paymentId: string | null
-  transactions: PaymentTransaction[]
+  userId: string;
+  uid: string;
+  name: string;
+  email: string;
+  phone: string;
+  totalAmount: number;
+  paidAmount: number;
+  unpaidAmount: number;
+  totalHours: number;
+  bookingsCount: number;
+  regularBookings: number;
+  recurringBookings: number;
+  lessonAmount: number;
+  lessonCount: number;
+  status: "unpaid" | "partial" | "paid" | "no-bookings";
+  paymentId: string | null;
+  transactions: PaymentTransaction[];
 }
 
 interface BreakdownItem {
-  type: 'booking' | 'recurring'
-  date: string
-  court: string
-  sport: string
-  time: string
-  hours: number
-  rate: number
-  amount: number
-  bookingId?: string
-  recurringId?: string
+  type: "booking" | "recurring" | "lesson";
+  date: string;
+  court: string;
+  sport: string;
+  time: string;
+  hours: number;
+  rate: number;
+  amount: number;
+  bookingId?: string;
+  recurringId?: string;
+  lessonSessionId?: string;
+  billingType?: string;
+  attended?: boolean;
 }
 
 interface Totals {
-  totalDue: number
-  totalPaid: number
-  totalUnpaid: number
-  usersCount: number
-  paidCount: number
-  partialCount: number
-  unpaidCount: number
+  totalDue: number;
+  totalPaid: number;
+  totalUnpaid: number;
+  usersCount: number;
+  paidCount: number;
+  partialCount: number;
+  unpaidCount: number;
 }
 
 export default function PaymentsContent() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
 
-  const now = new Date()
-  const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1)
-  const [selectedYear, setSelectedYear] = useState(now.getFullYear())
-  const [users, setUsers] = useState<UserSummary[]>([])
-  const [totals, setTotals] = useState<Totals | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [actionLoading, setActionLoading] = useState(false)
+  const now = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(now.getFullYear());
+  const [users, setUsers] = useState<UserSummary[]>([]);
+  const [totals, setTotals] = useState<Totals | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
-  // Selection for bulk actions
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set())
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(
+    new Set(),
+  );
 
-  // Payment dialog
-  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<UserSummary | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<string>('cash')
-  const [paymentAmount, setPaymentAmount] = useState<string>('')
-  const [paymentReference, setPaymentReference] = useState('')
-  const [paymentNotes, setPaymentNotes] = useState('')
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserSummary | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<string>("cash");
+  const [paymentAmount, setPaymentAmount] = useState<string>("");
+  const [paymentReference, setPaymentReference] = useState("");
+  const [paymentNotes, setPaymentNotes] = useState("");
 
-  // Breakdown dialog
-  const [breakdownDialogOpen, setBreakdownDialogOpen] = useState(false)
-  const [breakdownUser, setBreakdownUser] = useState<UserSummary | null>(null)
-  const [breakdown, setBreakdown] = useState<BreakdownItem[]>([])
-  const [breakdownLoading, setBreakdownLoading] = useState(false)
+  const [breakdownDialogOpen, setBreakdownDialogOpen] = useState(false);
+  const [breakdownUser, setBreakdownUser] = useState<UserSummary | null>(null);
+  const [breakdown, setBreakdown] = useState<BreakdownItem[]>([]);
+  const [breakdownLoading, setBreakdownLoading] = useState(false);
 
-  // Bulk payment dialog
-  const [bulkPayDialogOpen, setBulkPayDialogOpen] = useState(false)
-  const [bulkPaymentMethod, setBulkPaymentMethod] = useState<string>('cash')
-  const [bulkReference, setBulkReference] = useState('')
-  const [bulkNotes, setBulkNotes] = useState('')
+  const [bulkPayDialogOpen, setBulkPayDialogOpen] = useState(false);
+  const [bulkPaymentMethod, setBulkPaymentMethod] = useState<string>("cash");
+  const [bulkReference, setBulkReference] = useState("");
+  const [bulkNotes, setBulkNotes] = useState("");
 
   const fetchData = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await fetch(`/api/admin/monthly-payments?month=${selectedMonth}&year=${selectedYear}`)
-      const data = await res.json()
+      const res = await fetch(
+        `/api/admin/monthly-payments?month=${selectedMonth}&year=${selectedYear}`,
+      );
+      const data = await res.json();
 
       if (res.ok) {
-        setUsers(data.users || [])
-        setTotals(data.totals || null)
+        setUsers(data.users || []);
+        setTotals(data.totals || null);
       }
     } catch (error) {
-      console.error('Error fetching data:', error)
+      console.error("Error fetching data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [selectedMonth, selectedYear])
+  }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
     if (session?.user && isAdmin(session.user.email, session.user.isAdmin)) {
-      fetchData()
+      fetchData();
     }
-  }, [session, fetchData])
+  }, [session, fetchData]);
 
-  // Fetch breakdown for a user
   const fetchBreakdown = async (user: UserSummary) => {
-    setBreakdownUser(user)
-    setBreakdownDialogOpen(true)
-    setBreakdownLoading(true)
+    setBreakdownUser(user);
+    setBreakdownDialogOpen(true);
+    setBreakdownLoading(true);
 
     try {
       const res = await fetch(
-        `/api/admin/monthly-payments?userId=${user.userId}&month=${selectedMonth}&year=${selectedYear}`
-      )
-      const data = await res.json()
+        `/api/admin/monthly-payments?userId=${user.userId}&month=${selectedMonth}&year=${selectedYear}`,
+      );
+      const data = await res.json();
       if (res.ok) {
-        setBreakdown(data.breakdown || [])
+        setBreakdown(data.breakdown || []);
       }
     } catch (error) {
-      console.error('Error fetching breakdown:', error)
+      console.error("Error fetching breakdown:", error);
     } finally {
-      setBreakdownLoading(false)
+      setBreakdownLoading(false);
     }
-  }
+  };
 
-  // Record a payment
   const handleRecordPayment = async () => {
-    if (!selectedUser) return
+    if (!selectedUser) return;
 
-    const amount = parseFloat(paymentAmount) || selectedUser.unpaidAmount
-    if (amount <= 0) return
+    const amount = parseFloat(paymentAmount) || selectedUser.unpaidAmount;
+    if (amount <= 0) return;
 
-    setActionLoading(true)
+    setActionLoading(true);
     try {
-      const res = await fetch('/api/admin/monthly-payments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/monthly-payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: selectedUser.userId,
           month: selectedMonth,
@@ -200,29 +213,28 @@ export default function PaymentsContent() {
           reference: paymentReference || null,
           notes: paymentNotes || null,
         }),
-      })
+      });
 
       if (res.ok) {
-        setPaymentDialogOpen(false)
-        resetPaymentForm()
-        fetchData()
+        setPaymentDialogOpen(false);
+        resetPaymentForm();
+        fetchData();
       }
     } catch (error) {
-      console.error('Error recording payment:', error)
+      console.error("Error recording payment:", error);
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
-  // Bulk mark paid
   const handleBulkMarkPaid = async () => {
-    if (selectedUserIds.size === 0) return
+    if (selectedUserIds.size === 0) return;
 
-    setActionLoading(true)
+    setActionLoading(true);
     try {
-      const res = await fetch('/api/admin/monthly-payments', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/monthly-payments", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userIds: Array.from(selectedUserIds),
           month: selectedMonth,
@@ -231,117 +243,144 @@ export default function PaymentsContent() {
           reference: bulkReference || null,
           notes: bulkNotes || null,
         }),
-      })
+      });
 
       if (res.ok) {
-        setBulkPayDialogOpen(false)
-        setBulkPaymentMethod('cash')
-        setBulkReference('')
-        setBulkNotes('')
-        setSelectedUserIds(new Set())
-        fetchData()
+        setBulkPayDialogOpen(false);
+        setBulkPaymentMethod("cash");
+        setBulkReference("");
+        setBulkNotes("");
+        setSelectedUserIds(new Set());
+        fetchData();
       }
     } catch (error) {
-      console.error('Error bulk marking paid:', error)
+      console.error("Error bulk marking paid:", error);
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
-  // Export CSV
   const exportCSV = () => {
-    const headers = ['UID', 'Name', 'Email', 'Phone', 'Bookings', 'Hours', 'Total Due', 'Paid', 'Unpaid', 'Status']
+    const headers = [
+      "UID",
+      "Name",
+      "Email",
+      "Phone",
+      "Bookings",
+      "Lessons",
+      "Lesson Amount",
+      "Hours",
+      "Total Due",
+      "Paid",
+      "Unpaid",
+      "Status",
+    ];
     const rows = users.map((u) => [
       u.uid,
       u.name,
       u.email,
       u.phone,
       u.bookingsCount,
+      u.lessonCount || 0,
+      (u.lessonAmount || 0).toFixed(2),
       u.totalHours.toFixed(1),
       u.totalAmount.toFixed(2),
       u.paidAmount.toFixed(2),
       u.unpaidAmount.toFixed(2),
       u.status,
-    ])
+    ]);
 
-    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `monthly-payments-${selectedYear}-${String(selectedMonth).padStart(2, '0')}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `monthly-payments-${selectedYear}-${String(selectedMonth).padStart(2, "0")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const resetPaymentForm = () => {
-    setSelectedUser(null)
-    setPaymentMethod('cash')
-    setPaymentAmount('')
-    setPaymentReference('')
-    setPaymentNotes('')
-  }
+    setSelectedUser(null);
+    setPaymentMethod("cash");
+    setPaymentAmount("");
+    setPaymentReference("");
+    setPaymentNotes("");
+  };
 
-  // Navigate months
   const goToPreviousMonth = () => {
     if (selectedMonth === 1) {
-      setSelectedMonth(12)
-      setSelectedYear(selectedYear - 1)
+      setSelectedMonth(12);
+      setSelectedYear(selectedYear - 1);
     } else {
-      setSelectedMonth(selectedMonth - 1)
+      setSelectedMonth(selectedMonth - 1);
     }
-  }
+  };
 
   const goToNextMonth = () => {
     if (selectedMonth === 12) {
-      setSelectedMonth(1)
-      setSelectedYear(selectedYear + 1)
+      setSelectedMonth(1);
+      setSelectedYear(selectedYear + 1);
     } else {
-      setSelectedMonth(selectedMonth + 1)
+      setSelectedMonth(selectedMonth + 1);
     }
-  }
+  };
 
-  // Toggle user selection
   const toggleUserSelection = (userId: string) => {
-    const newSet = new Set(selectedUserIds)
+    const newSet = new Set(selectedUserIds);
     if (newSet.has(userId)) {
-      newSet.delete(userId)
+      newSet.delete(userId);
     } else {
-      newSet.add(userId)
+      newSet.add(userId);
     }
-    setSelectedUserIds(newSet)
-  }
+    setSelectedUserIds(newSet);
+  };
 
-  // Select all unpaid
   const selectAllUnpaid = () => {
-    const unpaidIds = users.filter((u) => u.status !== 'paid').map((u) => u.userId)
-    setSelectedUserIds(new Set(unpaidIds))
-  }
+    const unpaidIds = users
+      .filter((u) => u.status !== "paid")
+      .map((u) => u.userId);
+    setSelectedUserIds(new Set(unpaidIds));
+  };
 
-  // Clear selection
   const clearSelection = () => {
-    setSelectedUserIds(new Set())
-  }
+    setSelectedUserIds(new Set());
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'paid':
-        return <Badge className="bg-green-100 text-green-700 border-0"><Check className="w-3 h-3 mr-1" />Paid</Badge>
-      case 'partial':
-        return <Badge className="bg-amber-100 text-amber-700 border-0"><Banknote className="w-3 h-3 mr-1" />Partial</Badge>
-      case 'unpaid':
-        return <Badge className="bg-red-100 text-red-600 border-0"><Clock className="w-3 h-3 mr-1" />Unpaid</Badge>
+      case "paid":
+        return (
+          <Badge className="bg-green-100 text-green-700 border-0">
+            <Check className="w-3 h-3 mr-1" />
+            Paid
+          </Badge>
+        );
+      case "partial":
+        return (
+          <Badge className="bg-amber-100 text-amber-700 border-0">
+            <Banknote className="w-3 h-3 mr-1" />
+            Partial
+          </Badge>
+        );
+      case "unpaid":
+        return (
+          <Badge className="bg-red-100 text-red-600 border-0">
+            <Clock className="w-3 h-3 mr-1" />
+            Unpaid
+          </Badge>
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{status}</Badge>;
     }
-  }
+  };
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/70" />
       </div>
-    )
+    );
   }
 
   return (
@@ -428,7 +467,9 @@ export default function PaymentsContent() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Paid</p>
-                  <p className="text-xl font-bold text-green-700">{totals.paidCount}</p>
+                  <p className="text-xl font-bold text-green-700">
+                    {totals.paidCount}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -441,7 +482,9 @@ export default function PaymentsContent() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Unpaid</p>
-                  <p className="text-xl font-bold text-red-600">{totals.unpaidCount + totals.partialCount}</p>
+                  <p className="text-xl font-bold text-red-600">
+                    {totals.unpaidCount + totals.partialCount}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -456,7 +499,9 @@ export default function PaymentsContent() {
                   <p className="text-sm text-muted-foreground">Collected</p>
                   <p className="text-xl font-bold">
                     RM{totals.totalPaid.toFixed(0)}
-                    <span className="text-sm text-muted-foreground/70">/{totals.totalDue.toFixed(0)}</span>
+                    <span className="text-sm text-muted-foreground/70">
+                      /{totals.totalDue.toFixed(0)}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -519,16 +564,16 @@ export default function PaymentsContent() {
                 <div
                   key={user.userId}
                   className={`p-4 rounded-lg border ${
-                    user.status === 'paid'
-                      ? 'bg-green-50 border-green-200'
-                      : user.status === 'partial'
-                      ? 'bg-amber-50 border-yellow-200'
-                      : 'bg-red-50 border-red-200'
+                    user.status === "paid"
+                      ? "bg-green-50 border-green-200"
+                      : user.status === "partial"
+                        ? "bg-amber-50 border-yellow-200"
+                        : "bg-red-50 border-red-200"
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     {/* Checkbox */}
-                    {user.status !== 'paid' && (
+                    {user.status !== "paid" && (
                       <Checkbox
                         checked={selectedUserIds.has(user.userId)}
                         onCheckedChange={() => toggleUserSelection(user.userId)}
@@ -560,7 +605,11 @@ export default function PaymentsContent() {
                         <div className="flex items-center gap-4">
                           <span className="flex items-center gap-1">
                             <Receipt className="w-3 h-3" />
-                            {user.bookingsCount} bookings ({user.regularBookings} one-time, {user.recurringBookings} recurring)
+                            {user.bookingsCount} bookings (
+                            {user.regularBookings} one-time,{" "}
+                            {user.recurringBookings} recurring)
+                            {user.lessonCount > 0 &&
+                              `, ${user.lessonCount} lessons`}
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
@@ -572,19 +621,31 @@ export default function PaymentsContent() {
                       {/* Payment info */}
                       <div className="mt-3 flex items-center gap-6">
                         <div>
-                          <span className="text-sm text-muted-foreground">Total Due: </span>
-                          <span className="font-bold">RM{user.totalAmount.toFixed(2)}</span>
+                          <span className="text-sm text-muted-foreground">
+                            Total Due:{" "}
+                          </span>
+                          <span className="font-bold">
+                            RM{user.totalAmount.toFixed(2)}
+                          </span>
                         </div>
                         {user.paidAmount > 0 && (
                           <div>
-                            <span className="text-sm text-muted-foreground">Paid: </span>
-                            <span className="font-bold text-green-700">RM{user.paidAmount.toFixed(2)}</span>
+                            <span className="text-sm text-muted-foreground">
+                              Paid:{" "}
+                            </span>
+                            <span className="font-bold text-green-700">
+                              RM{user.paidAmount.toFixed(2)}
+                            </span>
                           </div>
                         )}
                         {user.unpaidAmount > 0 && (
                           <div>
-                            <span className="text-sm text-muted-foreground">Unpaid: </span>
-                            <span className="font-bold text-red-600">RM{user.unpaidAmount.toFixed(2)}</span>
+                            <span className="text-sm text-muted-foreground">
+                              Unpaid:{" "}
+                            </span>
+                            <span className="font-bold text-red-600">
+                              RM{user.unpaidAmount.toFixed(2)}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -592,9 +653,23 @@ export default function PaymentsContent() {
                       {/* Recent transactions */}
                       {user.transactions.length > 0 && (
                         <div className="mt-2 text-xs text-muted-foreground">
-                          Last payment: RM{user.transactions[user.transactions.length - 1].amount.toFixed(2)} via{' '}
-                          {user.transactions[user.transactions.length - 1].paymentMethod} on{' '}
-                          {format(new Date(user.transactions[user.transactions.length - 1].recordedAt), 'dd MMM yyyy')}
+                          Last payment: RM
+                          {user.transactions[
+                            user.transactions.length - 1
+                          ].amount.toFixed(2)}{" "}
+                          via{" "}
+                          {
+                            user.transactions[user.transactions.length - 1]
+                              .paymentMethod
+                          }{" "}
+                          on{" "}
+                          {format(
+                            new Date(
+                              user.transactions[user.transactions.length - 1]
+                                .recordedAt,
+                            ),
+                            "dd MMM yyyy",
+                          )}
                         </div>
                       )}
                     </div>
@@ -609,14 +684,14 @@ export default function PaymentsContent() {
                         <Eye className="w-4 h-4 mr-1" />
                         View
                       </Button>
-                      {user.status !== 'paid' && (
+                      {user.status !== "paid" && (
                         <Button
                           size="sm"
                           className="bg-green-600 hover:bg-green-700"
                           onClick={() => {
-                            setSelectedUser(user)
-                            setPaymentAmount(user.unpaidAmount.toFixed(2))
-                            setPaymentDialogOpen(true)
+                            setSelectedUser(user);
+                            setPaymentAmount(user.unpaidAmount.toFixed(2));
+                            setPaymentDialogOpen(true);
                           }}
                         >
                           <CreditCard className="w-4 h-4 mr-1" />
@@ -633,10 +708,13 @@ export default function PaymentsContent() {
       </Card>
 
       {/* Payment Dialog */}
-      <Dialog open={paymentDialogOpen} onOpenChange={(open) => {
-        setPaymentDialogOpen(open)
-        if (!open) resetPaymentForm()
-      }}>
+      <Dialog
+        open={paymentDialogOpen}
+        onOpenChange={(open) => {
+          setPaymentDialogOpen(open);
+          if (!open) resetPaymentForm();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-green-600">
@@ -651,11 +729,21 @@ export default function PaymentsContent() {
           {selectedUser && (
             <div className="py-4 space-y-4">
               <div className="p-3 bg-secondary rounded-lg space-y-1">
-                <p><strong>Customer:</strong> {selectedUser.name} (UID: {selectedUser.uid})</p>
-                <p><strong>Total Due:</strong> RM{selectedUser.totalAmount.toFixed(2)}</p>
-                <p><strong>Already Paid:</strong> RM{selectedUser.paidAmount.toFixed(2)}</p>
+                <p>
+                  <strong>Customer:</strong> {selectedUser.name} (UID:{" "}
+                  {selectedUser.uid})
+                </p>
+                <p>
+                  <strong>Total Due:</strong> RM
+                  {selectedUser.totalAmount.toFixed(2)}
+                </p>
+                <p>
+                  <strong>Already Paid:</strong> RM
+                  {selectedUser.paidAmount.toFixed(2)}
+                </p>
                 <p className="text-lg font-bold text-red-600">
-                  <strong>Remaining:</strong> RM{selectedUser.unpaidAmount.toFixed(2)}
+                  <strong>Remaining:</strong> RM
+                  {selectedUser.unpaidAmount.toFixed(2)}
                 </p>
               </div>
 
@@ -713,10 +801,13 @@ export default function PaymentsContent() {
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setPaymentDialogOpen(false)
-              resetPaymentForm()
-            }}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setPaymentDialogOpen(false);
+                resetPaymentForm();
+              }}
+            >
               Cancel
             </Button>
             <Button
@@ -757,16 +848,22 @@ export default function PaymentsContent() {
               {/* Summary */}
               <div className="grid grid-cols-3 gap-4 p-4 bg-secondary rounded-lg">
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Bookings</p>
+                  <p className="text-sm text-muted-foreground">
+                    Total Bookings
+                  </p>
                   <p className="text-xl font-bold">{breakdown.length}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total Hours</p>
-                  <p className="text-xl font-bold">{breakdown.reduce((s, b) => s + b.hours, 0).toFixed(1)}</p>
+                  <p className="text-xl font-bold">
+                    {breakdown.reduce((s, b) => s + b.hours, 0).toFixed(1)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total Amount</p>
-                  <p className="text-xl font-bold">RM{breakdown.reduce((s, b) => s + b.amount, 0).toFixed(2)}</p>
+                  <p className="text-xl font-bold">
+                    RM{breakdown.reduce((s, b) => s + b.amount, 0).toFixed(2)}
+                  </p>
                 </div>
               </div>
 
@@ -787,28 +884,64 @@ export default function PaymentsContent() {
                   <tbody>
                     {breakdown.map((item, idx) => (
                       <tr key={idx} className="border-t border-border">
-                        <td className="px-3 py-2">{format(new Date(item.date), 'dd MMM')}</td>
                         <td className="px-3 py-2">
-                          <Badge variant="outline" className={
-                            item.type === 'recurring' ? 'bg-purple-50 text-purple-700' : 'bg-primary/30 text-foreground'
-                          }>
-                            {item.type === 'recurring' ? 'Recurring' : 'One-time'}
+                          {format(new Date(item.date), "dd MMM")}
+                        </td>
+                        <td className="px-3 py-2">
+                          <Badge
+                            variant="outline"
+                            className={
+                              item.type === "lesson"
+                                ? "bg-orange-50 text-orange-700"
+                                : item.type === "recurring"
+                                  ? "bg-purple-50 text-purple-700"
+                                  : "bg-primary/30 text-foreground"
+                            }
+                          >
+                            {item.type === "lesson"
+                              ? "Lesson"
+                              : item.type === "recurring"
+                                ? "Recurring"
+                                : "One-time"}
                           </Badge>
                         </td>
                         <td className="px-3 py-2">{item.court}</td>
                         <td className="px-3 py-2">{item.time}</td>
                         <td className="px-3 py-2 text-right">{item.hours}</td>
-                        <td className="px-3 py-2 text-right">RM{item.rate.toFixed(0)}</td>
-                        <td className="px-3 py-2 text-right font-medium">RM{item.amount.toFixed(2)}</td>
+                        <td className="px-3 py-2 text-right">
+                          RM{item.rate.toFixed(0)}
+                        </td>
+                        <td className="px-3 py-2 text-right font-medium">
+                          {item.type === "lesson" &&
+                          !item.attended &&
+                          item.billingType !== "monthly" ? (
+                            <span className="line-through text-muted-foreground">
+                              RM
+                              {item.rate * item.hours > 0
+                                ? (item.rate * item.hours).toFixed(2)
+                                : "0.00"}{" "}
+                              <span className="text-xs">(absent)</span>
+                            </span>
+                          ) : (
+                            <>RM{item.amount.toFixed(2)}</>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot className="bg-secondary font-bold">
                     <tr>
-                      <td colSpan={4} className="px-3 py-2">Total</td>
-                      <td className="px-3 py-2 text-right">{breakdown.reduce((s, b) => s + b.hours, 0).toFixed(1)}</td>
+                      <td colSpan={4} className="px-3 py-2">
+                        Total
+                      </td>
+                      <td className="px-3 py-2 text-right">
+                        {breakdown.reduce((s, b) => s + b.hours, 0).toFixed(1)}
+                      </td>
                       <td className="px-3 py-2"></td>
-                      <td className="px-3 py-2 text-right">RM{breakdown.reduce((s, b) => s + b.amount, 0).toFixed(2)}</td>
+                      <td className="px-3 py-2 text-right">
+                        RM
+                        {breakdown.reduce((s, b) => s + b.amount, 0).toFixed(2)}
+                      </td>
                     </tr>
                   </tfoot>
                 </table>
@@ -844,7 +977,8 @@ export default function PaymentsContent() {
                   ))}
               </ul>
               <p className="mt-3 font-bold">
-                Total: RM{users
+                Total: RM
+                {users
                   .filter((u) => selectedUserIds.has(u.userId))
                   .reduce((sum, u) => sum + u.unpaidAmount, 0)
                   .toFixed(2)}
@@ -853,7 +987,10 @@ export default function PaymentsContent() {
 
             <div>
               <Label>Payment Method</Label>
-              <Select value={bulkPaymentMethod} onValueChange={setBulkPaymentMethod}>
+              <Select
+                value={bulkPaymentMethod}
+                onValueChange={setBulkPaymentMethod}
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
@@ -889,7 +1026,10 @@ export default function PaymentsContent() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setBulkPayDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setBulkPayDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -908,5 +1048,5 @@ export default function PaymentsContent() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

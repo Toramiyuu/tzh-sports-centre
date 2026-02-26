@@ -38,6 +38,14 @@ vi.mock('@/lib/recurring-booking-utils', () => ({
   countSessionsInMonth: vi.fn(() => 4),
 }))
 
+vi.mock('@/lib/lesson-billing-utils', () => ({
+  getLessonBillingForMonth: vi.fn(() => Promise.resolve(new Map())),
+}))
+
+vi.mock('@/app/api/admin/monthly-payments/breakdown', () => ({
+  getDetailedBreakdown: vi.fn(),
+}))
+
 import { auth } from '@/lib/auth'
 import { isAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
@@ -46,6 +54,7 @@ import {
   calculateBookingAmount,
   countSessionsInMonth,
 } from '@/lib/recurring-booking-utils'
+import { getDetailedBreakdown } from '@/app/api/admin/monthly-payments/breakdown'
 
 describe('GET /api/admin/monthly-payments', () => {
   beforeEach(() => {
@@ -161,88 +170,43 @@ describe('GET /api/admin/monthly-payments', () => {
   })
 
   it('returns detailed breakdown when userId is provided', async () => {
-    vi.mocked(calculateHours).mockReturnValue(1)
-
-    const mockUser = {
-      id: 'user-1',
-      uid: BigInt(1),
-      name: 'User One',
-      email: 'user1@example.com',
-      phone: '0123456789',
-      bookings: [
-        {
-          id: 'booking-1',
-          totalAmount: 15,
-          startTime: '09:00',
-          endTime: '10:00',
-          bookingDate: new Date('2026-02-15'),
-          sport: 'badminton',
-          court: { name: 'Court 1' },
-        },
-      ],
-      recurringBookings: [],
-      monthlyPayments: [
-        {
-          id: 'payment-1',
-          paidAmount: 10,
-          status: 'partial',
-          transactions: [],
-        },
-      ],
-    }
-
-    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as never)
+    const { NextResponse } = await import('next/server')
+    const mockResponse = NextResponse.json({
+      user: { id: 'user-1', uid: '001', name: 'User One' },
+      breakdown: [{ type: 'booking', court: 'Court 1', sport: 'badminton', amount: 15 }],
+      summary: { totalAmount: 15, paidAmount: 10, unpaidAmount: 5 },
+    })
+    vi.mocked(getDetailedBreakdown).mockResolvedValue(mockResponse)
 
     const request = createMockNextRequest({
       method: 'GET',
       url: 'http://localhost:3000/api/admin/monthly-payments',
-      searchParams: {
-        userId: 'user-1',
-        month: '2',
-        year: '2026',
-      },
+      searchParams: { userId: 'user-1', month: '2', year: '2026' },
     })
 
     const response = await GET(request)
-
     const json = await expectJsonResponse(response, 200)
 
-    expect(json.user).toMatchObject({
-      id: 'user-1',
-      uid: '001',
-      name: 'User One',
-    })
-
+    expect(json.user).toMatchObject({ id: 'user-1', uid: '001', name: 'User One' })
     expect(json.breakdown).toHaveLength(1)
-    expect(json.breakdown[0]).toMatchObject({
-      type: 'booking',
-      court: 'Court 1',
-      sport: 'badminton',
-      amount: 15,
-    })
-
-    expect(json.summary).toMatchObject({
-      totalAmount: 15,
-      paidAmount: 10,
-      unpaidAmount: 5,
-    })
+    expect(json.breakdown[0]).toMatchObject({ type: 'booking', court: 'Court 1', amount: 15 })
+    expect(json.summary).toMatchObject({ totalAmount: 15, paidAmount: 10, unpaidAmount: 5 })
+    expect(getDetailedBreakdown).toHaveBeenCalledWith('user-1', 2, 2026)
   })
 
   it('returns 404 when userId is not found', async () => {
-    vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
+    const { NextResponse } = await import('next/server')
+    vi.mocked(getDetailedBreakdown).mockResolvedValue(
+      NextResponse.json({ error: 'User not found' }, { status: 404 })
+    )
 
     const request = createMockNextRequest({
       method: 'GET',
       url: 'http://localhost:3000/api/admin/monthly-payments',
-      searchParams: {
-        userId: 'nonexistent',
-        month: '2',
-        year: '2026',
-      },
+      searchParams: { userId: 'nonexistent', month: '2', year: '2026' },
     })
 
     const response = await GET(request)
-
     await expectJsonResponse(response, 404, { error: 'User not found' })
   })
 })
