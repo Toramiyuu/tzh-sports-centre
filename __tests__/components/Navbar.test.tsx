@@ -60,14 +60,15 @@ describe('Navbar', () => {
     expect(screen.getByText('login')).toBeInTheDocument()
     expect(screen.getByText('signup')).toBeInTheDocument()
 
-    expect(screen.queryByText(/member/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/trainingSchedule/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/leaderboard/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/updates/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/admin/i)).not.toBeInTheDocument()
   })
 
-  it('renders member links for authenticated non-admin users', () => {
+  it('renders authenticated user links with role-gated navigation', () => {
     mockUseSession.mockReturnValue({
-      data: { user: { name: 'Test User', email: 'test@example.com' } },
+      data: { user: { name: 'Test User', email: 'test@example.com', isTrainee: true, isMember: true } },
       status: 'authenticated',
     })
 
@@ -77,7 +78,8 @@ describe('Navbar', () => {
     expect(screen.getByText(/lessons/i)).toBeInTheDocument()
     expect(screen.getByText(/shop/i)).toBeInTheDocument()
 
-    expect(screen.getByText(/member/i)).toBeInTheDocument()
+    expect(screen.getByText(/trainingSchedule/i)).toBeInTheDocument()
+    expect(screen.getByText(/leaderboard/i)).toBeInTheDocument()
     expect(screen.getByText(/updates/i)).toBeInTheDocument()
 
     expect(screen.queryByText(/admin/i)).not.toBeInTheDocument()

@@ -19,6 +19,7 @@ vi.mock('@/lib/prisma', () => ({
     lessonSession: {
       findMany: vi.fn(),
     },
+    $transaction: vi.fn(),
   },
 }))
 
@@ -63,7 +64,7 @@ describe('GET /api/bookings', () => {
         userId: 'regular-user-id',
         courtId: 1,
         sport: 'badminton',
-        bookingDate: new Date('2026-02-20'),
+        bookingDate: new Date('2026-03-28'),
         startTime: '09:00',
         endTime: '10:00',
         totalAmount: 15,
@@ -126,6 +127,12 @@ describe('POST /api/bookings', () => {
     vi.mocked(prisma.booking.findMany).mockResolvedValue([])
     vi.mocked(prisma.recurringBooking.findMany).mockResolvedValue([])
     vi.mocked(prisma.lessonSession.findMany).mockResolvedValue([])
+    vi.mocked(prisma.$transaction).mockImplementation(async (fn) => {
+      if (typeof fn === 'function') {
+        return fn(prisma as never)
+      }
+      return []
+    })
   })
 
   it('returns 429 when rate limit exceeded', async () => {
@@ -136,7 +143,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
       },
     })
@@ -153,7 +160,7 @@ describe('POST /api/bookings', () => {
       method: 'POST',
       url: 'http://localhost:3000/api/bookings',
       body: {
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
       },
     })
@@ -171,7 +178,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
       },
     })
@@ -206,7 +213,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
       },
     })
 
@@ -223,7 +230,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'tennis',
       },
     })
@@ -259,7 +266,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
         isGuestBooking: true,
         guestName: 'Guest User',
@@ -289,7 +296,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
         isGuestBooking: true,
         guestName: 'Guest User',
@@ -320,7 +327,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-19',
+        date: '2026-03-26',
         sport: 'badminton',
         isGuestBooking: true,
         guestName: 'Guest User',
@@ -349,7 +356,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:30' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
         isGuestBooking: true,
         guestName: 'Guest User',
@@ -369,7 +376,7 @@ describe('POST /api/bookings', () => {
       id: 'booking-1',
       courtId: 1,
       sport: 'badminton',
-      bookingDate: new Date('2026-02-20'),
+      bookingDate: new Date('2026-03-28'),
       startTime: '09:00',
       endTime: '09:30',
       totalAmount: 7.5,
@@ -388,7 +395,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
         paymentMethod: 'tng',
         guestName: 'Guest User',
@@ -417,7 +424,7 @@ describe('POST /api/bookings', () => {
       id: 'booking-1',
       courtId: 1,
       sport: 'badminton',
-      bookingDate: new Date('2026-02-20'),
+      bookingDate: new Date('2026-03-28'),
       startTime: '09:00',
       endTime: '09:30',
       totalAmount: 7.5,
@@ -436,7 +443,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
         paymentMethod: 'duitnow',
         guestName: 'Guest User',
@@ -465,7 +472,7 @@ describe('POST /api/bookings', () => {
       userId: 'regular-user-id',
       courtId: 1,
       sport: 'badminton',
-      bookingDate: new Date('2026-02-20'),
+      bookingDate: new Date('2026-03-28'),
       startTime: '09:00',
       endTime: '09:30',
       totalAmount: 7.5,
@@ -481,7 +488,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
       },
     })
@@ -508,7 +515,7 @@ describe('POST /api/bookings', () => {
       userId: 'admin-user-id',
       courtId: 1,
       sport: 'badminton',
-      bookingDate: new Date('2026-02-20'),
+      bookingDate: new Date('2026-03-28'),
       startTime: '09:00',
       endTime: '09:30',
       totalAmount: 7.5,
@@ -524,7 +531,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
         isTestBooking: true,
       },
@@ -547,7 +554,7 @@ describe('POST /api/bookings', () => {
       id: 'booking-1',
       courtId: 1,
       sport: 'badminton',
-      bookingDate: new Date('2026-02-20'),
+      bookingDate: new Date('2026-03-28'),
       startTime: '09:00',
       endTime: '09:30',
       totalAmount: 7.5,
@@ -565,7 +572,7 @@ describe('POST /api/bookings', () => {
       url: 'http://localhost:3000/api/bookings',
       body: {
         slots: [{ courtId: 1, slotTime: '09:00' }],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
         isGuestBooking: true,
         payAtCounter: true,
@@ -586,15 +593,8 @@ describe('POST /api/bookings', () => {
     })
   })
 
-  it('handles race condition with P2002 error and cleans up', async () => {
-    const mockBooking1 = {
-      id: 'booking-1',
-      courtId: 1,
-      startTime: '09:00',
-    }
-
+  it('handles race condition with P2002 error', async () => {
     vi.mocked(prisma.booking.create)
-      .mockResolvedValueOnce(mockBooking1 as never)
       .mockRejectedValueOnce({ code: 'P2002' })
 
     const request = createMockNextRequest({
@@ -603,9 +603,8 @@ describe('POST /api/bookings', () => {
       body: {
         slots: [
           { courtId: 1, slotTime: '09:00' },
-          { courtId: 1, slotTime: '09:30' },
         ],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
         isGuestBooking: true,
         guestName: 'Guest User',
@@ -617,10 +616,6 @@ describe('POST /api/bookings', () => {
 
     await expectJsonResponse(response, 409, {
       error: 'This slot was just booked by someone else. Please select another time.',
-    })
-
-    expect(prisma.booking.deleteMany).toHaveBeenCalledWith({
-      where: { id: { in: ['booking-1'] } },
     })
   })
 
@@ -653,7 +648,7 @@ describe('POST /api/bookings', () => {
           { courtId: 1, slotTime: '09:00' },
           { courtId: 1, slotTime: '09:30' },
         ],
-        date: '2026-02-20',
+        date: '2026-03-28',
         sport: 'badminton',
         isGuestBooking: true,
         guestName: 'Guest User',

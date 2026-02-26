@@ -15,11 +15,6 @@ describe('ShopFilters', () => {
   const mockProps = {
     searchQuery: '',
     onSearchChange: vi.fn(),
-    priceRange: [0, 1000] as [number, number],
-    selectedPriceRange: [0, 1000] as [number, number],
-    onPriceRangeChange: vi.fn(),
-    onClearFilters: vi.fn(),
-    activeFilterCount: 0,
   }
 
   beforeEach(() => {
@@ -52,41 +47,26 @@ describe('ShopFilters', () => {
     expect(mockProps.onSearchChange).toHaveBeenCalledWith('r')
   })
 
-  it('displays active filter count badge', () => {
-    render(<ShopFilters {...mockProps} activeFilterCount={3} />)
+  it('shows clear button when search query is present', () => {
+    render(<ShopFilters {...mockProps} searchQuery="test" />)
 
-    const filterButton = screen.getByText('filters.filters')
-    expect(filterButton).toBeInTheDocument()
-
-    const badge = screen.getByText('3')
-    expect(badge).toBeInTheDocument()
+    const clearButton = screen.getByRole('button')
+    expect(clearButton).toBeInTheDocument()
   })
 
-  it('shows clear all button when filters are active', () => {
-    render(<ShopFilters {...mockProps} activeFilterCount={2} />)
-
-    const clearButtons = screen.getAllByText(/filters.clearAll/i)
-    expect(clearButtons.length).toBeGreaterThan(0)
-  })
-
-  it('calls onClearFilters when clear all button is clicked', async () => {
+  it('calls onSearchChange with empty string when clear button is clicked', async () => {
     const user = userEvent.setup()
-    render(<ShopFilters {...mockProps} activeFilterCount={2} />)
+    render(<ShopFilters {...mockProps} searchQuery="test" />)
 
-    const clearAllButtons = screen.getAllByRole('button')
-    const clearButton = clearAllButtons.find((btn) =>
-      btn.textContent?.includes('filters.clearAll')
-    )
+    const clearButton = screen.getByRole('button')
+    await user.click(clearButton)
 
-    await user.click(clearButton!)
-
-    expect(mockProps.onClearFilters).toHaveBeenCalledTimes(1)
+    expect(mockProps.onSearchChange).toHaveBeenCalledWith('')
   })
 
-  it('displays price range values', () => {
-    render(<ShopFilters {...mockProps} selectedPriceRange={[100, 500]} />)
+  it('does not show clear button when search query is empty', () => {
+    render(<ShopFilters {...mockProps} />)
 
-    const priceTexts = screen.getAllByText(/RM100|RM500/)
-    expect(priceTexts.length).toBeGreaterThan(0)
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 })

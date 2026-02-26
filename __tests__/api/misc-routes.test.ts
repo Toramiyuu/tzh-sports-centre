@@ -125,7 +125,7 @@ describe('GET /api/courts', () => {
     expect(json.courts).toHaveLength(2)
     expect(prisma.court.findMany).toHaveBeenCalledWith({
       where: { isActive: true },
-      orderBy: { id: 'asc' },
+      orderBy: { name: 'asc' },
     })
   })
 })

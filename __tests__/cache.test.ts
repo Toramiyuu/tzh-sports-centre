@@ -111,7 +111,7 @@ describe('getCachedCourts', () => {
     expect(result).toEqual(mockCourts)
     expect(prisma.court.findMany).toHaveBeenCalledWith({
       where: { isActive: true },
-      orderBy: { id: 'asc' },
+      orderBy: { name: 'asc' },
     })
   })
 

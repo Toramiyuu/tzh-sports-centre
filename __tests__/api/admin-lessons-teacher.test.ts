@@ -16,6 +16,7 @@ vi.mock("@/lib/prisma", () => ({
     timeSlot: { findMany: vi.fn() },
     teacher: { findUnique: vi.fn() },
     lessonType: { findUnique: vi.fn() },
+    $transaction: vi.fn(),
   },
 }));
 
@@ -72,7 +73,7 @@ describe("Lesson API teacher support", () => {
         url: "http://localhost:3000/api/admin/lessons",
         body: {
           courtId: 1,
-          lessonDate: "2026-02-20",
+          lessonDate: "2026-03-28",
           startTime: "10:00",
           lessonType: "1-to-1",
           studentIds: ["user-1"],
@@ -99,7 +100,7 @@ describe("Lesson API teacher support", () => {
         url: "http://localhost:3000/api/admin/lessons",
         body: {
           courtId: 1,
-          lessonDate: "2026-02-20",
+          lessonDate: "2026-03-28",
           startTime: "10:00",
           lessonType: "1-to-1",
           studentIds: ["user-1"],
@@ -124,6 +125,10 @@ describe("Lesson API teacher support", () => {
       vi.mocked(prisma.timeSlot.findMany).mockResolvedValue([]);
       vi.mocked(prisma.recurringBooking.findFirst).mockResolvedValue(null);
       vi.mocked(prisma.lessonSession.findFirst).mockResolvedValue(null);
+      vi.mocked(prisma.$transaction).mockImplementation(async (fn) => {
+        if (typeof fn === 'function') return fn(prisma as never);
+        return [];
+      });
       vi.mocked(prisma.lessonSession.create).mockResolvedValue({
         id: "ls-new",
         teacherId: "teacher-1",
@@ -137,7 +142,7 @@ describe("Lesson API teacher support", () => {
         url: "http://localhost:3000/api/admin/lessons",
         body: {
           courtId: 1,
-          lessonDate: "2026-02-20",
+          lessonDate: "2026-03-28",
           startTime: "10:00",
           lessonType: "1-to-1",
           studentIds: ["user-1"],

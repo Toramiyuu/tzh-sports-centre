@@ -74,7 +74,7 @@ describe('MemberDashboard', () => {
 
     render(<MemberDashboard />)
 
-    expect(mockPush).toHaveBeenCalledWith('/auth/login?callbackUrl=/member')
+    expect(mockPush).toHaveBeenCalledWith('/auth/login?callbackUrl=/training')
   })
 
   it('shows non-member benefits screen when user is not a member', async () => {

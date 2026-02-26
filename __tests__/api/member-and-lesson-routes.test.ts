@@ -56,7 +56,7 @@ describe('GET /api/member/availability', () => {
       method: 'GET',
       url: 'http://localhost:3000/api/member/availability',
       searchParams: {
-        date: '2026-02-20',
+        date: '2026-03-28',
       },
     })
 
@@ -71,21 +71,21 @@ describe('GET /api/member/availability', () => {
     vi.mocked(auth).mockResolvedValue(fixtures.userSession as never)
     vi.mocked(prisma.user.findUnique).mockResolvedValue({
       id: 'user-1',
-      isMember: false,
+      isTrainee: false,
     } as never)
 
     const request = createMockNextRequest({
       method: 'GET',
       url: 'http://localhost:3000/api/member/availability',
       searchParams: {
-        date: '2026-02-20',
+        date: '2026-03-28',
       },
     })
 
     const response = await getMemberAvailability(request)
 
     await expectJsonResponse(response, 403, {
-      error: 'Not a member',
+      error: 'Not a trainee',
     })
   })
 
@@ -93,7 +93,7 @@ describe('GET /api/member/availability', () => {
     vi.mocked(auth).mockResolvedValue(fixtures.userSession as never)
     vi.mocked(prisma.user.findUnique).mockResolvedValue({
       id: 'user-1',
-      isMember: true,
+      isTrainee: true,
     } as never)
 
     const request = createMockNextRequest({
@@ -112,7 +112,7 @@ describe('GET /api/member/availability', () => {
     vi.mocked(auth).mockResolvedValue(fixtures.userSession as never)
     vi.mocked(prisma.user.findUnique).mockResolvedValue({
       id: 'user-1',
-      isMember: true,
+      isTrainee: true,
     } as never)
 
     const mockRecurringAvailability = [
@@ -122,7 +122,7 @@ describe('GET /api/member/availability', () => {
     const mockSpecificAvailability = [
       {
         id: 'avail-2',
-        specificDate: new Date('2026-02-20'),
+        specificDate: new Date('2026-03-28'),
         startTime: '14:00',
         endTime: '16:00',
         isRecurring: false,
@@ -144,7 +144,7 @@ describe('GET /api/member/availability', () => {
       method: 'GET',
       url: 'http://localhost:3000/api/member/availability',
       searchParams: {
-        date: '2026-02-20',
+        date: '2026-03-28',
       },
     })
 
@@ -183,7 +183,7 @@ describe('GET /api/admin/lessons', () => {
     const mockLessons = [
       {
         id: 'lesson-1',
-        lessonDate: new Date('2026-02-20'),
+        lessonDate: new Date('2026-03-28'),
         startTime: '09:00',
         endTime: '10:00',
         lessonType: 'private-1on1',
@@ -198,7 +198,7 @@ describe('GET /api/admin/lessons', () => {
       method: 'GET',
       url: 'http://localhost:3000/api/admin/lessons',
       searchParams: {
-        date: '2026-02-20',
+        date: '2026-03-28',
       },
     })
 
@@ -226,7 +226,7 @@ describe('POST /api/admin/lessons', () => {
       url: 'http://localhost:3000/api/admin/lessons',
       body: {
         courtId: 1,
-        lessonDate: '2026-02-20',
+        lessonDate: '2026-03-28',
         startTime: '09:00',
         lessonType: 'private-1on1',
         studentIds: ['student-1'],
@@ -246,7 +246,7 @@ describe('POST /api/admin/lessons', () => {
       url: 'http://localhost:3000/api/admin/lessons',
       body: {
         courtId: 1,
-        lessonDate: '2026-02-20',
+        lessonDate: '2026-03-28',
       },
     })
 
@@ -265,7 +265,7 @@ describe('POST /api/admin/lessons', () => {
       url: 'http://localhost:3000/api/admin/lessons',
       body: {
         courtId: 1,
-        lessonDate: '2026-02-20',
+        lessonDate: '2026-03-28',
         startTime: '09:00',
         lessonType: 'invalid-type',
         studentIds: ['student-1'],
@@ -303,7 +303,7 @@ describe('GET /api/admin/lesson-requests', () => {
         id: 'request-1',
         memberId: 'member-1',
         lessonType: 'private-1on1',
-        requestedDate: new Date('2026-02-20'),
+        requestedDate: new Date('2026-03-28'),
         requestedTime: '09:00',
         status: 'pending',
         member: {
@@ -428,7 +428,7 @@ describe('PATCH /api/admin/lesson-requests', () => {
       id: 'request-1',
       memberId: 'member-1',
       lessonType: 'invalid-type',
-      requestedDate: new Date('2026-02-20'),
+      requestedDate: new Date('2026-03-28'),
       requestedTime: '09:00',
       requestedDuration: 1.5,
       member: {
@@ -515,7 +515,7 @@ describe('POST /api/trial-requests', () => {
         phone: '0123456789',
         email: 'test@example.com',
         preferredLessonType: 'private-1on1',
-        preferredDate: '2026-02-20',
+        preferredDate: '2026-03-28',
         preferredTime: '09:00',
         message: 'Looking forward to trying!',
       },

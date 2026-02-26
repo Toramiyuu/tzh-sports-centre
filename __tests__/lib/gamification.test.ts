@@ -12,6 +12,7 @@ function createMockTx() {
     },
     playerPoints: {
       upsert: vi.fn(),
+      findUnique: vi.fn(),
     },
     playerProfile: {
       upsert: vi.fn(),
@@ -39,6 +40,7 @@ describe('recalculateMonthlyPoints', () => {
       { isWinner: true },
       { isWinner: false },
     ])
+    tx.playerPoints.findUnique.mockResolvedValue(null)
 
     await recalculateMonthlyPoints('user-1', '2026-02', tx as never)
 
@@ -47,19 +49,19 @@ describe('recalculateMonthlyPoints', () => {
         where: { userId_month: { userId: 'user-1', month: '2026-02' } },
         update: expect.objectContaining({
           attendancePoints: 3.0,
-          gamesPoints: 2.5,
+          gamesPoints: 5.0,
           winsPoints: 3.0,
           bonusPoints: 0,
-          totalPoints: 8.5,
+          totalPoints: 11.0,
         }),
         create: expect.objectContaining({
           userId: 'user-1',
           month: '2026-02',
           attendancePoints: 3.0,
-          gamesPoints: 2.5,
+          gamesPoints: 5.0,
           winsPoints: 3.0,
           bonusPoints: 0,
-          totalPoints: 8.5,
+          totalPoints: 11.0,
         }),
       })
     )
@@ -68,6 +70,7 @@ describe('recalculateMonthlyPoints', () => {
   it('handles zero activity month', async () => {
     tx.sessionAttendance.count.mockResolvedValue(0)
     tx.matchPlayer.findMany.mockResolvedValue([])
+    tx.playerPoints.findUnique.mockResolvedValue(null)
 
     await recalculateMonthlyPoints('user-1', '2026-01', tx as never)
 
