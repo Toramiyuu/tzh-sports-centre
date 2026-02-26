@@ -1246,6 +1246,10 @@
       "noTiers": "Tiada harga tempoh ditetapkan — harga asas akan digunakan",
       "hours": "Jam",
       "hrs": "jam"
+    },
+    "trainingGroups": {
+      "title": "Kumpulan Latihan",
+      "description": "Susun pelatih ke dalam kumpulan untuk kelas"
     }
   },
   "updates": {

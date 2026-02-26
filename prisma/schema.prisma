@@ -50,6 +50,7 @@ model User {
   playerProfile         PlayerProfile?
   teacher               Teacher?
   lessonAttendances     LessonAttendance[]
+  trainingGroups        TrainingGroup[]     @relation("TrainingGroupMembers")
 
   @@map("users")
 }
@@ -777,4 +778,19 @@ model PlayerProfile {
   updatedAt        DateTime    @updatedAt @map("updated_at")
 
   @@map("player_profiles")
+}
+
+// ─── Training Groups ─────────────────────────────────────────────────────────
+
+model TrainingGroup {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  sport     String   @default("badminton")
+  notes     String?
+  isActive  Boolean  @default(true) @map("is_active")
+  members   User[]   @relation("TrainingGroupMembers")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("training_groups")
 }

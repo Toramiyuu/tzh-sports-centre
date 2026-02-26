@@ -1141,6 +1141,10 @@
       "noTiers": "未设置时长定价 — 将使用基本价格",
       "hours": "小时",
       "hrs": "小时"
+    },
+    "trainingGroups": {
+      "title": "训练小组",
+      "description": "将学员组织成小组以便安排课程"
     }
   },
   "updates": {

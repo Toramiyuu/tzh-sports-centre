@@ -1257,6 +1257,10 @@
       "noTiers": "No duration pricing set — base price will be used",
       "hours": "Hours",
       "hrs": "hr"
+    },
+    "trainingGroups": {
+      "title": "Training Groups",
+      "description": "Organize trainees into groups for lessons"
     }
   },
   "updates": {
