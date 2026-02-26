@@ -190,8 +190,8 @@ export default function CreateRecurringLessonDialog({
                 <SelectContent>
                   {durationOptions.length > 0 ? (
                     durationOptions.map((d) => (
-                      <SelectItem key={d} value={d.toString()}>
-                        {d}hr
+                      <SelectItem key={d.value} value={d.value.toString()}>
+                        {d.label}
                       </SelectItem>
                     ))
                   ) : (

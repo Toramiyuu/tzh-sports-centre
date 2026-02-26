@@ -113,6 +113,13 @@ interface Member {
   skillLevel: string | null;
 }
 
+interface TrainingGroup {
+  id: string;
+  name: string;
+  sport: string;
+  members: { id: string }[];
+}
+
 interface Court {
   id: number;
   name: string;
@@ -269,6 +276,8 @@ export default function LessonsContent({
   const [activeTeachers, setActiveTeachers] = useState<
     { id: string; name: string }[]
   >([]);
+  const [trainingGroups, setTrainingGroups] = useState<TrainingGroup[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
 
   const fetchData = async () => {
     setLoading(true);
@@ -280,6 +289,7 @@ export default function LessonsContent({
         lessonsRes,
         requestsRes,
         staffRes,
+        groupsRes,
       ] = await Promise.all([
         fetch("/api/admin/coach-availability"),
         fetch("/api/admin/members"),
@@ -287,6 +297,7 @@ export default function LessonsContent({
         fetch(`/api/admin/lessons?date=${format(selectedDate, "yyyy-MM-dd")}`),
         fetch("/api/admin/lesson-requests"),
         fetch("/api/admin/staff"),
+        fetch("/api/admin/training-groups"),
       ]);
 
       const [
@@ -296,6 +307,7 @@ export default function LessonsContent({
         lessonsData,
         requestsData,
         staffData,
+        groupsData,
       ] = await Promise.all([
         availRes.json(),
         membersRes.json(),
@@ -303,6 +315,7 @@ export default function LessonsContent({
         lessonsRes.json(),
         requestsRes.json(),
         staffRes.json(),
+        groupsRes.json(),
       ]);
 
       setCoachAvailability(availData.availability || []);
@@ -316,6 +329,7 @@ export default function LessonsContent({
           name: t.name,
         })),
       );
+      setTrainingGroups(groupsData.groups || []);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -587,6 +601,7 @@ export default function LessonsContent({
     setLessonCourtId(courtId);
     setLessonStartTime(slotTime);
     setStudentSearch("");
+    setSelectedGroupId("");
     setLessonDialogOpen(true);
   };
 
@@ -823,6 +838,17 @@ export default function LessonsContent({
     );
     setAttendanceDialogOpen(true);
   };
+
+  const memberGroupMap = (() => {
+    const map: Record<string, string[]> = {};
+    trainingGroups.forEach((group) => {
+      group.members.forEach((m) => {
+        if (!map[m.id]) map[m.id] = [];
+        map[m.id].push(group.name);
+      });
+    });
+    return map;
+  })();
 
   const getBillingByMember = () => {
     const billing: Record<
@@ -1587,13 +1613,25 @@ export default function LessonsContent({
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   <span className="font-medium text-lg text-foreground">
                                     {member.name}
                                   </span>
                                   <Badge variant="outline">
                                     {member.phone}
                                   </Badge>
+                                  {memberGroupMap[member.id]?.map(
+                                    (groupName) => (
+                                      <Badge
+                                        key={groupName}
+                                        variant="secondary"
+                                        className="text-xs bg-primary/10 text-primary"
+                                      >
+                                        <Users className="w-3 h-3 mr-1" />
+                                        {groupName}
+                                      </Badge>
+                                    ),
+                                  )}
                                 </div>
                                 <div className="mt-2 space-y-1">
                                   {memberLessons.map(({ lesson, attended }) => {
@@ -1986,6 +2024,38 @@ export default function LessonsContent({
                 </SelectContent>
               </Select>
             </div>
+
+            {trainingGroups.length > 0 && (
+              <div>
+                <Label>Training Group (quick fill)</Label>
+                <Select
+                  value={selectedGroupId}
+                  onValueChange={(v) => {
+                    setSelectedGroupId(v);
+                    if (v === "none") {
+                      setLessonStudentIds([]);
+                      return;
+                    }
+                    const group = trainingGroups.find((g) => g.id === v);
+                    if (group) {
+                      setLessonStudentIds(group.members.map((m) => m.id));
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a group to auto-fill students" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None (pick manually)</SelectItem>
+                    {trainingGroups.map((group) => (
+                      <SelectItem key={group.id} value={group.id}>
+                        {group.name} ({group.members.length} members)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div>
               <Label>Students</Label>
