@@ -45,6 +45,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import TrialRequestsContent from "@/components/admin/TrialRequestsContent";
+import AttendanceDialog from "@/components/admin/AttendanceDialog";
+import RecurringLessonsPanel from "@/components/admin/RecurringLessonsPanel";
 import { useLessonTypes } from "@/lib/hooks/useLessonTypes";
 
 const DAYS_OF_WEEK_KEYS = [
@@ -116,6 +118,13 @@ interface Court {
   name: string;
 }
 
+interface LessonAttendance {
+  id?: string;
+  userId: string;
+  status: "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
+  user?: { id: string; name: string };
+}
+
 interface LessonSession {
   id: string;
   courtId: number;
@@ -123,12 +132,14 @@ interface LessonSession {
   startTime: string;
   endTime: string;
   lessonType: string;
+  billingType?: string;
   duration: number;
   price: number;
   status: string;
   notes: string | null;
   court: Court;
   students: Member[];
+  attendances?: LessonAttendance[];
 }
 
 interface LessonRequest {
@@ -210,6 +221,11 @@ export default function LessonsContent({
 
   const [availabilityDialogOpen, setAvailabilityDialogOpen] = useState(false);
   const [lessonDialogOpen, setLessonDialogOpen] = useState(false);
+  const [attendanceDialogOpen, setAttendanceDialogOpen] = useState(false);
+  const [attendanceLessonId, setAttendanceLessonId] = useState<string | null>(
+    null,
+  );
+  const [attendanceLessonLabel, setAttendanceLessonLabel] = useState("");
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const [requestDetailsDialogOpen, setRequestDetailsDialogOpen] =
     useState(false);
@@ -799,42 +815,45 @@ export default function LessonsContent({
     }
   };
 
-  const handleMarkCompleted = async (lessonId: string) => {
-    setActionLoading(true);
-    try {
-      await fetch("/api/admin/lessons", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lessonId, status: "completed" }),
-      });
-      if (activeTab === "schedule") {
-        fetchLessonsForDate();
-      } else {
-        fetchBillingData();
-      }
-    } catch (error) {
-      console.error("Error updating lesson:", error);
-    } finally {
-      setActionLoading(false);
-    }
+  const openAttendanceDialog = (lesson: LessonSession) => {
+    const typeInfo = getLessonTypeInfo(lesson.lessonType);
+    setAttendanceLessonId(lesson.id);
+    setAttendanceLessonLabel(
+      `${typeInfo?.name || lesson.lessonType} — ${lesson.startTime}-${lesson.endTime} — ${lesson.students.map((s) => s.name).join(", ")}`,
+    );
+    setAttendanceDialogOpen(true);
   };
 
   const getBillingByMember = () => {
     const billing: Record<
       string,
-      { member: Member; lessons: LessonSession[]; total: number }
+      {
+        member: Member;
+        lessons: { lesson: LessonSession; attended: boolean }[];
+        total: number;
+      }
     > = {};
 
     lessons
       .filter((l) => l.status === "completed")
       .forEach((lesson) => {
+        const isPerSession = lesson.billingType !== "monthly";
         const pricePerStudent = lesson.price / lesson.students.length;
         lesson.students.forEach((student) => {
           if (!billing[student.id]) {
             billing[student.id] = { member: student, lessons: [], total: 0 };
           }
-          billing[student.id].lessons.push(lesson);
-          billing[student.id].total += pricePerStudent;
+          const attendance = lesson.attendances?.find(
+            (a) => a.userId === student.id,
+          );
+          const attended =
+            !attendance ||
+            attendance.status === "PRESENT" ||
+            attendance.status === "LATE";
+          billing[student.id].lessons.push({ lesson, attended });
+          if (attended || !isPerSession) {
+            billing[student.id].total += pricePerStudent;
+          }
         });
       });
 
@@ -1125,14 +1144,12 @@ export default function LessonsContent({
                                                   size="sm"
                                                   className="h-6 text-green-700 hover:text-green-600 hover:bg-green-100 flex-1"
                                                   onClick={() =>
-                                                    handleMarkCompleted(
-                                                      lesson.id,
-                                                    )
+                                                    openAttendanceDialog(lesson)
                                                   }
                                                   disabled={actionLoading}
                                                 >
-                                                  <Check className="w-3 h-3 mr-1" />
-                                                  Done
+                                                  <CheckSquare className="w-3 h-3 mr-1" />
+                                                  Attend
                                                 </Button>
                                                 <Button
                                                   variant="ghost"
@@ -1343,11 +1360,12 @@ export default function LessonsContent({
                                             size="sm"
                                             className="text-green-700"
                                             onClick={() =>
-                                              handleMarkCompleted(lesson.id)
+                                              openAttendanceDialog(lesson)
                                             }
                                             disabled={actionLoading}
                                           >
-                                            <Check className="w-4 h-4" />
+                                            <CheckSquare className="w-4 h-4 mr-1" />
+                                            Attendance
                                           </Button>
                                           <Button
                                             variant="outline"
@@ -1373,6 +1391,12 @@ export default function LessonsContent({
                   )}
                 </CardContent>
               </Card>
+
+              <RecurringLessonsPanel
+                courts={courts}
+                members={members}
+                teachers={activeTeachers}
+              />
             </div>
           )}
 
@@ -1572,16 +1596,18 @@ export default function LessonsContent({
                                   </Badge>
                                 </div>
                                 <div className="mt-2 space-y-1">
-                                  {memberLessons.map((lesson) => {
+                                  {memberLessons.map(({ lesson, attended }) => {
                                     const typeInfo = getLessonTypeInfo(
                                       lesson.lessonType,
                                     );
                                     const pricePerStudent =
                                       lesson.price / lesson.students.length;
+                                    const isPerSession =
+                                      lesson.billingType !== "monthly";
                                     return (
                                       <div
                                         key={lesson.id}
-                                        className="text-sm text-muted-foreground flex justify-between"
+                                        className={`text-sm flex justify-between ${attended ? "text-muted-foreground" : "text-muted-foreground/50 line-through"}`}
                                       >
                                         <span>
                                           {format(
@@ -1590,9 +1616,14 @@ export default function LessonsContent({
                                           )}{" "}
                                           - {typeInfo?.name} ({lesson.duration}
                                           hr)
+                                          {!attended &&
+                                            isPerSession &&
+                                            " (absent)"}
                                         </span>
                                         <span>
-                                          RM{pricePerStudent.toFixed(0)}
+                                          {!attended && isPerSession
+                                            ? "—"
+                                            : `RM${pricePerStudent.toFixed(0)}`}
                                         </span>
                                       </div>
                                     );
@@ -1604,8 +1635,11 @@ export default function LessonsContent({
                                   RM{total.toFixed(0)}
                                 </div>
                                 <div className="text-sm text-muted-foreground">
-                                  {memberLessons.length} lesson
-                                  {memberLessons.length !== 1 ? "s" : ""}
+                                  {
+                                    memberLessons.filter((l) => l.attended)
+                                      .length
+                                  }
+                                  /{memberLessons.length} attended
                                 </div>
                               </div>
                             </div>
@@ -2574,6 +2608,16 @@ export default function LessonsContent({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AttendanceDialog
+        open={attendanceDialogOpen}
+        onOpenChange={setAttendanceDialogOpen}
+        lessonId={attendanceLessonId}
+        lessonLabel={attendanceLessonLabel}
+        onSaved={() => {
+          fetchLessonsForDate();
+        }}
+      />
     </div>
   );
 }

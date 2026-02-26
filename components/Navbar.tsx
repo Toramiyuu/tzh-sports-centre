@@ -83,6 +83,14 @@ export function Navbar() {
                 👤 {t("trainingSchedule")}
               </Link>
             )}
+            {session?.user?.isTeacher && (
+              <Link
+                href="/teacher"
+                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                📋 {t("teacherDashboard")}
+              </Link>
+            )}
             {session?.user && (
               <Link
                 href="/updates"
@@ -197,6 +205,15 @@ export function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 👤 {t("trainingSchedule")}
+              </Link>
+            )}
+            {session?.user?.isTeacher && (
+              <Link
+                href="/teacher"
+                className="block py-2 text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                📋 {t("teacherDashboard")}
               </Link>
             )}
             {session?.user && (

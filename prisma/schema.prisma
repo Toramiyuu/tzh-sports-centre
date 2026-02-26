@@ -49,6 +49,7 @@ model User {
   playerPoints          PlayerPoints[]
   playerProfile         PlayerProfile?
   teacher               Teacher?
+  lessonAttendances     LessonAttendance[]
 
   @@map("users")
 }
@@ -62,6 +63,7 @@ model Court {
   bookings          Booking[]
   lessonSessions    LessonSession[]
   recurringBookings RecurringBooking[]
+  recurringLessons  RecurringLesson[]
   gameSessions      GameSession[]
 
   @@map("courts")
@@ -229,9 +231,66 @@ model LessonSession {
   students             User[]               @relation("StudentLessons")
   absences             Absence[]
   replacementBookings  ReplacementBooking[]
+  attendances          LessonAttendance[]
+  recurringLessonId    String?              @map("recurring_lesson_id")
+  recurringLesson      RecurringLesson?     @relation(fields: [recurringLessonId], references: [id])
 
   @@index([teacherId])
+  @@index([recurringLessonId])
   @@map("lesson_sessions")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model LessonAttendance {
+  id              String           @id @default(cuid())
+  lessonSessionId String           @map("lesson_session_id")
+  lessonSession   LessonSession    @relation(fields: [lessonSessionId], references: [id])
+  userId          String           @map("user_id")
+  user            User             @relation(fields: [userId], references: [id])
+  status          AttendanceStatus @default(PRESENT)
+  markedBy        String?          @map("marked_by")
+  markedAt        DateTime         @default(now()) @map("marked_at")
+  notes           String?
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  @@unique([lessonSessionId, userId])
+  @@index([userId])
+  @@index([lessonSessionId])
+  @@map("lesson_attendances")
+}
+
+model RecurringLesson {
+  id              String          @id @default(cuid())
+  dayOfWeek       Int             @map("day_of_week")
+  startTime       String          @map("start_time")
+  endTime         String          @map("end_time")
+  lessonType      String          @map("lesson_type")
+  billingType     String          @default("per_session") @map("billing_type")
+  duration        Float
+  price           Float
+  courtId         Int             @map("court_id")
+  court           Court           @relation(fields: [courtId], references: [id])
+  teacherId       String?         @map("teacher_id")
+  teacher         Teacher?        @relation(fields: [teacherId], references: [id])
+  studentIds      Json            @map("student_ids")
+  isActive        Boolean         @default(true) @map("is_active")
+  startDate       DateTime        @map("start_date")
+  endDate         DateTime?       @map("end_date")
+  notes           String?
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  lessonSessions  LessonSession[]
+
+  @@index([dayOfWeek])
+  @@index([isActive])
+  @@map("recurring_lessons")
 }
 
 model MonthlyPayment {
@@ -596,8 +655,9 @@ model Teacher {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  payRates       TeacherPayRate[]
-  lessonSessions LessonSession[]
+  payRates         TeacherPayRate[]
+  lessonSessions   LessonSession[]
+  recurringLessons RecurringLesson[]
 
   @@map("teachers")
 }

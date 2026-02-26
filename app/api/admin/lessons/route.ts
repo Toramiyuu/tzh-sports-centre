@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { format } from "date-fns";
 import { validateFutureDate } from "@/lib/validation";
 
 export async function GET(request: NextRequest) {
@@ -48,6 +49,12 @@ export async function GET(request: NextRequest) {
             name: true,
             phone: true,
             skillLevel: true,
+          },
+        },
+        attendances: {
+          select: {
+            userId: true,
+            status: true,
           },
         },
       },
@@ -410,10 +417,29 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    const lesson = await prisma.lessonSession.findUnique({
+      where: { id: lessonId },
+      include: {
+        students: { select: { id: true } },
+        court: { select: { name: true } },
+      },
+    });
+
     await prisma.lessonSession.update({
       where: { id: lessonId },
       data: { status: "cancelled" },
     });
+
+    if (lesson && lesson.students.length > 0) {
+      const { notifyLessonCancelled } =
+        await import("@/lib/lesson-notifications");
+      await notifyLessonCancelled({
+        studentIds: lesson.students.map((s) => s.id),
+        lessonType: lesson.lessonType,
+        lessonDate: format(lesson.lessonDate, "MMM d"),
+        startTime: lesson.startTime,
+      }).catch((err) => console.error("Notification error:", err));
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
