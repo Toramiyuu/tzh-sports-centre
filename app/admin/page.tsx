@@ -108,21 +108,21 @@ export default async function AdminPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {adminFeatures.map((feature) => (
             <Link key={feature.href} href={feature.href} className="group">
-              <div className="relative flex items-start gap-4 p-6 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200">
+              <div className="relative flex items-start gap-4 p-6 h-full rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200">
                 <div
                   className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${feature.iconBg}`}
                 >
                   <feature.icon className="w-6 h-6" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-lg font-semibold text-slate-900 group-hover:text-primary transition-colors">
+                  <h2 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                     {t(feature.titleKey)}
                   </h2>
-                  <p className="text-sm text-slate-500 mt-0.5">
+                  <p className="text-sm text-muted-foreground mt-0.5">
                     {t(feature.descriptionKey)}
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all mt-1 shrink-0" />
+                <ArrowRight className="w-5 h-5 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all mt-1 shrink-0" />
               </div>
             </Link>
           ))}
