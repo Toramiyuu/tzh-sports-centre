@@ -1,0 +1,126 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "Vercel logo":
+        - /url: /home
+        - button "Vercel Logo" [ref=e4] [cursor=pointer]:
+          - img "Vercel Logo" [ref=e5]
+      - navigation [ref=e7]:
+        - listitem [ref=e8]:
+          - img [ref=e9]
+          - img "Placeholder Avatar" [ref=e12]
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e16]:
+          - link "Overview" [ref=e17] [cursor=pointer]:
+            - /url: "#intent:global:overview"
+          - link "Deployments" [ref=e18] [cursor=pointer]:
+            - /url: "#intent:global:deployments"
+          - link "Analytics" [ref=e19] [cursor=pointer]:
+            - /url: "#intent:global:analytics"
+          - link "Speed Insights" [ref=e20] [cursor=pointer]:
+            - /url: "#intent:global:speed-insights"
+          - link "Logs" [ref=e21] [cursor=pointer]:
+            - /url: "#intent:global:logs"
+          - link "Observability" [ref=e22] [cursor=pointer]:
+            - /url: "#intent:global:observability"
+          - link "Redirects" [ref=e23] [cursor=pointer]:
+            - /url: "#intent:global:redirects"
+          - link "Firewall" [ref=e24] [cursor=pointer]:
+            - /url: "#intent:global:firewall"
+          - link "AI Gateway" [ref=e25] [cursor=pointer]:
+            - /url: "#intent:global:ai-gateway"
+          - link "Sandboxes" [ref=e26] [cursor=pointer]:
+            - /url: "#intent:global:sandboxes"
+          - link "Storage" [ref=e27] [cursor=pointer]:
+            - /url: "#intent:global:storage"
+          - link "Flags" [ref=e28] [cursor=pointer]:
+            - /url: "#intent:global:flags"
+          - link "Settings" [ref=e29] [cursor=pointer]:
+            - /url: "#intent:global:settings"
+        - generic:
+          - button "Scroll to top":
+            - generic:
+              - img
+      - generic [ref=e32]:
+        - generic [ref=e37]:
+          - paragraph [ref=e40]:
+            - generic [ref=e41]:
+              - generic [ref=e42]: tzh-sp
+              - generic [ref=e43]: orts-
+              - generic [ref=e44]: centre
+          - generic [ref=e46]:
+            - link "Domains" [ref=e48] [cursor=pointer]:
+              - /url: /toramiyuus-projects/tzh-sports-centre/settings/domains
+              - generic [ref=e49]: Domains
+            - link "Usage" [ref=e50] [cursor=pointer]:
+              - /url: /toramiyuus-projects/tzh-sports-centre/usage
+              - generic [ref=e51]: Usage
+            - link "Connect Git" [ref=e52] [cursor=pointer]:
+              - /url: /toramiyuus-projects/tzh-sports-centre/settings/git
+              - generic [ref=e53]: Connect Git
+        - generic [ref=e54]:
+          - heading "Production Deployment" [level=3] [ref=e58]
+          - generic [ref=e63]:
+            - generic [ref=e69]:
+              - generic [ref=e72]:
+                - term [ref=e73]: Deployment
+                - definition [ref=e74]
+              - generic [ref=e79]:
+                - term [ref=e80]:
+                  - generic [ref=e82]:
+                    - text: Domains
+                    - link [ref=e83] [cursor=pointer]:
+                      - /url: /toramiyuus-projects/tzh-sports-centre/settings/domains
+                      - img [ref=e84]
+                - definition [ref=e86]
+              - generic [ref=e88]:
+                - generic [ref=e89]:
+                  - term [ref=e90]: Status
+                  - definition [ref=e91]
+                - generic [ref=e94]:
+                  - term [ref=e95]: Created
+                  - definition [ref=e96]
+              - generic [ref=e99]:
+                - term [ref=e100]: Source
+                - definition [ref=e101]
+            - button "Deployment Settings" [disabled] [ref=e107]:
+              - generic [ref=e108]:
+                - img [ref=e109]
+                - generic [ref=e112]: Deployment Settings
+        - generic [ref=e121]:
+          - paragraph [ref=e125]
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - generic [ref=e132]:
+                - paragraph [ref=e133]:
+                  - strong [ref=e134]: Observability
+                - time [ref=e135]: 6h
+              - link "Go to page" [ref=e136] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e138]
+              - link [ref=e140] [cursor=pointer]:
+                - /url: "#"
+            - generic [ref=e142]:
+              - generic [ref=e144]: Edge Requests
+              - generic [ref=e149]: Function Invocations
+              - generic [ref=e154]: Error Rate
+          - generic [ref=e160]:
+            - paragraph [ref=e161]:
+              - strong [ref=e162]: Analytics
+            - time [ref=e163]: 1w
+        - generic [ref=e177]:
+          - img [ref=e180]
+          - img [ref=e191]
+          - img [ref=e202]
+          - img [ref=e213]
+          - generic [ref=e222]:
+            - img [ref=e225]
+            - img [ref=e236]
+            - img [ref=e247]
+            - img [ref=e258]
+            - img [ref=e269]
+            - img [ref=e280]
+    - contentinfo [ref=e289]

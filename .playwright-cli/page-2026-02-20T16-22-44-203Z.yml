@@ -1,0 +1,138 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e8]: TZH
+    - generic [ref=e11]: Loading
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e32]:
+          - img
+          - generic [ref=e33]: English
+  - main [ref=e35]:
+    - generic [ref=e37]:
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - img [ref=e44]
+          - generic [ref=e47]: Pro Shop
+        - heading "TZH Pro Shop" [level=1] [ref=e48]
+        - paragraph [ref=e49]: Quality badminton & pickleball gear for players of all levels
+      - generic [ref=e52]:
+        - button "All" [ref=e53]:
+          - img [ref=e54]
+          - text: All
+        - button "Rackets" [ref=e59]:
+          - img [ref=e60]
+          - text: Rackets
+        - button "Shoes" [ref=e69]:
+          - img [ref=e70]
+          - text: Shoes
+        - button "Bags" [ref=e73]:
+          - img [ref=e74]
+          - text: Bags
+        - button "Clothing" [ref=e77]:
+          - img [ref=e78]
+          - text: Clothing
+        - button "Grips" [ref=e80]:
+          - img [ref=e81]
+          - text: Grips
+        - button "Shuttlecocks" [ref=e91]:
+          - img [ref=e92]
+          - text: Shuttlecocks
+        - button "Accessories" [ref=e96]:
+          - img [ref=e97]
+          - text: Accessories
+        - button "Pickleball" [ref=e101]:
+          - img [ref=e102]
+          - text: Pickleball
+        - button "Stringing Service" [ref=e105]:
+          - img [ref=e106]
+          - text: Stringing Service
+      - generic [ref=e108]:
+        - generic [ref=e111]:
+          - img [ref=e112]
+          - textbox "Search products..." [ref=e115]
+        - paragraph [ref=e117]: 0 products
+  - contentinfo [ref=e167]:
+    - generic [ref=e169]:
+      - generic [ref=e170]:
+        - generic [ref=e171]:
+          - generic [ref=e173]: TZH
+          - generic [ref=e174]: TZH Sports Centre
+        - paragraph [ref=e175]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e176]:
+        - heading "Quick Links" [level=3] [ref=e177]
+        - generic [ref=e178]:
+          - link "Book a Court" [ref=e179] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e180] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e181] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e182] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e183] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e184]:
+        - heading "Contact" [level=3] [ref=e185]
+        - generic [ref=e186]:
+          - generic [ref=e187]:
+            - img [ref=e188]
+            - paragraph [ref=e192]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e193] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e194]
+          - link "View on Google Maps" [ref=e196] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e197]:
+              - img [ref=e198]
+              - generic [ref=e201]: View on Google Maps
+      - generic [ref=e202]:
+        - heading "Operating Hours" [level=3] [ref=e203]:
+          - generic [ref=e204]:
+            - img [ref=e205]
+            - text: Operating Hours
+        - generic [ref=e208]:
+          - generic [ref=e209]:
+            - generic [ref=e210]:
+              - generic [ref=e211]: Mon - Fri
+              - generic [ref=e212]: 3PM - 12AM
+            - generic [ref=e214]:
+              - generic [ref=e215]: Sat - Sun
+              - generic [ref=e216]: 9AM - 12AM
+          - generic [ref=e217]:
+            - generic [ref=e218]:
+              - img [ref=e219]
+              - generic [ref=e221]:
+                - paragraph [ref=e222]: Court Bookings
+                - link "011-6868 8508" [ref=e223] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e224]:
+              - img [ref=e225]
+              - generic [ref=e227]:
+                - paragraph [ref=e228]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e229] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e231]:
+      - paragraph [ref=e232]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e234] [cursor=pointer]:
+        - /url: /terms

@@ -1,0 +1,144 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e8]: TZH
+    - generic [ref=e11]: Loading
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e36]:
+          - img
+          - generic [ref=e37]: English
+  - main [ref=e39]:
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]: Create Account
+        - generic [ref=e45]: Sign up to get started
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]: Full Name
+            - textbox "Full Name" [ref=e50]:
+              - /placeholder: John Doe
+          - generic [ref=e51]:
+            - generic [ref=e52]: Email
+            - textbox "Email" [ref=e53]:
+              - /placeholder: you@example.com
+          - generic [ref=e54]:
+            - generic [ref=e55]: Phone Number
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - generic [ref=e58]: 🇲🇾
+                - generic [ref=e59]: "+60"
+              - textbox "Phone Number" [ref=e60]:
+                - /placeholder: 12 345 6789
+          - generic [ref=e61]:
+            - generic [ref=e62]: Password
+            - textbox "Password" [ref=e63]:
+              - /placeholder: ••••••••
+          - generic [ref=e64]:
+            - generic [ref=e65]: Confirm Password
+            - textbox "Confirm Password" [ref=e66]:
+              - /placeholder: ••••••••
+        - generic [ref=e67]:
+          - button "Create Account" [ref=e68]
+          - paragraph [ref=e69]:
+            - text: Already have an account?
+            - link "Sign in" [ref=e70] [cursor=pointer]:
+              - /url: /auth/login
+  - contentinfo [ref=e71]:
+    - generic [ref=e73]:
+      - generic [ref=e74]:
+        - generic [ref=e75]:
+          - generic [ref=e77]: TZH
+          - generic [ref=e78]: TZH Sports Centre
+        - paragraph [ref=e79]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+        - generic [ref=e80]:
+          - link "Facebook" [ref=e81] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e82]
+          - link "Instagram" [ref=e84] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e85]
+          - link "TikTok" [ref=e88] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e89]
+          - link "YouTube" [ref=e91] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e92]
+      - generic [ref=e95]:
+        - heading "Quick Links" [level=3] [ref=e96]
+        - generic [ref=e97]:
+          - link "Book a Court" [ref=e98] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e99] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e100] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e101] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e102] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e103]:
+        - heading "Contact" [level=3] [ref=e104]
+        - generic [ref=e105]:
+          - generic [ref=e106]:
+            - img [ref=e107]
+            - paragraph [ref=e111]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e112] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e113]
+          - link "View on Google Maps" [ref=e115] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - generic [ref=e120]: View on Google Maps
+      - generic [ref=e121]:
+        - heading "Operating Hours" [level=3] [ref=e122]:
+          - generic [ref=e123]:
+            - img [ref=e124]
+            - text: Operating Hours
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - generic [ref=e130]: Mon - Fri
+              - generic [ref=e131]: 3PM - 12AM
+            - generic [ref=e133]:
+              - generic [ref=e134]: Sat - Sun
+              - generic [ref=e135]: 9AM - 12AM
+          - generic [ref=e136]:
+            - generic [ref=e137]:
+              - img [ref=e138]
+              - generic [ref=e140]:
+                - paragraph [ref=e141]: Court Bookings
+                - link "011-6868 8508" [ref=e142] [cursor=pointer]:
+                  - /url: tel:+60116868508
+            - generic [ref=e143]:
+              - img [ref=e144]
+              - generic [ref=e146]:
+                - paragraph [ref=e147]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e148] [cursor=pointer]:
+                  - /url: tel:+60117575508
+    - generic [ref=e150]:
+      - paragraph [ref=e151]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e153] [cursor=pointer]:
+        - /url: /terms

@@ -1,0 +1,120 @@
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - alert [ref=e11]
+  - link "Skip to main content" [ref=e12] [cursor=pointer]:
+    - /url: "#main-content"
+  - region "Notifications alt+T"
+  - navigation [ref=e25]:
+    - generic [ref=e27]:
+      - link "TZH TZH Sports Centre" [ref=e29] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e31]: TZH
+        - generic [ref=e32]: TZH Sports Centre
+      - generic [ref=e33]:
+        - link "🏸 Book Court" [ref=e34] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e35] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e36] [cursor=pointer]:
+          - /url: /shop
+      - generic [ref=e37]:
+        - button "Toggle theme" [ref=e38]:
+          - img [ref=e39]
+        - button "English" [ref=e41]:
+          - img
+          - generic [ref=e42]: English
+        - link "Login" [ref=e117] [cursor=pointer]:
+          - /url: /auth/login
+          - button "Login" [ref=e118]
+        - link "Sign Up" [ref=e119] [cursor=pointer]:
+          - /url: /auth/register
+          - button "Sign Up" [ref=e120]
+  - main [ref=e44]:
+    - generic [ref=e123]:
+      - generic [ref=e124]:
+        - generic [ref=e125]: Welcome Back
+        - generic [ref=e126]: Sign in to your account
+      - generic [ref=e127]:
+        - generic [ref=e128]:
+          - generic [ref=e129]:
+            - generic [ref=e130]: Email or Phone Number
+            - textbox "Email or Phone Number" [ref=e131]:
+              - /placeholder: you@example.com or 012-345 6789
+          - generic [ref=e132]:
+            - generic [ref=e133]: Password
+            - textbox "Password" [ref=e134]:
+              - /placeholder: ••••••••
+        - generic [ref=e135]:
+          - button "Sign in" [ref=e136]
+          - paragraph [ref=e137]:
+            - text: Don't have an account?
+            - link "Sign up" [ref=e138] [cursor=pointer]:
+              - /url: /auth/register
+  - contentinfo [ref=e49]:
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e53]:
+          - generic [ref=e55]: TZH
+          - generic [ref=e56]: TZH Sports Centre
+        - paragraph [ref=e57]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e58]:
+        - heading "Quick Links" [level=3] [ref=e59]
+        - generic [ref=e60]:
+          - link "Book a Court" [ref=e61] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e62] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e63] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e64] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e65] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e66]:
+        - heading "Contact" [level=3] [ref=e67]
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - img [ref=e70]
+            - paragraph [ref=e74]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e75] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e76]
+          - link "View on Google Maps" [ref=e78] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e79]:
+              - img [ref=e80]
+              - generic [ref=e83]: View on Google Maps
+      - generic [ref=e84]:
+        - heading "Operating Hours" [level=3] [ref=e85]:
+          - generic [ref=e86]:
+            - img [ref=e87]
+            - text: Operating Hours
+        - generic [ref=e90]:
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - generic [ref=e93]: Mon - Fri
+              - generic [ref=e94]: 3PM - 12AM
+            - generic [ref=e96]:
+              - generic [ref=e97]: Sat - Sun
+              - generic [ref=e98]: 9AM - 12AM
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - img [ref=e101]
+              - generic [ref=e103]:
+                - paragraph [ref=e104]: Court Bookings
+                - link "011-6868 8508" [ref=e105] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e106]:
+              - img [ref=e107]
+              - generic [ref=e109]:
+                - paragraph [ref=e110]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e111] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e113]:
+      - paragraph [ref=e114]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e116] [cursor=pointer]:
+        - /url: /terms

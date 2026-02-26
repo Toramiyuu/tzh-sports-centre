@@ -1,0 +1,585 @@
+- generic:
+  - alert
+  - link:
+    - /url: "#main-content"
+    - text: Skip to main content
+  - region "Notifications alt+T"
+  - navigation:
+    - generic:
+      - generic:
+        - generic:
+          - link:
+            - /url: /
+            - generic:
+              - generic: TZH
+            - generic: TZH Sports Centre
+        - generic:
+          - link:
+            - /url: /booking
+            - text: 🏸 Book Court
+          - link:
+            - /url: /lessons
+            - text: 📖 Lessons
+          - link:
+            - /url: /shop
+            - text: 🛒 Shop & Stringing
+        - generic:
+          - button:
+            - img
+          - button [expanded]:
+            - img
+            - generic: English
+          - link:
+            - /url: /auth/login
+            - button: Login
+          - link:
+            - /url: /auth/register
+            - button: Sign Up
+  - main:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - img
+          - generic:
+            - generic:
+              - generic: Open now until 12:00 AM
+            - paragraph: Ayer Itam, Penang
+            - heading [level=1]: Two Sports. One Tap. Game On.
+            - paragraph: Badminton & Pickleball
+            - paragraph: Badminton & pickleball courts in Ayer Itam. Book online, show up, play.
+            - generic:
+              - link:
+                - /url: /booking
+                - button: Book a Court
+              - link:
+                - /url: /lessons
+                - button: View Lessons
+            - generic:
+              - paragraph: No account needed — book as a guest
+              - generic:
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - generic: 4.7 stars on Google
+          - generic:
+            - generic: 4 Courts
+            - generic: From RM15/hr
+            - generic: Open Late
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - heading [level=2]: Live Court Status
+            - generic:
+              - link:
+                - /url: /booking?court=1
+                - generic:
+                  - generic: Court 2
+                - paragraph: Available
+              - link:
+                - /url: /booking?court=2
+                - generic:
+                  - generic: Court 4
+                - paragraph: Available
+              - link:
+                - /url: /booking?court=3
+                - generic:
+                  - generic: Court 3
+                - paragraph: Available
+              - link:
+                - /url: /booking?court=4
+                - generic:
+                  - generic: Court 1
+                - paragraph: Available
+        - generic:
+          - generic:
+            - generic:
+              - paragraph: Our Courts
+              - heading [level=2]: Built for Players
+              - paragraph: Ayer Itam's home for badminton and pickleball — book online, show up, and play.
+            - generic:
+              - generic:
+                - generic:
+                  - img
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - heading [level=3]: Professional Courts
+                    - paragraph: 4 courts with quality vinyl flooring and side-mounted lighting with zero glare.
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - heading [level=3]: Racket Stringing
+                    - paragraph: On-site stringing service with 18+ string options. Same-day turnaround available.
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - heading [level=3]: Expert Coaching
+                    - paragraph: BAM-certified coaches for all levels. Private and group sessions available.
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - generic: "4"
+                - generic: 4 Courts
+              - generic:
+                - generic:
+                  - img
+                - generic: "4.7"
+                - generic: Google Rating
+              - generic:
+                - generic:
+                  - img
+                - generic: RM15
+                - generic: From / Hour
+              - generic:
+                - generic:
+                  - img
+                - generic: 12AM
+                - generic: Open Until
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: What We Offer
+              - heading [level=2]: Two Sports, One Venue
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - generic: RM15/hr
+                  - generic: 4 courts
+                - generic:
+                  - heading [level=3]: Badminton
+                  - paragraph: Professional courts with quality flooring and lighting. Perfect for casual games or serious training.
+                  - generic:
+                    - generic: Vinyl Flooring
+                    - generic: Zero-Glare Lighting
+                    - generic: Walk-ins Welcome
+                  - link:
+                    - /url: /booking
+                    - button:
+                      - text: Book Now
+                      - img
+              - generic:
+                - generic:
+                  - img
+                  - generic: RM25/hr
+                  - generic: 4 courts
+                - generic:
+                  - heading [level=3]: Pickleball
+                  - paragraph: The fastest-growing sport in the world, now in Ayer Itam. Paddles and balls available for rent.
+                  - generic:
+                    - generic: Equipment Rental
+                    - generic: Beginner Friendly
+                    - generic: Zero-Glare Lighting
+                  - link:
+                    - /url: /booking?sport=pickleball
+                    - button:
+                      - text: Book Now
+                      - img
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Pricing
+              - heading [level=2]: Simple, Transparent Rates
+              - paragraph: No hidden fees. Pay only for what you choose.
+            - generic:
+              - generic:
+                - generic:
+                  - heading [level=3]: Badminton
+                  - generic: RM15/hr
+                  - paragraph: "Peak: RM18/hr"
+                  - list:
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Online booking
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Walk-ins welcome
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Quality vinyl flooring
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Zero-glare lighting
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Clean between sessions
+                  - link:
+                    - /url: /booking
+                    - button:
+                      - text: Book Court
+                      - img
+              - generic:
+                - generic: Popular
+                - generic:
+                  - heading [level=3]: Pickleball
+                  - generic: RM25/hr
+                  - paragraph: All hours
+                  - list:
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Online booking
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Equipment rental
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Beginner friendly
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Quality vinyl flooring
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Zero-glare lighting
+                  - link:
+                    - /url: /booking?sport=pickleball
+                    - button:
+                      - text: Book Court
+                      - img
+              - generic:
+                - generic:
+                  - heading [level=3]: Coaching
+                  - generic: RM50/mo
+                  - paragraph: Group classes from RM50. Private from RM130.
+                  - list:
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: BAM-certified coaches
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: All skill levels
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Kids & adult groups
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Private sessions available
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Flexible scheduling
+                  - link:
+                    - /url: /lessons
+                    - button:
+                      - text: View Lessons
+                      - img
+            - generic:
+              - generic:
+                - img
+                - generic: "Weekdays: 3 PM – 12 AM"
+              - generic:
+                - img
+                - generic: "Weekends & Holidays: 9 AM – 12 AM"
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Rated 4.7 out of 5 on Google Maps
+              - heading [level=2]: What Players Say
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: "4.7"
+                    - generic: Google Rating
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: Based on 100+ verified reviews from real players.
+                - link:
+                  - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+                  - text: View on Google
+                  - img
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “So hot but fun as hell! The courts are well-maintained and the booking system is super convenient. Love that it's open till midnight.”
+                - generic:
+                  - generic:
+                    - generic: "Y"
+                  - generic:
+                    - text: Ying Jie Teoh
+                    - generic:
+                      - generic: Google
+                      - generic: 2 months ago
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “Best badminton courts in Ayer Itam. Clean courts, good lighting with no glare, and the prices are very reasonable.”
+                - generic:
+                  - generic:
+                    - generic: W
+                  - generic:
+                    - text: Wei Liang C.
+                    - generic:
+                      - generic: Google
+                      - generic: 3 weeks ago
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “Tried pickleball here for the first time — great experience. Paddles available for rent and the staff are friendly. Easy online booking too.”
+                - generic:
+                  - generic:
+                    - generic: S
+                  - generic:
+                    - text: Sarah L.
+                    - generic:
+                      - generic: Google
+                      - generic: a month ago
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “Good facility with quality flooring. The coaching sessions are worth it — Coach is patient and knowledgeable. Racket stringing service is a nice bonus.”
+                - generic:
+                  - generic:
+                    - generic: M
+                  - generic:
+                    - text: Marcus T.
+                    - generic:
+                      - generic: Google
+                      - generic: 2 months ago
+        - generic:
+          - generic:
+            - img
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Professional Service
+              - heading [level=2]: Professional Racket Stringing
+              - paragraph: 18+ string options from top brands. Prices from RM33 per racket.
+              - generic:
+                - generic:
+                  - img
+                  - text: 18+ String Options
+                - generic:
+                  - img
+                  - text: Same-Day Service
+                - generic:
+                  - img
+                  - text: Expert Tension
+                - generic:
+                  - img
+                  - text: All Brands
+              - link:
+                - /url: /stringing
+                - button:
+                  - text: View Strings
+                  - img
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - generic: Pro Shop
+                - heading [level=2]: Gear Up for Your Game
+                - paragraph: Browse our collection of rackets, shoes, bags, and accessories from TZH and top brands. Available in-store and online.
+                - generic:
+                  - generic: Yonex
+                  - generic: Li-Ning
+                  - generic: Joola
+                  - generic: Victor
+                - link:
+                  - /url: /shop
+                  - button:
+                    - text: Browse Shop
+                    - img
+              - generic:
+                - link:
+                  - /url: /shop?category=rackets
+                  - img
+                  - generic:
+                    - generic: Rackets
+                    - generic: 20+ products
+                - link:
+                  - /url: /shop?category=shoes
+                  - img
+                  - generic:
+                    - generic: Shoes
+                    - generic: 15+ products
+                - link:
+                  - /url: /shop?category=bags
+                  - img
+                  - generic:
+                    - generic: Bags
+                    - generic: 10+ products
+                - link:
+                  - /url: /shop?category=accessories
+                  - img
+                  - generic:
+                    - generic: Accessories
+                    - generic: 30+ products
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Find Us
+              - heading [level=2]: Where to Find Us
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - heading [level=3]: Address
+                - paragraph: Jalan Sekolah La Salle 11400 Ayer Itam, Penang
+                - link:
+                  - /url: https://maps.app.goo.gl/xmtbgwLbfGoEUDWA9
+                  - text: Get Directions
+                  - img
+              - generic:
+                - generic:
+                  - img
+                - heading [level=3]: Opening Hours
+                - paragraph: "Weekdays: 3 PM – 12 AM Weekends & Holidays: 9 AM – 12 AM"
+              - generic:
+                - generic:
+                  - img
+                - heading [level=3]: Contact
+                - paragraph:
+                  - text: "Court Bookings:"
+                  - link:
+                    - /url: tel:+601168688508
+                    - text: 011-6868 8508
+                  - text: "Lessons:"
+                  - link:
+                    - /url: tel:+601175758508
+                    - text: 011-7575 8508
+            - iframe [ref=e534]
+  - contentinfo:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: TZH
+            - generic: TZH Sports Centre
+          - paragraph: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+        - generic:
+          - heading [level=3]: Quick Links
+          - generic:
+            - link:
+              - /url: /booking
+              - text: Book a Court
+            - link:
+              - /url: /lessons
+              - text: Lessons
+            - link:
+              - /url: /dashboard
+              - text: My Bookings
+            - link:
+              - /url: /updates
+              - text: Updates
+            - link:
+              - /url: /shop
+              - text: Pro Shop
+        - generic:
+          - heading [level=3]: Contact
+          - generic:
+            - generic:
+              - img
+              - generic:
+                - paragraph: Jalan Sekolah La Salle, 11400 Ayer Itam, Penang
+            - link:
+              - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+              - text: Get Directions
+              - img
+            - link:
+              - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+              - generic:
+                - img
+                - generic: View on Google Maps
+        - generic:
+          - heading [level=3]:
+            - generic:
+              - img
+              - text: Operating Hours
+          - generic:
+            - generic:
+              - generic:
+                - generic: Mon - Fri
+                - generic: 3PM - 12AM
+              - generic:
+                - generic: Sat - Sun
+                - generic: 9AM - 12AM
+            - generic:
+              - generic:
+                - img
+                - generic:
+                  - paragraph: Court Bookings
+                  - link:
+                    - /url: tel:+601168688508
+                    - text: 011-6868 8508
+              - generic:
+                - img
+                - generic:
+                  - paragraph: Lessons Enquiry
+                  - link:
+                    - /url: tel:+601175758508
+                    - text: 011-7575 8508
+    - generic:
+      - generic:
+        - paragraph: © 2026 TZH Sports Centre. All rights reserved.
+        - generic:
+          - link:
+            - /url: /terms
+            - text: Terms & Conditions
+  - menu "English" [active] [ref=e637]:
+    - menuitem "English" [ref=e638]
+    - menuitem "Bahasa Malaysia" [ref=e639]
+    - menuitem "中文" [ref=e640]

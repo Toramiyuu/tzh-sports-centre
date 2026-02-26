@@ -1,0 +1,175 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+        - link "👤 Member" [ref=e124] [cursor=pointer]:
+          - /url: /member
+        - link "📢 Updates" [ref=e125] [cursor=pointer]:
+          - /url: /updates
+        - link "⚙️ Admin" [ref=e126] [cursor=pointer]:
+          - /url: /admin
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e32]:
+          - img
+          - generic [ref=e33]: English
+        - button "H" [ref=e127]:
+          - generic [ref=e129]: H
+  - main [ref=e35]:
+    - generic [ref=e130]:
+      - generic [ref=e132]:
+        - generic [ref=e133]: H
+        - generic [ref=e134]:
+          - heading "Harvey" [level=1] [ref=e135]
+          - paragraph [ref=e136]: harveydavis2610@gmail.com
+      - generic [ref=e137]:
+        - button "Personal Info" [ref=e138]:
+          - img [ref=e139]
+          - text: Personal Info
+        - button "Bookings" [ref=e142]:
+          - img [ref=e143]
+          - text: Bookings
+        - button "Recurring" [ref=e145]:
+          - img [ref=e146]
+          - text: Recurring
+        - button "Lessons" [ref=e151]:
+          - img [ref=e152]
+          - text: Lessons
+        - button "Absences" [ref=e155]:
+          - img [ref=e156]
+          - text: Absences
+        - button "Settings" [ref=e160]:
+          - img [ref=e161]
+          - text: Settings
+      - generic [ref=e165]:
+        - generic [ref=e166]:
+          - generic [ref=e168]:
+            - img [ref=e169]
+            - text: February 2026 · Absence Calendar
+          - generic [ref=e173]:
+            - generic [ref=e174]:
+              - generic [ref=e175]: Su
+              - generic [ref=e176]: Mo
+              - generic [ref=e177]: Tu
+              - generic [ref=e178]: We
+              - generic [ref=e179]: Th
+              - generic [ref=e180]: Fr
+              - generic [ref=e181]: Sa
+            - generic [ref=e182]:
+              - generic [ref=e183]: "1"
+              - generic [ref=e184]: "2"
+              - generic [ref=e185]: "3"
+              - generic [ref=e186]: "4"
+              - generic [ref=e187]: "5"
+              - generic [ref=e188]: "6"
+              - generic [ref=e189]: "7"
+              - generic [ref=e190]: "8"
+              - generic [ref=e191]: "9"
+              - generic [ref=e192]: "10"
+              - generic [ref=e193]: "11"
+              - generic [ref=e194]: "12"
+              - generic [ref=e195]: "13"
+              - generic [ref=e196]: "14"
+              - generic [ref=e197]: "15"
+              - generic [ref=e198]: "16"
+              - generic [ref=e199]: "17"
+              - generic [ref=e200]: "18"
+              - generic [ref=e201]: "19"
+              - generic [ref=e202]: "20"
+              - generic [ref=e203]: "21"
+              - generic [ref=e204]: "22"
+              - generic [ref=e205]: "23"
+              - generic [ref=e206]: "24"
+              - generic [ref=e207]: "25"
+              - generic [ref=e208]: "26"
+              - generic [ref=e209]: "27"
+              - generic [ref=e210]: "28"
+        - generic [ref=e211]:
+          - generic [ref=e213]: Upcoming Lessons
+          - paragraph [ref=e215]: No upcoming lessons
+        - generic [ref=e216]:
+          - generic [ref=e218]: Absence History
+          - paragraph [ref=e220]: No absence records
+      - generic [ref=e221]: "UID: 001"
+  - contentinfo [ref=e56]:
+    - generic [ref=e58]:
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - generic [ref=e62]: TZH
+          - generic [ref=e63]: TZH Sports Centre
+        - paragraph [ref=e64]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e65]:
+        - heading "Quick Links" [level=3] [ref=e66]
+        - generic [ref=e67]:
+          - link "Book a Court" [ref=e68] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e69] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e70] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e71] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e72] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e73]:
+        - heading "Contact" [level=3] [ref=e74]
+        - generic [ref=e75]:
+          - generic [ref=e76]:
+            - img [ref=e77]
+            - paragraph [ref=e81]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e82] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e83]
+          - link "View on Google Maps" [ref=e85] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e86]:
+              - img [ref=e87]
+              - generic [ref=e90]: View on Google Maps
+      - generic [ref=e91]:
+        - heading "Operating Hours" [level=3] [ref=e92]:
+          - generic [ref=e93]:
+            - img [ref=e94]
+            - text: Operating Hours
+        - generic [ref=e97]:
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - generic [ref=e100]: Mon - Fri
+              - generic [ref=e101]: 3PM - 12AM
+            - generic [ref=e103]:
+              - generic [ref=e104]: Sat - Sun
+              - generic [ref=e105]: 9AM - 12AM
+          - generic [ref=e106]:
+            - generic [ref=e107]:
+              - img [ref=e108]
+              - generic [ref=e110]:
+                - paragraph [ref=e111]: Court Bookings
+                - link "011-6868 8508" [ref=e112] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e113]:
+              - img [ref=e114]
+              - generic [ref=e116]:
+                - paragraph [ref=e117]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e118] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e120]:
+      - paragraph [ref=e121]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e123] [cursor=pointer]:
+        - /url: /terms

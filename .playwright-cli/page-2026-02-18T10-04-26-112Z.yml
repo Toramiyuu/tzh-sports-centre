@@ -1,0 +1,574 @@
+- generic [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e32]:
+          - img
+          - generic [ref=e33]: English
+        - link "Login" [ref=e216] [cursor=pointer]:
+          - /url: /auth/login
+          - button "Login" [ref=e217]
+        - link "Sign Up" [ref=e218] [cursor=pointer]:
+          - /url: /auth/register
+          - button "Sign Up" [ref=e219]
+  - main [ref=e35]:
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - heading "Book a Court" [level=1] [ref=e39]
+        - paragraph [ref=e40]: Select Sport, Select Date, Select Time Slots
+      - generic [ref=e41]:
+        - navigation [ref=e43]:
+          - button "Badminton" [ref=e44]
+          - button "Pickleball" [ref=e45]
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - img [ref=e50]
+            - generic [ref=e54]:
+              - generic [ref=e55]: RM15/hr
+              - generic [ref=e56]: before 6PM
+              - generic [ref=e57]: RM18/hr
+              - generic [ref=e58]: after 6PM
+          - paragraph [ref=e60]: "Min: 1 Hour"
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - generic [ref=e65]:
+              - img [ref=e66]
+              - text: Select Date
+            - generic [ref=e612]:
+              - navigation "Navigation bar" [ref=e613]:
+                - button "Go to the Previous Month" [ref=e614]:
+                  - img
+                - button "Go to the Next Month" [ref=e615]:
+                  - img
+              - generic [ref=e616]:
+                - status [ref=e618]: February 2026
+                - grid "February 2026" [ref=e619]:
+                  - rowgroup [ref=e620]:
+                    - row [ref=e621]:
+                      - columnheader [ref=e622]: Su
+                      - columnheader [ref=e623]: Mo
+                      - columnheader [ref=e624]: Tu
+                      - columnheader [ref=e625]: We
+                      - columnheader [ref=e626]: Th
+                      - columnheader [ref=e627]: Fr
+                      - columnheader [ref=e628]: Sa
+                  - rowgroup [ref=e629]:
+                    - row "Sunday, February 1st, 2026 Monday, February 2nd, 2026 Tuesday, February 3rd, 2026 Wednesday, February 4th, 2026 Thursday, February 5th, 2026 Friday, February 6th, 2026 Saturday, February 7th, 2026" [ref=e630]:
+                      - gridcell "Sunday, February 1st, 2026" [ref=e631]:
+                        - button "Sunday, February 1st, 2026" [disabled]: "1"
+                      - gridcell "Monday, February 2nd, 2026" [ref=e632]:
+                        - button "Monday, February 2nd, 2026" [disabled]: "2"
+                      - gridcell "Tuesday, February 3rd, 2026" [ref=e633]:
+                        - button "Tuesday, February 3rd, 2026" [disabled]: "3"
+                      - gridcell "Wednesday, February 4th, 2026" [ref=e634]:
+                        - button "Wednesday, February 4th, 2026" [disabled]: "4"
+                      - gridcell "Thursday, February 5th, 2026" [ref=e635]:
+                        - button "Thursday, February 5th, 2026" [disabled]: "5"
+                      - gridcell "Friday, February 6th, 2026" [ref=e636]:
+                        - button "Friday, February 6th, 2026" [disabled]: "6"
+                      - gridcell "Saturday, February 7th, 2026" [ref=e637]:
+                        - button "Saturday, February 7th, 2026" [disabled]: "7"
+                    - row "Sunday, February 8th, 2026 Monday, February 9th, 2026 Tuesday, February 10th, 2026 Wednesday, February 11th, 2026 Thursday, February 12th, 2026 Friday, February 13th, 2026 Saturday, February 14th, 2026" [ref=e638]:
+                      - gridcell "Sunday, February 8th, 2026" [ref=e639]:
+                        - button "Sunday, February 8th, 2026" [disabled]: "8"
+                      - gridcell "Monday, February 9th, 2026" [ref=e640]:
+                        - button "Monday, February 9th, 2026" [disabled]: "9"
+                      - gridcell "Tuesday, February 10th, 2026" [ref=e641]:
+                        - button "Tuesday, February 10th, 2026" [disabled]: "10"
+                      - gridcell "Wednesday, February 11th, 2026" [ref=e642]:
+                        - button "Wednesday, February 11th, 2026" [disabled]: "11"
+                      - gridcell "Thursday, February 12th, 2026" [ref=e643]:
+                        - button "Thursday, February 12th, 2026" [disabled]: "12"
+                      - gridcell "Friday, February 13th, 2026" [ref=e644]:
+                        - button "Friday, February 13th, 2026" [disabled]: "13"
+                      - gridcell "Saturday, February 14th, 2026" [ref=e645]:
+                        - button "Saturday, February 14th, 2026" [disabled]: "14"
+                    - row "Sunday, February 15th, 2026 Monday, February 16th, 2026 Tuesday, February 17th, 2026 Today, Wednesday, February 18th, 2026, selected Thursday, February 19th, 2026 Friday, February 20th, 2026 Saturday, February 21st, 2026" [ref=e646]:
+                      - gridcell "Sunday, February 15th, 2026" [ref=e647]:
+                        - button "Sunday, February 15th, 2026" [disabled]: "15"
+                      - gridcell "Monday, February 16th, 2026" [ref=e648]:
+                        - button "Monday, February 16th, 2026" [disabled]: "16"
+                      - gridcell "Tuesday, February 17th, 2026" [ref=e649]:
+                        - button "Tuesday, February 17th, 2026" [disabled]: "17"
+                      - gridcell "Today, Wednesday, February 18th, 2026, selected" [selected] [ref=e650]:
+                        - button "Today, Wednesday, February 18th, 2026, selected" [ref=e651]: "18"
+                      - gridcell "Thursday, February 19th, 2026" [ref=e652]:
+                        - button "Thursday, February 19th, 2026" [ref=e653]: "19"
+                      - gridcell "Friday, February 20th, 2026" [ref=e654]:
+                        - button "Friday, February 20th, 2026" [ref=e655]: "20"
+                      - gridcell "Saturday, February 21st, 2026" [ref=e656]:
+                        - button "Saturday, February 21st, 2026" [ref=e657]: "21"
+                    - row "Sunday, February 22nd, 2026 Monday, February 23rd, 2026 Tuesday, February 24th, 2026 Wednesday, February 25th, 2026 Thursday, February 26th, 2026 Friday, February 27th, 2026 Saturday, February 28th, 2026" [ref=e658]:
+                      - gridcell "Sunday, February 22nd, 2026" [ref=e659]:
+                        - button "Sunday, February 22nd, 2026" [ref=e660]: "22"
+                      - gridcell "Monday, February 23rd, 2026" [ref=e661]:
+                        - button "Monday, February 23rd, 2026" [ref=e662]: "23"
+                      - gridcell "Tuesday, February 24th, 2026" [ref=e663]:
+                        - button "Tuesday, February 24th, 2026" [ref=e664]: "24"
+                      - gridcell "Wednesday, February 25th, 2026" [ref=e665]:
+                        - button "Wednesday, February 25th, 2026" [ref=e666]: "25"
+                      - gridcell "Thursday, February 26th, 2026" [ref=e667]:
+                        - button "Thursday, February 26th, 2026" [ref=e668]: "26"
+                      - gridcell "Friday, February 27th, 2026" [ref=e669]:
+                        - button "Friday, February 27th, 2026" [ref=e670]: "27"
+                      - gridcell "Saturday, February 28th, 2026" [ref=e671]:
+                        - button "Saturday, February 28th, 2026" [ref=e672]: "28"
+          - generic [ref=e131]:
+            - generic [ref=e133]:
+              - img [ref=e134]
+              - text: Select Time Slots - Wednesday, February 18, 2026
+              - generic [ref=e137]: Badminton
+            - table [ref=e282]:
+              - rowgroup [ref=e283]:
+                - row "Time Court 2 Court 4 Court 3 Court 1" [ref=e284]:
+                  - columnheader "Time" [ref=e285]
+                  - columnheader "Court 2" [ref=e286]
+                  - columnheader "Court 4" [ref=e287]
+                  - columnheader "Court 3" [ref=e288]
+                  - columnheader "Court 1" [ref=e289]
+              - rowgroup [ref=e290]:
+                - row "9:00 - 9:30 AM Past Past Past Past" [ref=e291]:
+                  - cell "9:00 - 9:30 AM" [ref=e292]
+                  - cell "Past" [ref=e293]:
+                    - button "Past" [disabled] [ref=e294]
+                  - cell "Past" [ref=e295]:
+                    - button "Past" [disabled] [ref=e296]
+                  - cell "Past" [ref=e297]:
+                    - button "Past" [disabled] [ref=e298]
+                  - cell "Past" [ref=e299]:
+                    - button "Past" [disabled] [ref=e300]
+                - row "9:30 - 10:00 AM Past Past Past Past" [ref=e301]:
+                  - cell "9:30 - 10:00 AM" [ref=e302]
+                  - cell "Past" [ref=e303]:
+                    - button "Past" [disabled] [ref=e304]
+                  - cell "Past" [ref=e305]:
+                    - button "Past" [disabled] [ref=e306]
+                  - cell "Past" [ref=e307]:
+                    - button "Past" [disabled] [ref=e308]
+                  - cell "Past" [ref=e309]:
+                    - button "Past" [disabled] [ref=e310]
+                - row "10:00 - 10:30 AM Past Past Past Past" [ref=e311]:
+                  - cell "10:00 - 10:30 AM" [ref=e312]
+                  - cell "Past" [ref=e313]:
+                    - button "Past" [disabled] [ref=e314]
+                  - cell "Past" [ref=e315]:
+                    - button "Past" [disabled] [ref=e316]
+                  - cell "Past" [ref=e317]:
+                    - button "Past" [disabled] [ref=e318]
+                  - cell "Past" [ref=e319]:
+                    - button "Past" [disabled] [ref=e320]
+                - row "10:30 - 11:00 AM Past Past Past Past" [ref=e321]:
+                  - cell "10:30 - 11:00 AM" [ref=e322]
+                  - cell "Past" [ref=e323]:
+                    - button "Past" [disabled] [ref=e324]
+                  - cell "Past" [ref=e325]:
+                    - button "Past" [disabled] [ref=e326]
+                  - cell "Past" [ref=e327]:
+                    - button "Past" [disabled] [ref=e328]
+                  - cell "Past" [ref=e329]:
+                    - button "Past" [disabled] [ref=e330]
+                - row "11:00 - 11:30 AM Past Past Past Past" [ref=e331]:
+                  - cell "11:00 - 11:30 AM" [ref=e332]
+                  - cell "Past" [ref=e333]:
+                    - button "Past" [disabled] [ref=e334]
+                  - cell "Past" [ref=e335]:
+                    - button "Past" [disabled] [ref=e336]
+                  - cell "Past" [ref=e337]:
+                    - button "Past" [disabled] [ref=e338]
+                  - cell "Past" [ref=e339]:
+                    - button "Past" [disabled] [ref=e340]
+                - row "11:30 - 12:00 PM Past Past Past Past" [ref=e341]:
+                  - cell "11:30 - 12:00 PM" [ref=e342]
+                  - cell "Past" [ref=e343]:
+                    - button "Past" [disabled] [ref=e344]
+                  - cell "Past" [ref=e345]:
+                    - button "Past" [disabled] [ref=e346]
+                  - cell "Past" [ref=e347]:
+                    - button "Past" [disabled] [ref=e348]
+                  - cell "Past" [ref=e349]:
+                    - button "Past" [disabled] [ref=e350]
+                - row "12:00 - 12:30 PM Past Past Past Past" [ref=e351]:
+                  - cell "12:00 - 12:30 PM" [ref=e352]
+                  - cell "Past" [ref=e353]:
+                    - button "Past" [disabled] [ref=e354]
+                  - cell "Past" [ref=e355]:
+                    - button "Past" [disabled] [ref=e356]
+                  - cell "Past" [ref=e357]:
+                    - button "Past" [disabled] [ref=e358]
+                  - cell "Past" [ref=e359]:
+                    - button "Past" [disabled] [ref=e360]
+                - row "12:30 - 1:00 PM Past Past Past Past" [ref=e361]:
+                  - cell "12:30 - 1:00 PM" [ref=e362]
+                  - cell "Past" [ref=e363]:
+                    - button "Past" [disabled] [ref=e364]
+                  - cell "Past" [ref=e365]:
+                    - button "Past" [disabled] [ref=e366]
+                  - cell "Past" [ref=e367]:
+                    - button "Past" [disabled] [ref=e368]
+                  - cell "Past" [ref=e369]:
+                    - button "Past" [disabled] [ref=e370]
+                - row "1:00 - 1:30 PM Past Past Past Past" [ref=e371]:
+                  - cell "1:00 - 1:30 PM" [ref=e372]
+                  - cell "Past" [ref=e373]:
+                    - button "Past" [disabled] [ref=e374]
+                  - cell "Past" [ref=e375]:
+                    - button "Past" [disabled] [ref=e376]
+                  - cell "Past" [ref=e377]:
+                    - button "Past" [disabled] [ref=e378]
+                  - cell "Past" [ref=e379]:
+                    - button "Past" [disabled] [ref=e380]
+                - row "1:30 - 2:00 PM Past Past Past Past" [ref=e381]:
+                  - cell "1:30 - 2:00 PM" [ref=e382]
+                  - cell "Past" [ref=e383]:
+                    - button "Past" [disabled] [ref=e384]
+                  - cell "Past" [ref=e385]:
+                    - button "Past" [disabled] [ref=e386]
+                  - cell "Past" [ref=e387]:
+                    - button "Past" [disabled] [ref=e388]
+                  - cell "Past" [ref=e389]:
+                    - button "Past" [disabled] [ref=e390]
+                - row "2:00 - 2:30 PM Past Past Past Past" [ref=e391]:
+                  - cell "2:00 - 2:30 PM" [ref=e392]
+                  - cell "Past" [ref=e393]:
+                    - button "Past" [disabled] [ref=e394]
+                  - cell "Past" [ref=e395]:
+                    - button "Past" [disabled] [ref=e396]
+                  - cell "Past" [ref=e397]:
+                    - button "Past" [disabled] [ref=e398]
+                  - cell "Past" [ref=e399]:
+                    - button "Past" [disabled] [ref=e400]
+                - row "2:30 - 3:00 PM Past Past Past Past" [ref=e401]:
+                  - cell "2:30 - 3:00 PM" [ref=e402]
+                  - cell "Past" [ref=e403]:
+                    - button "Past" [disabled] [ref=e404]
+                  - cell "Past" [ref=e405]:
+                    - button "Past" [disabled] [ref=e406]
+                  - cell "Past" [ref=e407]:
+                    - button "Past" [disabled] [ref=e408]
+                  - cell "Past" [ref=e409]:
+                    - button "Past" [disabled] [ref=e410]
+                - row "3:00 - 3:30 PM Past Past Past Past" [ref=e411]:
+                  - cell "3:00 - 3:30 PM" [ref=e412]
+                  - cell "Past" [ref=e413]:
+                    - button "Past" [disabled] [ref=e414]
+                  - cell "Past" [ref=e415]:
+                    - button "Past" [disabled] [ref=e416]
+                  - cell "Past" [ref=e417]:
+                    - button "Past" [disabled] [ref=e418]
+                  - cell "Past" [ref=e419]:
+                    - button "Past" [disabled] [ref=e420]
+                - row "3:30 - 4:00 PM Past Past Past Past" [ref=e421]:
+                  - cell "3:30 - 4:00 PM" [ref=e422]
+                  - cell "Past" [ref=e423]:
+                    - button "Past" [disabled] [ref=e424]
+                  - cell "Past" [ref=e425]:
+                    - button "Past" [disabled] [ref=e426]
+                  - cell "Past" [ref=e427]:
+                    - button "Past" [disabled] [ref=e428]
+                  - cell "Past" [ref=e429]:
+                    - button "Past" [disabled] [ref=e430]
+                - row "4:00 - 4:30 PM Past Past Past Past" [ref=e431]:
+                  - cell "4:00 - 4:30 PM" [ref=e432]
+                  - cell "Past" [ref=e433]:
+                    - button "Past" [disabled] [ref=e434]
+                  - cell "Past" [ref=e435]:
+                    - button "Past" [disabled] [ref=e436]
+                  - cell "Past" [ref=e437]:
+                    - button "Past" [disabled] [ref=e438]
+                  - cell "Past" [ref=e439]:
+                    - button "Past" [disabled] [ref=e440]
+                - row "4:30 - 5:00 PM Past Past Past Past" [ref=e441]:
+                  - cell "4:30 - 5:00 PM" [ref=e442]
+                  - cell "Past" [ref=e443]:
+                    - button "Past" [disabled] [ref=e444]
+                  - cell "Past" [ref=e445]:
+                    - button "Past" [disabled] [ref=e446]
+                  - cell "Past" [ref=e447]:
+                    - button "Past" [disabled] [ref=e448]
+                  - cell "Past" [ref=e449]:
+                    - button "Past" [disabled] [ref=e450]
+                - row "5:00 - 5:30 PM Past Past Past Past" [ref=e451]:
+                  - cell "5:00 - 5:30 PM" [ref=e452]
+                  - cell "Past" [ref=e453]:
+                    - button "Past" [disabled] [ref=e454]
+                  - cell "Past" [ref=e455]:
+                    - button "Past" [disabled] [ref=e456]
+                  - cell "Past" [ref=e457]:
+                    - button "Past" [disabled] [ref=e458]
+                  - cell "Past" [ref=e459]:
+                    - button "Past" [disabled] [ref=e460]
+                - row "5:30 - 6:00 PM Past Past Past Past" [ref=e461]:
+                  - cell "5:30 - 6:00 PM" [ref=e462]
+                  - cell "Past" [ref=e463]:
+                    - button "Past" [disabled] [ref=e464]
+                  - cell "Past" [ref=e465]:
+                    - button "Past" [disabled] [ref=e466]
+                  - cell "Past" [ref=e467]:
+                    - button "Past" [disabled] [ref=e468]
+                  - cell "Past" [ref=e469]:
+                    - button "Past" [disabled] [ref=e470]
+                - row "6:00 - 6:30 PM Past Past Past Past" [ref=e471]:
+                  - cell "6:00 - 6:30 PM" [ref=e472]
+                  - cell "Past" [ref=e473]:
+                    - button "Past" [disabled] [ref=e474]
+                  - cell "Past" [ref=e475]:
+                    - button "Past" [disabled] [ref=e476]
+                  - cell "Past" [ref=e477]:
+                    - button "Past" [disabled] [ref=e478]
+                  - cell "Past" [ref=e479]:
+                    - button "Past" [disabled] [ref=e480]
+                - row "6:30 - 7:00 PM Available Selected Available Available" [ref=e673]:
+                  - cell "6:30 - 7:00 PM" [ref=e482]
+                  - cell "Available" [ref=e483]:
+                    - button "Available" [ref=e484]
+                  - cell "Selected" [ref=e674]:
+                    - button "Selected" [active] [ref=e675]
+                  - cell "Available" [ref=e487]:
+                    - button "Available" [ref=e488]
+                  - cell "Available" [ref=e489]:
+                    - button "Available" [ref=e490]
+                - row "7:00 - 7:30 PM Booked Selected Available Available" [ref=e676]:
+                  - cell "7:00 - 7:30 PM" [ref=e492]
+                  - cell "Booked" [ref=e493]:
+                    - button "Booked" [disabled] [ref=e494]
+                  - cell "Selected" [ref=e677]:
+                    - button "Selected" [ref=e678]
+                  - cell "Available" [ref=e497]:
+                    - button "Available" [ref=e498]
+                  - cell "Available" [ref=e499]:
+                    - button "Available" [ref=e500]
+                - row "7:30 - 8:00 PM Booked Booked Booked Available" [ref=e501]:
+                  - cell "7:30 - 8:00 PM" [ref=e502]
+                  - cell "Booked" [ref=e503]:
+                    - button "Booked" [disabled] [ref=e504]
+                  - cell "Booked" [ref=e505]:
+                    - button "Booked" [disabled] [ref=e506]
+                  - cell "Booked" [ref=e507]:
+                    - button "Booked" [disabled] [ref=e508]
+                  - cell "Available" [ref=e509]:
+                    - button "Available" [ref=e510]
+                - row "8:00 - 8:30 PM Booked Booked Booked Booked" [ref=e511]:
+                  - cell "8:00 - 8:30 PM" [ref=e512]
+                  - cell "Booked" [ref=e513]:
+                    - button "Booked" [disabled] [ref=e514]
+                  - cell "Booked" [ref=e515]:
+                    - button "Booked" [disabled] [ref=e516]
+                  - cell "Booked" [ref=e517]:
+                    - button "Booked" [disabled] [ref=e518]
+                  - cell "Booked" [ref=e519]:
+                    - button "Booked" [disabled] [ref=e520]
+                - row "8:30 - 9:00 PM Booked Booked Booked Booked" [ref=e521]:
+                  - cell "8:30 - 9:00 PM" [ref=e522]
+                  - cell "Booked" [ref=e523]:
+                    - button "Booked" [disabled] [ref=e524]
+                  - cell "Booked" [ref=e525]:
+                    - button "Booked" [disabled] [ref=e526]
+                  - cell "Booked" [ref=e527]:
+                    - button "Booked" [disabled] [ref=e528]
+                  - cell "Booked" [ref=e529]:
+                    - button "Booked" [disabled] [ref=e530]
+                - row "9:00 - 9:30 PM Available Booked Booked Booked" [ref=e531]:
+                  - cell "9:00 - 9:30 PM" [ref=e532]
+                  - cell "Available" [ref=e533]:
+                    - button "Available" [ref=e534]
+                  - cell "Booked" [ref=e535]:
+                    - button "Booked" [disabled] [ref=e536]
+                  - cell "Booked" [ref=e537]:
+                    - button "Booked" [disabled] [ref=e538]
+                  - cell "Booked" [ref=e539]:
+                    - button "Booked" [disabled] [ref=e540]
+                - row "9:30 - 10:00 PM Booked Booked Booked Booked" [ref=e541]:
+                  - cell "9:30 - 10:00 PM" [ref=e542]
+                  - cell "Booked" [ref=e543]:
+                    - button "Booked" [disabled] [ref=e544]
+                  - cell "Booked" [ref=e545]:
+                    - button "Booked" [disabled] [ref=e546]
+                  - cell "Booked" [ref=e547]:
+                    - button "Booked" [disabled] [ref=e548]
+                  - cell "Booked" [ref=e549]:
+                    - button "Booked" [disabled] [ref=e550]
+                - row "10:00 - 10:30 PM Booked Booked Booked Booked" [ref=e551]:
+                  - cell "10:00 - 10:30 PM" [ref=e552]
+                  - cell "Booked" [ref=e553]:
+                    - button "Booked" [disabled] [ref=e554]
+                  - cell "Booked" [ref=e555]:
+                    - button "Booked" [disabled] [ref=e556]
+                  - cell "Booked" [ref=e557]:
+                    - button "Booked" [disabled] [ref=e558]
+                  - cell "Booked" [ref=e559]:
+                    - button "Booked" [disabled] [ref=e560]
+                - row "10:30 - 11:00 PM Booked Booked Booked Booked" [ref=e561]:
+                  - cell "10:30 - 11:00 PM" [ref=e562]
+                  - cell "Booked" [ref=e563]:
+                    - button "Booked" [disabled] [ref=e564]
+                  - cell "Booked" [ref=e565]:
+                    - button "Booked" [disabled] [ref=e566]
+                  - cell "Booked" [ref=e567]:
+                    - button "Booked" [disabled] [ref=e568]
+                  - cell "Booked" [ref=e569]:
+                    - button "Booked" [disabled] [ref=e570]
+                - row "11:00 - 11:30 PM Booked Booked Booked Booked" [ref=e571]:
+                  - cell "11:00 - 11:30 PM" [ref=e572]
+                  - cell "Booked" [ref=e573]:
+                    - button "Booked" [disabled] [ref=e574]
+                  - cell "Booked" [ref=e575]:
+                    - button "Booked" [disabled] [ref=e576]
+                  - cell "Booked" [ref=e577]:
+                    - button "Booked" [disabled] [ref=e578]
+                  - cell "Booked" [ref=e579]:
+                    - button "Booked" [disabled] [ref=e580]
+                - row "11:30 - 12:00 AM Booked Booked Booked Booked" [ref=e581]:
+                  - cell "11:30 - 12:00 AM" [ref=e582]
+                  - cell "Booked" [ref=e583]:
+                    - button "Booked" [disabled] [ref=e584]
+                  - cell "Booked" [ref=e585]:
+                    - button "Booked" [disabled] [ref=e586]
+                  - cell "Booked" [ref=e587]:
+                    - button "Booked" [disabled] [ref=e588]
+                  - cell "Booked" [ref=e589]:
+                    - button "Booked" [disabled] [ref=e590]
+        - generic [ref=e141]:
+          - generic [ref=e143]:
+            - img [ref=e144]
+            - text: Confirm Booking
+          - generic [ref=e679]:
+            - generic [ref=e680]:
+              - paragraph [ref=e681]:
+                - strong [ref=e682]: "Select Sport:"
+                - text: Badminton
+              - paragraph [ref=e683]:
+                - strong [ref=e684]: "Select Date:"
+                - text: Wednesday, February 18, 2026
+            - generic [ref=e685]:
+              - paragraph [ref=e686]: "Selected Slots:"
+              - generic [ref=e687]:
+                - generic [ref=e688]:
+                  - generic [ref=e689]: Court 4
+                  - text: 6:30 - 7:00 PM
+                - generic [ref=e690]: RM9.00
+              - generic [ref=e691]:
+                - generic [ref=e692]:
+                  - generic [ref=e693]: Court 4
+                  - text: 7:00 - 7:30 PM
+                - generic [ref=e694]: RM9.00
+            - generic [ref=e695]:
+              - generic [ref=e696]:
+                - generic [ref=e697]: "Total Amount:"
+                - generic [ref=e698]: RM18.00
+              - generic [ref=e699]:
+                - generic [ref=e700]:
+                  - img [ref=e701]
+                  - text: Guest Booking
+                - generic [ref=e704]:
+                  - generic [ref=e705]:
+                    - generic [ref=e706]: Your Name *
+                    - textbox "Your Name *" [ref=e707]:
+                      - /placeholder: Your Name
+                  - generic [ref=e708]:
+                    - generic [ref=e709]: Phone Number *
+                    - generic [ref=e710]:
+                      - generic [ref=e711]:
+                        - generic [ref=e712]: 🇲🇾
+                        - generic [ref=e713]: "+60"
+                      - textbox "Phone Number *" [ref=e714]:
+                        - /placeholder: 12 345 6789
+                  - generic [ref=e715]:
+                    - generic [ref=e716]: Email (optional)
+                    - textbox "Email (optional)" [ref=e717]:
+                      - /placeholder: email@example.com
+              - generic [ref=e718]:
+                - checkbox "I have read and agree to the Terms & Conditions" [ref=e719]
+                - generic [ref=e720] [cursor=pointer]:
+                  - text: I have read and agree to the
+                  - button "Terms & Conditions" [ref=e721]
+              - button "Book Now - Touch 'n Go" [disabled]:
+                - img
+                - text: Book Now - Touch 'n Go
+              - button "Book Now - DuitNow" [disabled]:
+                - img
+                - text: Book Now - DuitNow
+  - contentinfo [ref=e148]:
+    - generic [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - generic [ref=e154]: TZH
+          - generic [ref=e155]: TZH Sports Centre
+        - paragraph [ref=e156]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e157]:
+        - heading "Quick Links" [level=3] [ref=e158]
+        - generic [ref=e159]:
+          - link "Book a Court" [ref=e160] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e161] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e162] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e163] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e164] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e165]:
+        - heading "Contact" [level=3] [ref=e166]
+        - generic [ref=e167]:
+          - generic [ref=e168]:
+            - img [ref=e169]
+            - paragraph [ref=e173]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e174] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e175]
+          - link "View on Google Maps" [ref=e177] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e178]:
+              - img [ref=e179]
+              - generic [ref=e182]: View on Google Maps
+      - generic [ref=e183]:
+        - heading "Operating Hours" [level=3] [ref=e184]:
+          - generic [ref=e185]:
+            - img [ref=e186]
+            - text: Operating Hours
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - generic [ref=e191]:
+              - generic [ref=e192]: Mon - Fri
+              - generic [ref=e193]: 3PM - 12AM
+            - generic [ref=e195]:
+              - generic [ref=e196]: Sat - Sun
+              - generic [ref=e197]: 9AM - 12AM
+          - generic [ref=e198]:
+            - generic [ref=e199]:
+              - img [ref=e200]
+              - generic [ref=e202]:
+                - paragraph [ref=e203]: Court Bookings
+                - link "011-6868 8508" [ref=e204] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e205]:
+              - img [ref=e206]
+              - generic [ref=e208]:
+                - paragraph [ref=e209]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e210] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e212]:
+      - paragraph [ref=e213]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e215] [cursor=pointer]:
+        - /url: /terms

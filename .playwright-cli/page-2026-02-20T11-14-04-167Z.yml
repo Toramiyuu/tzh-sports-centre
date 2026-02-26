@@ -1,0 +1,95 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - generic [ref=e7]: TZH
+    - generic [ref=e10]: Loading
+  - region "Notifications alt+T"
+  - navigation [ref=e15]:
+    - generic [ref=e17]:
+      - link "TZH TZH Sports Centre" [ref=e19] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e21]: TZH
+        - generic [ref=e22]: TZH Sports Centre
+      - generic [ref=e23]:
+        - link "🏸 Book Court" [ref=e24] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e25] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e26] [cursor=pointer]:
+          - /url: /shop
+      - generic [ref=e27]:
+        - button "Toggle theme" [ref=e28]:
+          - img [ref=e29]
+        - button "English" [ref=e31]:
+          - img
+          - generic [ref=e32]: English
+  - main [ref=e34]:
+    - img [ref=e37]
+  - contentinfo [ref=e39]:
+    - generic [ref=e41]:
+      - generic [ref=e42]:
+        - generic [ref=e43]:
+          - generic [ref=e45]: TZH
+          - generic [ref=e46]: TZH Sports Centre
+        - paragraph [ref=e47]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e48]:
+        - heading "Quick Links" [level=3] [ref=e49]
+        - generic [ref=e50]:
+          - link "Book a Court" [ref=e51] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e52] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e53] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e54] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e55] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e56]:
+        - heading "Contact" [level=3] [ref=e57]
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - img [ref=e60]
+            - paragraph [ref=e64]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e65] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e66]
+          - link "View on Google Maps" [ref=e68] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e69]:
+              - img [ref=e70]
+              - generic [ref=e73]: View on Google Maps
+      - generic [ref=e74]:
+        - heading "Operating Hours" [level=3] [ref=e75]:
+          - generic [ref=e76]:
+            - img [ref=e77]
+            - text: Operating Hours
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - generic [ref=e82]:
+              - generic [ref=e83]: Mon - Fri
+              - generic [ref=e84]: 3PM - 12AM
+            - generic [ref=e86]:
+              - generic [ref=e87]: Sat - Sun
+              - generic [ref=e88]: 9AM - 12AM
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - img [ref=e91]
+              - generic [ref=e93]:
+                - paragraph [ref=e94]: Court Bookings
+                - link "011-6868 8508" [ref=e95] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e96]:
+              - img [ref=e97]
+              - generic [ref=e99]:
+                - paragraph [ref=e100]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e101] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e103]:
+      - paragraph [ref=e104]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e106] [cursor=pointer]:
+        - /url: /terms

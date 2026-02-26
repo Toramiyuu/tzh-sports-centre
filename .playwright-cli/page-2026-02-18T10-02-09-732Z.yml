@@ -1,0 +1,585 @@
+- generic:
+  - alert
+  - link:
+    - /url: "#main-content"
+    - text: Skip to main content
+  - region "Notifications alt+T"
+  - navigation:
+    - generic:
+      - generic:
+        - generic:
+          - link:
+            - /url: /
+            - generic:
+              - generic: TZH
+            - generic: TZH Sports Centre
+        - generic:
+          - link:
+            - /url: /booking
+            - text: 🏸 Tempah Gelanggang
+          - link:
+            - /url: /lessons
+            - text: 📖 Kelas
+          - link:
+            - /url: /shop
+            - text: 🛒 Kedai & Tali
+        - generic:
+          - button:
+            - img
+          - button [expanded]:
+            - img
+            - generic: Bahasa Malaysia
+          - link:
+            - /url: /auth/login
+            - button: Log Masuk
+          - link:
+            - /url: /auth/register
+            - button: Daftar
+  - main:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - img
+          - generic:
+            - generic:
+              - generic: Buka sehingga 12:00 MLM
+            - paragraph: Ayer Itam, Pulau Pinang
+            - heading [level=1]: Dua Sukan. Satu Ketik. Jom Main.
+            - paragraph: Badminton & Pickleball
+            - paragraph: Gelanggang badminton dan pickleball di Ayer Itam. Tempah online, hadir, main.
+            - generic:
+              - link:
+                - /url: /booking
+                - button: Tempah Gelanggang
+              - link:
+                - /url: /lessons
+                - button: Lihat Kelas
+            - generic:
+              - paragraph: Tiada akaun diperlukan — tempah sebagai tetamu
+              - generic:
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - generic: 4.7 bintang di Google
+          - generic:
+            - generic: 4 Gelanggang
+            - generic: Dari RM15/jam
+            - generic: Buka Lewat Malam
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - heading [level=2]: Status Gelanggang
+            - generic:
+              - link:
+                - /url: /booking?court=1
+                - generic:
+                  - generic: Court 2
+                - paragraph: Tersedia
+              - link:
+                - /url: /booking?court=2
+                - generic:
+                  - generic: Court 4
+                - paragraph: Tersedia
+              - link:
+                - /url: /booking?court=3
+                - generic:
+                  - generic: Court 3
+                - paragraph: Tersedia
+              - link:
+                - /url: /booking?court=4
+                - generic:
+                  - generic: Court 1
+                - paragraph: Tersedia
+        - generic:
+          - generic:
+            - generic:
+              - paragraph: Gelanggang Kami
+              - heading [level=2]: Dibina untuk Pemain
+              - paragraph: Destinasi badminton dan pickleball Ayer Itam — tempah online, hadir, dan main.
+            - generic:
+              - generic:
+                - generic:
+                  - img
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - heading [level=3]: Gelanggang Profesional
+                    - paragraph: 4 gelanggang dengan lantai vinil berkualiti dan lampu sisi tanpa silau.
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - heading [level=3]: Pasang Tali Raket
+                    - paragraph: Perkhidmatan pasang tali di premis dengan 18+ pilihan tali. Boleh siap hari yang sama.
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - heading [level=3]: Jurulatih Pakar
+                    - paragraph: Jurulatih bertauliah BAM untuk semua tahap. Kelas persendirian dan berkumpulan.
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - generic: "4"
+                - generic: 4 Gelanggang
+              - generic:
+                - generic:
+                  - img
+                - generic: "4.7"
+                - generic: Penilaian Google
+              - generic:
+                - generic:
+                  - img
+                - generic: RM15
+                - generic: Dari / Jam
+              - generic:
+                - generic:
+                  - img
+                - generic: 12AM
+                - generic: Buka Sehingga
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Apa Yang Kami Tawarkan
+              - heading [level=2]: Dua Sukan, Satu Tempat
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - generic: RM15/jam
+                  - generic: 4 gelanggang
+                - generic:
+                  - heading [level=3]: Badminton
+                  - paragraph: Gelanggang profesional dengan lantai dan lampu berkualiti. Sesuai untuk permainan kasual atau latihan serius.
+                  - generic:
+                    - generic: Lantai Vinil
+                    - generic: Lampu Tanpa Silau
+                    - generic: Walk-in Dialu-alukan
+                  - link:
+                    - /url: /booking
+                    - button:
+                      - text: Tempah Sekarang
+                      - img
+              - generic:
+                - generic:
+                  - img
+                  - generic: RM25/jam
+                  - generic: 4 gelanggang
+                - generic:
+                  - heading [level=3]: Pickleball
+                  - paragraph: Sukan paling pesat berkembang di dunia, kini di Ayer Itam. Raket dan bola boleh disewa.
+                  - generic:
+                    - generic: Sewa Peralatan
+                    - generic: Sesuai Pemula
+                    - generic: Lampu Tanpa Silau
+                  - link:
+                    - /url: /booking?sport=pickleball
+                    - button:
+                      - text: Tempah Sekarang
+                      - img
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Pricing
+              - heading [level=2]: Simple, Transparent Rates
+              - paragraph: Tiada caj tersembunyi. Bayar hanya untuk apa yang anda pilih.
+            - generic:
+              - generic:
+                - generic:
+                  - heading [level=3]: Badminton
+                  - generic: RM15/hr
+                  - paragraph: "Peak: RM18/hr"
+                  - list:
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Online booking
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Walk-ins welcome
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Quality vinyl flooring
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Zero-glare lighting
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Clean between sessions
+                  - link:
+                    - /url: /booking
+                    - button:
+                      - text: Book Court
+                      - img
+              - generic:
+                - generic: Popular
+                - generic:
+                  - heading [level=3]: Pickleball
+                  - generic: RM25/hr
+                  - paragraph: All hours
+                  - list:
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Online booking
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Equipment rental
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Beginner friendly
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Quality vinyl flooring
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Zero-glare lighting
+                  - link:
+                    - /url: /booking?sport=pickleball
+                    - button:
+                      - text: Book Court
+                      - img
+              - generic:
+                - generic:
+                  - heading [level=3]: Latihan
+                  - generic: RM50/mo
+                  - paragraph: Group classes from RM50. Private from RM130.
+                  - list:
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: BAM-certified coaches
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: All skill levels
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Kids & adult groups
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Private sessions available
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Flexible scheduling
+                  - link:
+                    - /url: /lessons
+                    - button:
+                      - text: View Lessons
+                      - img
+            - generic:
+              - generic:
+                - img
+                - generic: "Hari Bekerja: 3 PTG – 12 MLM"
+              - generic:
+                - img
+                - generic: "Hujung Minggu & Cuti: 9 PG – 12 MLM"
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Penilaian 4.7 daripada 5 di Google Maps
+              - heading [level=2]: Apa Kata Pemain
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: "4.7"
+                    - generic: Penilaian Google
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: Berdasarkan 100+ ulasan daripada pemain sebenar.
+                - link:
+                  - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+                  - text: Lihat di Google
+                  - img
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “So hot but fun as hell! The courts are well-maintained and the booking system is super convenient. Love that it's open till midnight.”
+                - generic:
+                  - generic:
+                    - generic: "Y"
+                  - generic:
+                    - text: Ying Jie Teoh
+                    - generic:
+                      - generic: Google
+                      - generic: 2 bulan lalu
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “Best badminton courts in Ayer Itam. Clean courts, good lighting with no glare, and the prices are very reasonable.”
+                - generic:
+                  - generic:
+                    - generic: W
+                  - generic:
+                    - text: Wei Liang C.
+                    - generic:
+                      - generic: Google
+                      - generic: 3 weeks ago
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “Tried pickleball here for the first time — great experience. Paddles available for rent and the staff are friendly. Easy online booking too.”
+                - generic:
+                  - generic:
+                    - generic: S
+                  - generic:
+                    - text: Sarah L.
+                    - generic:
+                      - generic: Google
+                      - generic: a month ago
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “Good facility with quality flooring. The coaching sessions are worth it — Coach is patient and knowledgeable. Racket stringing service is a nice bonus.”
+                - generic:
+                  - generic:
+                    - generic: M
+                  - generic:
+                    - text: Marcus T.
+                    - generic:
+                      - generic: Google
+                      - generic: 2 months ago
+        - generic:
+          - generic:
+            - img
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Professional Service
+              - heading [level=2]: Perkhidmatan Tali Raket Profesional
+              - paragraph: 18+ pilihan tali dari jenama terkemuka. Harga dari RM33 setiap raket.
+              - generic:
+                - generic:
+                  - img
+                  - text: 18+ String Options
+                - generic:
+                  - img
+                  - text: Same-Day Service
+                - generic:
+                  - img
+                  - text: Expert Tension
+                - generic:
+                  - img
+                  - text: All Brands
+              - link:
+                - /url: /stringing
+                - button:
+                  - text: Lihat Tali
+                  - img
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - generic: Pro Shop
+                - heading [level=2]: Gear Up for Your Game
+                - paragraph: Browse our collection of rackets, shoes, bags, and accessories from TZH and top brands. Available in-store and online.
+                - generic:
+                  - generic: Yonex
+                  - generic: Li-Ning
+                  - generic: Joola
+                  - generic: Victor
+                - link:
+                  - /url: /shop
+                  - button:
+                    - text: Browse Shop
+                    - img
+              - generic:
+                - link:
+                  - /url: /shop?category=rackets
+                  - img
+                  - generic:
+                    - generic: Rackets
+                    - generic: 20+ products
+                - link:
+                  - /url: /shop?category=shoes
+                  - img
+                  - generic:
+                    - generic: Shoes
+                    - generic: 15+ products
+                - link:
+                  - /url: /shop?category=bags
+                  - img
+                  - generic:
+                    - generic: Bags
+                    - generic: 10+ products
+                - link:
+                  - /url: /shop?category=accessories
+                  - img
+                  - generic:
+                    - generic: Accessories
+                    - generic: 30+ products
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Cari Kami
+              - heading [level=2]: Lokasi Kami
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - heading [level=3]: Alamat
+                - paragraph: Jalan Sekolah La Salle 11400 Ayer Itam, Pulau Pinang
+                - link:
+                  - /url: https://maps.app.goo.gl/xmtbgwLbfGoEUDWA9
+                  - text: Dapatkan Arah
+                  - img
+              - generic:
+                - generic:
+                  - img
+                - heading [level=3]: Waktu Operasi
+                - paragraph: "Hari Bekerja: 3 PTG – 12 MLM Hujung Minggu & Cuti: 9 PG – 12 MLM"
+              - generic:
+                - generic:
+                  - img
+                - heading [level=3]: Hubungi
+                - paragraph:
+                  - text: "Tempahan Gelanggang:"
+                  - link:
+                    - /url: tel:+601168688508
+                    - text: 011-6868 8508
+                  - text: "Kelas:"
+                  - link:
+                    - /url: tel:+601175758508
+                    - text: 011-7575 8508
+            - iframe [ref=e555]
+  - contentinfo:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: TZH
+            - generic: TZH Sports Centre
+          - paragraph: Gelanggang badminton dan pickleball tersedia untuk ditempah. 4 gelanggang profesional dibuka setiap hari.
+        - generic:
+          - heading [level=3]: Pautan Pantas
+          - generic:
+            - link:
+              - /url: /booking
+              - text: Tempah Gelanggang
+            - link:
+              - /url: /lessons
+              - text: Kelas
+            - link:
+              - /url: /dashboard
+              - text: Tempahan Saya
+            - link:
+              - /url: /updates
+              - text: Kemas Kini
+            - link:
+              - /url: /shop
+              - text: Kedai Pro
+        - generic:
+          - heading [level=3]: Hubungi
+          - generic:
+            - generic:
+              - img
+              - generic:
+                - paragraph: Jalan Sekolah La Salle, 11400 Ayer Itam, Penang
+            - link:
+              - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+              - text: Dapatkan Arah
+              - img
+            - link:
+              - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+              - generic:
+                - img
+                - generic: View on Google Maps
+        - generic:
+          - heading [level=3]:
+            - generic:
+              - img
+              - text: Operating Hours
+          - generic:
+            - generic:
+              - generic:
+                - generic: Mon - Fri
+                - generic: 3PM - 12AM
+              - generic:
+                - generic: Sat - Sun
+                - generic: 9AM - 12AM
+            - generic:
+              - generic:
+                - img
+                - generic:
+                  - paragraph: Tempahan Gelanggang
+                  - link:
+                    - /url: tel:+601168688508
+                    - text: 011-6868 8508
+              - generic:
+                - img
+                - generic:
+                  - paragraph: Pertanyaan Kelas
+                  - link:
+                    - /url: tel:+601175758508
+                    - text: 011-7575 8508
+    - generic:
+      - generic:
+        - paragraph: © 2026 TZH Sports Centre. Hak cipta terpelihara.
+        - generic:
+          - link:
+            - /url: /terms
+            - text: Terms & Conditions
+  - menu "Bahasa Malaysia" [active] [ref=e624]:
+    - menuitem "English" [ref=e625]
+    - menuitem "Bahasa Malaysia" [ref=e626]
+    - menuitem "中文" [ref=e627]

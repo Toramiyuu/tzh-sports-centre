@@ -1,0 +1,208 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e8]: TZH
+    - generic [ref=e11]: Loading
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e32]:
+          - img
+          - generic [ref=e33]: English
+  - main [ref=e35]:
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - heading "Book a Court" [level=1] [ref=e39]
+        - paragraph [ref=e40]: Select Sport, Select Date, Select Time Slots
+      - generic [ref=e41]:
+        - navigation [ref=e43]:
+          - button "Badminton" [ref=e44]
+          - button "Pickleball" [ref=e45]
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - img [ref=e50]
+            - generic [ref=e54]:
+              - generic [ref=e55]: RM15/hr
+              - generic [ref=e56]: before 6PM
+              - generic [ref=e57]: RM18/hr
+              - generic [ref=e58]: after 6PM
+          - paragraph [ref=e60]: "Min: 1 Hour"
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - generic [ref=e65]:
+              - img [ref=e66]
+              - text: Select Date
+            - generic [ref=e70]:
+              - navigation "Navigation bar" [ref=e71]:
+                - button "Go to the Previous Month" [ref=e72]:
+                  - img
+                - button "Go to the Next Month" [ref=e73]:
+                  - img
+              - generic [ref=e74]:
+                - status [ref=e76]: February 2026
+                - grid "February 2026" [ref=e77]:
+                  - rowgroup [ref=e78]:
+                    - row [ref=e79]:
+                      - columnheader [ref=e80]: Su
+                      - columnheader [ref=e81]: Mo
+                      - columnheader [ref=e82]: Tu
+                      - columnheader [ref=e83]: We
+                      - columnheader [ref=e84]: Th
+                      - columnheader [ref=e85]: Fr
+                      - columnheader [ref=e86]: Sa
+                  - rowgroup [ref=e87]:
+                    - row "Sunday, February 1st, 2026 Monday, February 2nd, 2026 Tuesday, February 3rd, 2026 Wednesday, February 4th, 2026 Thursday, February 5th, 2026 Friday, February 6th, 2026 Saturday, February 7th, 2026" [ref=e88]:
+                      - gridcell "Sunday, February 1st, 2026" [ref=e89]:
+                        - button "Sunday, February 1st, 2026" [disabled]: "1"
+                      - gridcell "Monday, February 2nd, 2026" [ref=e90]:
+                        - button "Monday, February 2nd, 2026" [disabled]: "2"
+                      - gridcell "Tuesday, February 3rd, 2026" [ref=e91]:
+                        - button "Tuesday, February 3rd, 2026" [disabled]: "3"
+                      - gridcell "Wednesday, February 4th, 2026" [ref=e92]:
+                        - button "Wednesday, February 4th, 2026" [disabled]: "4"
+                      - gridcell "Thursday, February 5th, 2026" [ref=e93]:
+                        - button "Thursday, February 5th, 2026" [disabled]: "5"
+                      - gridcell "Friday, February 6th, 2026" [ref=e94]:
+                        - button "Friday, February 6th, 2026" [disabled]: "6"
+                      - gridcell "Saturday, February 7th, 2026" [ref=e95]:
+                        - button "Saturday, February 7th, 2026" [disabled]: "7"
+                    - row "Sunday, February 8th, 2026 Monday, February 9th, 2026 Tuesday, February 10th, 2026 Wednesday, February 11th, 2026 Thursday, February 12th, 2026 Friday, February 13th, 2026 Saturday, February 14th, 2026" [ref=e96]:
+                      - gridcell "Sunday, February 8th, 2026" [ref=e97]:
+                        - button "Sunday, February 8th, 2026" [disabled]: "8"
+                      - gridcell "Monday, February 9th, 2026" [ref=e98]:
+                        - button "Monday, February 9th, 2026" [disabled]: "9"
+                      - gridcell "Tuesday, February 10th, 2026" [ref=e99]:
+                        - button "Tuesday, February 10th, 2026" [disabled]: "10"
+                      - gridcell "Wednesday, February 11th, 2026" [ref=e100]:
+                        - button "Wednesday, February 11th, 2026" [disabled]: "11"
+                      - gridcell "Thursday, February 12th, 2026" [ref=e101]:
+                        - button "Thursday, February 12th, 2026" [disabled]: "12"
+                      - gridcell "Friday, February 13th, 2026" [ref=e102]:
+                        - button "Friday, February 13th, 2026" [disabled]: "13"
+                      - gridcell "Saturday, February 14th, 2026" [ref=e103]:
+                        - button "Saturday, February 14th, 2026" [disabled]: "14"
+                    - row "Sunday, February 15th, 2026 Monday, February 16th, 2026 Tuesday, February 17th, 2026 Today, Wednesday, February 18th, 2026, selected Thursday, February 19th, 2026 Friday, February 20th, 2026 Saturday, February 21st, 2026" [ref=e104]:
+                      - gridcell "Sunday, February 15th, 2026" [ref=e105]:
+                        - button "Sunday, February 15th, 2026" [disabled]: "15"
+                      - gridcell "Monday, February 16th, 2026" [ref=e106]:
+                        - button "Monday, February 16th, 2026" [disabled]: "16"
+                      - gridcell "Tuesday, February 17th, 2026" [ref=e107]:
+                        - button "Tuesday, February 17th, 2026" [disabled]: "17"
+                      - gridcell "Today, Wednesday, February 18th, 2026, selected" [selected] [ref=e108]:
+                        - button "Today, Wednesday, February 18th, 2026, selected" [ref=e109]: "18"
+                      - gridcell "Thursday, February 19th, 2026" [ref=e110]:
+                        - button "Thursday, February 19th, 2026" [ref=e111]: "19"
+                      - gridcell "Friday, February 20th, 2026" [ref=e112]:
+                        - button "Friday, February 20th, 2026" [ref=e113]: "20"
+                      - gridcell "Saturday, February 21st, 2026" [ref=e114]:
+                        - button "Saturday, February 21st, 2026" [ref=e115]: "21"
+                    - row "Sunday, February 22nd, 2026 Monday, February 23rd, 2026 Tuesday, February 24th, 2026 Wednesday, February 25th, 2026 Thursday, February 26th, 2026 Friday, February 27th, 2026 Saturday, February 28th, 2026" [ref=e116]:
+                      - gridcell "Sunday, February 22nd, 2026" [ref=e117]:
+                        - button "Sunday, February 22nd, 2026" [ref=e118]: "22"
+                      - gridcell "Monday, February 23rd, 2026" [ref=e119]:
+                        - button "Monday, February 23rd, 2026" [ref=e120]: "23"
+                      - gridcell "Tuesday, February 24th, 2026" [ref=e121]:
+                        - button "Tuesday, February 24th, 2026" [ref=e122]: "24"
+                      - gridcell "Wednesday, February 25th, 2026" [ref=e123]:
+                        - button "Wednesday, February 25th, 2026" [ref=e124]: "25"
+                      - gridcell "Thursday, February 26th, 2026" [ref=e125]:
+                        - button "Thursday, February 26th, 2026" [ref=e126]: "26"
+                      - gridcell "Friday, February 27th, 2026" [ref=e127]:
+                        - button "Friday, February 27th, 2026" [ref=e128]: "27"
+                      - gridcell "Saturday, February 28th, 2026" [ref=e129]:
+                        - button "Saturday, February 28th, 2026" [ref=e130]: "28"
+          - generic [ref=e131]:
+            - generic [ref=e133]:
+              - img [ref=e134]
+              - text: Select Time Slots - Wednesday, February 18, 2026
+              - generic [ref=e137]: Badminton
+            - generic [ref=e139]: Loading...
+        - generic [ref=e141]:
+          - generic [ref=e143]:
+            - img [ref=e144]
+            - text: Confirm Booking
+          - paragraph [ref=e147]: Please select at least one slot
+  - contentinfo [ref=e148]:
+    - generic [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e152]:
+          - generic [ref=e154]: TZH
+          - generic [ref=e155]: TZH Sports Centre
+        - paragraph [ref=e156]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e157]:
+        - heading "Quick Links" [level=3] [ref=e158]
+        - generic [ref=e159]:
+          - link "Book a Court" [ref=e160] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e161] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e162] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e163] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e164] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e165]:
+        - heading "Contact" [level=3] [ref=e166]
+        - generic [ref=e167]:
+          - generic [ref=e168]:
+            - img [ref=e169]
+            - paragraph [ref=e173]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e174] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e175]
+          - link "View on Google Maps" [ref=e177] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e178]:
+              - img [ref=e179]
+              - generic [ref=e182]: View on Google Maps
+      - generic [ref=e183]:
+        - heading "Operating Hours" [level=3] [ref=e184]:
+          - generic [ref=e185]:
+            - img [ref=e186]
+            - text: Operating Hours
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - generic [ref=e191]:
+              - generic [ref=e192]: Mon - Fri
+              - generic [ref=e193]: 3PM - 12AM
+            - generic [ref=e195]:
+              - generic [ref=e196]: Sat - Sun
+              - generic [ref=e197]: 9AM - 12AM
+          - generic [ref=e198]:
+            - generic [ref=e199]:
+              - img [ref=e200]
+              - generic [ref=e202]:
+                - paragraph [ref=e203]: Court Bookings
+                - link "011-6868 8508" [ref=e204] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e205]:
+              - img [ref=e206]
+              - generic [ref=e208]:
+                - paragraph [ref=e209]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e210] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e212]:
+      - paragraph [ref=e213]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e215] [cursor=pointer]:
+        - /url: /terms

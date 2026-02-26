@@ -1,0 +1,364 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e8]: TZH
+    - generic [ref=e11]: Loading
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e32]:
+          - img
+          - generic [ref=e33]: English
+        - link "Login" [ref=e34] [cursor=pointer]:
+          - /url: /auth/login
+          - button "Login" [ref=e35]
+        - link "Sign Up" [ref=e36] [cursor=pointer]:
+          - /url: /auth/register
+          - button "Sign Up" [ref=e37]
+  - main [ref=e38]:
+    - generic [ref=e40]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - paragraph [ref=e45]: BAM Certified Coach
+          - heading "Badminton Lessons" [level=1] [ref=e46]
+          - paragraph [ref=e47]: Professional coaching. Certified by Badminton Association of Malaysia
+          - link "WhatsApp" [ref=e48] [cursor=pointer]:
+            - /url: https://wa.me/601175758508
+            - button "WhatsApp" [ref=e49]:
+              - img
+              - text: WhatsApp
+        - img "Professional badminton coaching" [ref=e52]
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - heading "Private Lessons" [level=2] [ref=e57]
+          - paragraph [ref=e58]: One-on-one and small group coaching
+        - generic [ref=e59]:
+          - generic [ref=e61] [cursor=pointer]:
+            - generic [ref=e62]:
+              - generic [ref=e63]:
+                - img [ref=e64]
+                - heading "1-to-1 Private" [level=3] [ref=e69]
+              - button "Details" [ref=e70]:
+                - img
+                - text: Details
+            - generic [ref=e72]:
+              - generic [ref=e73]: RM130
+              - generic [ref=e74]: / per session
+            - generic [ref=e75]:
+              - generic [ref=e76]:
+                - img [ref=e77]
+                - text: 1.5-2 hours
+              - generic [ref=e80]:
+                - img [ref=e81]
+                - text: student
+          - generic [ref=e86] [cursor=pointer]:
+            - generic [ref=e88]:
+              - img
+              - text: Popular
+            - generic [ref=e89]:
+              - generic [ref=e90]:
+                - generic [ref=e91]:
+                  - img [ref=e92]
+                  - heading "1-to-2" [level=3] [ref=e97]
+                - button "Details" [ref=e98]:
+                  - img
+                  - text: Details
+              - generic [ref=e100]:
+                - generic [ref=e101]: RM80
+                - generic [ref=e102]: / person
+                - generic [ref=e103]: "(Total: RM160)"
+              - generic [ref=e104]:
+                - generic [ref=e105]:
+                  - img [ref=e106]
+                  - text: 1.5-2 hours
+                - generic [ref=e109]:
+                  - img [ref=e110]
+                  - text: Max 2 students
+          - generic [ref=e116] [cursor=pointer]:
+            - generic [ref=e117]:
+              - generic [ref=e118]:
+                - img [ref=e119]
+                - heading "1-to-3" [level=3] [ref=e124]
+              - button "Details" [ref=e125]:
+                - img
+                - text: Details
+            - generic [ref=e127]:
+              - generic [ref=e128]: RM60
+              - generic [ref=e129]: / person
+              - generic [ref=e130]: "(Total: RM180)"
+            - generic [ref=e131]:
+              - generic [ref=e132]:
+                - img [ref=e133]
+                - text: 2 hours
+              - generic [ref=e136]:
+                - img [ref=e137]
+                - text: Max 3 students
+          - generic [ref=e143] [cursor=pointer]:
+            - generic [ref=e144]:
+              - generic [ref=e145]:
+                - img [ref=e146]
+                - heading "1-to-4" [level=3] [ref=e151]
+              - button "Details" [ref=e152]:
+                - img
+                - text: Details
+            - generic [ref=e154]:
+              - generic [ref=e155]: RM50
+              - generic [ref=e156]: / person
+              - generic [ref=e157]: "(Total: RM200)"
+            - generic [ref=e158]:
+              - generic [ref=e159]:
+                - img [ref=e160]
+                - text: 2 hours
+              - generic [ref=e163]:
+                - img [ref=e164]
+                - text: Max 4 students
+      - generic [ref=e170]:
+        - generic [ref=e171]:
+          - heading "Group Lessons" [level=2] [ref=e172]
+          - paragraph [ref=e173]: Kids and adult group training programs
+        - generic [ref=e174]:
+          - generic [ref=e176] [cursor=pointer]:
+            - generic [ref=e177]:
+              - generic [ref=e178]:
+                - img [ref=e179]
+                - heading "Small Group Kids (Beginners)" [level=3] [ref=e184]
+              - button "Details" [ref=e185]:
+                - img
+                - text: Details
+            - generic [ref=e187]:
+              - generic [ref=e188]: RM50
+              - generic [ref=e189]: / per month
+            - generic [ref=e190]:
+              - generic [ref=e191]:
+                - img [ref=e192]
+                - text: 4 sessions/month
+              - generic [ref=e195]:
+                - img [ref=e196]
+                - text: Max 6 students
+          - generic [ref=e201] [cursor=pointer]:
+            - generic [ref=e203]:
+              - img
+              - text: Popular
+            - generic [ref=e204]:
+              - generic [ref=e205]:
+                - generic [ref=e206]:
+                  - img [ref=e207]
+                  - heading "Large Group Kids" [level=3] [ref=e212]
+                - button "Details" [ref=e213]:
+                  - img
+                  - text: Details
+              - generic [ref=e215]:
+                - generic [ref=e216]: RM100
+                - generic [ref=e217]: / per month
+              - generic [ref=e218]:
+                - generic [ref=e219]:
+                  - img [ref=e220]
+                  - text: 4 sessions/month
+                - generic [ref=e223]:
+                  - img [ref=e224]
+                  - text: Max 12 students
+          - generic [ref=e230] [cursor=pointer]:
+            - generic [ref=e231]:
+              - generic [ref=e232]:
+                - img [ref=e233]
+                - heading "Large Group Kids (Intermediate)" [level=3] [ref=e238]
+              - button "Details" [ref=e239]:
+                - img
+                - text: Details
+            - generic [ref=e241]:
+              - generic [ref=e242]: RM140
+              - generic [ref=e243]: / per month
+            - generic [ref=e244]:
+              - generic [ref=e245]:
+                - img [ref=e246]
+                - text: 4 sessions/month
+              - generic [ref=e249]:
+                - img [ref=e250]
+                - text: Max 12 students
+          - generic [ref=e256] [cursor=pointer]:
+            - generic [ref=e257]:
+              - generic [ref=e258]:
+                - img [ref=e259]
+                - heading "Small Adult Group" [level=3] [ref=e264]
+              - button "Details" [ref=e265]:
+                - img
+                - text: Details
+            - generic [ref=e267]:
+              - generic [ref=e268]: RM50
+              - generic [ref=e269]: / per session
+            - generic [ref=e270]:
+              - generic [ref=e271]:
+                - img [ref=e272]
+                - text: 2 hours
+              - generic [ref=e275]:
+                - img [ref=e276]
+                - text: Max 6 students
+      - generic [ref=e283]:
+        - generic [ref=e284]:
+          - img "Professional badminton coach" [ref=e286]
+          - img [ref=e288]
+        - heading "Our Coach" [level=2] [ref=e291]
+        - paragraph [ref=e292]: Our BAM-certified coach brings years of competitive and teaching experience, training players of all ages and skill levels from beginners to competitive athletes.
+        - generic [ref=e293]:
+          - generic [ref=e294]:
+            - img [ref=e295]
+            - generic [ref=e298]:
+              - paragraph [ref=e299]: BAM Certified Coach
+              - paragraph [ref=e300]: Badminton Association of Malaysia
+          - generic [ref=e301]:
+            - img [ref=e302]
+            - generic [ref=e307]:
+              - paragraph [ref=e308]: All Ages & Levels
+              - paragraph [ref=e309]: Kids, teens & adults welcome
+        - button "Book a Trial Lesson" [ref=e310]
+      - generic [ref=e313]:
+        - generic [ref=e315]:
+          - img [ref=e317]
+          - heading "Court Booking" [level=3] [ref=e320]
+          - paragraph [ref=e321]: Court rental is included in all lesson packages
+        - generic [ref=e323]:
+          - img [ref=e325]
+          - heading "Training Shuttlecocks" [level=3] [ref=e328]
+          - paragraph [ref=e329]: Shuttlecocks provided for all training sessions
+        - generic [ref=e331]:
+          - img [ref=e333]
+          - heading "Trial Available" [level=3] [ref=e336]
+          - paragraph [ref=e337]: Try a session at the normal lesson rate
+      - generic [ref=e340]:
+        - generic [ref=e341]:
+          - generic [ref=e342]: Request a Trial Lesson
+          - paragraph [ref=e343]: Fill in your details and we'll get back to you shortly
+        - generic [ref=e345]:
+          - generic [ref=e346]:
+            - generic [ref=e347]:
+              - generic [ref=e348]: Name *
+              - textbox "Name *" [ref=e349]:
+                - /placeholder: Your full name
+            - generic [ref=e350]:
+              - generic [ref=e351]: Phone Number *
+              - textbox "Phone Number *" [ref=e352]:
+                - /placeholder: 012-345 6789
+          - generic [ref=e353]:
+            - generic [ref=e354]:
+              - generic [ref=e355]: Email (optional)
+              - textbox "Email (optional)" [ref=e356]:
+                - /placeholder: your@email.com
+            - generic [ref=e357]:
+              - generic [ref=e358]: Interested Lesson Type *
+              - combobox [ref=e359]:
+                - generic: Select a lesson type
+                - img
+              - combobox [ref=e360]
+          - generic [ref=e361]:
+            - generic [ref=e362]:
+              - generic [ref=e363]: Preferred Date (optional)
+              - textbox "Preferred Date (optional)" [ref=e364]
+            - generic [ref=e365]:
+              - generic [ref=e366]: Preferred Time (optional)
+              - combobox [ref=e367]:
+                - generic: Select time
+                - img
+              - combobox [ref=e368]
+          - generic [ref=e369]:
+            - generic [ref=e370]: Message (optional)
+            - textbox "Message (optional)" [ref=e371]:
+              - /placeholder: Any questions or special requests?
+          - button "Submit Request" [ref=e372]:
+            - img
+            - text: Submit Request
+  - contentinfo [ref=e373]:
+    - generic [ref=e375]:
+      - generic [ref=e376]:
+        - generic [ref=e377]:
+          - generic [ref=e379]: TZH
+          - generic [ref=e380]: TZH Sports Centre
+        - paragraph [ref=e381]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+        - generic [ref=e382]:
+          - link "Facebook" [ref=e383] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e384]
+          - link "Instagram" [ref=e386] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e387]
+          - link "TikTok" [ref=e390] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e391]
+          - link "YouTube" [ref=e393] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e394]
+      - generic [ref=e397]:
+        - heading "Quick Links" [level=3] [ref=e398]
+        - generic [ref=e399]:
+          - link "Book a Court" [ref=e400] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e401] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e402] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e403] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e404] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e405]:
+        - heading "Contact" [level=3] [ref=e406]
+        - generic [ref=e407]:
+          - generic [ref=e408]:
+            - img [ref=e409]
+            - paragraph [ref=e413]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e414] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e415]
+          - link "View on Google Maps" [ref=e417] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e418]:
+              - img [ref=e419]
+              - generic [ref=e422]: View on Google Maps
+      - generic [ref=e423]:
+        - heading "Operating Hours" [level=3] [ref=e424]:
+          - generic [ref=e425]:
+            - img [ref=e426]
+            - text: Operating Hours
+        - generic [ref=e429]:
+          - generic [ref=e430]:
+            - generic [ref=e431]:
+              - generic [ref=e432]: Mon - Fri
+              - generic [ref=e433]: 3PM - 12AM
+            - generic [ref=e435]:
+              - generic [ref=e436]: Sat - Sun
+              - generic [ref=e437]: 9AM - 12AM
+          - generic [ref=e438]:
+            - generic [ref=e439]:
+              - img [ref=e440]
+              - generic [ref=e442]:
+                - paragraph [ref=e443]: Court Bookings
+                - link "011-6868 8508" [ref=e444] [cursor=pointer]:
+                  - /url: tel:+60116868508
+            - generic [ref=e445]:
+              - img [ref=e446]
+              - generic [ref=e448]:
+                - paragraph [ref=e449]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e450] [cursor=pointer]:
+                  - /url: tel:+60117575508
+    - generic [ref=e452]:
+      - paragraph [ref=e453]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e455] [cursor=pointer]:
+        - /url: /terms

@@ -1,0 +1,148 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+        - link "👤 Member" [ref=e170] [cursor=pointer]:
+          - /url: /member
+        - link "📢 Updates" [ref=e171] [cursor=pointer]:
+          - /url: /updates
+        - link "⚙️ Admin" [ref=e172] [cursor=pointer]:
+          - /url: /admin
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e32]:
+          - img
+          - generic [ref=e33]: English
+        - button "H" [ref=e173]:
+          - generic [ref=e175]: H
+  - main [ref=e35]:
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - img [ref=e41]
+          - text: Admin Panel
+        - heading "Welcome, Harvey" [level=1] [ref=e43]
+        - paragraph [ref=e44]: Manage your sports centre from here.
+      - generic [ref=e45]:
+        - link "Bookings & Lessons Manage court bookings, payments, and lesson scheduling" [ref=e46] [cursor=pointer]:
+          - /url: /admin/bookings-lessons
+          - generic [ref=e47]:
+            - img [ref=e49]
+            - generic [ref=e51]:
+              - heading "Bookings & Lessons" [level=2] [ref=e52]
+              - paragraph [ref=e53]: Manage court bookings, payments, and lesson scheduling
+            - img [ref=e54]
+        - link "Members & Accounts Manage training members and user accounts" [ref=e56] [cursor=pointer]:
+          - /url: /admin/members-accounts
+          - generic [ref=e57]:
+            - img [ref=e59]
+            - generic [ref=e64]:
+              - heading "Members & Accounts" [level=2] [ref=e65]
+              - paragraph [ref=e66]: Manage training members and user accounts
+            - img [ref=e67]
+        - link "Stringing Orders Manage racket stringing orders" [ref=e69] [cursor=pointer]:
+          - /url: /admin/stringing
+          - generic [ref=e70]:
+            - img [ref=e72]
+            - generic [ref=e74]:
+              - heading "Stringing Orders" [level=2] [ref=e75]
+              - paragraph [ref=e76]: Manage racket stringing orders
+            - img [ref=e77]
+        - link "Shop Inventory Manage products and stock levels" [ref=e79] [cursor=pointer]:
+          - /url: /admin/shop
+          - generic [ref=e80]:
+            - img [ref=e82]
+            - generic [ref=e85]:
+              - heading "Shop Inventory" [level=2] [ref=e86]
+              - paragraph [ref=e87]: Manage products and stock levels
+            - img [ref=e88]
+        - link "Absence Management Review medical absences and track student attendance" [ref=e90] [cursor=pointer]:
+          - /url: /admin/absences
+          - generic [ref=e91]:
+            - img [ref=e93]
+            - generic [ref=e97]:
+              - heading "Absence Management" [level=2] [ref=e98]
+              - paragraph [ref=e99]: Review medical absences and track student attendance
+            - img [ref=e100]
+  - contentinfo [ref=e102]:
+    - generic [ref=e104]:
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - generic [ref=e108]: TZH
+          - generic [ref=e109]: TZH Sports Centre
+        - paragraph [ref=e110]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e111]:
+        - heading "Quick Links" [level=3] [ref=e112]
+        - generic [ref=e113]:
+          - link "Book a Court" [ref=e114] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e115] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e116] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e117] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e118] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e119]:
+        - heading "Contact" [level=3] [ref=e120]
+        - generic [ref=e121]:
+          - generic [ref=e122]:
+            - img [ref=e123]
+            - paragraph [ref=e127]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e128] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e129]
+          - link "View on Google Maps" [ref=e131] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e132]:
+              - img [ref=e133]
+              - generic [ref=e136]: View on Google Maps
+      - generic [ref=e137]:
+        - heading "Operating Hours" [level=3] [ref=e138]:
+          - generic [ref=e139]:
+            - img [ref=e140]
+            - text: Operating Hours
+        - generic [ref=e143]:
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - generic [ref=e146]: Mon - Fri
+              - generic [ref=e147]: 3PM - 12AM
+            - generic [ref=e149]:
+              - generic [ref=e150]: Sat - Sun
+              - generic [ref=e151]: 9AM - 12AM
+          - generic [ref=e152]:
+            - generic [ref=e153]:
+              - img [ref=e154]
+              - generic [ref=e156]:
+                - paragraph [ref=e157]: Court Bookings
+                - link "011-6868 8508" [ref=e158] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e159]:
+              - img [ref=e160]
+              - generic [ref=e162]:
+                - paragraph [ref=e163]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e164] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e166]:
+      - paragraph [ref=e167]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e169] [cursor=pointer]:
+        - /url: /terms

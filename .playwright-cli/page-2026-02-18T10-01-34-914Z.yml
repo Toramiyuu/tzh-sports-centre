@@ -1,0 +1,585 @@
+- generic:
+  - alert
+  - link:
+    - /url: "#main-content"
+    - text: Skip to main content
+  - region "Notifications alt+T"
+  - navigation:
+    - generic:
+      - generic:
+        - generic:
+          - link:
+            - /url: /
+            - generic:
+              - generic: TZH
+            - generic: TZH Sports Centre
+        - generic:
+          - link:
+            - /url: /booking
+            - text: 🏸 预订球场
+          - link:
+            - /url: /lessons
+            - text: 📖 课程
+          - link:
+            - /url: /shop
+            - text: 🛒 商店 & 穿线
+        - generic:
+          - button:
+            - img
+          - button [expanded]:
+            - img
+            - generic: 中文
+          - link:
+            - /url: /auth/login
+            - button: 登录
+          - link:
+            - /url: /auth/register
+            - button: 注册
+  - main:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - img
+          - generic:
+            - generic:
+              - generic: 营业至凌晨12:00
+            - paragraph: 槟城亚依淡
+            - heading [level=1]: 两项运动。一键预订。开打。
+            - paragraph: 羽毛球 & 匹克球
+            - paragraph: 亚依淡羽毛球和匹克球场。在线预订，到场开打。
+            - generic:
+              - link:
+                - /url: /booking
+                - button: 预订球场
+              - link:
+                - /url: /lessons
+                - button: 查看课程
+            - generic:
+              - paragraph: 无需注册 — 可直接以访客身份预订
+              - generic:
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - generic: Google 4.7 星评分
+          - generic:
+            - generic: 4个球场
+            - generic: RM15/小时起
+            - generic: 营业至深夜
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - heading [level=2]: 球场实时状态
+            - generic:
+              - link:
+                - /url: /booking?court=1
+                - generic:
+                  - generic: Court 2
+                - paragraph: 可用
+              - link:
+                - /url: /booking?court=2
+                - generic:
+                  - generic: Court 4
+                - paragraph: 可用
+              - link:
+                - /url: /booking?court=3
+                - generic:
+                  - generic: Court 3
+                - paragraph: 可用
+              - link:
+                - /url: /booking?court=4
+                - generic:
+                  - generic: Court 1
+                - paragraph: 可用
+        - generic:
+          - generic:
+            - generic:
+              - paragraph: 我们的球场
+              - heading [level=2]: 为球员而建
+              - paragraph: 亚依淡的羽毛球和匹克球之家——在线预订，到场开打。
+            - generic:
+              - generic:
+                - generic:
+                  - img
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - heading [level=3]: 专业球场
+                    - paragraph: 4个球场配备优质乙烯基地板和侧装零眩光照明。
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - heading [level=3]: 球拍穿线
+                    - paragraph: 现场穿线服务，18种以上线材选择。可当日完成。
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - heading [level=3]: 专业教练
+                    - paragraph: BAM认证教练，适合所有水平。提供私人和小组课程。
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - generic: "4"
+                - generic: 4个球场
+              - generic:
+                - generic:
+                  - img
+                - generic: "4.7"
+                - generic: Google评分
+              - generic:
+                - generic:
+                  - img
+                - generic: RM15
+                - generic: 每小时起
+              - generic:
+                - generic:
+                  - img
+                - generic: 12AM
+                - generic: 营业至
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: 我们的服务
+              - heading [level=2]: 两项运动，一个场地
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - generic: RM15/小时
+                  - generic: 4个球场
+                - generic:
+                  - heading [level=3]: 羽毛球
+                  - paragraph: 专业球场配备优质地板和照明。适合休闲比赛或认真训练。
+                  - generic:
+                    - generic: 乙烯基地板
+                    - generic: 零眩光照明
+                    - generic: 欢迎直接来
+                  - link:
+                    - /url: /booking
+                    - button:
+                      - text: 立即预订
+                      - img
+              - generic:
+                - generic:
+                  - img
+                  - generic: RM25/小时
+                  - generic: 4个球场
+                - generic:
+                  - heading [level=3]: 匹克球
+                  - paragraph: 全球增长最快的运动，现在来到亚依淡。可租用球拍和球。
+                  - generic:
+                    - generic: 设备租赁
+                    - generic: 适合初学者
+                    - generic: 零眩光照明
+                  - link:
+                    - /url: /booking?sport=pickleball
+                    - button:
+                      - text: 立即预订
+                      - img
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Pricing
+              - heading [level=2]: Simple, Transparent Rates
+              - paragraph: 无隐藏收费。只需支付您选择的项目。
+            - generic:
+              - generic:
+                - generic:
+                  - heading [level=3]: 羽毛球
+                  - generic: RM15/hr
+                  - paragraph: "Peak: RM18/hr"
+                  - list:
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Online booking
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Walk-ins welcome
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Quality vinyl flooring
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Zero-glare lighting
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Clean between sessions
+                  - link:
+                    - /url: /booking
+                    - button:
+                      - text: Book Court
+                      - img
+              - generic:
+                - generic: Popular
+                - generic:
+                  - heading [level=3]: 匹克球
+                  - generic: RM25/hr
+                  - paragraph: All hours
+                  - list:
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Online booking
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Equipment rental
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Beginner friendly
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Quality vinyl flooring
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Zero-glare lighting
+                  - link:
+                    - /url: /booking?sport=pickleball
+                    - button:
+                      - text: Book Court
+                      - img
+              - generic:
+                - generic:
+                  - heading [level=3]: 培训
+                  - generic: RM50/mo
+                  - paragraph: Group classes from RM50. Private from RM130.
+                  - list:
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: BAM-certified coaches
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: All skill levels
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Kids & adult groups
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Private sessions available
+                    - listitem:
+                      - generic:
+                        - img
+                      - generic: Flexible scheduling
+                  - link:
+                    - /url: /lessons
+                    - button:
+                      - text: View Lessons
+                      - img
+            - generic:
+              - generic:
+                - img
+                - generic: "平日: 下午3点 - 午夜12点"
+              - generic:
+                - img
+                - generic: "周末及假日: 上午9点 - 午夜12点"
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Google Maps 评分 4.7 / 5
+              - heading [level=2]: 球员评价
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: "4.7"
+                    - generic: Google评分
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: 基于100+位真实球员的评价。
+                - link:
+                  - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+                  - text: 在Google查看
+                  - img
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “So hot but fun as hell! The courts are well-maintained and the booking system is super convenient. Love that it's open till midnight.”
+                - generic:
+                  - generic:
+                    - generic: "Y"
+                  - generic:
+                    - text: Ying Jie Teoh
+                    - generic:
+                      - generic: Google
+                      - generic: 2个月前
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “Best badminton courts in Ayer Itam. Clean courts, good lighting with no glare, and the prices are very reasonable.”
+                - generic:
+                  - generic:
+                    - generic: W
+                  - generic:
+                    - text: Wei Liang C.
+                    - generic:
+                      - generic: Google
+                      - generic: 3 weeks ago
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “Tried pickleball here for the first time — great experience. Paddles available for rent and the staff are friendly. Easy online booking too.”
+                - generic:
+                  - generic:
+                    - generic: S
+                  - generic:
+                    - text: Sarah L.
+                    - generic:
+                      - generic: Google
+                      - generic: a month ago
+              - generic:
+                - img
+                - generic:
+                  - img
+                  - img
+                  - img
+                  - img
+                  - img
+                - paragraph: “Good facility with quality flooring. The coaching sessions are worth it — Coach is patient and knowledgeable. Racket stringing service is a nice bonus.”
+                - generic:
+                  - generic:
+                    - generic: M
+                  - generic:
+                    - text: Marcus T.
+                    - generic:
+                      - generic: Google
+                      - generic: 2 months ago
+        - generic:
+          - generic:
+            - img
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Professional Service
+              - heading [level=2]: 专业球拍穿线服务
+              - paragraph: 18+种顶级品牌球线选择。每支球拍RM33起。
+              - generic:
+                - generic:
+                  - img
+                  - text: 18+ String Options
+                - generic:
+                  - img
+                  - text: Same-Day Service
+                - generic:
+                  - img
+                  - text: Expert Tension
+                - generic:
+                  - img
+                  - text: All Brands
+              - link:
+                - /url: /stringing
+                - button:
+                  - text: 查看球线
+                  - img
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - generic: Pro Shop
+                - heading [level=2]: Gear Up for Your Game
+                - paragraph: Browse our collection of rackets, shoes, bags, and accessories from TZH and top brands. Available in-store and online.
+                - generic:
+                  - generic: Yonex
+                  - generic: Li-Ning
+                  - generic: Joola
+                  - generic: Victor
+                - link:
+                  - /url: /shop
+                  - button:
+                    - text: Browse Shop
+                    - img
+              - generic:
+                - link:
+                  - /url: /shop?category=rackets
+                  - img
+                  - generic:
+                    - generic: Rackets
+                    - generic: 20+ products
+                - link:
+                  - /url: /shop?category=shoes
+                  - img
+                  - generic:
+                    - generic: Shoes
+                    - generic: 15+ products
+                - link:
+                  - /url: /shop?category=bags
+                  - img
+                  - generic:
+                    - generic: Bags
+                    - generic: 10+ products
+                - link:
+                  - /url: /shop?category=accessories
+                  - img
+                  - generic:
+                    - generic: Accessories
+                    - generic: 30+ products
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: 找到我们
+              - heading [level=2]: 我们的位置
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - heading [level=3]: 地址
+                - paragraph: Jalan Sekolah La Salle 11400 Ayer Itam, 槟城
+                - link:
+                  - /url: https://maps.app.goo.gl/xmtbgwLbfGoEUDWA9
+                  - text: 获取路线
+                  - img
+              - generic:
+                - generic:
+                  - img
+                - heading [level=3]: 营业时间
+                - paragraph: "平日: 下午3点 - 午夜12点 周末及假日: 上午9点 - 午夜12点"
+              - generic:
+                - generic:
+                  - img
+                - heading [level=3]: 联系方式
+                - paragraph:
+                  - text: "球场预订:"
+                  - link:
+                    - /url: tel:+601168688508
+                    - text: 011-6868 8508
+                  - text: "课程咨询:"
+                  - link:
+                    - /url: tel:+601175758508
+                    - text: 011-7575 8508
+            - iframe [ref=e555]
+  - contentinfo:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: TZH
+            - generic: TZH Sports Centre
+          - paragraph: 羽毛球和匹克球场开放预订。每天开放4个专业球场。
+        - generic:
+          - heading [level=3]: 快速链接
+          - generic:
+            - link:
+              - /url: /booking
+              - text: 预订球场
+            - link:
+              - /url: /lessons
+              - text: 课程
+            - link:
+              - /url: /dashboard
+              - text: 我的预订
+            - link:
+              - /url: /updates
+              - text: 更新日志
+            - link:
+              - /url: /shop
+              - text: 专业商店
+        - generic:
+          - heading [level=3]: 联系方式
+          - generic:
+            - generic:
+              - img
+              - generic:
+                - paragraph: Jalan Sekolah La Salle, 11400 Ayer Itam, Penang
+            - link:
+              - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+              - text: 获取路线
+              - img
+            - link:
+              - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+              - generic:
+                - img
+                - generic: View on Google Maps
+        - generic:
+          - heading [level=3]:
+            - generic:
+              - img
+              - text: Operating Hours
+          - generic:
+            - generic:
+              - generic:
+                - generic: Mon - Fri
+                - generic: 3PM - 12AM
+              - generic:
+                - generic: Sat - Sun
+                - generic: 9AM - 12AM
+            - generic:
+              - generic:
+                - img
+                - generic:
+                  - paragraph: 球场预订
+                  - link:
+                    - /url: tel:+601168688508
+                    - text: 011-6868 8508
+              - generic:
+                - img
+                - generic:
+                  - paragraph: 课程咨询
+                  - link:
+                    - /url: tel:+601175758508
+                    - text: 011-7575 8508
+    - generic:
+      - generic:
+        - paragraph: © 2026 TZH 体育中心。版权所有。
+        - generic:
+          - link:
+            - /url: /terms
+            - text: Terms & Conditions
+  - menu "中文" [active] [ref=e624]:
+    - menuitem "English" [ref=e625]
+    - menuitem "Bahasa Malaysia" [ref=e626]
+    - menuitem "中文" [ref=e627]

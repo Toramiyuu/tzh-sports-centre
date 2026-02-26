@@ -1,0 +1,334 @@
+- generic [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e32]:
+          - img
+          - generic [ref=e33]: English
+        - link "Login" [ref=e243] [cursor=pointer]:
+          - /url: /auth/login
+          - button "Login" [ref=e244]
+        - link "Sign Up" [ref=e245] [cursor=pointer]:
+          - /url: /auth/register
+          - button "Sign Up" [ref=e246]
+  - main [ref=e35]:
+    - generic [ref=e37]:
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - img [ref=e44]
+          - generic [ref=e47]: Pro Shop
+        - heading "TZH Pro Shop" [level=1] [ref=e48]
+        - paragraph [ref=e49]: Quality badminton & pickleball gear for players of all levels
+      - generic [ref=e52]:
+        - button "All" [ref=e53]:
+          - img [ref=e54]
+          - text: All
+        - button "Rackets" [active] [ref=e59]:
+          - img [ref=e60]
+          - text: Rackets
+        - button "Shoes" [ref=e69]:
+          - img [ref=e70]
+          - text: Shoes
+        - button "Bags" [ref=e73]:
+          - img [ref=e74]
+          - text: Bags
+        - button "Clothing" [ref=e77]:
+          - img [ref=e78]
+          - text: Clothing
+        - button "Grips" [ref=e80]:
+          - img [ref=e81]
+          - text: Grips
+        - button "Accessories" [ref=e91]:
+          - img [ref=e92]
+          - text: Accessories
+        - button "Pickleball" [ref=e96]:
+          - img [ref=e97]
+          - text: Pickleball
+        - button "Stringing Service" [ref=e100]:
+          - img [ref=e101]
+          - text: Stringing Service
+      - generic [ref=e103]:
+        - generic [ref=e105]:
+          - generic [ref=e107]:
+            - img [ref=e108]
+            - textbox "Search products..." [ref=e111]
+          - generic [ref=e112]:
+            - generic [ref=e113]: "Price Range:"
+            - generic [ref=e114]: RM8
+            - generic [ref=e116]:
+              - slider "Minimum" [ref=e120]
+              - slider "Maximum" [ref=e122]
+            - generic [ref=e123]: RM380
+        - paragraph [ref=e125]:
+          - text: 13 products
+          - generic [ref=e1152]: in Rackets
+        - generic [ref=e126]:
+          - generic [ref=e352] [cursor=pointer]:
+            - generic [ref=e353]:
+              - img "TZH Promaks Hunter Series" [ref=e354]
+              - generic [ref=e355]: Featured
+              - button "Quick View" [ref=e357]:
+                - img
+                - text: Quick View
+            - generic [ref=e358]:
+              - paragraph [ref=e359]: TZH
+              - heading "Promaks" [level=3] [ref=e360]
+              - paragraph [ref=e361]: RM380
+              - paragraph [ref=e362]: 1 color
+              - button "Quick View" [ref=e363]:
+                - img
+                - text: Quick View
+          - generic [ref=e365] [cursor=pointer]:
+            - generic [ref=e366]:
+              - img "TZH Harimau Pro" [ref=e367]
+              - generic [ref=e368]: Featured
+              - button "Quick View" [ref=e370]:
+                - img
+                - text: Quick View
+            - generic [ref=e371]:
+              - paragraph [ref=e372]: TZH
+              - heading "Harimau Pro" [level=3] [ref=e373]
+              - paragraph [ref=e374]: RM350
+              - paragraph [ref=e375]: 1 color
+              - button "Quick View" [ref=e376]:
+                - img
+                - text: Quick View
+          - generic [ref=e378] [cursor=pointer]:
+            - generic [ref=e379]:
+              - img "TZH 8023 Racket" [ref=e380]
+              - generic [ref=e381]: Featured
+              - button "Quick View" [ref=e383]:
+                - img
+                - text: Quick View
+            - generic [ref=e384]:
+              - paragraph [ref=e385]: TZH
+              - heading "8023" [level=3] [ref=e386]
+              - paragraph [ref=e387]: RM280
+              - paragraph [ref=e388]: 2 colors
+              - button "Quick View" [ref=e389]:
+                - img
+                - text: Quick View
+          - generic [ref=e1033] [cursor=pointer]:
+            - generic [ref=e1034]:
+              - img "TZH Liu Yun (流云)" [ref=e1035]
+              - button "Quick View" [ref=e1037]:
+                - img
+                - text: Quick View
+            - generic [ref=e1038]:
+              - paragraph [ref=e1039]: TZH
+              - heading "Liu Yun" [level=3] [ref=e1040]
+              - paragraph [ref=e1041]: RM290
+              - paragraph [ref=e1042]: 1 color
+              - button "Quick View" [ref=e1043]:
+                - img
+                - text: Quick View
+          - generic [ref=e1045] [cursor=pointer]:
+            - generic [ref=e1046]:
+              - img "TZH Ling She (凌蛇)" [ref=e1047]
+              - button "Quick View" [ref=e1049]:
+                - img
+                - text: Quick View
+            - generic [ref=e1050]:
+              - paragraph [ref=e1051]: TZH
+              - heading "Ling She" [level=3] [ref=e1052]
+              - paragraph [ref=e1053]: RM310
+              - paragraph [ref=e1054]: 1 color
+              - button "Quick View" [ref=e1055]:
+                - img
+                - text: Quick View
+          - generic [ref=e1057] [cursor=pointer]:
+            - generic [ref=e1058]:
+              - img "TZH UNS Steel Armor Series" [ref=e1059]
+              - button "Quick View" [ref=e1061]:
+                - img
+                - text: Quick View
+            - generic [ref=e1062]:
+              - paragraph [ref=e1063]: TZH
+              - heading "UNS" [level=3] [ref=e1064]
+              - paragraph [ref=e1065]: RM340
+              - paragraph [ref=e1066]: 2 colors
+              - button "Quick View" [ref=e1067]:
+                - img
+                - text: Quick View
+          - generic [ref=e1069] [cursor=pointer]:
+            - generic [ref=e1070]:
+              - img "TZH Uni Explorer" [ref=e1071]
+              - button "Quick View" [ref=e1073]:
+                - img
+                - text: Quick View
+            - generic [ref=e1074]:
+              - paragraph [ref=e1075]: TZH
+              - heading "Uni Explorer" [level=3] [ref=e1076]
+              - paragraph [ref=e1077]: RM360
+              - paragraph [ref=e1078]: 1 color
+              - button "Quick View" [ref=e1079]:
+                - img
+                - text: Quick View
+          - generic [ref=e1081] [cursor=pointer]:
+            - generic [ref=e1082]:
+              - img "TZH Super Like" [ref=e1083]
+              - button "Quick View" [ref=e1085]:
+                - img
+                - text: Quick View
+            - generic [ref=e1086]:
+              - paragraph [ref=e1087]: TZH
+              - heading "Super Like" [level=3] [ref=e1088]
+              - paragraph [ref=e1089]: RM260
+              - paragraph [ref=e1090]: 2 colors
+              - button "Quick View" [ref=e1091]:
+                - img
+                - text: Quick View
+          - generic [ref=e1093] [cursor=pointer]:
+            - generic [ref=e1094]:
+              - img "TZH SMG Assault Series" [ref=e1095]
+              - button "Quick View" [ref=e1097]:
+                - img
+                - text: Quick View
+            - generic [ref=e1098]:
+              - paragraph [ref=e1099]: TZH
+              - heading "SMG" [level=3] [ref=e1100]
+              - paragraph [ref=e1101]: RM300
+              - paragraph [ref=e1102]: 2 colors
+              - button "Quick View" [ref=e1103]:
+                - img
+                - text: Quick View
+          - generic [ref=e1105] [cursor=pointer]:
+            - generic [ref=e1106]:
+              - img "TZH RM99 Series" [ref=e1107]
+              - button "Quick View" [ref=e1109]:
+                - img
+                - text: Quick View
+            - generic [ref=e1110]:
+              - paragraph [ref=e1111]: TZH
+              - heading "RM99" [level=3] [ref=e1112]
+              - paragraph [ref=e1113]: RM199
+              - paragraph [ref=e1114]: 2 colors
+              - button "Quick View" [ref=e1115]:
+                - img
+                - text: Quick View
+          - generic [ref=e1117] [cursor=pointer]:
+            - generic [ref=e1118]:
+              - img "TZH Macaron Series" [ref=e1119]
+              - button "Quick View" [ref=e1121]:
+                - img
+                - text: Quick View
+            - generic [ref=e1122]:
+              - paragraph [ref=e1123]: TZH
+              - heading "Macaron" [level=3] [ref=e1124]
+              - paragraph [ref=e1125]: RM230
+              - paragraph [ref=e1126]: 3 colors
+              - button "Quick View" [ref=e1127]:
+                - img
+                - text: Quick View
+          - generic [ref=e1129] [cursor=pointer]:
+            - generic [ref=e1130]:
+              - img "TZH Love Shot" [ref=e1131]
+              - button "Quick View" [ref=e1133]:
+                - img
+                - text: Quick View
+            - generic [ref=e1134]:
+              - paragraph [ref=e1135]: TZH
+              - heading "Love Shot" [level=3] [ref=e1136]
+              - paragraph [ref=e1137]: RM250
+              - paragraph [ref=e1138]: 2 colors
+              - button "Quick View" [ref=e1139]:
+                - img
+                - text: Quick View
+          - generic [ref=e1141] [cursor=pointer]:
+            - generic [ref=e1142]:
+              - img "TZH Kranted Series" [ref=e1143]
+              - button "Quick View" [ref=e1145]:
+                - img
+                - text: Quick View
+            - generic [ref=e1146]:
+              - paragraph [ref=e1147]: TZH
+              - heading "Kranted" [level=3] [ref=e1148]
+              - paragraph [ref=e1149]: RM320
+              - paragraph [ref=e1150]: 1 color
+              - button "Quick View" [ref=e1151]:
+                - img
+                - text: Quick View
+  - contentinfo [ref=e175]:
+    - generic [ref=e177]:
+      - generic [ref=e178]:
+        - generic [ref=e179]:
+          - generic [ref=e181]: TZH
+          - generic [ref=e182]: TZH Sports Centre
+        - paragraph [ref=e183]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e184]:
+        - heading "Quick Links" [level=3] [ref=e185]
+        - generic [ref=e186]:
+          - link "Book a Court" [ref=e187] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e188] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e189] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e190] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e191] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e192]:
+        - heading "Contact" [level=3] [ref=e193]
+        - generic [ref=e194]:
+          - generic [ref=e195]:
+            - img [ref=e196]
+            - paragraph [ref=e200]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e201] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e202]
+          - link "View on Google Maps" [ref=e204] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e205]:
+              - img [ref=e206]
+              - generic [ref=e209]: View on Google Maps
+      - generic [ref=e210]:
+        - heading "Operating Hours" [level=3] [ref=e211]:
+          - generic [ref=e212]:
+            - img [ref=e213]
+            - text: Operating Hours
+        - generic [ref=e216]:
+          - generic [ref=e217]:
+            - generic [ref=e218]:
+              - generic [ref=e219]: Mon - Fri
+              - generic [ref=e220]: 3PM - 12AM
+            - generic [ref=e222]:
+              - generic [ref=e223]: Sat - Sun
+              - generic [ref=e224]: 9AM - 12AM
+          - generic [ref=e225]:
+            - generic [ref=e226]:
+              - img [ref=e227]
+              - generic [ref=e229]:
+                - paragraph [ref=e230]: Court Bookings
+                - link "011-6868 8508" [ref=e231] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e232]:
+              - img [ref=e233]
+              - generic [ref=e235]:
+                - paragraph [ref=e236]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e237] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e239]:
+      - paragraph [ref=e240]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e242] [cursor=pointer]:
+        - /url: /terms

@@ -1,0 +1,166 @@
+- generic [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+        - link "🏆 Leaderboard" [active] [ref=e655] [cursor=pointer]:
+          - /url: /leaderboard
+        - link "👤 Training Schedule" [ref=e656] [cursor=pointer]:
+          - /url: /training
+        - link "📢 Updates" [ref=e657] [cursor=pointer]:
+          - /url: /updates
+        - link "⚙️ Admin" [ref=e658] [cursor=pointer]:
+          - /url: /admin
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e32]:
+          - img
+          - generic [ref=e33]: English
+        - button "H" [ref=e659]:
+          - generic [ref=e661]: H
+  - main [ref=e35]:
+    - generic [ref=e1193]:
+      - generic [ref=e1194]:
+        - img [ref=e1195]
+        - generic [ref=e1201]:
+          - heading "Leaderboard" [level=1] [ref=e1202]
+          - paragraph [ref=e1203]: Monthly player rankings
+      - generic [ref=e1204]:
+        - generic [ref=e1205]:
+          - generic [ref=e1206]: Month
+          - textbox [ref=e1207]: 2026-02
+        - button [ref=e1208]:
+          - img
+      - generic [ref=e1209]:
+        - generic [ref=e1210]:
+          - generic [ref=e1211]:
+            - generic [ref=e1212]: S
+            - img [ref=e1213]
+            - paragraph [ref=e1219]: Shane
+            - paragraph [ref=e1220]: "35"
+            - paragraph [ref=e1221]: Total pts
+            - generic [ref=e1223]: "2"
+          - generic [ref=e1224]:
+            - generic [ref=e1225]: O
+            - img [ref=e1226]
+            - paragraph [ref=e1232]: Ong Yi
+            - paragraph [ref=e1233]: "37"
+            - paragraph [ref=e1234]: Total pts
+            - generic [ref=e1236]: "1"
+          - generic [ref=e1237]:
+            - img "Chuin Han" [ref=e1238]
+            - img [ref=e1239]
+            - paragraph [ref=e1245]: Chuin Han
+            - paragraph [ref=e1246]: "30"
+            - paragraph [ref=e1247]: Total pts
+            - generic [ref=e1249]: "3"
+        - generic [ref=e1252]:
+          - generic [ref=e1253]:
+            - generic [ref=e1254]: "4"
+            - generic [ref=e1255]: Thomas
+            - generic [ref=e1256]: 29 pts
+          - generic [ref=e1257]:
+            - generic [ref=e1258]: "5"
+            - generic [ref=e1259]: Zhi Chao
+            - generic [ref=e1260]: 22 pts
+          - generic [ref=e1261]:
+            - generic [ref=e1262]: "6"
+            - generic [ref=e1263]: Wei Hao
+            - generic [ref=e1264]: 18 pts
+          - generic [ref=e1265]:
+            - generic [ref=e1266]: "7"
+            - generic [ref=e1267]: Shin Leong
+            - generic [ref=e1268]: 15 pts
+          - generic [ref=e1269]:
+            - generic [ref=e1270]: "8"
+            - generic [ref=e1271]: Jimmy
+            - generic [ref=e1272]: 11 pts
+          - generic [ref=e1273]:
+            - generic [ref=e1274]: "9"
+            - generic [ref=e1275]: Chiam
+            - generic [ref=e1276]: 8 pts
+          - generic [ref=e1277]:
+            - generic [ref=e1278]: "10"
+            - generic [ref=e1279]: Harvey
+            - generic [ref=e1280]: 6 pts
+  - contentinfo [ref=e535]:
+    - generic [ref=e537]:
+      - generic [ref=e538]:
+        - generic [ref=e539]:
+          - generic [ref=e541]: TZH
+          - generic [ref=e542]: TZH Sports Centre
+        - paragraph [ref=e543]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e544]:
+        - heading "Quick Links" [level=3] [ref=e545]
+        - generic [ref=e546]:
+          - link "Book a Court" [ref=e547] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e548] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e549] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e550] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e551] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e552]:
+        - heading "Contact" [level=3] [ref=e553]
+        - generic [ref=e554]:
+          - generic [ref=e555]:
+            - img [ref=e556]
+            - paragraph [ref=e560]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e561] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e562]
+          - link "View on Google Maps" [ref=e564] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e565]:
+              - img [ref=e566]
+              - generic [ref=e569]: View on Google Maps
+      - generic [ref=e570]:
+        - heading "Operating Hours" [level=3] [ref=e571]:
+          - generic [ref=e572]:
+            - img [ref=e573]
+            - text: Operating Hours
+        - generic [ref=e576]:
+          - generic [ref=e577]:
+            - generic [ref=e578]:
+              - generic [ref=e579]: Mon - Fri
+              - generic [ref=e580]: 3PM - 12AM
+            - generic [ref=e582]:
+              - generic [ref=e583]: Sat - Sun
+              - generic [ref=e584]: 9AM - 12AM
+          - generic [ref=e585]:
+            - generic [ref=e586]:
+              - img [ref=e587]
+              - generic [ref=e589]:
+                - paragraph [ref=e590]: Court Bookings
+                - link "011-6868 8508" [ref=e591] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e592]:
+              - img [ref=e593]
+              - generic [ref=e595]:
+                - paragraph [ref=e596]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e597] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e599]:
+      - paragraph [ref=e600]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e602] [cursor=pointer]:
+        - /url: /terms

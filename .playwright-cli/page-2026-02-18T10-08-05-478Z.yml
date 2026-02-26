@@ -1,0 +1,174 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e8]: TZH
+    - generic [ref=e11]: Loading
+  - region "Notifications alt+T"
+  - navigation [ref=e16]:
+    - generic [ref=e18]:
+      - link "TZH TZH Sports Centre" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: TZH
+        - generic [ref=e23]: TZH Sports Centre
+      - generic [ref=e24]:
+        - link "🏸 Book Court" [ref=e25] [cursor=pointer]:
+          - /url: /booking
+        - link "📖 Lessons" [ref=e26] [cursor=pointer]:
+          - /url: /lessons
+        - link "🛒 Shop & Stringing" [ref=e27] [cursor=pointer]:
+          - /url: /shop
+      - generic [ref=e28]:
+        - button "Toggle theme" [ref=e29]:
+          - img [ref=e30]
+        - button "English" [ref=e32]:
+          - img
+          - generic [ref=e33]: English
+  - main [ref=e35]:
+    - generic [ref=e37]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - img [ref=e42]
+          - heading "Terms & Conditions" [level=1] [ref=e45]
+        - paragraph [ref=e46]: Please read our terms and conditions carefully before using our facilities.
+        - paragraph [ref=e47]: "Last updated: February 2025"
+      - generic [ref=e49]:
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - heading "1. Payment Policy" [level=2] [ref=e52]:
+              - img [ref=e53]
+              - text: 1. Payment Policy
+            - paragraph [ref=e57]: All payments made are strictly non-refundable and non-transferable. Payments cannot be refunded, exchanged, or converted into other sessions, dates, or services under any circumstances.
+          - generic [ref=e58]:
+            - heading "2. Coaching & Commercial Use Policy" [level=2] [ref=e59]:
+              - img [ref=e60]
+              - text: 2. Coaching & Commercial Use Policy
+            - generic [ref=e63]:
+              - paragraph [ref=e64]: Court reservations are strictly for personal play only. Reservation for coaching, training sessions, group classes, or any commercial activity without prior written approval from management is strictly prohibited.
+              - paragraph [ref=e65]: Any booking found to be used for coaching or commercial purposes will be cancelled immediately without refund.
+          - generic [ref=e66]:
+            - heading "3. Booking Confirmation" [level=2] [ref=e67]:
+              - img [ref=e68]
+              - text: 3. Booking Confirmation
+            - generic [ref=e71]:
+              - paragraph [ref=e72]: Reservation is only confirmed upon receipt of full payment. Customers must send payment proof for verification.
+              - paragraph [ref=e73]: Management reserves the right to release the slot if payment proof is not received.
+          - generic [ref=e74]:
+            - heading "4. Payment Details" [level=2] [ref=e75]:
+              - img [ref=e76]
+              - text: 4. Payment Details
+            - generic [ref=e79]:
+              - paragraph [ref=e80]: Payment can be made via Touch 'n Go or DuitNow. Please refer to the booking page for QR codes and payment instructions.
+              - paragraph [ref=e81]: "WhatsApp: 011-6868 8508"
+          - generic [ref=e82]:
+            - heading "5. Outside Sales & Beverages" [level=2] [ref=e83]:
+              - img [ref=e84]
+              - text: 5. Outside Sales & Beverages
+            - paragraph [ref=e88]: Selling drinks, food, or any products inside the premises without permission is strictly prohibited. Bringing beverages or goods into the facility for resale purposes is not allowed.
+          - generic [ref=e89]:
+            - heading "6. Cancellation & No-Show Policy" [level=2] [ref=e90]:
+              - img [ref=e91]
+              - text: 6. Cancellation & No-Show Policy
+            - paragraph [ref=e95]: Once booking is confirmed, cancellation, rescheduling, or refunds are not allowed. No-shows will not be compensated.
+          - generic [ref=e96]:
+            - heading "7. Time Strictness Policy" [level=2] [ref=e97]:
+              - img [ref=e98]
+              - text: 7. Time Strictness Policy
+            - paragraph [ref=e102]: Booking time starts and ends strictly according to the reserved slot. Overtime usage will be charged accordingly.
+          - generic [ref=e103]:
+            - heading "8. Damage & Responsibility" [level=2] [ref=e104]:
+              - img [ref=e105]
+              - text: 8. Damage & Responsibility
+            - paragraph [ref=e109]: Any damage to the facility, flooring, nets, or equipment will be charged accordingly. The booking holder is responsible for all participants.
+          - generic [ref=e110]:
+            - heading "9. Conduct & Liability" [level=2] [ref=e111]:
+              - img [ref=e112]
+              - text: 9. Conduct & Liability
+            - paragraph [ref=e116]: Management is not responsible for injuries, accidents, or loss of personal belongings. All users enter and use the facility at their own risk.
+          - generic [ref=e117]:
+            - heading "10. Media & Recording Policy" [level=2] [ref=e118]:
+              - img [ref=e119]
+              - text: 10. Media & Recording Policy
+            - paragraph [ref=e123]: Management reserves the right to record photos and videos for promotional purposes. Written objection must be submitted in advance if any individual does not wish to appear in recordings.
+          - generic [ref=e124]:
+            - heading "11. Booking Transfer Policy" [level=2] [ref=e125]:
+              - img [ref=e126]
+              - text: 11. Booking Transfer Policy
+            - generic [ref=e129]:
+              - paragraph [ref=e130]: Booking transfer is allowed. The booking holder may transfer the session to another individual if unable to attend.
+              - paragraph [ref=e131]: However, the booking must not be resold for profit. The price charged must not exceed the original booking rate. The booking holder remains responsible for any misconduct or damages.
+              - paragraph [ref=e132]: Management reserves the right to cancel bookings suspected of resale at inflated prices without refund.
+          - generic [ref=e133]:
+            - heading "12. Management Rights" [level=2] [ref=e134]:
+              - img [ref=e135]
+              - text: 12. Management Rights
+            - paragraph [ref=e139]: Management reserves the right to refuse service, cancel bookings that violate policies, and update these Terms & Conditions without prior notice.
+        - paragraph [ref=e141]: By proceeding with payment, you acknowledge and agree to the above Terms & Conditions.
+  - contentinfo [ref=e142]:
+    - generic [ref=e144]:
+      - generic [ref=e145]:
+        - generic [ref=e146]:
+          - generic [ref=e148]: TZH
+          - generic [ref=e149]: TZH Sports Centre
+        - paragraph [ref=e150]: Badminton and pickleball courts available for booking. 4 professional courts open daily.
+      - generic [ref=e151]:
+        - heading "Quick Links" [level=3] [ref=e152]
+        - generic [ref=e153]:
+          - link "Book a Court" [ref=e154] [cursor=pointer]:
+            - /url: /booking
+          - link "Lessons" [ref=e155] [cursor=pointer]:
+            - /url: /lessons
+          - link "My Bookings" [ref=e156] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Updates" [ref=e157] [cursor=pointer]:
+            - /url: /updates
+          - link "Pro Shop" [ref=e158] [cursor=pointer]:
+            - /url: /shop
+      - generic [ref=e159]:
+        - heading "Contact" [level=3] [ref=e160]
+        - generic [ref=e161]:
+          - generic [ref=e162]:
+            - img [ref=e163]
+            - paragraph [ref=e167]:
+              - text: Jalan Sekolah La Salle,
+              - text: 11400 Ayer Itam, Penang
+          - link "Get Directions" [ref=e168] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - text: Get Directions
+            - img [ref=e169]
+          - link "View on Google Maps" [ref=e171] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/6id7KLMbwohP7o9J6
+            - generic [ref=e172]:
+              - img [ref=e173]
+              - generic [ref=e176]: View on Google Maps
+      - generic [ref=e177]:
+        - heading "Operating Hours" [level=3] [ref=e178]:
+          - generic [ref=e179]:
+            - img [ref=e180]
+            - text: Operating Hours
+        - generic [ref=e183]:
+          - generic [ref=e184]:
+            - generic [ref=e185]:
+              - generic [ref=e186]: Mon - Fri
+              - generic [ref=e187]: 3PM - 12AM
+            - generic [ref=e189]:
+              - generic [ref=e190]: Sat - Sun
+              - generic [ref=e191]: 9AM - 12AM
+          - generic [ref=e192]:
+            - generic [ref=e193]:
+              - img [ref=e194]
+              - generic [ref=e196]:
+                - paragraph [ref=e197]: Court Bookings
+                - link "011-6868 8508" [ref=e198] [cursor=pointer]:
+                  - /url: tel:+601168688508
+            - generic [ref=e199]:
+              - img [ref=e200]
+              - generic [ref=e202]:
+                - paragraph [ref=e203]: Lessons Enquiry
+                - link "011-7575 8508" [ref=e204] [cursor=pointer]:
+                  - /url: tel:+601175758508
+    - generic [ref=e206]:
+      - paragraph [ref=e207]: © 2026 TZH Sports Centre. All rights reserved.
+      - link "Terms & Conditions" [ref=e209] [cursor=pointer]:
+        - /url: /terms
