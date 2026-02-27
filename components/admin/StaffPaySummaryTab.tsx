@@ -10,7 +10,9 @@ import { DollarSign, RefreshCw } from "lucide-react";
 export interface PaySummaryEntry {
   teacherId: string;
   teacherName: string;
+  hourlyRate: number;
   totalSessions: number;
+  totalHours: number;
   totalPay: number;
   lessons: {
     id: string;
@@ -18,7 +20,8 @@ export interface PaySummaryEntry {
     lessonDate: string;
     startTime: string;
     endTime: string;
-    rate: number;
+    duration: number;
+    pay: number;
   }[];
 }
 
@@ -80,7 +83,9 @@ export default function StaffPaySummaryTab({
                       RM{entry.totalPay.toFixed(2)}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {entry.totalSessions} {t("totalSessions").toLowerCase()}
+                      {entry.totalSessions} {t("totalSessions").toLowerCase()}{" "}
+                      &middot; {entry.totalHours}hr &middot; RM
+                      {entry.hourlyRate}/hr
                     </p>
                   </div>
                 </div>
@@ -96,7 +101,10 @@ export default function StaffPaySummaryTab({
                         </th>
                         <th className="text-left py-2 font-medium">Time</th>
                         <th className="text-right py-2 font-medium">
-                          {t("rate")}
+                          {t("duration")}
+                        </th>
+                        <th className="text-right py-2 font-medium">
+                          {t("pay")}
                         </th>
                       </tr>
                     </thead>
@@ -117,8 +125,11 @@ export default function StaffPaySummaryTab({
                           <td className="py-2">
                             {lesson.startTime} - {lesson.endTime}
                           </td>
+                          <td className="py-2 text-right">
+                            {lesson.duration}hr
+                          </td>
                           <td className="py-2 text-right font-medium">
-                            RM{lesson.rate.toFixed(2)}
+                            RM{lesson.pay.toFixed(2)}
                           </td>
                         </tr>
                       ))}

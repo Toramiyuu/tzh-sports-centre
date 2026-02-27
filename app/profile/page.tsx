@@ -15,6 +15,7 @@ import {
   CalendarX2,
   Camera,
   Loader2,
+  Wrench,
   X,
 } from "lucide-react";
 import { PersonalInfoTab } from "@/components/profile/PersonalInfoTab";
@@ -22,6 +23,7 @@ import { BookingsTab } from "@/components/profile/BookingsTab";
 import { RecurringTab } from "@/components/profile/RecurringTab";
 import { LessonsTab } from "@/components/profile/LessonsTab";
 import { AbsencesTab } from "@/components/profile/AbsencesTab";
+import { RacketsTab } from "@/components/profile/RacketsTab";
 import { SettingsTab } from "@/components/profile/SettingsTab";
 import { SkeletonProfile } from "@/components/ui/skeleton";
 import { useTranslations } from "next-intl";
@@ -30,6 +32,7 @@ type TabType =
   | "personal"
   | "bookings"
   | "recurring"
+  | "rackets"
   | "lessons"
   | "absences"
   | "settings";
@@ -70,6 +73,7 @@ function ProfileContent() {
     "personal",
     "bookings",
     "recurring",
+    "rackets",
     "lessons",
     "absences",
     "settings",
@@ -217,6 +221,7 @@ function ProfileContent() {
       icon: CalendarDays,
     },
     { id: "recurring" as TabType, label: t("tabs.recurring"), icon: Repeat },
+    { id: "rackets" as TabType, label: t("tabs.rackets"), icon: Wrench },
     ...(profile?.isTrainee
       ? [
           {
@@ -337,6 +342,7 @@ function ProfileContent() {
             />
           )}
           {activeTab === "recurring" && <RecurringTab />}
+          {activeTab === "rackets" && <RacketsTab />}
           {activeTab === "lessons" && profile?.isTrainee && <LessonsTab />}
           {activeTab === "absences" && profile?.isTrainee && <AbsencesTab />}
           {activeTab === "settings" &&

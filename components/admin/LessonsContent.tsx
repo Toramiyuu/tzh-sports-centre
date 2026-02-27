@@ -1835,29 +1835,7 @@ export default function LessonsContent({
                   <SelectContent>
                     {LESSON_TYPES.map((type) => (
                       <SelectItem key={type.slug} value={type.slug}>
-                        <div className="flex items-center gap-2">
-                          <span>{type.name}</span>
-                          {type.billingType === "monthly" ? (
-                            <Badge
-                              variant="outline"
-                              className="text-xs bg-purple-50 text-purple-600 border-purple-300"
-                            >
-                              RM{type.price}/mo
-                            </Badge>
-                          ) : (
-                            <Badge
-                              variant="outline"
-                              className="text-xs bg-green-50 text-green-700 border-green-300"
-                            >
-                              From RM
-                              {type.pricingTiers.length > 0
-                                ? Math.min(
-                                    ...type.pricingTiers.map((t) => t.price),
-                                  )
-                                : type.price}
-                            </Badge>
-                          )}
-                        </div>
+                        {type.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -1891,9 +1869,7 @@ export default function LessonsContent({
                             key={opt.value}
                             value={opt.value.toString()}
                           >
-                            {opt.label} - RM{opt.price}
-                            {opt.pricePerPerson &&
-                              ` (RM${opt.pricePerPerson}/person)`}
+                            {opt.label}
                           </SelectItem>
                         ))}
                     </SelectContent>

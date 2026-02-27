@@ -8,6 +8,8 @@ import {
   validatePayRate,
 } from "@/lib/validation";
 
+const VALID_ROLES = ["TEACHER", "COACH_ASSISTANT"] as const;
+
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
@@ -54,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, phone, userId, payRates } = body;
+    const { name, phone, userId, hourlyRate, role } = body;
 
     const validName = validateTeacherName(name);
     if (!validName) {
@@ -74,6 +76,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (role && !VALID_ROLES.includes(role)) {
+      return NextResponse.json(
+        { error: "Invalid role. Must be TEACHER or COACH_ASSISTANT" },
+        { status: 400 },
+      );
+    }
+
+    const validRate = hourlyRate != null ? validatePayRate(hourlyRate) : 0;
+    if (hourlyRate != null && validRate === null) {
+      return NextResponse.json(
+        { error: "Invalid hourly rate" },
+        { status: 400 },
+      );
+    }
+
     if (userId) {
       const user = await prisma.user.findUnique({ where: { id: userId } });
       if (!user) {
@@ -84,58 +101,24 @@ export async function POST(request: NextRequest) {
       });
       if (existingTeacher) {
         return NextResponse.json(
-          { error: "This user is already linked to a teacher" },
+          { error: "This user is already linked to a staff member" },
           { status: 400 },
         );
       }
     }
 
-    const validPayRates: { lessonType: string; rate: number }[] = [];
-    if (payRates && Array.isArray(payRates)) {
-      for (const pr of payRates) {
-        if (!pr.lessonType || typeof pr.lessonType !== "string") {
-          return NextResponse.json(
-            { error: "Each pay rate must have a lessonType" },
-            { status: 400 },
-          );
-        }
-        const validRate = validatePayRate(pr.rate);
-        if (!validRate) {
-          return NextResponse.json(
-            { error: `Invalid rate for ${pr.lessonType}` },
-            { status: 400 },
-          );
-        }
-        validPayRates.push({ lessonType: pr.lessonType, rate: validRate });
-      }
-    }
-
-    const teacher = await prisma.$transaction(async (tx) => {
-      const created = await tx.teacher.create({
-        data: {
-          name: validName,
-          phone: phone || null,
-          userId: userId || null,
-        },
-      });
-
-      if (validPayRates.length > 0) {
-        await tx.teacherPayRate.createMany({
-          data: validPayRates.map((pr) => ({
-            teacherId: created.id,
-            lessonType: pr.lessonType,
-            rate: pr.rate,
-          })),
-        });
-      }
-
-      return tx.teacher.findUnique({
-        where: { id: created.id },
-        include: {
-          payRates: true,
-          user: { select: { id: true, name: true, email: true } },
-        },
-      });
+    const teacher = await prisma.teacher.create({
+      data: {
+        name: validName,
+        phone: phone || null,
+        userId: userId || null,
+        role: role || "TEACHER",
+        hourlyRate: validRate || 0,
+      },
+      include: {
+        payRates: true,
+        user: { select: { id: true, name: true, email: true } },
+      },
     });
 
     return NextResponse.json({ teacher }, { status: 201 });

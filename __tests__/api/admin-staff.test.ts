@@ -30,12 +30,12 @@ const mockTeacher = {
   name: "Coach Lee",
   phone: "0123456789",
   userId: null,
+  role: "TEACHER",
+  hourlyRate: 50,
   isActive: true,
   createdAt: new Date(),
   updatedAt: new Date(),
-  payRates: [
-    { id: "pr-1", teacherId: "teacher-1", lessonType: "1-to-1", rate: 50 },
-  ],
+  payRates: [],
   user: null,
 };
 
@@ -144,19 +144,18 @@ describe("POST /api/admin/staff", () => {
     expect(json.error).toContain("phone");
   });
 
-  it("returns 400 for invalid pay rate", async () => {
+  it("returns 400 for invalid role", async () => {
     vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
     vi.mocked(isAdmin).mockReturnValue(true);
     const req = createMockNextRequest({
       method: "POST",
       url: "http://localhost:3000/api/admin/staff",
-      body: {
-        name: "Coach Lee",
-        payRates: [{ lessonType: "1-to-1", rate: -5 }],
-      },
+      body: { name: "Coach Lee", role: "INVALID" },
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toContain("role");
   });
 
   it("returns 400 when userId not found", async () => {
@@ -174,20 +173,10 @@ describe("POST /api/admin/staff", () => {
     expect(json.error).toContain("User not found");
   });
 
-  it("creates teacher with pay rates in transaction", async () => {
+  it("creates teacher with role and hourly rate", async () => {
     vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
     vi.mocked(isAdmin).mockReturnValue(true);
-    vi.mocked(prisma.$transaction).mockImplementation(async (fn) => {
-      return (fn as Function)({
-        teacher: {
-          create: vi.fn().mockResolvedValue({ id: "new-teacher" }),
-          findUnique: vi.fn().mockResolvedValue(mockTeacher),
-        },
-        teacherPayRate: {
-          createMany: vi.fn().mockResolvedValue({ count: 1 }),
-        },
-      });
-    });
+    vi.mocked(prisma.teacher.create).mockResolvedValue(mockTeacher as never);
 
     const req = createMockNextRequest({
       method: "POST",
@@ -195,12 +184,50 @@ describe("POST /api/admin/staff", () => {
       body: {
         name: "Coach Lee",
         phone: "0123456789",
-        payRates: [{ lessonType: "1-to-1", rate: 50 }],
+        role: "TEACHER",
+        hourlyRate: 50,
       },
     });
     const res = await POST(req);
     expect(res.status).toBe(201);
     const json = await res.json();
     expect(json.teacher.name).toBe("Coach Lee");
+    expect(prisma.teacher.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          role: "TEACHER",
+          hourlyRate: 50,
+        }),
+      }),
+    );
+  });
+
+  it("creates coach assistant", async () => {
+    vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
+    vi.mocked(isAdmin).mockReturnValue(true);
+    const coachAssistant = { ...mockTeacher, role: "COACH_ASSISTANT" };
+    vi.mocked(prisma.teacher.create).mockResolvedValue(
+      coachAssistant as never,
+    );
+
+    const req = createMockNextRequest({
+      method: "POST",
+      url: "http://localhost:3000/api/admin/staff",
+      body: {
+        name: "Assistant Kim",
+        role: "COACH_ASSISTANT",
+        hourlyRate: 30,
+      },
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(201);
+    expect(prisma.teacher.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          role: "COACH_ASSISTANT",
+          hourlyRate: 30,
+        }),
+      }),
+    );
   });
 });

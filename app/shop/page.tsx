@@ -11,6 +11,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion, useReducedMotion } from "framer-motion";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { ShopHero } from "@/components/shop/ShopHero";
 import { ShopCategoryTabs } from "@/components/shop/ShopCategoryTabs";
 import { ShopProductCard } from "@/components/shop/ShopProductCard";
@@ -21,6 +22,8 @@ import {
   ShopCategoryId,
   SHOP_CATEGORIES,
   searchProducts,
+  getPriceRange,
+  filterByPriceRange,
 } from "@/lib/shop-config";
 
 const StringingPage = lazy(() => import("@/app/stringing/page"));
@@ -100,10 +103,20 @@ function ShopContent() {
   }, [categoryParam]);
   const prefersReducedMotion = useReducedMotion();
   const [searchQuery, setSearchQuery] = useState("");
+  const [priceSort, setPriceSort] = useState<"none" | "asc" | "desc">("none");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
   const [selectedProduct, setSelectedProduct] = useState<ShopProduct | null>(
     null,
   );
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const priceExtent = useMemo(() => getPriceRange(allProducts), [allProducts]);
+
+  useEffect(() => {
+    if (allProducts.length > 0) {
+      setPriceRange([priceExtent.min, priceExtent.max]);
+    }
+  }, [priceExtent, allProducts.length]);
 
   const filteredProducts = useMemo(() => {
     let products = allProducts;
@@ -119,8 +132,25 @@ function ShopContent() {
       products = searchProducts(products, searchQuery);
     }
 
+    if (priceRange[0] > priceExtent.min || priceRange[1] < priceExtent.max) {
+      products = filterByPriceRange(products, priceRange[0], priceRange[1]);
+    }
+
+    if (priceSort === "asc") {
+      products = [...products].sort((a, b) => a.price - b.price);
+    } else if (priceSort === "desc") {
+      products = [...products].sort((a, b) => b.price - a.price);
+    }
+
     return products;
-  }, [allProducts, selectedCategory, searchQuery]);
+  }, [
+    allProducts,
+    selectedCategory,
+    searchQuery,
+    priceRange,
+    priceExtent,
+    priceSort,
+  ]);
 
   const handleViewDetails = (product: ShopProduct) => {
     setSelectedProduct(product);
@@ -129,6 +159,8 @@ function ShopContent() {
 
   const handleClearFilters = () => {
     setSearchQuery("");
+    setPriceRange([priceExtent.min, priceExtent.max]);
+    setPriceSort("none");
   };
 
   return (
@@ -182,11 +214,15 @@ function ShopContent() {
               <ShopFilters
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
+                priceRange={priceRange}
+                priceMin={priceExtent.min}
+                priceMax={priceExtent.max}
+                onPriceRangeChange={setPriceRange}
               />
             </div>
 
-            {/* Results Count */}
-            <div className="mb-6">
+            {/* Results Count + Sort */}
+            <div className="mb-6 flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 {filteredProducts.length}{" "}
                 {filteredProducts.length === 1
@@ -199,6 +235,34 @@ function ShopContent() {
                   </span>
                 )}
               </p>
+              <div className="flex rounded-lg border border-border overflow-hidden">
+                <button
+                  onClick={() =>
+                    setPriceSort(priceSort === "desc" ? "none" : "desc")
+                  }
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-sm transition-colors ${
+                    priceSort === "desc"
+                      ? "bg-primary text-white"
+                      : "bg-card text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <ArrowDownWideNarrow className="w-4 h-4" />
+                  {t("sort.highToLow")}
+                </button>
+                <button
+                  onClick={() =>
+                    setPriceSort(priceSort === "asc" ? "none" : "asc")
+                  }
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-sm border-l border-border transition-colors ${
+                    priceSort === "asc"
+                      ? "bg-primary text-white"
+                      : "bg-card text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <ArrowUpWideNarrow className="w-4 h-4" />
+                  {t("sort.lowToHigh")}
+                </button>
+              </div>
             </div>
 
             {/* Product Grid */}

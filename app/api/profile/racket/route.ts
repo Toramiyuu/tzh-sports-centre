@@ -1,160 +1,230 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
-// GET /api/profile/racket - Get user's racket profile(s)
+const MAX_PRESETS = 3;
+
 export async function GET() {
   try {
-    const session = await auth()
+    const session = await auth();
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: {
+        racketProfile: { orderBy: { createdAt: "asc" } },
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const racketProfiles = user.racketProfile || [];
+    const defaultRacket =
+      racketProfiles.find((r) => r.isDefault) || racketProfiles[0] || null;
+
+    return NextResponse.json({
+      racketProfile: defaultRacket,
+      racketProfiles,
+    });
+  } catch (error) {
+    console.error("Error fetching racket profile:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch racket profile" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: { racketProfile: true },
-    })
+    });
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Return the default racket or first one for backwards compatibility
-    const racketProfiles = user.racketProfile || []
-    const defaultRacket = racketProfiles.find(r => r.isDefault) || racketProfiles[0] || null
-
-    return NextResponse.json({
-      racketProfile: defaultRacket,
-      racketProfiles: racketProfiles
-    })
-  } catch (error) {
-    console.error('Error fetching racket profile:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch racket profile' },
-      { status: 500 }
-    )
-  }
-}
-
-// POST /api/profile/racket - Create racket profile
-export async function POST(request: NextRequest) {
-  try {
-    const session = await auth()
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    })
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
-
-    const body = await request.json()
-    const { brand, model, weight, shaftNumber, tensionMain, tensionCross } = body
-
-    // Validate required fields
-    if (!brand || !model || !weight) {
+    if ((user.racketProfile || []).length >= MAX_PRESETS) {
       return NextResponse.json(
-        { error: 'Brand, model, and weight are required' },
-        { status: 400 }
-      )
+        { error: `Maximum ${MAX_PRESETS} racket presets allowed` },
+        { status: 400 },
+      );
     }
+
+    const body = await request.json();
+    const { name, brand, model, tensionMain, tensionCross, stringName } = body;
+
+    if (!name?.trim() || !brand?.trim() || !model?.trim()) {
+      return NextResponse.json(
+        { error: "Name, brand, and model are required" },
+        { status: 400 },
+      );
+    }
+
+    const isFirst = (user.racketProfile || []).length === 0;
 
     const racketProfile = await prisma.racketProfile.create({
       data: {
         userId: user.id,
-        brand,
-        model,
-        color: '', // Not used anymore but required in schema
-        weight,
-        shaftNumber: shaftNumber || null,
+        name: name.trim(),
+        brand: brand.trim(),
+        model: model.trim(),
+        color: "",
+        weight: "",
+        stringName: stringName?.trim() || null,
         tensionMain: tensionMain || null,
         tensionCross: tensionCross || null,
+        isDefault: isFirst,
       },
-    })
+    });
 
-    return NextResponse.json({ racketProfile })
+    return NextResponse.json({ racketProfile });
   } catch (error) {
-    console.error('Error creating racket profile:', error)
+    console.error("Error creating racket profile:", error);
     return NextResponse.json(
-      { error: 'Failed to create racket profile' },
-      { status: 500 }
-    )
+      { error: "Failed to create racket profile" },
+      { status: 500 },
+    );
   }
 }
 
-// PATCH /api/profile/racket - Update racket profile
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: { racketProfile: true },
-    })
+    });
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const racketProfiles = user.racketProfile || []
-    if (racketProfiles.length === 0) {
-      return NextResponse.json({ error: 'No racket profile found' }, { status: 404 })
-    }
+    const body = await request.json();
+    const {
+      id,
+      name,
+      brand,
+      model,
+      tensionMain,
+      tensionCross,
+      stringName,
+      isDefault,
+    } = body;
 
-    const body = await request.json()
-    const { id, brand, model, weight, shaftNumber, tensionMain, tensionCross, isDefault } = body
-
-    // Validate required fields
-    if (!brand || !model || !weight) {
+    if (!id) {
       return NextResponse.json(
-        { error: 'Brand, model, and weight are required' },
-        { status: 400 }
-      )
+        { error: "Racket profile ID is required" },
+        { status: 400 },
+      );
     }
 
-    // Determine which racket to update - use provided id or default/first racket
-    const racketId = id || racketProfiles.find(r => r.isDefault)?.id || racketProfiles[0].id
+    if (!name?.trim() || !brand?.trim() || !model?.trim()) {
+      return NextResponse.json(
+        { error: "Name, brand, and model are required" },
+        { status: 400 },
+      );
+    }
 
-    // Verify the racket belongs to this user
-    const targetRacket = racketProfiles.find(r => r.id === racketId)
+    const racketProfiles = user.racketProfile || [];
+    const targetRacket = racketProfiles.find((r) => r.id === id);
     if (!targetRacket) {
-      return NextResponse.json({ error: 'Racket not found' }, { status: 404 })
+      return NextResponse.json({ error: "Racket not found" }, { status: 404 });
     }
 
-    // If setting as default, unset all other rackets first
     if (isDefault) {
       await prisma.racketProfile.updateMany({
-        where: { userId: user.id, id: { not: racketId } },
-        data: { isDefault: false }
-      })
+        where: { userId: user.id, id: { not: id } },
+        data: { isDefault: false },
+      });
     }
 
     const racketProfile = await prisma.racketProfile.update({
-      where: { id: racketId },
+      where: { id },
       data: {
-        brand,
-        model,
-        weight,
-        shaftNumber: shaftNumber || null,
+        name: name.trim(),
+        brand: brand.trim(),
+        model: model.trim(),
+        stringName: stringName?.trim() || null,
         tensionMain: tensionMain || null,
         tensionCross: tensionCross || null,
         isDefault: isDefault ?? targetRacket.isDefault,
       },
-    })
+    });
 
-    return NextResponse.json({ racketProfile })
+    return NextResponse.json({ racketProfile });
   } catch (error) {
-    console.error('Error updating racket profile:', error)
+    console.error("Error updating racket profile:", error);
     return NextResponse.json(
-      { error: 'Failed to update racket profile' },
-      { status: 500 }
-    )
+      { error: "Failed to update racket profile" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: { racketProfile: true },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json(
+        { error: "Racket profile ID is required" },
+        { status: 400 },
+      );
+    }
+
+    const racketProfiles = user.racketProfile || [];
+    const target = racketProfiles.find((r) => r.id === id);
+    if (!target) {
+      return NextResponse.json({ error: "Racket not found" }, { status: 404 });
+    }
+
+    await prisma.racketProfile.delete({ where: { id } });
+
+    if (target.isDefault) {
+      const remaining = racketProfiles.filter((r) => r.id !== id);
+      if (remaining.length > 0) {
+        await prisma.racketProfile.update({
+          where: { id: remaining[0].id },
+          data: { isDefault: true },
+        });
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting racket profile:", error);
+    return NextResponse.json(
+      { error: "Failed to delete racket profile" },
+      { status: 500 },
+    );
   }
 }

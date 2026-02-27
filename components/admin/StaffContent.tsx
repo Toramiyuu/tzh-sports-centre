@@ -19,18 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Loader2, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Search, CheckCircle, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useLessonTypes } from "@/lib/hooks/useLessonTypes";
-import StaffTeachersTab, {
-  type Teacher,
-  type PayRate,
-} from "./StaffTeachersTab";
+import StaffTeachersTab, { type Teacher } from "./StaffTeachersTab";
 import StaffPaySummaryTab, { type PaySummaryEntry } from "./StaffPaySummaryTab";
 
 export default function StaffContent() {
   const t = useTranslations("admin.staff");
-  const { lessonTypes } = useLessonTypes();
   const [activeTab, setActiveTab] = useState<"teachers" | "paySummary">(
     "teachers",
   );
@@ -43,7 +39,17 @@ export default function StaffContent() {
 
   const [formName, setFormName] = useState("");
   const [formPhone, setFormPhone] = useState("");
-  const [formPayRates, setFormPayRates] = useState<PayRate[]>([]);
+  const [formRole, setFormRole] = useState<"TEACHER" | "COACH_ASSISTANT">(
+    "TEACHER",
+  );
+  const [formHourlyRate, setFormHourlyRate] = useState<number>(0);
+  const [formUid, setFormUid] = useState("");
+  const [formLinkedUser, setFormLinkedUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+  } | null>(null);
+  const [userSearchLoading, setUserSearchLoading] = useState(false);
 
   const [paySummary, setPaySummary] = useState<PaySummaryEntry[]>([]);
   const [payMonth, setPayMonth] = useState(() => {
@@ -86,7 +92,10 @@ export default function StaffContent() {
     setEditingTeacher(null);
     setFormName("");
     setFormPhone("");
-    setFormPayRates([]);
+    setFormRole("TEACHER");
+    setFormHourlyRate(0);
+    setFormUid("");
+    setFormLinkedUser(null);
     setDialogOpen(true);
   };
 
@@ -94,23 +103,45 @@ export default function StaffContent() {
     setEditingTeacher(teacher);
     setFormName(teacher.name);
     setFormPhone(teacher.phone || "");
-    setFormPayRates(
-      teacher.payRates.map((pr) => ({
-        lessonType: pr.lessonType,
-        rate: pr.rate,
-      })),
-    );
+    setFormRole(teacher.role || "TEACHER");
+    setFormHourlyRate(teacher.hourlyRate || 0);
+    setFormUid("");
+    setFormLinkedUser(teacher.user || null);
     setDialogOpen(true);
+  };
+
+  const searchUserByUid = async () => {
+    if (!formUid.trim()) return;
+    setUserSearchLoading(true);
+    try {
+      const res = await fetch(`/api/admin/accounts?uid=${formUid.trim()}`);
+      const data = await res.json();
+      if (res.ok && data.user) {
+        setFormLinkedUser(data.user);
+        if (!formName.trim()) setFormName(data.user.name || "");
+      } else {
+        setFormLinkedUser(null);
+        alert(t("userNotFound"));
+      }
+    } catch {
+      alert("Error searching user");
+    } finally {
+      setUserSearchLoading(false);
+    }
   };
 
   const handleSave = async () => {
     setActionLoading(true);
     try {
-      const body = {
+      const body: Record<string, unknown> = {
         name: formName,
         phone: formPhone || null,
-        payRates: formPayRates.filter((pr) => pr.lessonType && pr.rate > 0),
+        role: formRole,
+        hourlyRate: formHourlyRate,
       };
+      if (formLinkedUser) {
+        body.userId = formLinkedUser.id;
+      }
       const url = editingTeacher
         ? `/api/admin/staff/${editingTeacher.id}`
         : "/api/admin/staff";
@@ -125,10 +156,10 @@ export default function StaffContent() {
         fetchTeachers();
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to save teacher");
+        alert(data.error || "Failed to save");
       }
     } catch (error) {
-      console.error("Error saving teacher:", error);
+      console.error("Error saving:", error);
     } finally {
       setActionLoading(false);
     }
@@ -145,28 +176,10 @@ export default function StaffContent() {
       });
       fetchTeachers();
     } catch (error) {
-      console.error("Error toggling teacher:", error);
+      console.error("Error toggling:", error);
     } finally {
       setActionLoading(false);
     }
-  };
-
-  const addPayRateRow = () => {
-    setFormPayRates([...formPayRates, { lessonType: "", rate: 0 }]);
-  };
-
-  const removePayRateRow = (index: number) => {
-    setFormPayRates(formPayRates.filter((_, i) => i !== index));
-  };
-
-  const updatePayRate = (
-    index: number,
-    field: "lessonType" | "rate",
-    value: string | number,
-  ) => {
-    const updated = [...formPayRates];
-    updated[index] = { ...updated[index], [field]: value };
-    setFormPayRates(updated);
   };
 
   const filteredTeachers = teachers.filter((teacher) =>
@@ -234,15 +247,86 @@ export default function StaffContent() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              {editingTeacher ? t("editTeacher") : t("addTeacher")}
+              {editingTeacher ? t("editTeacher") : t("addStaff")}
             </DialogTitle>
             <DialogDescription>
               {editingTeacher
                 ? `Editing ${editingTeacher.name}`
-                : "Add a new teacher to the roster"}
+                : t("addStaffDescription")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Link to User by UID */}
+            {!editingTeacher && (
+              <div>
+                <Label>{t("linkToUser")}</Label>
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    value={formUid}
+                    onChange={(e) => setFormUid(e.target.value)}
+                    placeholder={t("enterUid")}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={searchUserByUid}
+                    disabled={userSearchLoading || !formUid.trim()}
+                  >
+                    {userSearchLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Search className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+                {formLinkedUser && (
+                  <div className="flex items-center gap-2 mt-2 p-2 bg-green-50 border border-green-200 rounded-md">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-sm text-green-800 flex-1">
+                      {formLinkedUser.name} ({formLinkedUser.email})
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setFormLinkedUser(null)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+            {editingTeacher?.user && (
+              <div className="flex items-center gap-2 p-2 bg-secondary rounded-md">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                <span className="text-sm">
+                  {t("linkedTo")}: {editingTeacher.user.name} (
+                  {editingTeacher.user.email})
+                </span>
+              </div>
+            )}
+            <div>
+              <Label>{t("role")}</Label>
+              <Select
+                value={formRole}
+                onValueChange={(v) =>
+                  setFormRole(v as "TEACHER" | "COACH_ASSISTANT")
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="TEACHER">{t("teacher")}</SelectItem>
+                  <SelectItem value="COACH_ASSISTANT">
+                    {t("coachAssistant")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div>
               <Label>{t("teacherName")}</Label>
               <Input
@@ -262,59 +346,19 @@ export default function StaffContent() {
               />
             </div>
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label>{t("payRates")}</Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addPayRateRow}
-                >
-                  <Plus className="w-3 h-3 mr-1" />
-                  {t("addRate")}
-                </Button>
-              </div>
-              {formPayRates.length === 0 && (
-                <p className="text-sm text-muted-foreground">{t("noRates")}</p>
+              <Label>{t("hourlyRate")} (RM)</Label>
+              <Input
+                type="number"
+                value={formHourlyRate || ""}
+                onChange={(e) => setFormHourlyRate(Number(e.target.value))}
+                placeholder="0"
+                className="w-32"
+              />
+              {formHourlyRate > 0 && (
+                <Badge variant="outline" className="mt-1 text-xs">
+                  RM{formHourlyRate}/hr
+                </Badge>
               )}
-              <div className="space-y-2">
-                {formPayRates.map((pr, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <Select
-                      value={pr.lessonType}
-                      onValueChange={(v) => updatePayRate(idx, "lessonType", v)}
-                    >
-                      <SelectTrigger className="flex-1">
-                        <SelectValue placeholder={t("lessonType")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {lessonTypes.map((lt) => (
-                          <SelectItem key={lt.slug} value={lt.slug}>
-                            {lt.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      type="number"
-                      value={pr.rate || ""}
-                      onChange={(e) =>
-                        updatePayRate(idx, "rate", Number(e.target.value))
-                      }
-                      placeholder="RM"
-                      className="w-24"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removePayRateRow(idx)}
-                    >
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
           <DialogFooter>

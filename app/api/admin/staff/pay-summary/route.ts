@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
 
     const teachers = await prisma.teacher.findMany({
       where: { isActive: true },
-      include: { payRates: true },
     });
 
     const lessons = await prisma.lessonSession.findMany({
@@ -46,14 +45,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const ratesMap = new Map<string, Map<string, number>>();
-    for (const teacher of teachers) {
-      const typeMap = new Map<string, number>();
-      for (const pr of teacher.payRates) {
-        typeMap.set(pr.lessonType, pr.rate);
-      }
-      ratesMap.set(teacher.id, typeMap);
-    }
+    const teacherMap = new Map(teachers.map((t) => [t.id, t]));
 
     const teacherLessons = new Map<
       string,
@@ -66,28 +58,33 @@ export async function GET(request: NextRequest) {
         teacherLessons.set(lesson.teacherId, { lessons: [], totalPay: 0 });
       }
       const entry = teacherLessons.get(lesson.teacherId)!;
-      const rate = ratesMap.get(lesson.teacherId)?.get(lesson.lessonType) ?? 0;
+      const hourlyRate = teacherMap.get(lesson.teacherId)?.hourlyRate ?? 0;
+      const pay = hourlyRate * lesson.duration;
       entry.lessons.push(lesson);
-      entry.totalPay += rate;
+      entry.totalPay += pay;
     }
 
-    const teacherMap = new Map(teachers.map((t) => [t.id, t]));
     const summary = Array.from(teacherLessons.entries()).map(
       ([teacherId, data]) => ({
         teacherId,
         teacherName: teacherMap.get(teacherId)?.name ?? "Unknown",
+        hourlyRate: teacherMap.get(teacherId)?.hourlyRate ?? 0,
         totalSessions: data.lessons.length,
+        totalHours: data.lessons.reduce((sum, l) => sum + l.duration, 0),
         totalPay: data.totalPay,
-        lessons: data.lessons.map((l) => ({
-          id: l.id,
-          lessonType: l.lessonType,
-          lessonDate: l.lessonDate,
-          startTime: l.startTime,
-          endTime: l.endTime,
-          duration: l.duration,
-          status: l.status,
-          rate: ratesMap.get(teacherId)?.get(l.lessonType) ?? 0,
-        })),
+        lessons: data.lessons.map((l) => {
+          const hr = teacherMap.get(teacherId)?.hourlyRate ?? 0;
+          return {
+            id: l.id,
+            lessonType: l.lessonType,
+            lessonDate: l.lessonDate,
+            startTime: l.startTime,
+            endTime: l.endTime,
+            duration: l.duration,
+            status: l.status,
+            pay: hr * l.duration,
+          };
+        }),
       }),
     );
 

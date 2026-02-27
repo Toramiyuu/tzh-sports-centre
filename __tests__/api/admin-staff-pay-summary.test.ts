@@ -41,7 +41,7 @@ describe("GET /api/admin/staff/pay-summary", () => {
     expect(res.status).toBe(400);
   });
 
-  it("calculates pay summary for a month", async () => {
+  it("calculates pay using hourlyRate * duration", async () => {
     vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
     vi.mocked(isAdmin).mockReturnValue(true);
 
@@ -49,10 +49,8 @@ describe("GET /api/admin/staff/pay-summary", () => {
       {
         id: "teacher-1",
         name: "Coach Lee",
-        payRates: [
-          { lessonType: "1-to-1", rate: 50 },
-          { lessonType: "1-to-2", rate: 60 },
-        ],
+        hourlyRate: 50,
+        isActive: true,
       },
     ] as never);
 
@@ -89,7 +87,10 @@ describe("GET /api/admin/staff/pay-summary", () => {
     expect(json.summary).toHaveLength(1);
     expect(json.summary[0].teacherName).toBe("Coach Lee");
     expect(json.summary[0].totalSessions).toBe(2);
-    expect(json.summary[0].totalPay).toBe(110);
+    expect(json.summary[0].totalHours).toBe(3);
+    expect(json.summary[0].hourlyRate).toBe(50);
+    expect(json.summary[0].totalPay).toBe(150);
+    expect(json.summary[0].lessons[0].pay).toBe(75);
   });
 
   it("defaults to current month when no month param", async () => {

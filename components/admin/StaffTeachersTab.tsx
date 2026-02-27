@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GraduationCap, Plus, Pencil, RefreshCw } from "lucide-react";
+import { GraduationCap, Plus, Pencil, RefreshCw, Users } from "lucide-react";
 
 export interface PayRate {
   id?: string;
@@ -17,6 +17,8 @@ export interface Teacher {
   name: string;
   phone: string | null;
   userId: string | null;
+  role: "TEACHER" | "COACH_ASSISTANT";
+  hourlyRate: number;
   isActive: boolean;
   payRates: PayRate[];
   user: { id: string; name: string; email: string } | null;
@@ -90,28 +92,36 @@ export default function StaffTeachersTab({
                       </p>
                     )}
                   </div>
-                  <Badge variant={teacher.isActive ? "default" : "secondary"}>
-                    {teacher.isActive ? t("active") : t("inactive")}
-                  </Badge>
+                  <div className="flex items-center gap-1.5">
+                    <Badge
+                      variant="outline"
+                      className={
+                        teacher.role === "COACH_ASSISTANT"
+                          ? "text-xs bg-purple-50 text-purple-700 border-purple-300"
+                          : "text-xs bg-blue-50 text-blue-700 border-blue-300"
+                      }
+                    >
+                      {teacher.role === "COACH_ASSISTANT" ? (
+                        <Users className="w-3 h-3 mr-1" />
+                      ) : (
+                        <GraduationCap className="w-3 h-3 mr-1" />
+                      )}
+                      {teacher.role === "COACH_ASSISTANT"
+                        ? t("coachAssistant")
+                        : t("teacher")}
+                    </Badge>
+                    <Badge variant={teacher.isActive ? "default" : "secondary"}>
+                      {teacher.isActive ? t("active") : t("inactive")}
+                    </Badge>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                {teacher.payRates.length > 0 && (
+                {teacher.hourlyRate > 0 && (
                   <div className="mb-3">
-                    <p className="text-xs font-medium text-muted-foreground mb-1">
-                      {t("payRates")}
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {teacher.payRates.map((pr) => (
-                        <Badge
-                          key={pr.lessonType}
-                          variant="outline"
-                          className="text-xs"
-                        >
-                          {pr.lessonType}: RM{pr.rate}
-                        </Badge>
-                      ))}
-                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      RM{teacher.hourlyRate}/hr
+                    </Badge>
                   </div>
                 )}
                 <div className="flex gap-2">

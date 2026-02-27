@@ -8,6 +8,8 @@ import {
   validatePayRate,
 } from "@/lib/validation";
 
+const VALID_ROLES = ["TEACHER", "COACH_ASSISTANT"] as const;
+
 export async function PATCH(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -31,7 +33,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { name, phone, userId, isActive, payRates } = body;
+    const { name, phone, userId, isActive, hourlyRate, role } = body;
 
     const updateData: Record<string, unknown> = {};
 
@@ -69,52 +71,34 @@ export async function PATCH(
       updateData.isActive = Boolean(isActive);
     }
 
-    const validPayRates: { lessonType: string; rate: number }[] = [];
-    if (payRates && Array.isArray(payRates)) {
-      for (const pr of payRates) {
-        if (!pr.lessonType || typeof pr.lessonType !== "string") {
-          return NextResponse.json(
-            { error: "Each pay rate must have a lessonType" },
-            { status: 400 },
-          );
-        }
-        const validRate = validatePayRate(pr.rate);
-        if (!validRate) {
-          return NextResponse.json(
-            { error: `Invalid rate for ${pr.lessonType}` },
-            { status: 400 },
-          );
-        }
-        validPayRates.push({ lessonType: pr.lessonType, rate: validRate });
+    if (role !== undefined) {
+      if (!VALID_ROLES.includes(role)) {
+        return NextResponse.json(
+          { error: "Invalid role. Must be TEACHER or COACH_ASSISTANT" },
+          { status: 400 },
+        );
       }
+      updateData.role = role;
     }
 
-    const teacher = await prisma.$transaction(async (tx) => {
-      await tx.teacher.update({
-        where: { id },
-        data: updateData,
-      });
-
-      if (payRates && Array.isArray(payRates)) {
-        await tx.teacherPayRate.deleteMany({ where: { teacherId: id } });
-        if (validPayRates.length > 0) {
-          await tx.teacherPayRate.createMany({
-            data: validPayRates.map((pr) => ({
-              teacherId: id,
-              lessonType: pr.lessonType,
-              rate: pr.rate,
-            })),
-          });
-        }
+    if (hourlyRate !== undefined) {
+      const validRate = validatePayRate(hourlyRate);
+      if (validRate === null) {
+        return NextResponse.json(
+          { error: "Invalid hourly rate" },
+          { status: 400 },
+        );
       }
+      updateData.hourlyRate = validRate;
+    }
 
-      return tx.teacher.findUnique({
-        where: { id },
-        include: {
-          payRates: true,
-          user: { select: { id: true, name: true, email: true } },
-        },
-      });
+    const teacher = await prisma.teacher.update({
+      where: { id },
+      data: updateData,
+      include: {
+        payRates: true,
+        user: { select: { id: true, name: true, email: true } },
+      },
     });
 
     return NextResponse.json({ teacher });

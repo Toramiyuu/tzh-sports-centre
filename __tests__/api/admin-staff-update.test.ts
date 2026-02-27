@@ -6,8 +6,6 @@ vi.mock("@/lib/admin", () => ({ isAdmin: vi.fn() }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     teacher: { findUnique: vi.fn(), update: vi.fn() },
-    teacherPayRate: { deleteMany: vi.fn(), createMany: vi.fn() },
-    $transaction: vi.fn(),
   },
 }));
 
@@ -23,10 +21,10 @@ const mockTeacher = {
   name: "Coach Lee",
   phone: "0123456789",
   userId: null,
+  role: "TEACHER",
+  hourlyRate: 50,
   isActive: true,
-  payRates: [
-    { id: "pr-1", teacherId: "teacher-1", lessonType: "1-to-1", rate: 50 },
-  ],
+  payRates: [],
   user: null,
 };
 
@@ -60,42 +58,67 @@ describe("PATCH /api/admin/staff/[id]", () => {
     expect(res.status).toBe(404);
   });
 
-  it("updates teacher name and pay rates", async () => {
+  it("updates teacher name and hourly rate", async () => {
     vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
     vi.mocked(isAdmin).mockReturnValue(true);
     vi.mocked(prisma.teacher.findUnique).mockResolvedValue(
       mockTeacher as never,
     );
 
-    const updatedTeacher = { ...mockTeacher, name: "Coach Lee Updated" };
-    vi.mocked(prisma.$transaction).mockImplementation(async (fn) => {
-      return (fn as Function)({
-        teacher: {
-          update: vi.fn().mockResolvedValue(updatedTeacher),
-          findUnique: vi.fn().mockResolvedValue(updatedTeacher),
-        },
-        teacherPayRate: {
-          deleteMany: vi.fn().mockResolvedValue({ count: 1 }),
-          createMany: vi.fn().mockResolvedValue({ count: 1 }),
-        },
-      });
-    });
+    const updatedTeacher = {
+      ...mockTeacher,
+      name: "Coach Lee Updated",
+      hourlyRate: 60,
+    };
+    vi.mocked(prisma.teacher.update).mockResolvedValue(
+      updatedTeacher as never,
+    );
 
     const req = createMockNextRequest({
       method: "PATCH",
       url: "http://localhost:3000/api/admin/staff/teacher-1",
-      body: {
-        name: "Coach Lee Updated",
-        payRates: [{ lessonType: "1-to-1", rate: 60 }],
-      },
+      body: { name: "Coach Lee Updated", hourlyRate: 60 },
     });
     const res = await PATCH(req, mockContext);
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.teacher.name).toBe("Coach Lee Updated");
+    expect(prisma.teacher.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          name: "Coach Lee Updated",
+          hourlyRate: 60,
+        }),
+      }),
+    );
   });
 
-  it("returns 400 for invalid pay rate", async () => {
+  it("updates role to coach assistant", async () => {
+    vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
+    vi.mocked(isAdmin).mockReturnValue(true);
+    vi.mocked(prisma.teacher.findUnique).mockResolvedValue(
+      mockTeacher as never,
+    );
+    vi.mocked(prisma.teacher.update).mockResolvedValue({
+      ...mockTeacher,
+      role: "COACH_ASSISTANT",
+    } as never);
+
+    const req = createMockNextRequest({
+      method: "PATCH",
+      url: "http://localhost:3000/api/admin/staff/teacher-1",
+      body: { role: "COACH_ASSISTANT" },
+    });
+    const res = await PATCH(req, mockContext);
+    expect(res.status).toBe(200);
+    expect(prisma.teacher.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ role: "COACH_ASSISTANT" }),
+      }),
+    );
+  });
+
+  it("returns 400 for invalid role", async () => {
     vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
     vi.mocked(isAdmin).mockReturnValue(true);
     vi.mocked(prisma.teacher.findUnique).mockResolvedValue(
@@ -104,7 +127,22 @@ describe("PATCH /api/admin/staff/[id]", () => {
     const req = createMockNextRequest({
       method: "PATCH",
       url: "http://localhost:3000/api/admin/staff/teacher-1",
-      body: { payRates: [{ lessonType: "1-to-1", rate: -10 }] },
+      body: { role: "INVALID" },
+    });
+    const res = await PATCH(req, mockContext);
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 for invalid hourly rate", async () => {
+    vi.mocked(auth).mockResolvedValue(fixtures.adminSession as never);
+    vi.mocked(isAdmin).mockReturnValue(true);
+    vi.mocked(prisma.teacher.findUnique).mockResolvedValue(
+      mockTeacher as never,
+    );
+    const req = createMockNextRequest({
+      method: "PATCH",
+      url: "http://localhost:3000/api/admin/staff/teacher-1",
+      body: { hourlyRate: -10 },
     });
     const res = await PATCH(req, mockContext);
     expect(res.status).toBe(400);

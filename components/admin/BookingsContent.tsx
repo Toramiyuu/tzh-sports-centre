@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
+import { MultiSlotDialog } from "@/components/admin/MultiSlotDialog";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { format, startOfDay } from "date-fns";
@@ -239,6 +240,13 @@ export default function BookingsContent() {
     new Set(),
   );
   const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedFreeSlots, setSelectedFreeSlots] = useState<Set<string>>(
+    new Set(),
+  );
+  const [multiBookingDialogOpen, setMultiBookingDialogOpen] = useState(false);
+  const [multiBookingType, setMultiBookingType] = useState<
+    "booking" | "lesson"
+  >("booking");
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const [paymentConfirmOpen, setPaymentConfirmOpen] = useState(false);
@@ -286,9 +294,23 @@ export default function BookingsContent() {
     });
   };
 
+  const toggleFreeSlotSelection = (courtId: number, slotTime: string) => {
+    const key = `${courtId}-${slotTime}`;
+    setSelectedFreeSlots((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
+      }
+      return newSet;
+    });
+  };
+
   const clearSelections = () => {
     setSelectedRecurringIds(new Set());
     setSelectedBookingIds(new Set());
+    setSelectedFreeSlots(new Set());
     setSelectionMode(false);
   };
 
@@ -846,6 +868,67 @@ export default function BookingsContent() {
     setAddDialogOpen(true);
   };
 
+  const handleMultiCreate = async (
+    type: "booking" | "lesson",
+    formData: Record<string, unknown>,
+  ) => {
+    if (selectedFreeSlots.size === 0) return;
+    setActionLoading(true);
+    try {
+      const slots = Array.from(selectedFreeSlots).map((key) => {
+        const [courtId, slotTime] = key.split("-");
+        return { courtId: parseInt(courtId), slotTime };
+      });
+
+      if (type === "booking") {
+        for (const s of slots) {
+          const slotIndex = timeSlots.findIndex(
+            (ts) => ts.slotTime === s.slotTime,
+          );
+          const endSlot = timeSlots[slotIndex + 1];
+          await fetch("/api/admin/bookings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              courtId: s.courtId,
+              date: format(selectedDate, "yyyy-MM-dd"),
+              startTime: s.slotTime,
+              endTime: endSlot?.slotTime || s.slotTime,
+              sport: formData.sport,
+              guestName: formData.name,
+              guestPhone: formData.phone,
+            }),
+          });
+        }
+      } else {
+        for (const s of slots) {
+          await fetch("/api/admin/lessons", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              courtId: s.courtId,
+              lessonDate: format(selectedDate, "yyyy-MM-dd"),
+              startTime: s.slotTime,
+              lessonType: formData.lessonType,
+              duration: formData.duration,
+              studentIds: formData.studentIds,
+              teacherId: formData.teacherId || undefined,
+              notes: formData.notes || "",
+            }),
+          });
+        }
+      }
+
+      setMultiBookingDialogOpen(false);
+      clearSelections();
+      fetchBookings();
+    } catch (error) {
+      console.error("Error creating multi-bookings:", error);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const filteredBookings = bookings.filter((b) => {
     if (sportFilter === "all") return true;
     return b.sport === sportFilter;
@@ -1298,21 +1381,49 @@ export default function BookingsContent() {
                                 </td>
                               );
                             } else if (!booking) {
+                              const freeKey = `${court.id}-${slot.slotTime}`;
+                              const isFreeSelected =
+                                selectedFreeSlots.has(freeKey);
                               return (
                                 <td
                                   key={court.id}
                                   className="p-2 border-b border-border"
                                 >
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="w-full h-16 border-dashed border-border text-muted-foreground/70 hover:text-muted-foreground hover:bg-card"
-                                    onClick={() =>
-                                      openAddDialog(court.id, slot.slotTime)
-                                    }
-                                  >
-                                    <Plus className="w-4 h-4" />
-                                  </Button>
+                                  {selectionMode ? (
+                                    <button
+                                      type="button"
+                                      className={`w-full h-16 rounded-md border-2 border-dashed flex items-center justify-center transition-colors relative ${
+                                        isFreeSelected
+                                          ? "border-primary bg-primary/10"
+                                          : "border-border text-muted-foreground/70 hover:border-primary/50 hover:bg-primary/5"
+                                      }`}
+                                      onClick={() =>
+                                        toggleFreeSlotSelection(
+                                          court.id,
+                                          slot.slotTime,
+                                        )
+                                      }
+                                    >
+                                      {isFreeSelected ? (
+                                        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                                          <Check className="w-3 h-3 text-white" />
+                                        </div>
+                                      ) : (
+                                        <Plus className="w-4 h-4" />
+                                      )}
+                                    </button>
+                                  ) : (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="w-full h-16 border-dashed border-border text-muted-foreground/70 hover:text-muted-foreground hover:bg-card"
+                                      onClick={() =>
+                                        openAddDialog(court.id, slot.slotTime)
+                                      }
+                                    >
+                                      <Plus className="w-4 h-4" />
+                                    </Button>
+                                  )}
                                 </td>
                               );
                             } else {
@@ -2711,11 +2822,23 @@ export default function BookingsContent() {
 
       {/* Floating Action Bar for Selection Mode */}
       {selectionMode &&
-        (selectedRecurringIds.size > 0 || selectedBookingIds.size > 0) && (
+        (selectedRecurringIds.size > 0 ||
+          selectedBookingIds.size > 0 ||
+          selectedFreeSlots.size > 0) && (
           <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-4 z-50">
             <span className="text-sm">
-              {selectedRecurringIds.size + selectedBookingIds.size}{" "}
-              {t("selected")}
+              {selectedFreeSlots.size > 0 && (
+                <span className="text-primary ml-1">
+                  {selectedFreeSlots.size} {t("freeSlots")}
+                </span>
+              )}
+              {selectedRecurringIds.size + selectedBookingIds.size > 0 && (
+                <>
+                  {selectedFreeSlots.size > 0 && " + "}
+                  {selectedRecurringIds.size + selectedBookingIds.size}{" "}
+                  {t("selected")}
+                </>
+              )}
               {selectedRecurringIds.size > 0 && (
                 <span className="text-purple-600 ml-1">
                   ({selectedRecurringIds.size} {t("recurring")})
@@ -2727,6 +2850,34 @@ export default function BookingsContent() {
                 </span>
               )}
             </span>
+            {selectedFreeSlots.size > 0 && (
+              <>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setMultiBookingType("booking");
+                    setMultiBookingDialogOpen(true);
+                  }}
+                  disabled={actionLoading}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  {t("createBookings")}
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setMultiBookingType("lesson");
+                    setMultiBookingDialogOpen(true);
+                  }}
+                  disabled={actionLoading}
+                  className="bg-orange-600 hover:bg-orange-700"
+                >
+                  <GraduationCap className="w-4 h-4 mr-1" />
+                  {t("createLesson")}
+                </Button>
+              </>
+            )}
             {selectedRecurringIds.size > 0 && (
               <Button
                 size="sm"
@@ -2753,15 +2904,17 @@ export default function BookingsContent() {
                 Confirm Payment{selectedPendingPaymentCount > 1 ? "s" : ""}
               </Button>
             )}
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setDeleteConfirmOpen(true)}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              <Trash2 className="w-4 h-4 mr-1" />
-              {t("deleteSelected")}
-            </Button>
+            {selectedRecurringIds.size + selectedBookingIds.size > 0 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setDeleteConfirmOpen(true)}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                {t("deleteSelected")}
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -2772,6 +2925,26 @@ export default function BookingsContent() {
             </Button>
           </div>
         )}
+
+      {/* Multi Slot Booking/Lesson Dialog */}
+      <MultiSlotDialog
+        open={multiBookingDialogOpen}
+        onOpenChange={setMultiBookingDialogOpen}
+        type={multiBookingType}
+        slots={Array.from(selectedFreeSlots).map((key) => {
+          const [cId, sTime] = key.split("-");
+          const court = courts.find((c) => c.id === parseInt(cId));
+          const slot = timeSlots.find((s) => s.slotTime === sTime);
+          return {
+            courtId: parseInt(cId),
+            slotTime: sTime,
+            courtName: court?.name || `Court ${cId}`,
+            displayTime: slot?.displayName || sTime,
+          };
+        })}
+        loading={actionLoading}
+        onCreate={handleMultiCreate}
+      />
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
