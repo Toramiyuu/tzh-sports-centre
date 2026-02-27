@@ -394,7 +394,7 @@ export async function PATCH(request: NextRequest) {
     const siblingFilter = phone
       ? {
           bookingDate: booking.bookingDate,
-          status: "pending",
+          status: { not: "cancelled" },
           OR: [{ guestPhone: phone }, { user: { phone } }],
         }
       : { id: bookingId };

@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { format, startOfDay } from "date-fns";
@@ -336,14 +337,28 @@ export default function BookingsContent() {
         }),
       });
 
-      if (res.ok) {
-        setPaymentConfirmOpen(false);
-        setBookingToConfirmPayment(null);
-        setVerificationNotes("");
-        fetchBookings();
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        toast.error(data?.error || "Failed to approve booking");
+        return;
       }
+
+      const data = await res.json();
+      if (data.count === 0) {
+        toast.error(
+          "No bookings were updated. The booking may have already been processed.",
+        );
+        return;
+      }
+
+      toast.success("Booking approved successfully");
+      setPaymentConfirmOpen(false);
+      setBookingToConfirmPayment(null);
+      setVerificationNotes("");
+      fetchBookings();
     } catch (error) {
       console.error("Error confirming payment:", error);
+      toast.error("Failed to approve booking");
     } finally {
       setActionLoading(false);
     }
@@ -364,14 +379,28 @@ export default function BookingsContent() {
         }),
       });
 
-      if (res.ok) {
-        setPaymentConfirmOpen(false);
-        setBookingToConfirmPayment(null);
-        setVerificationNotes("");
-        fetchBookings();
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        toast.error(data?.error || "Failed to reject booking");
+        return;
       }
+
+      const data = await res.json();
+      if (data.count === 0) {
+        toast.error(
+          "No bookings were updated. The booking may have already been processed.",
+        );
+        return;
+      }
+
+      toast.success("Booking rejected");
+      setPaymentConfirmOpen(false);
+      setBookingToConfirmPayment(null);
+      setVerificationNotes("");
+      fetchBookings();
     } catch (error) {
       console.error("Error rejecting payment:", error);
+      toast.error("Failed to reject booking");
     } finally {
       setActionLoading(false);
     }

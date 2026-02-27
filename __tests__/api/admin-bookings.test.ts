@@ -587,7 +587,7 @@ describe('PATCH /api/admin/bookings', () => {
     expect(prisma.booking.updateMany).toHaveBeenCalledWith({
       where: expect.objectContaining({
         bookingDate: new Date('2026-03-28'),
-        status: 'pending',
+        status: { not: 'cancelled' },
       }),
       data: expect.objectContaining({
         receiptVerificationStatus: 'approved',
@@ -626,7 +626,7 @@ describe('PATCH /api/admin/bookings', () => {
     expect(prisma.booking.updateMany).toHaveBeenCalledWith({
       where: expect.objectContaining({
         bookingDate: new Date('2026-03-28'),
-        status: 'pending',
+        status: { not: 'cancelled' },
       }),
       data: expect.objectContaining({
         receiptVerificationStatus: 'rejected',
