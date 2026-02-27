@@ -25,7 +25,9 @@ export async function GET(request: NextRequest) {
     };
 
     if (upcoming) {
-      where.lessonDate = { gt: new Date() };
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      where.lessonDate = { gte: today };
     }
 
     const sessions = await prisma.lessonSession.findMany({
