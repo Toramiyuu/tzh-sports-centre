@@ -14,8 +14,14 @@ export function PricingSection() {
       price: "RM15",
       unit: "/hr",
       note: "Peak: RM18/hr",
-      popular: false,
-      features: ["Online booking", "Walk-ins welcome", "Quality vinyl flooring", "Zero-glare lighting", "Clean between sessions"],
+      popular: true,
+      features: [
+        "Online booking",
+        "Walk-ins welcome",
+        "Quality vinyl flooring",
+        "Zero-glare lighting",
+        "Clean between sessions",
+      ],
       href: "/booking",
       cta: "Book Court",
     },
@@ -24,18 +30,30 @@ export function PricingSection() {
       price: "RM25",
       unit: "/hr",
       note: "All hours",
-      popular: true,
-      features: ["Online booking", "Equipment rental", "Beginner friendly", "Quality vinyl flooring", "Zero-glare lighting"],
+      popular: false,
+      features: [
+        "Online booking",
+        "Equipment rental",
+        "Beginner friendly",
+        "Quality vinyl flooring",
+        "Zero-glare lighting",
+      ],
       href: "/booking?sport=pickleball",
       cta: "Book Court",
     },
     {
       name: t("coaching.title"),
       price: "RM50",
-      unit: "/mo",
+      unit: "/session",
       note: "Group classes from RM50. Private from RM130.",
       popular: false,
-      features: ["BAM-certified coaches", "All skill levels", "Kids & adult groups", "Private sessions available", "Flexible scheduling"],
+      features: [
+        "BAM-certified coaches",
+        "All skill levels",
+        "Kids & adult groups",
+        "Private sessions available",
+        "Flexible scheduling",
+      ],
       href: "/lessons",
       cta: "View Lessons",
     },
@@ -48,7 +66,9 @@ export function PricingSection() {
         <div className="text-center mb-16 md:mb-20 animate-in fade-in duration-700 fill-mode-forwards">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <Calendar className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wider">Pricing</span>
+            <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+              Pricing
+            </span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground mb-4">
             Simple, Transparent Rates
@@ -72,43 +92,69 @@ export function PricingSection() {
             >
               {plan.popular && (
                 <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm">
-                  <span className="text-xs font-bold uppercase tracking-wider">Popular</span>
+                  <span className="text-xs font-bold uppercase tracking-wider">
+                    Popular
+                  </span>
                 </div>
               )}
 
               <div className="p-8">
-                <h3 className={`text-lg font-semibold mb-6 ${plan.popular ? "text-white" : "text-foreground"}`}>
+                <h3
+                  className={`text-lg font-semibold mb-6 ${plan.popular ? "text-white" : "text-foreground"}`}
+                >
                   {plan.name}
                 </h3>
 
                 {/* Price */}
                 <div className="mb-2">
-                  <span className={`text-4xl font-bold ${plan.popular ? "text-white" : "text-foreground"}`}>{plan.price}</span>
-                  <span className={`text-sm ${plan.popular ? "text-white/70" : "text-muted-foreground"}`}>{plan.unit}</span>
+                  <span
+                    className={`text-4xl font-bold ${plan.popular ? "text-white" : "text-foreground"}`}
+                  >
+                    {plan.price}
+                  </span>
+                  <span
+                    className={`text-sm ${plan.popular ? "text-white/70" : "text-muted-foreground"}`}
+                  >
+                    {plan.unit}
+                  </span>
                 </div>
-                <p className={`text-sm mb-8 ${plan.popular ? "text-white/60" : "text-muted-foreground"}`}>{plan.note}</p>
+                <p
+                  className={`text-sm mb-8 ${plan.popular ? "text-white/60" : "text-muted-foreground"}`}
+                >
+                  {plan.note}
+                </p>
 
                 {/* Features */}
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        plan.popular ? "bg-white/20" : "bg-primary/10"
-                      }`}>
-                        <Check className={`w-3 h-3 ${plan.popular ? "text-white" : "text-primary"}`} />
+                      <div
+                        className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          plan.popular ? "bg-white/20" : "bg-primary/10"
+                        }`}
+                      >
+                        <Check
+                          className={`w-3 h-3 ${plan.popular ? "text-white" : "text-primary"}`}
+                        />
                       </div>
-                      <span className={`text-sm ${plan.popular ? "text-white/90" : "text-muted-foreground"}`}>{feature}</span>
+                      <span
+                        className={`text-sm ${plan.popular ? "text-white/90" : "text-muted-foreground"}`}
+                      >
+                        {feature}
+                      </span>
                     </li>
                   ))}
                 </ul>
 
                 {/* CTA */}
                 <Link href={plan.href}>
-                  <Button className={`w-full h-11 font-medium rounded-lg group/btn ${
-                    plan.popular
-                      ? "bg-white text-primary hover:bg-white/90"
-                      : "bg-primary hover:bg-primary/90 text-white"
-                  }`}>
+                  <Button
+                    className={`w-full h-11 font-medium rounded-lg group/btn ${
+                      plan.popular
+                        ? "bg-white text-primary hover:bg-white/90"
+                        : "bg-primary hover:bg-primary/90 text-white"
+                    }`}
+                  >
                     {plan.cta}
                     <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
@@ -133,4 +179,3 @@ export function PricingSection() {
     </section>
   );
 }
-

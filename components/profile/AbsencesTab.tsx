@@ -59,6 +59,7 @@ export function AbsencesTab() {
   const [credits, setCredits] = useState<ReplacementCredit[]>([]);
   const [upcomingLessons, setUpcomingLessons] = useState<LessonSession[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
 
   useEffect(() => {
     fetchAll();
@@ -88,6 +89,10 @@ export function AbsencesTab() {
   };
 
   const now = new Date();
+  const todayDate = now.getDate();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
   const TYPE_PRIORITY: Record<string, number> = {
     MEDICAL: 4,
     ABSENT: 3,
@@ -98,9 +103,7 @@ export function AbsencesTab() {
   absences
     .filter((a) => {
       const d = new Date(a.lessonDate);
-      return (
-        d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
-      );
+      return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
     })
     .forEach((a) => {
       const day = new Date(a.lessonDate).getDate();
@@ -113,16 +116,35 @@ export function AbsencesTab() {
       }
     });
 
-  const daysInMonth = new Date(
-    now.getFullYear(),
-    now.getMonth() + 1,
-    0,
-  ).getDate();
-  const firstDayOfMonth = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    1,
-  ).getDay();
+  const lessonDays = new Set<number>();
+  upcomingLessons.forEach((l) => {
+    const d = new Date(l.lessonDate);
+    if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {
+      lessonDays.add(d.getDate());
+    }
+  });
+
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+
+  const filteredLessons = selectedDate
+    ? upcomingLessons.filter((l) => {
+        const d = new Date(l.lessonDate);
+        return (
+          d.getFullYear() === currentYear &&
+          d.getMonth() === currentMonth &&
+          d.getDate() === selectedDate
+        );
+      })
+    : upcomingLessons;
+
+  const handleDayClick = (day: number) => {
+    const isFutureOrToday = day >= todayDate;
+    const hasLesson = lessonDays.has(day);
+    if (isFutureOrToday && hasLesson) {
+      setSelectedDate(selectedDate === day ? null : day);
+    }
+  };
 
   if (loading) {
     return (
@@ -179,26 +201,68 @@ export function AbsencesTab() {
             {Array.from({ length: firstDayOfMonth }).map((_, i) => (
               <div key={`e${i}`} />
             ))}
-            {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => (
-              <div
-                key={day}
-                className={`h-8 w-8 mx-auto flex items-center justify-center rounded-full text-sm ${
-                  absenceDateTypes.has(day)
-                    ? `${TYPE_COLOURS[absenceDateTypes.get(day)!] || ""} font-semibold`
-                    : day === now.getDate()
-                      ? "bg-primary/20 text-primary font-semibold"
-                      : "text-foreground"
-                }`}
-              >
-                {day}
-              </div>
-            ))}
+            {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
+              const hasLesson = lessonDays.has(day);
+              const isFutureOrToday = day >= todayDate;
+              const isClickable = hasLesson && isFutureOrToday;
+              const isSelected = selectedDate === day;
+
+              let dayClass =
+                "h-8 w-8 mx-auto flex items-center justify-center rounded-full text-sm relative";
+
+              if (isSelected) {
+                dayClass +=
+                  " bg-primary text-white font-semibold ring-2 ring-primary ring-offset-2 ring-offset-card";
+              } else if (absenceDateTypes.has(day)) {
+                dayClass += ` ${TYPE_COLOURS[absenceDateTypes.get(day)!] || ""} font-semibold`;
+              } else if (day === todayDate) {
+                dayClass += " bg-primary/20 text-primary font-semibold";
+              } else {
+                dayClass += " text-foreground";
+              }
+
+              if (isClickable && !isSelected) {
+                dayClass += " cursor-pointer hover:bg-primary/10";
+              }
+
+              return (
+                <div key={day} className="relative">
+                  <div
+                    className={dayClass}
+                    onClick={
+                      isClickable ? () => handleDayClick(day) : undefined
+                    }
+                  >
+                    {day}
+                  </div>
+                  {hasLesson && !isSelected && (
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+                  )}
+                </div>
+              );
+            })}
           </div>
+          {selectedDate && (
+            <p className="text-xs text-muted-foreground text-center mt-3">
+              Showing lessons for{" "}
+              {format(
+                new Date(currentYear, currentMonth, selectedDate),
+                "EEE, dd MMM",
+              )}{" "}
+              ·{" "}
+              <button
+                className="text-primary underline"
+                onClick={() => setSelectedDate(null)}
+              >
+                Show all
+              </button>
+            </p>
+          )}
         </CardContent>
       </Card>
 
       <UpcomingLessonsSection
-        upcomingLessons={upcomingLessons}
+        upcomingLessons={filteredLessons}
         onSubmitted={fetchAll}
       />
 
