@@ -1210,7 +1210,7 @@ function BookingPageContent() {
                       </h4>
                       <p className="text-sm text-muted-foreground">
                         {t("uploadReceiptDesc") ||
-                          "Upload a screenshot of your payment confirmation for faster verification."}
+                          "Upload a screenshot of your payment confirmation (required)."}
                       </p>
                     </div>
                   </div>
@@ -1284,10 +1284,12 @@ function BookingPageContent() {
 
               {/* Confirm Button */}
               <Button
-                className={`w-full h-14 text-lg font-semibold ${tngHasPaid ? "bg-primary hover:bg-primary/90" : "bg-accent cursor-not-allowed"}`}
+                className={`w-full h-14 text-lg font-semibold ${tngHasPaid && tngReceiptFile ? "bg-primary hover:bg-primary/90" : "bg-accent cursor-not-allowed"}`}
                 size="lg"
                 onClick={handleTngBookingConfirm}
-                disabled={!tngHasPaid || booking || uploadingReceipt}
+                disabled={
+                  !tngHasPaid || !tngReceiptFile || booking || uploadingReceipt
+                }
               >
                 {booking || uploadingReceipt ? (
                   <>
@@ -1470,7 +1472,7 @@ function BookingPageContent() {
                       </h4>
                       <p className="text-sm text-muted-foreground">
                         {t("uploadReceiptDesc") ||
-                          "Upload a screenshot of your payment confirmation for faster verification."}
+                          "Upload a screenshot of your payment confirmation (required)."}
                       </p>
                     </div>
                   </div>
@@ -1544,10 +1546,15 @@ function BookingPageContent() {
 
               {/* Confirm Button */}
               <Button
-                className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid ? "bg-primary hover:bg-primary/90" : "bg-accent cursor-not-allowed"}`}
+                className={`w-full h-14 text-lg font-semibold ${duitNowHasPaid && duitNowReceiptFile ? "bg-primary hover:bg-primary/90" : "bg-accent cursor-not-allowed"}`}
                 size="lg"
                 onClick={handleDuitNowBookingConfirm}
-                disabled={!duitNowHasPaid || booking || uploadingReceipt}
+                disabled={
+                  !duitNowHasPaid ||
+                  !duitNowReceiptFile ||
+                  booking ||
+                  uploadingReceipt
+                }
               >
                 {booking || uploadingReceipt ? (
                   <>
