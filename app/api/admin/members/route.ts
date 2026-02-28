@@ -22,6 +22,9 @@ export async function GET() {
         isTrainee: true,
         skillLevel: true,
         createdAt: true,
+        teacher: {
+          select: { id: true, role: true, isActive: true },
+        },
         _count: {
           select: {
             lessonSessions: true,
@@ -34,6 +37,7 @@ export async function GET() {
     const serializedUsers = users.map((u) => ({
       ...u,
       uid: u.uid.toString().padStart(3, "0"),
+      isTeacher: !!u.teacher && u.teacher.isActive,
     }));
 
     const members = serializedUsers.filter((u) => u.isMember);

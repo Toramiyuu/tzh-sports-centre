@@ -35,6 +35,7 @@ interface User {
   phone: string;
   isMember: boolean;
   isTrainee: boolean;
+  isTeacher: boolean;
   skillLevel: string | null;
   createdAt: string;
   _count: {
@@ -351,6 +352,11 @@ export default function MembersContent() {
                         {user.isMember && (
                           <Badge className="bg-primary text-white border-0">
                             {t("membersTab")}
+                          </Badge>
+                        )}
+                        {user.isTeacher && (
+                          <Badge className="bg-teal-100 text-teal-700 border-0">
+                            Teacher
                           </Badge>
                         )}
                         {user.isTrainee && (

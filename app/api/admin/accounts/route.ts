@@ -1,27 +1,27 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { isAdmin, isSuperAdmin } from '@/lib/admin'
-import { prisma } from '@/lib/prisma'
-import { logAdminAction } from '@/lib/audit'
-import { validateMalaysianPhone, sanitiseText } from '@/lib/validation'
-import bcrypt from 'bcryptjs'
-import crypto from 'crypto'
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { isAdmin, isSuperAdmin } from "@/lib/admin";
+import { prisma } from "@/lib/prisma";
+import { logAdminAction } from "@/lib/audit";
+import { validateMalaysianPhone, sanitiseText } from "@/lib/validation";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 function generateTempPassword(): string {
-  return crypto.randomBytes(6).toString('base64url') // 8 chars, URL-safe
+  return crypto.randomBytes(6).toString("base64url"); // 8 chars, URL-safe
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Check if looking up a single user by UID
-    const searchParams = request.nextUrl.searchParams
-    const uidParam = searchParams.get('uid')
+    const searchParams = request.nextUrl.searchParams;
+    const uidParam = searchParams.get("uid");
 
     if (uidParam) {
       // Look up single user by UID
@@ -34,18 +34,18 @@ export async function GET(request: NextRequest) {
           email: true,
           phone: true,
         },
-      })
+      });
 
       if (!user) {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 })
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
       }
 
       return NextResponse.json({
         user: {
           ...user,
-          uid: user.uid.toString().padStart(3, '0'),
+          uid: user.uid.toString().padStart(3, "0"),
         },
-      })
+      });
     }
 
     const users = await prisma.user.findMany({
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
               },
             },
           },
-          orderBy: { bookingDate: 'desc' },
+          orderBy: { bookingDate: "desc" },
           take: 10, // Last 10 bookings for history
         },
         recurringBookings: {
@@ -94,6 +94,9 @@ export async function GET(request: NextRequest) {
             },
           },
         },
+        teacher: {
+          select: { id: true, role: true, isActive: true },
+        },
         _count: {
           select: {
             bookings: true,
@@ -101,53 +104,59 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
-    })
+      orderBy: { createdAt: "desc" },
+    });
 
     // Helper function to calculate hours between two time strings
     const calculateHours = (startTime: string, endTime: string): number => {
       const parseTime = (time: string) => {
-        const [hours, minutes] = time.split(':').map(Number)
-        return hours + minutes / 60
-      }
-      return parseTime(endTime) - parseTime(startTime)
-    }
+        const [hours, minutes] = time.split(":").map(Number);
+        return hours + minutes / 60;
+      };
+      return parseTime(endTime) - parseTime(startTime);
+    };
 
     // Calculate total spent and combined booking count for each user
-    const serializedUsers = users.map(u => {
+    const serializedUsers = users.map((u) => {
       // Calculate total spent from regular bookings
-      const regularSpent = u.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0)
+      const regularSpent = u.bookings.reduce(
+        (sum, b) => sum + (b.totalAmount || 0),
+        0,
+      );
 
       // Calculate recurring booking instances and cost
-      let recurringInstances = 0
-      let recurringSpent = 0
+      let recurringInstances = 0;
+      let recurringSpent = 0;
 
       for (const rb of u.recurringBookings) {
-        if (!rb.isActive) continue
+        if (!rb.isActive) continue;
 
-        const startDate = new Date(rb.startDate)
-        const endDate = rb.endDate ? new Date(rb.endDate) : new Date()
-        const weeks = Math.ceil((endDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000))
-        const sessionCount = Math.max(weeks, 1)
+        const startDate = new Date(rb.startDate);
+        const endDate = rb.endDate ? new Date(rb.endDate) : new Date();
+        const weeks = Math.ceil(
+          (endDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000),
+        );
+        const sessionCount = Math.max(weeks, 1);
 
-        recurringInstances += sessionCount
+        recurringInstances += sessionCount;
 
         // Calculate cost: hours per session × hourly rate × number of sessions
-        const hoursPerSession = calculateHours(rb.startTime, rb.endTime)
-        const sessionCost = hoursPerSession * rb.court.hourlyRate
-        recurringSpent += sessionCost * sessionCount
+        const hoursPerSession = calculateHours(rb.startTime, rb.endTime);
+        const sessionCost = hoursPerSession * rb.court.hourlyRate;
+        recurringSpent += sessionCost * sessionCount;
       }
 
-      const totalSpent = regularSpent + recurringSpent
+      const totalSpent = regularSpent + recurringSpent;
 
       return {
         id: u.id,
-        uid: u.uid.toString().padStart(3, '0'),
+        uid: u.uid.toString().padStart(3, "0"),
         name: u.name,
         email: u.email,
         phone: u.phone,
         isAdmin: u.isAdmin || isSuperAdmin(u.email),
         isSuperAdmin: isSuperAdmin(u.email),
+        isTeacher: !!u.teacher && u.teacher.isActive,
         createdAt: u.createdAt,
         totalSpent,
         regularSpent,
@@ -156,96 +165,101 @@ export async function GET(request: NextRequest) {
         regularBookings: u._count.bookings,
         recurringBookingsCount: u._count.recurringBookings,
         recurringInstances,
-        recentBookings: u.bookings.map(b => ({
+        recentBookings: u.bookings.map((b) => ({
           ...b,
           courtName: b.court.name,
         })),
-        recurringBookings: u.recurringBookings.map(rb => ({
+        recurringBookings: u.recurringBookings.map((rb) => ({
           ...rb,
           courtName: rb.court.name,
         })),
         _count: u._count,
-      }
-    })
+      };
+    });
 
-    return NextResponse.json({ users: serializedUsers })
+    return NextResponse.json({ users: serializedUsers });
   } catch (error) {
-    console.error('Error fetching accounts:', error)
+    console.error("Error fetching accounts:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch accounts' },
-      { status: 500 }
-    )
+      { error: "Failed to fetch accounts" },
+      { status: 500 },
+    );
   }
 }
 
 // POST - Admin creates a temporary account for a user
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { name, phone, email } = body
+    const body = await request.json();
+    const { name, phone, email } = body;
 
     // Validate required fields
     if (!name || !phone) {
       return NextResponse.json(
-        { error: 'Name and phone are required' },
-        { status: 400 }
-      )
+        { error: "Name and phone are required" },
+        { status: 400 },
+      );
     }
 
     // Validate phone format (Malaysian)
-    const cleanPhone = validateMalaysianPhone(phone)
+    const cleanPhone = validateMalaysianPhone(phone);
     if (!cleanPhone) {
       return NextResponse.json(
-        { error: 'Invalid phone number format. Please use a valid Malaysian phone number.' },
-        { status: 400 }
-      )
+        {
+          error:
+            "Invalid phone number format. Please use a valid Malaysian phone number.",
+        },
+        { status: 400 },
+      );
     }
 
     // Check if phone already exists
     const existingPhone = await prisma.user.findUnique({
       where: { phone: cleanPhone },
-    })
+    });
 
     if (existingPhone) {
       return NextResponse.json(
-        { error: 'Phone number already registered' },
-        { status: 400 }
-      )
+        { error: "Phone number already registered" },
+        { status: 400 },
+      );
     }
 
     // Check if email already exists (if provided)
     if (email) {
       const existingEmail = await prisma.user.findUnique({
         where: { email },
-      })
+      });
 
       if (existingEmail) {
         return NextResponse.json(
-          { error: 'Email already registered' },
-          { status: 400 }
-        )
+          { error: "Email already registered" },
+          { status: 400 },
+        );
       }
     }
 
     // Generate and hash a temporary password
-    const tempPassword = generateTempPassword()
-    const passwordHash = await bcrypt.hash(tempPassword, 12)
+    const tempPassword = generateTempPassword();
+    const passwordHash = await bcrypt.hash(tempPassword, 12);
 
     // Generate a placeholder email if not provided (required by schema)
-    const userEmail = email || `${cleanPhone}@temp.tzh.local`
+    const userEmail = email || `${cleanPhone}@temp.tzh.local`;
 
     // Get the maximum UID and generate a new one
     const maxUidResult = await prisma.user.findFirst({
       select: { uid: true },
-      orderBy: { uid: 'desc' },
-    })
-    const newUid = maxUidResult ? maxUidResult.uid + BigInt(1) : BigInt(100000001)
+      orderBy: { uid: "desc" },
+    });
+    const newUid = maxUidResult
+      ? maxUidResult.uid + BigInt(1)
+      : BigInt(100000001);
 
     // Create the user
     const newUser = await prisma.user.create({
@@ -264,63 +278,67 @@ export async function POST(request: NextRequest) {
         phone: true,
         createdAt: true,
       },
-    })
+    });
 
     logAdminAction({
       adminId: session.user.id!,
       adminEmail: session.user.email!,
-      action: 'account_create',
-      targetType: 'user',
+      action: "account_create",
+      targetType: "user",
       targetId: newUser.id,
-      details: { name: newUser.name, email: newUser.email, phone: newUser.phone },
-    })
+      details: {
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+      },
+    });
 
     return NextResponse.json({
       success: true,
       user: {
         ...newUser,
-        uid: newUser.uid.toString().padStart(3, '0'),
+        uid: newUser.uid.toString().padStart(3, "0"),
       },
       defaultPassword: tempPassword,
-    })
+    });
   } catch (error) {
-    console.error('Error creating account:', error)
+    console.error("Error creating account:", error);
     return NextResponse.json(
-      { error: 'Failed to create account' },
-      { status: 500 }
-    )
+      { error: "Failed to create account" },
+      { status: 500 },
+    );
   }
 }
 
 // PATCH - Update user UID
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { userId, newUid } = body
+    const body = await request.json();
+    const { userId, newUid } = body;
 
     if (!userId || !newUid) {
       return NextResponse.json(
-        { error: 'User ID and new UID are required' },
-        { status: 400 }
-      )
+        { error: "User ID and new UID are required" },
+        { status: 400 },
+      );
     }
 
     // Check if UID is already in use
     const existingUser = await prisma.user.findUnique({
       where: { uid: BigInt(newUid) },
-    })
+    });
 
     if (existingUser && existingUser.id !== userId) {
       return NextResponse.json(
-        { error: 'UID is already in use by another user' },
-        { status: 400 }
-      )
+        { error: "UID is already in use by another user" },
+        { status: 400 },
+      );
     }
 
     // Update the user's UID
@@ -333,62 +351,59 @@ export async function PATCH(request: NextRequest) {
         name: true,
         email: true,
       },
-    })
+    });
 
     return NextResponse.json({
       success: true,
       user: {
         ...updatedUser,
-        uid: updatedUser.uid.toString().padStart(3, '0'),
+        uid: updatedUser.uid.toString().padStart(3, "0"),
       },
-    })
+    });
   } catch (error) {
-    console.error('Error updating UID:', error)
+    console.error("Error updating UID:", error);
     return NextResponse.json(
-      { error: 'Failed to update UID' },
-      { status: 500 }
-    )
+      { error: "Failed to update UID" },
+      { status: 500 },
+    );
   }
 }
 
 // PUT - Toggle admin status
 export async function PUT(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { userId, isAdmin: makeAdmin } = body
+    const body = await request.json();
+    const { userId, isAdmin: makeAdmin } = body;
 
-    if (!userId || typeof makeAdmin !== 'boolean') {
+    if (!userId || typeof makeAdmin !== "boolean") {
       return NextResponse.json(
-        { error: 'User ID and admin status are required' },
-        { status: 400 }
-      )
+        { error: "User ID and admin status are required" },
+        { status: 400 },
+      );
     }
 
     // Get the user to check if they're a superadmin
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { email: true },
-    })
+    });
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Prevent removing admin from superadmins
     if (!makeAdmin && isSuperAdmin(user.email)) {
       return NextResponse.json(
-        { error: 'Cannot remove admin status from superadmins' },
-        { status: 400 }
-      )
+        { error: "Cannot remove admin status from superadmins" },
+        { status: 400 },
+      );
     }
 
     // Update the user's admin status
@@ -401,7 +416,7 @@ export async function PUT(request: NextRequest) {
         email: true,
         isAdmin: true,
       },
-    })
+    });
 
     return NextResponse.json({
       success: true,
@@ -410,84 +425,81 @@ export async function PUT(request: NextRequest) {
         isAdmin: updatedUser.isAdmin || isSuperAdmin(updatedUser.email),
         isSuperAdmin: isSuperAdmin(updatedUser.email),
       },
-    })
+    });
   } catch (error) {
-    console.error('Error toggling admin status:', error)
+    console.error("Error toggling admin status:", error);
     return NextResponse.json(
-      { error: 'Failed to update admin status' },
-      { status: 500 }
-    )
+      { error: "Failed to update admin status" },
+      { status: 500 },
+    );
   }
 }
 
 // DELETE - Delete user account(s) - supports single or bulk deletion
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await auth()
+    const session = await auth();
 
     if (!session?.user || !isAdmin(session.user.email, session.user.isAdmin)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { userId, userIds } = body
+    const body = await request.json();
+    const { userId, userIds } = body;
 
     // Support both single deletion (userId) and bulk deletion (userIds)
-    const idsToDelete: string[] = userIds || (userId ? [userId] : [])
+    const idsToDelete: string[] = userIds || (userId ? [userId] : []);
 
     if (idsToDelete.length === 0) {
       return NextResponse.json(
-        { error: 'User ID(s) required' },
-        { status: 400 }
-      )
+        { error: "User ID(s) required" },
+        { status: 400 },
+      );
     }
 
     // Get all users to check permissions
     const users = await prisma.user.findMany({
       where: { id: { in: idsToDelete } },
       select: { id: true, email: true, name: true },
-    })
+    });
 
     if (users.length === 0) {
-      return NextResponse.json(
-        { error: 'No users found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: "No users found" }, { status: 404 });
     }
 
     // Check for superadmins and self-deletion
-    const skipped: string[] = []
-    const toDelete: string[] = []
+    const skipped: string[] = [];
+    const toDelete: string[] = [];
 
     for (const user of users) {
       if (isSuperAdmin(user.email)) {
-        skipped.push(`${user.name} (superadmin)`)
+        skipped.push(`${user.name} (superadmin)`);
       } else if (session.user.email === user.email) {
-        skipped.push(`${user.name} (self)`)
+        skipped.push(`${user.name} (self)`);
       } else {
-        toDelete.push(user.id)
+        toDelete.push(user.id);
       }
     }
 
     if (toDelete.length === 0) {
       return NextResponse.json(
-        { error: 'No users can be deleted', skipped },
-        { status: 400 }
-      )
+        { error: "No users can be deleted", skipped },
+        { status: 400 },
+      );
     }
 
     // Delete related records first (to avoid foreign key constraints)
     await prisma.lessonRequest.deleteMany({
       where: { memberId: { in: toDelete } },
-    })
+    });
 
     await prisma.booking.deleteMany({
       where: { userId: { in: toDelete } },
-    })
+    });
 
     await prisma.recurringBooking.deleteMany({
       where: { userId: { in: toDelete } },
-    })
+    });
 
     // Remove users from lesson sessions (many-to-many)
     for (const id of toDelete) {
@@ -498,37 +510,41 @@ export async function DELETE(request: NextRequest) {
             set: [],
           },
         },
-      })
+      });
     }
 
     // Delete the users
     await prisma.user.deleteMany({
       where: { id: { in: toDelete } },
-    })
+    });
 
-    const deletedUsers = users.filter(u => toDelete.includes(u.id))
+    const deletedUsers = users.filter((u) => toDelete.includes(u.id));
     logAdminAction({
       adminId: session.user.id!,
       adminEmail: session.user.email!,
-      action: 'account_delete',
-      targetType: 'user',
+      action: "account_delete",
+      targetType: "user",
       details: {
-        deletedUsers: deletedUsers.map(u => ({ id: u.id, name: u.name, email: u.email })),
+        deletedUsers: deletedUsers.map((u) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+        })),
         count: toDelete.length,
       },
-    })
+    });
 
     return NextResponse.json({
       success: true,
       deleted: toDelete.length,
       skipped: skipped.length > 0 ? skipped : undefined,
       message: `${toDelete.length} user(s) deleted`,
-    })
+    });
   } catch (error) {
-    console.error('Error deleting account(s):', error)
+    console.error("Error deleting account(s):", error);
     return NextResponse.json(
-      { error: 'Failed to delete account(s)' },
-      { status: 500 }
-    )
+      { error: "Failed to delete account(s)" },
+      { status: 500 },
+    );
   }
 }

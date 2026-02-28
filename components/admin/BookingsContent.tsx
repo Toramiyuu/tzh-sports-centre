@@ -2,6 +2,11 @@
 
 import { toast } from "sonner";
 import { MultiSlotDialog } from "@/components/admin/MultiSlotDialog";
+import { SlotTypeChooser } from "@/components/admin/SlotTypeChooser";
+import { GridLessonDialog } from "@/components/admin/GridLessonDialog";
+import { GridRecurringLessonDialog } from "@/components/admin/GridRecurringLessonDialog";
+import { RescheduleConfirmDialog } from "@/components/admin/RescheduleConfirmDialog";
+import { BulkMoveConfirmDialog } from "@/components/admin/BulkMoveConfirmDialog";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { format, startOfDay } from "date-fns";
@@ -50,6 +55,8 @@ import {
   Eye,
   AlertCircle,
   GraduationCap,
+  GripVertical,
+  Move,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { isAdmin } from "@/lib/admin";
@@ -256,6 +263,60 @@ export default function BookingsContent() {
   const [imageZoomOpen, setImageZoomOpen] = useState(false);
   const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null);
 
+  const [lessonDialogOpen, setLessonDialogOpen] = useState(false);
+  const [recurringLessonDialogOpen, setRecurringLessonDialogOpen] =
+    useState(false);
+
+  const [dragOverKey, setDragOverKey] = useState<string | null>(null);
+  const [dragItem, setDragItem] = useState<{
+    id: string;
+    type: "booking" | "lesson";
+    name: string;
+    fromCourtId: number;
+    fromCourtName: string;
+    fromSlotTime: string;
+  } | null>(null);
+  const [rescheduleState, setRescheduleState] = useState<{
+    open: boolean;
+    id: string;
+    type: "booking" | "lesson";
+    name: string;
+    fromCourtId: number;
+    fromCourtName: string;
+    fromSlotTime: string;
+    toCourtId: number;
+    toCourtName: string;
+    toSlotTime: string;
+    submitting: boolean;
+  } | null>(null);
+
+  const [bulkMoveMode, setBulkMoveMode] = useState(false);
+  const [bulkMoveQueue, setBulkMoveQueue] = useState<
+    Array<{
+      id: string;
+      type: "booking" | "lesson";
+      name: string;
+      fromCourtId: number;
+      fromCourtName: string;
+      fromSlotTime: string;
+    }>
+  >([]);
+  const [bulkMoveAssignments, setBulkMoveAssignments] = useState<
+    Array<{
+      id: string;
+      type: "booking" | "lesson";
+      name: string;
+      fromCourtId: number;
+      fromCourtName: string;
+      fromSlotTime: string;
+      toCourtId: number;
+      toCourtName: string;
+      toSlotTime: string;
+    }>
+  >([]);
+  const [bulkMoveConfirmOpen, setBulkMoveConfirmOpen] = useState(false);
+  const [bulkMoveLoading, setBulkMoveLoading] = useState(false);
+
   const [bulkEditOpen, setBulkEditOpen] = useState(false);
   const [bulkEditEndDate, setBulkEditEndDate] = useState("");
   const [bulkEditHourlyRate, setBulkEditHourlyRate] = useState("");
@@ -312,6 +373,283 @@ export default function BookingsContent() {
     setSelectedBookingIds(new Set());
     setSelectedFreeSlots(new Set());
     setSelectionMode(false);
+  };
+
+  const startBulkMove = () => {
+    const queue: typeof bulkMoveQueue = [];
+    // Collect selected non-recurring bookings
+    for (const id of selectedBookingIds) {
+      const entry = Object.entries(bookingMap).find(
+        ([, b]) => b.id === id && !b.isRecurring && !b.isLesson,
+      );
+      if (entry) {
+        const [key, b] = entry;
+        const [courtIdStr, slotTime] = key.split("-");
+        const courtId = parseInt(courtIdStr);
+        const court = courts.find((c) => c.id === courtId);
+        queue.push({
+          id: b.id,
+          type: "booking",
+          name: b.name,
+          fromCourtId: courtId,
+          fromCourtName: court?.name || `Court ${courtId}`,
+          fromSlotTime: slotTime,
+        });
+      }
+    }
+    // Collect selected lessons
+    for (const id of selectedBookingIds) {
+      const entry = Object.entries(bookingMap).find(
+        ([, b]) => b.id === id && b.isLesson,
+      );
+      if (entry) {
+        const [key, b] = entry;
+        const [courtIdStr, slotTime] = key.split("-");
+        const courtId = parseInt(courtIdStr);
+        const court = courts.find((c) => c.id === courtId);
+        queue.push({
+          id: b.id,
+          type: "lesson",
+          name: b.lessonStudents?.join(", ") || "Lesson",
+          fromCourtId: courtId,
+          fromCourtName: court?.name || `Court ${courtId}`,
+          fromSlotTime: slotTime,
+        });
+      }
+    }
+    if (queue.length === 0) return;
+    setBulkMoveMode(true);
+    setBulkMoveQueue(queue);
+    setBulkMoveAssignments([]);
+  };
+
+  const cancelBulkMove = () => {
+    setBulkMoveMode(false);
+    setBulkMoveQueue([]);
+    setBulkMoveAssignments([]);
+  };
+
+  const handleBulkMoveSlotClick = (
+    courtId: number,
+    courtName: string,
+    slotTime: string,
+  ) => {
+    // Check if this slot is already assigned — if so, unassign it
+    const existingIdx = bulkMoveAssignments.findIndex(
+      (a) => a.toCourtId === courtId && a.toSlotTime === slotTime,
+    );
+    if (existingIdx !== -1) {
+      const removed = bulkMoveAssignments[existingIdx];
+      setBulkMoveAssignments((prev) =>
+        prev.filter((_, i) => i !== existingIdx),
+      );
+      setBulkMoveQueue((prev) => [
+        ...prev,
+        {
+          id: removed.id,
+          type: removed.type,
+          name: removed.name,
+          fromCourtId: removed.fromCourtId,
+          fromCourtName: removed.fromCourtName,
+          fromSlotTime: removed.fromSlotTime,
+        },
+      ]);
+      return;
+    }
+
+    if (bulkMoveQueue.length === 0) return;
+    const next = bulkMoveQueue[0];
+    setBulkMoveQueue((prev) => prev.slice(1));
+    setBulkMoveAssignments((prev) => [
+      ...prev,
+      {
+        ...next,
+        toCourtId: courtId,
+        toCourtName: courtName,
+        toSlotTime: slotTime,
+      },
+    ]);
+  };
+
+  const handleBulkMoveConfirm = async () => {
+    setBulkMoveLoading(true);
+    try {
+      const results = await Promise.allSettled(
+        bulkMoveAssignments.map((a) => {
+          const isLesson = a.type === "lesson";
+          const url = isLesson
+            ? "/api/admin/lessons/reschedule"
+            : "/api/admin/bookings/reschedule";
+          const body = isLesson
+            ? {
+                lessonId: a.id,
+                newCourtId: a.toCourtId,
+                newStartTime: a.toSlotTime,
+              }
+            : {
+                bookingId: a.id,
+                newCourtId: a.toCourtId,
+                newStartTime: a.toSlotTime,
+              };
+          return fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          }).then(async (res) => {
+            if (!res.ok) {
+              const data = await res.json().catch(() => ({}));
+              throw new Error(
+                res.status === 409
+                  ? `${a.name}: ${t("conflictError")}`
+                  : data.error || t("rescheduleError"),
+              );
+            }
+          });
+        }),
+      );
+
+      const succeeded = results.filter((r) => r.status === "fulfilled").length;
+      const failed = results.filter((r) => r.status === "rejected").length;
+
+      if (failed === 0) {
+        toast.success(t("bulkMoveSuccess", { count: succeeded }));
+      } else {
+        toast.warning(t("bulkMovePartial", { success: succeeded, failed }));
+        results.forEach((r) => {
+          if (r.status === "rejected") {
+            toast.error(r.reason?.message || t("rescheduleError"));
+          }
+        });
+      }
+
+      setBulkMoveConfirmOpen(false);
+      cancelBulkMove();
+      clearSelections();
+      fetchBookings();
+    } catch {
+      toast.error(t("rescheduleError"));
+    } finally {
+      setBulkMoveLoading(false);
+    }
+  };
+
+  // Items eligible for bulk move: selected non-recurring bookings + lessons
+  const bulkMoveEligibleCount = Array.from(selectedBookingIds).filter((id) => {
+    const entry = Object.entries(bookingMap).find(([, b]) => b.id === id);
+    if (!entry) return false;
+    const b = entry[1];
+    return !b.isRecurring;
+  }).length;
+
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    id: string,
+    type: "booking" | "lesson",
+    name: string,
+    courtId: number,
+    courtName: string,
+    slotTime: string,
+  ) => {
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", id);
+    setDragItem({
+      id,
+      type,
+      name,
+      fromCourtId: courtId,
+      fromCourtName: courtName,
+      fromSlotTime: slotTime,
+    });
+  };
+
+  const handleDragOver = (
+    e: React.DragEvent<HTMLTableCellElement>,
+    key: string,
+  ) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverKey(key);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverKey(null);
+  };
+
+  const handleDrop = (
+    e: React.DragEvent<HTMLTableCellElement>,
+    toCourtId: number,
+    toCourtName: string,
+    toSlotTime: string,
+  ) => {
+    e.preventDefault();
+    setDragOverKey(null);
+    if (!dragItem) return;
+    if (
+      dragItem.fromCourtId === toCourtId &&
+      dragItem.fromSlotTime === toSlotTime
+    )
+      return;
+    setRescheduleState({
+      open: true,
+      id: dragItem.id,
+      type: dragItem.type,
+      name: dragItem.name,
+      fromCourtId: dragItem.fromCourtId,
+      fromCourtName: dragItem.fromCourtName,
+      fromSlotTime: dragItem.fromSlotTime,
+      toCourtId,
+      toCourtName,
+      toSlotTime,
+      submitting: false,
+    });
+    setDragItem(null);
+  };
+
+  const handleRescheduleConfirm = async () => {
+    if (!rescheduleState) return;
+    setRescheduleState((prev) => (prev ? { ...prev, submitting: true } : null));
+    try {
+      const isLesson = rescheduleState.type === "lesson";
+      const url = isLesson
+        ? "/api/admin/lessons/reschedule"
+        : "/api/admin/bookings/reschedule";
+      const body = isLesson
+        ? {
+            lessonId: rescheduleState.id,
+            newCourtId: rescheduleState.toCourtId,
+            newStartTime: rescheduleState.toSlotTime,
+          }
+        : {
+            bookingId: rescheduleState.id,
+            newCourtId: rescheduleState.toCourtId,
+            newStartTime: rescheduleState.toSlotTime,
+          };
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(
+          res.status === 409
+            ? t("conflictError")
+            : data.error || t("rescheduleError"),
+        );
+        setRescheduleState((prev) =>
+          prev ? { ...prev, submitting: false } : null,
+        );
+        return;
+      }
+      toast.success(t("rescheduleSuccess"));
+      setRescheduleState(null);
+      fetchBookings();
+    } catch {
+      toast.error(t("rescheduleError"));
+      setRescheduleState((prev) =>
+        prev ? { ...prev, submitting: false } : null,
+      );
+    }
   };
 
   const handleBulkDelete = async () => {
@@ -1169,7 +1507,29 @@ export default function BookingsContent() {
                                   key={court.id}
                                   className="p-2 border-b border-border"
                                 >
-                                  <div className="p-2 rounded text-xs bg-orange-50 border border-orange-300">
+                                  <div
+                                    className={`p-2 rounded text-xs bg-orange-50 border border-orange-300 relative group ${dragItem?.id === booking.id ? "opacity-50" : ""}`}
+                                    draggable={!selectionMode}
+                                    onDragStart={(e) =>
+                                      handleDragStart(
+                                        e,
+                                        booking.id,
+                                        "lesson",
+                                        booking.lessonStudents?.join(", ") ||
+                                          "Lesson",
+                                        court.id,
+                                        court.name,
+                                        slot.slotTime,
+                                      )
+                                    }
+                                    onDragEnd={() => {
+                                      setDragItem(null);
+                                      setDragOverKey(null);
+                                    }}
+                                  >
+                                    {!selectionMode && (
+                                      <GripVertical className="absolute top-0.5 right-0.5 w-3 h-3 text-orange-400 opacity-0 group-hover:opacity-100 cursor-grab" />
+                                    )}
                                     <div className="flex items-center gap-1 font-medium">
                                       <GraduationCap className="w-3 h-3 text-orange-600" />
                                       <span className="text-orange-700">
@@ -1196,7 +1556,7 @@ export default function BookingsContent() {
                                   className="p-2 border-b border-border"
                                 >
                                   <div
-                                    className={`p-2 rounded text-xs relative ${
+                                    className={`p-2 rounded text-xs relative group ${
                                       isSelected
                                         ? "ring-2 ring-red-500 bg-red-50"
                                         : booking.isRecurring
@@ -1217,7 +1577,28 @@ export default function BookingsContent() {
                                                 : booking.sport === "badminton"
                                                   ? "bg-blue-50 border border-blue-300"
                                                   : "bg-emerald-50 border border-emerald-300"
-                                    } ${selectionMode ? "cursor-pointer hover:opacity-80" : ""}`}
+                                    } ${selectionMode ? "cursor-pointer hover:opacity-80" : ""} ${dragItem?.id === booking.id ? "opacity-50" : ""}`}
+                                    draggable={
+                                      !selectionMode && !booking.isRecurring
+                                    }
+                                    onDragStart={
+                                      !selectionMode && !booking.isRecurring
+                                        ? (e) =>
+                                            handleDragStart(
+                                              e,
+                                              booking.id,
+                                              "booking",
+                                              booking.name,
+                                              court.id,
+                                              court.name,
+                                              slot.slotTime,
+                                            )
+                                        : undefined
+                                    }
+                                    onDragEnd={() => {
+                                      setDragItem(null);
+                                      setDragOverKey(null);
+                                    }}
                                     onClick={
                                       selectionMode
                                         ? () => {
@@ -1234,6 +1615,10 @@ export default function BookingsContent() {
                                         : undefined
                                     }
                                   >
+                                    {/* Drag handle for non-recurring bookings */}
+                                    {!selectionMode && !booking.isRecurring && (
+                                      <GripVertical className="absolute top-0.5 right-0.5 w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 cursor-grab" />
+                                    )}
                                     {/* Selection checkbox indicator */}
                                     {selectionMode && (
                                       <div
@@ -1384,12 +1769,83 @@ export default function BookingsContent() {
                               const freeKey = `${court.id}-${slot.slotTime}`;
                               const isFreeSelected =
                                 selectedFreeSlots.has(freeKey);
+                              const isDragTarget = dragOverKey === freeKey;
+                              const bulkAssigned = bulkMoveAssignments.find(
+                                (a) =>
+                                  a.toCourtId === court.id &&
+                                  a.toSlotTime === slot.slotTime,
+                              );
                               return (
                                 <td
                                   key={court.id}
-                                  className="p-2 border-b border-border"
+                                  className={`p-2 border-b border-border transition-colors ${
+                                    isDragTarget && dragItem
+                                      ? "bg-primary/10 border-2 border-dashed border-primary"
+                                      : ""
+                                  }`}
+                                  onDragOver={
+                                    dragItem
+                                      ? (e) => handleDragOver(e, freeKey)
+                                      : undefined
+                                  }
+                                  onDragLeave={
+                                    dragItem ? handleDragLeave : undefined
+                                  }
+                                  onDrop={
+                                    dragItem
+                                      ? (e) =>
+                                          handleDrop(
+                                            e,
+                                            court.id,
+                                            court.name,
+                                            slot.slotTime,
+                                          )
+                                      : undefined
+                                  }
                                 >
-                                  {selectionMode ? (
+                                  {bulkMoveMode ? (
+                                    <button
+                                      type="button"
+                                      className={`w-full h-16 rounded-md border-2 border-dashed flex flex-col items-center justify-center transition-colors text-xs ${
+                                        bulkAssigned
+                                          ? "border-indigo-400 bg-indigo-50 text-indigo-700"
+                                          : bulkMoveQueue.length > 0
+                                            ? "border-indigo-300 text-indigo-500 hover:border-indigo-400 hover:bg-indigo-50 cursor-pointer"
+                                            : "border-border text-muted-foreground/70"
+                                      }`}
+                                      onClick={() =>
+                                        handleBulkMoveSlotClick(
+                                          court.id,
+                                          court.name,
+                                          slot.slotTime,
+                                        )
+                                      }
+                                      disabled={
+                                        !bulkAssigned &&
+                                        bulkMoveQueue.length === 0
+                                      }
+                                    >
+                                      {bulkAssigned ? (
+                                        <>
+                                          <Move className="w-3 h-3 mb-0.5" />
+                                          <span className="font-medium truncate max-w-[120px]">
+                                            {bulkAssigned.name}
+                                          </span>
+                                        </>
+                                      ) : bulkMoveQueue.length > 0 ? (
+                                        <>
+                                          <Plus className="w-3 h-3 mb-0.5" />
+                                          <span>
+                                            {t("bulkMoveClickToAssign")}
+                                          </span>
+                                        </>
+                                      ) : (
+                                        <span className="text-muted-foreground/50">
+                                          —
+                                        </span>
+                                      )}
+                                    </button>
+                                  ) : selectionMode ? (
                                     <button
                                       type="button"
                                       className={`w-full h-16 rounded-md border-2 border-dashed flex items-center justify-center transition-colors relative ${
@@ -1413,16 +1869,25 @@ export default function BookingsContent() {
                                       )}
                                     </button>
                                   ) : (
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="w-full h-16 border-dashed border-border text-muted-foreground/70 hover:text-muted-foreground hover:bg-card"
-                                      onClick={() =>
+                                    <SlotTypeChooser
+                                      onSelectBooking={() =>
                                         openAddDialog(court.id, slot.slotTime)
                                       }
-                                    >
-                                      <Plus className="w-4 h-4" />
-                                    </Button>
+                                      onSelectLesson={() => {
+                                        setSelectedSlot({
+                                          courtId: court.id,
+                                          slotTime: slot.slotTime,
+                                        });
+                                        setLessonDialogOpen(true);
+                                      }}
+                                      onSelectRecurringLesson={() => {
+                                        setSelectedSlot({
+                                          courtId: court.id,
+                                          slotTime: slot.slotTime,
+                                        });
+                                        setRecurringLessonDialogOpen(true);
+                                      }}
+                                    />
                                   )}
                                 </td>
                               );
@@ -2820,8 +3285,41 @@ export default function BookingsContent() {
         </DialogContent>
       </Dialog>
 
+      {/* Floating Action Bar for Bulk Move Mode */}
+      {bulkMoveMode && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-4 z-50">
+          <span className="text-sm">
+            <Move className="w-4 h-4 inline mr-1" />
+            {t("bulkMoveAssigning", {
+              done: bulkMoveAssignments.length,
+              total: bulkMoveAssignments.length + bulkMoveQueue.length,
+            })}
+          </span>
+          {bulkMoveAssignments.length > 0 && (
+            <Button
+              size="sm"
+              onClick={() => setBulkMoveConfirmOpen(true)}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <Check className="w-4 h-4 mr-1" />
+              {t("bulkMoveConfirmMoves")}
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={cancelBulkMove}
+            className="text-muted-foreground/70 hover:text-foreground hover:bg-accent"
+          >
+            <X className="w-4 h-4 mr-1" />
+            {t("bulkMoveCancelMode")}
+          </Button>
+        </div>
+      )}
+
       {/* Floating Action Bar for Selection Mode */}
       {selectionMode &&
+        !bulkMoveMode &&
         (selectedRecurringIds.size > 0 ||
           selectedBookingIds.size > 0 ||
           selectedFreeSlots.size > 0) && (
@@ -2877,6 +3375,16 @@ export default function BookingsContent() {
                   {t("createLesson")}
                 </Button>
               </>
+            )}
+            {bulkMoveEligibleCount > 0 && (
+              <Button
+                size="sm"
+                onClick={startBulkMove}
+                className="bg-indigo-600 hover:bg-indigo-700"
+              >
+                <Move className="w-4 h-4 mr-1" />
+                {t("moveSelected")}
+              </Button>
             )}
             {selectedRecurringIds.size > 0 && (
               <Button
@@ -3352,6 +3860,56 @@ export default function BookingsContent() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <GridLessonDialog
+        open={lessonDialogOpen}
+        onOpenChange={setLessonDialogOpen}
+        courtId={selectedSlot?.courtId ?? null}
+        courtName={
+          courts.find((c) => c.id === selectedSlot?.courtId)?.name ?? ""
+        }
+        slotTime={selectedSlot?.slotTime ?? null}
+        lessonDate={selectedDate}
+        onSuccess={fetchBookings}
+      />
+
+      <GridRecurringLessonDialog
+        open={recurringLessonDialogOpen}
+        onOpenChange={setRecurringLessonDialogOpen}
+        courtId={selectedSlot?.courtId ?? null}
+        courtName={
+          courts.find((c) => c.id === selectedSlot?.courtId)?.name ?? ""
+        }
+        slotTime={selectedSlot?.slotTime ?? null}
+        selectedDate={selectedDate}
+        onSuccess={fetchBookings}
+      />
+
+      {rescheduleState && (
+        <RescheduleConfirmDialog
+          open={rescheduleState.open}
+          onOpenChange={(open) => {
+            if (!open) setRescheduleState(null);
+            else
+              setRescheduleState((prev) => (prev ? { ...prev, open } : null));
+          }}
+          itemName={rescheduleState.name}
+          fromCourtName={rescheduleState.fromCourtName}
+          fromSlotTime={rescheduleState.fromSlotTime}
+          toCourtName={rescheduleState.toCourtName}
+          toSlotTime={rescheduleState.toSlotTime}
+          onConfirm={handleRescheduleConfirm}
+          loading={rescheduleState.submitting}
+        />
+      )}
+
+      <BulkMoveConfirmDialog
+        open={bulkMoveConfirmOpen}
+        onOpenChange={setBulkMoveConfirmOpen}
+        assignments={bulkMoveAssignments}
+        onConfirm={handleBulkMoveConfirm}
+        loading={bulkMoveLoading}
+      />
     </div>
   );
 }
