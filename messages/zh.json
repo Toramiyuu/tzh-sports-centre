@@ -50,7 +50,8 @@
     "trainingSchedule": "训练日程",
     "teacherDashboard": "我的课程",
     "updates": "更新日志",
-    "leaderboard": "排行榜"
+    "leaderboard": "排行榜",
+    "videos": "教程"
   },
   "home": {
     "hero": {
@@ -1202,7 +1203,17 @@
     "trainingGroups": {
       "title": "训练小组",
       "description": "将学员组织成小组以便安排课程"
-    }
+    },
+    "videoSubscriptions": {
+      "title": "视频订阅",
+      "description": "批准或拒绝视频订阅付款",
+      "subscriptionsTab": "订阅",
+      "videosTab": "管理视频",
+      "addVideo": "添加视频",
+      "noVideos": "暂无上传视频",
+      "videosCount": "{count} 个视频"
+    },
+    "backToAdmin": "返回管理面板"
   },
   "updates": {
     "title": "更新日志",
@@ -1395,6 +1406,13 @@
     "welcome": "欢迎回来，{name}",
     "requestLesson": "申请课程",
     "requestAbsence": "请假",
+    "absenceManagement": {
+      "title": "请假与补课",
+      "viewAll": "请假记录",
+      "requestAbsenceFor": "为即将到来的课程请假",
+      "cancel": "取消",
+      "noData": "没有即将到来的课程或补课额度"
+    },
     "membersOnly": {
       "title": "成为培训会员",
       "description": "加入我们的教练计划，获得定期课程、个人课表等更多服务。",
@@ -1909,6 +1927,74 @@
       "invalidGroup": "无效的分组值",
       "profileNotFound": "未找到球员资料",
       "invalidMonth": "无效的月份格式"
+    }
+  },
+  "videos": {
+    "pageTitle": "视频",
+    "pageSubtitle": "观看教练的训练技巧、练习和比赛分析",
+    "addVideo": "添加视频",
+    "noVideos": "暂无视频",
+    "exclusive": "仅限订阅者",
+    "exclusiveBadge": "高级",
+    "by": "发布者",
+    "month": "月",
+    "categories": {
+      "all": "全部",
+      "technique": "技术",
+      "drills": "训练",
+      "match-analysis": "比赛分析",
+      "tips": "技巧"
+    },
+    "subscribedTitle": "高级订阅者",
+    "expiresOn": "到期日期：{date}",
+    "pendingTitle": "订阅待审核",
+    "pendingDescription": "您的订阅正在等待管理员审批",
+    "ctaTitle": "解锁高级视频",
+    "ctaDescription": "获取独家教练视频、训练和比赛分析",
+    "subscribeNow": "立即订阅",
+    "payment": {
+      "title": "订阅高级视频",
+      "amount": "订阅金额",
+      "duration": "30天访问权限",
+      "saveQr": "保存二维码",
+      "uploadReceipt": "上传付款收据",
+      "receiptUploaded": "收据已上传",
+      "tapToUpload": "点击上传收据",
+      "maxFileSize": "最大5MB（JPG, PNG）",
+      "fileTooLarge": "文件过大（最大5MB）",
+      "iHavePaid": "我已付款",
+      "confirmSubscription": "确认订阅",
+      "submitting": "提交中...",
+      "success": "订阅请求已提交！等待管理员审批。",
+      "error": "提交订阅失败"
+    },
+    "upload": {
+      "title": "添加新视频",
+      "videoTitle": "标题",
+      "videoTitlePlaceholder": "输入视频标题",
+      "videoUrl": "视频链接",
+      "urlHint": "支持YouTube、Instagram和TikTok链接",
+      "description": "描述",
+      "descriptionPlaceholder": "可选描述",
+      "category": "分类",
+      "selectCategory": "选择分类",
+      "exclusiveToggle": "仅限高级会员",
+      "exclusiveHint": "仅对高级订阅者可见",
+      "publish": "发布视频",
+      "publishing": "发布中...",
+      "success": "视频已发布！",
+      "error": "发布视频失败",
+      "requiredFields": "标题和链接为必填项"
+    },
+    "admin": {
+      "noSubscriptions": "暂无订阅",
+      "approve": "批准",
+      "reject": "拒绝",
+      "approved": "订阅已批准",
+      "rejected": "订阅已拒绝",
+      "viewReceipt": "收据",
+      "activePeriod": "{start} — {end}",
+      "videoDeleted": "视频已删除"
     }
   }
 }

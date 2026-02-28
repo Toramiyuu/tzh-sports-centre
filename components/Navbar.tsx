@@ -65,6 +65,12 @@ export function Navbar() {
             >
               🛒 {t("shop")}
             </Link>
+            <Link
+              href="/videos"
+              className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+            >
+              🎬 {t("videos")}
+            </Link>
             {session?.user?.isMember && (
               <Link
                 href="/leaderboard"
@@ -185,6 +191,13 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
             >
               🛒 {t("shop")}
+            </Link>
+            <Link
+              href="/videos"
+              className="block py-2 text-muted-foreground hover:text-foreground"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              🎬 {t("videos")}
             </Link>
 
             {session?.user?.isMember && (

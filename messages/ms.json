@@ -39,7 +39,8 @@
     "teacherDashboard": "Jadual Saya",
     "updates": "Kemas Kini",
     "shop": "Kedai & Tali",
-    "leaderboard": "Papan Pendahulu"
+    "leaderboard": "Papan Pendahulu",
+    "videos": "Tutorial"
   },
   "home": {
     "hero": {
@@ -620,6 +621,13 @@
     "welcome": "Selamat kembali, {name}",
     "requestLesson": "Mohon Kelas",
     "requestAbsence": "Mohon Ketidakhadiran",
+    "absenceManagement": {
+      "title": "Ketidakhadiran & Gantian",
+      "viewAll": "Sejarah Ketidakhadiran",
+      "requestAbsenceFor": "Mohon Ketidakhadiran untuk Kelas Akan Datang",
+      "cancel": "Batal",
+      "noData": "Tiada kelas akan datang atau kredit gantian"
+    },
     "membersOnly": {
       "title": "Jadi Ahli Latihan",
       "description": "Sertai program kejurulatihan kami dan dapatkan akses kepada kelas berjadual, jadual peribadi, dan banyak lagi.",
@@ -1307,7 +1315,17 @@
     "trainingGroups": {
       "title": "Kumpulan Latihan",
       "description": "Susun pelatih ke dalam kumpulan untuk kelas"
-    }
+    },
+    "videoSubscriptions": {
+      "title": "Langganan Video",
+      "description": "Luluskan atau tolak pembayaran langganan video",
+      "subscriptionsTab": "Langganan",
+      "videosTab": "Urus Video",
+      "addVideo": "Tambah Video",
+      "noVideos": "Belum ada video dimuat naik",
+      "videosCount": "{count} video"
+    },
+    "backToAdmin": "Kembali ke Admin"
   },
   "updates": {
     "title": "Log Kemas Kini",
@@ -1895,6 +1913,74 @@
       "invalidGroup": "Nilai kumpulan tidak sah",
       "profileNotFound": "Profil pemain tidak dijumpai",
       "invalidMonth": "Format bulan tidak sah"
+    }
+  },
+  "videos": {
+    "pageTitle": "Video",
+    "pageSubtitle": "Tonton tip kejurulatihan, latihan, dan analisis perlawanan daripada jurulatih kami",
+    "addVideo": "Tambah Video",
+    "noVideos": "Belum ada video",
+    "exclusive": "Pelanggan Sahaja",
+    "exclusiveBadge": "Premium",
+    "by": "Oleh",
+    "month": "bulan",
+    "categories": {
+      "all": "Semua",
+      "technique": "Teknik",
+      "drills": "Latihan",
+      "match-analysis": "Analisis Perlawanan",
+      "tips": "Tips"
+    },
+    "subscribedTitle": "Pelanggan Premium",
+    "expiresOn": "Tamat pada {date}",
+    "pendingTitle": "Langganan Menunggu",
+    "pendingDescription": "Langganan anda menunggu kelulusan admin",
+    "ctaTitle": "Buka Kunci Video Premium",
+    "ctaDescription": "Dapatkan akses kepada video kejurulatihan eksklusif, latihan, dan analisis perlawanan",
+    "subscribeNow": "Langgan Sekarang",
+    "payment": {
+      "title": "Langgan Video Premium",
+      "amount": "Jumlah Langganan",
+      "duration": "Akses 30 hari",
+      "saveQr": "Simpan Kod QR",
+      "uploadReceipt": "Muat Naik Resit Pembayaran",
+      "receiptUploaded": "Resit dimuat naik",
+      "tapToUpload": "Ketik untuk muat naik resit",
+      "maxFileSize": "Maks 5MB (JPG, PNG)",
+      "fileTooLarge": "Fail terlalu besar (maks 5MB)",
+      "iHavePaid": "Saya telah bayar",
+      "confirmSubscription": "Sahkan Langganan",
+      "submitting": "Menghantar...",
+      "success": "Permintaan langganan dihantar! Menunggu kelulusan admin.",
+      "error": "Gagal menghantar langganan"
+    },
+    "upload": {
+      "title": "Tambah Video Baharu",
+      "videoTitle": "Tajuk",
+      "videoTitlePlaceholder": "Masukkan tajuk video",
+      "videoUrl": "URL Video",
+      "urlHint": "Menyokong pautan YouTube, Instagram, dan TikTok",
+      "description": "Penerangan",
+      "descriptionPlaceholder": "Penerangan pilihan",
+      "category": "Kategori",
+      "selectCategory": "Pilih kategori",
+      "exclusiveToggle": "Premium Sahaja",
+      "exclusiveHint": "Hanya boleh dilihat oleh pelanggan premium",
+      "publish": "Terbitkan Video",
+      "publishing": "Menerbitkan...",
+      "success": "Video diterbitkan!",
+      "error": "Gagal menerbitkan video",
+      "requiredFields": "Tajuk dan URL diperlukan"
+    },
+    "admin": {
+      "noSubscriptions": "Belum ada langganan",
+      "approve": "Luluskan",
+      "reject": "Tolak",
+      "approved": "Langganan diluluskan",
+      "rejected": "Langganan ditolak",
+      "viewReceipt": "Resit",
+      "activePeriod": "{start} — {end}",
+      "videoDeleted": "Video dipadam"
     }
   }
 }

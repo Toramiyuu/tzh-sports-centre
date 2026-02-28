@@ -56,6 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           isMember: user.isMember,
           isTrainee: user.isTrainee,
           isTeacher: !!teacherRecord?.isActive,
+          isContentCreator: user.isContentCreator,
         };
       },
     }),
@@ -68,13 +69,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.isMember = (user as Record<string, unknown>).isMember ?? false;
         token.isTrainee = (user as Record<string, unknown>).isTrainee ?? false;
         token.isTeacher = (user as Record<string, unknown>).isTeacher ?? false;
+        token.isContentCreator =
+          (user as Record<string, unknown>).isContentCreator ?? false;
       } else if (token.id && token.isMember === undefined) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { isMember: true, isTrainee: true },
+          select: { isMember: true, isTrainee: true, isContentCreator: true },
         });
         token.isMember = dbUser?.isMember ?? false;
         token.isTrainee = dbUser?.isTrainee ?? false;
+        token.isContentCreator = dbUser?.isContentCreator ?? false;
         const teacherRec = await prisma.teacher.findUnique({
           where: { userId: token.id as string },
           select: { isActive: true },
@@ -90,6 +94,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.isMember = token.isMember as boolean;
         session.user.isTrainee = token.isTrainee as boolean;
         session.user.isTeacher = (token.isTeacher as boolean) ?? false;
+        session.user.isContentCreator =
+          (token.isContentCreator as boolean) ?? false;
       }
       return session;
     },

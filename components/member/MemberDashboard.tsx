@@ -24,6 +24,7 @@ import { CoachSuggestedSection } from "./CoachSuggestedSection";
 import { PendingRequestsSection } from "./PendingRequestsSection";
 import { UpcomingLessonsSection } from "./UpcomingLessonsSection";
 import { RequestHistorySection } from "./RequestHistorySection";
+import { AbsenceReplacementSection } from "./AbsenceReplacementSection";
 import { BookingDialog } from "./BookingDialog";
 import { CounterProposeDialog } from "./CounterProposeDialog";
 
@@ -372,7 +373,7 @@ export function MemberDashboard() {
           onClick={() => router.push("/profile?tab=absences")}
         >
           <CalendarX2 className="w-4 h-4" />
-          {t("requestAbsence")}
+          {t("absenceManagement.viewAll")}
         </Button>
       </div>
 
@@ -408,6 +409,11 @@ export function MemberDashboard() {
       <UpcomingLessonsSection
         lessons={upcomingLessons}
         currentUserName={session?.user?.name}
+      />
+
+      <AbsenceReplacementSection
+        upcomingLessons={upcomingLessons}
+        onRefresh={refreshData}
       />
 
       <RequestHistorySection requests={requests} />

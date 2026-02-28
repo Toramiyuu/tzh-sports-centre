@@ -50,7 +50,8 @@
     "trainingSchedule": "Training Schedule",
     "teacherDashboard": "My Schedule",
     "updates": "Updates",
-    "leaderboard": "Leaderboard"
+    "leaderboard": "Leaderboard",
+    "videos": "Tutorials"
   },
   "home": {
     "hero": {
@@ -631,6 +632,13 @@
     "welcome": "Welcome back, {name}",
     "requestLesson": "Request Lesson",
     "requestAbsence": "Request Absence",
+    "absenceManagement": {
+      "title": "Absence & Replacements",
+      "viewAll": "Absence History",
+      "requestAbsenceFor": "Request Absence for Upcoming Lessons",
+      "cancel": "Cancel",
+      "noData": "No upcoming lessons or replacement credits"
+    },
     "membersOnly": {
       "title": "Become a Training Member",
       "description": "Join our coaching program and get access to scheduled lessons, a personal timetable, and more.",
@@ -1318,7 +1326,17 @@
     "trainingGroups": {
       "title": "Training Groups",
       "description": "Organize trainees into groups for lessons"
-    }
+    },
+    "videoSubscriptions": {
+      "title": "Video Subscriptions",
+      "description": "Approve or reject video subscription payments",
+      "subscriptionsTab": "Subscriptions",
+      "videosTab": "Manage Videos",
+      "addVideo": "Add Video",
+      "noVideos": "No videos uploaded yet",
+      "videosCount": "{count} videos"
+    },
+    "backToAdmin": "Back to Admin"
   },
   "updates": {
     "title": "Update Log",
@@ -1906,6 +1924,74 @@
       "invalidGroup": "Invalid group value",
       "profileNotFound": "Player profile not found",
       "invalidMonth": "Invalid month format"
+    }
+  },
+  "videos": {
+    "pageTitle": "Videos",
+    "pageSubtitle": "Watch coaching tips, drills, and match analysis from our coaches",
+    "addVideo": "Add Video",
+    "noVideos": "No videos yet",
+    "exclusive": "Subscribers Only",
+    "exclusiveBadge": "Premium",
+    "by": "By",
+    "month": "month",
+    "categories": {
+      "all": "All",
+      "technique": "Technique",
+      "drills": "Drills",
+      "match-analysis": "Match Analysis",
+      "tips": "Tips"
+    },
+    "subscribedTitle": "Premium Subscriber",
+    "expiresOn": "Expires on {date}",
+    "pendingTitle": "Subscription Pending",
+    "pendingDescription": "Your subscription is awaiting admin approval",
+    "ctaTitle": "Unlock Premium Videos",
+    "ctaDescription": "Get access to exclusive coaching videos, drills, and match analysis",
+    "subscribeNow": "Subscribe Now",
+    "payment": {
+      "title": "Subscribe to Premium Videos",
+      "amount": "Subscription Amount",
+      "duration": "30 days access",
+      "saveQr": "Save QR Code",
+      "uploadReceipt": "Upload Payment Receipt",
+      "receiptUploaded": "Receipt uploaded",
+      "tapToUpload": "Tap to upload receipt",
+      "maxFileSize": "Max 5MB (JPG, PNG)",
+      "fileTooLarge": "File is too large (max 5MB)",
+      "iHavePaid": "I have paid",
+      "confirmSubscription": "Confirm Subscription",
+      "submitting": "Submitting...",
+      "success": "Subscription request submitted! Awaiting admin approval.",
+      "error": "Failed to submit subscription"
+    },
+    "upload": {
+      "title": "Add New Video",
+      "videoTitle": "Title",
+      "videoTitlePlaceholder": "Enter video title",
+      "videoUrl": "Video URL",
+      "urlHint": "Supports YouTube, Instagram, and TikTok links",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "category": "Category",
+      "selectCategory": "Select a category",
+      "exclusiveToggle": "Premium Only",
+      "exclusiveHint": "Only visible to premium subscribers",
+      "publish": "Publish Video",
+      "publishing": "Publishing...",
+      "success": "Video published!",
+      "error": "Failed to publish video",
+      "requiredFields": "Title and URL are required"
+    },
+    "admin": {
+      "noSubscriptions": "No subscriptions yet",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved": "Subscription approved",
+      "rejected": "Subscription rejected",
+      "viewReceipt": "Receipt",
+      "activePeriod": "{start} — {end}",
+      "videoDeleted": "Video deleted"
     }
   }
 }
