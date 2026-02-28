@@ -69,8 +69,14 @@ export default function TeacherDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const from = format(currentWeekStart, "yyyy-MM-dd");
-      const to = format(currentWeekEnd, "yyyy-MM-dd");
+      const weekStart = startOfWeek(addWeeks(new Date(), weekOffset), {
+        weekStartsOn: 1,
+      });
+      const weekEnd = endOfWeek(addWeeks(new Date(), weekOffset), {
+        weekStartsOn: 1,
+      });
+      const from = format(weekStart, "yyyy-MM-dd");
+      const to = format(weekEnd, "yyyy-MM-dd");
       const res = await fetch(`/api/teacher/lessons?from=${from}&to=${to}`);
       if (res.status === 403) {
         setError("not_teacher");
@@ -85,7 +91,7 @@ export default function TeacherDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [currentWeekStart, currentWeekEnd]);
+  }, [weekOffset]);
 
   useEffect(() => {
     fetchLessons();
