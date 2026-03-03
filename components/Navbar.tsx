@@ -65,12 +65,14 @@ export function Navbar() {
             >
               🛒 {t("shop")}
             </Link>
+            {/* Videos section hidden - not complete yet
             <Link
               href="/videos"
               className="px-2 xl:px-3 py-2 text-xs xl:text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               🎬 {t("videos")}
             </Link>
+            */}
             {session?.user?.isMember && (
               <Link
                 href="/leaderboard"
@@ -192,6 +194,7 @@ export function Navbar() {
             >
               🛒 {t("shop")}
             </Link>
+            {/* Videos section hidden - not complete yet
             <Link
               href="/videos"
               className="block py-2 text-muted-foreground hover:text-foreground"
@@ -199,6 +202,7 @@ export function Navbar() {
             >
               🎬 {t("videos")}
             </Link>
+            */}
 
             {session?.user?.isMember && (
               <Link

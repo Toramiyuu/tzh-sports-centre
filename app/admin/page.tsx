@@ -13,7 +13,6 @@ import {
   Trophy,
   BookOpen,
   UsersRound,
-  Video,
 } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -94,13 +93,14 @@ export default async function AdminPage() {
       href: "/admin/training-groups",
       iconBg: "bg-primary/10 text-primary",
     },
-    {
-      titleKey: "videoSubscriptions.title",
-      descriptionKey: "videoSubscriptions.description",
-      icon: Video,
-      href: "/admin/video-subscriptions",
-      iconBg: "bg-primary/15 text-primary",
-    },
+    // Video subscriptions hidden - not complete yet
+    // {
+    //   titleKey: "videoSubscriptions.title",
+    //   descriptionKey: "videoSubscriptions.description",
+    //   icon: Video,
+    //   href: "/admin/video-subscriptions",
+    //   iconBg: "bg-primary/15 text-primary",
+    // },
   ];
 
   return (
