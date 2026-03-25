@@ -17,7 +17,7 @@ export function SportsSection() {
       name: t("badminton.name"),
       courts: t("badminton.courts"),
       price: t("badminton.price"),
-      image: "/images/badminton-action.jpg",
+      image: "/images/court-view-2.jpg",
       href: "/booking",
       description: tSports("badmintonDesc"),
       highlights: [tSports("vinylFlooring"), tSports("zeroGlareLighting"), tSports("walkInsWelcome")],

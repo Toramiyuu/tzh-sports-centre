@@ -72,7 +72,7 @@ function LoginInner() {
           t('subtitle')
         )
       }
-      heroImageSrc="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=2160&q=80"
+      heroImageSrc="/images/court-view-2.jpg"
       testimonials={TESTIMONIALS}
       onSignIn={handleSignIn}
       onCreateAccount={() => router.push('/auth/register')}

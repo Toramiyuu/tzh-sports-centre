@@ -77,7 +77,7 @@ export default function RegisterPage() {
           t('subtitle')
         )
       }
-      heroImageSrc="https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?w=2160&q=80"
+      heroImageSrc="/images/court-view-1.jpg"
       onSignUp={handleSignUp}
       onSignIn={() => router.push('/auth/login')}
     />
