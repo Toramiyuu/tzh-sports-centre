@@ -23,7 +23,7 @@ export function ShopSection() {
               <ShoppingBag className="w-3.5 h-3.5 text-primary" />
               <span className="text-xs font-semibold text-primary uppercase tracking-wider">Pro Shop</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-display text-foreground mb-4">
               Gear Up for <br className="hidden md:block" />Your Game
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
@@ -39,7 +39,7 @@ export function ShopSection() {
             </div>
 
             <Link href="/shop">
-              <Button className="h-12 px-6 sm:px-8 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg group/btn">
+              <Button className="h-12 px-6 sm:px-8 bg-primary hover:bg-primary/90 text-white font-medium rounded-full group/btn">
                 Browse Shop
                 <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
               </Button>

@@ -105,7 +105,7 @@ export function CourtStatusSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {courtStatuses.map(({ court, totalUpcoming, isFreeNow }) => {
             const statusText = totalUpcoming === 0
               ? t('closed')
@@ -116,7 +116,7 @@ export function CourtStatusSection() {
               <Link
                 key={court.id}
                 href={`/booking?court=${court.id}`}
-                className={`relative rounded-xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-md ${
+                className={`relative rounded-xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-md ${
                   isFreeNow
                     ? 'border-green-500/30 bg-green-500/5 hover:border-green-500/50'
                     : 'border-border bg-card hover:border-border'

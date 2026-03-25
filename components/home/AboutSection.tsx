@@ -3,6 +3,7 @@
 import { Clock, GraduationCap, Star, Trophy, Wrench, Zap } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { NumberTicker } from "@/components/ui/number-ticker";
 
 export function AboutSection() {
   const t = useTranslations("home");
@@ -28,10 +29,10 @@ export function AboutSection() {
   ];
 
   const stats = [
-    { icon: Trophy, value: "4", label: t("hero.stat.courts") },
-    { icon: Star, value: "4.7", label: t("hero.stat.googleRating") },
-    { icon: Zap, value: "RM15", label: t("hero.stat.fromPerHour") },
-    { icon: Clock, value: "12AM", label: t("hero.stat.openUntil") },
+    { icon: Trophy, label: t("hero.stat.courts"), ticker: { value: 4, decimalPlaces: 0 } },
+    { icon: Star, label: t("hero.stat.googleRating"), ticker: { value: 4.7, decimalPlaces: 1 } },
+    { icon: Zap, label: t("hero.stat.fromPerHour"), prefix: "RM", ticker: { value: 15, decimalPlaces: 0 } },
+    { icon: Clock, label: t("hero.stat.openUntil"), suffix: "AM", ticker: { value: 12, decimalPlaces: 0 } },
   ];
 
   return (
@@ -66,11 +67,11 @@ export function AboutSection() {
           </div>
 
           {/* Feature Cards */}
-          <div className="space-y-4 animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
+          <div className="space-y-5 animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="flex gap-4 p-5 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-md transition-all duration-300"
+                className="flex gap-4 p-5 rounded-xl bg-card border border-border shadow-sm hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
               >
                 <div className="flex-shrink-0 w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center">
                   <feature.icon className="w-5 h-5 text-primary" />
@@ -85,16 +86,18 @@ export function AboutSection() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="text-center p-6 rounded-xl bg-card border border-border"
+              className="text-center p-6 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
             >
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                 <stat.icon className="w-5 h-5 text-primary" />
               </div>
-              <div className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-xl sm:text-2xl font-bold text-foreground">
+                {stat.prefix}<NumberTicker value={stat.ticker.value} decimalPlaces={stat.ticker.decimalPlaces} className="text-foreground" />{stat.suffix}
+              </div>
               <div className="text-xs uppercase tracking-[0.1em] text-muted-foreground mt-1">{stat.label}</div>
             </div>
           ))}

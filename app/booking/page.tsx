@@ -682,7 +682,7 @@ function BookingPageContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24 bg-background min-h-screen">
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-2">
+        <h1 className="text-3xl md:text-4xl font-semibold font-display text-foreground mb-2">
           {t("title")}
         </h1>
         <p className="text-muted-foreground">
@@ -721,8 +721,8 @@ function BookingPageContent() {
         <div className="mt-4 p-4 rounded-2xl border border-border bg-card">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-card">
-                <Clock className="w-5 h-5 text-muted-foreground" />
+              <div className="p-2 rounded-full bg-primary/10">
+                <Clock className="w-5 h-5 text-primary" />
               </div>
               <div>
                 {sport === "badminton" ? (

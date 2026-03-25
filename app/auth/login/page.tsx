@@ -3,15 +3,32 @@
 import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { SignInPage } from '@/components/ui/sign-in'
 
-function LoginForm() {
+const TESTIMONIALS = [
+  {
+    avatarSrc: 'https://randomuser.me/api/portraits/men/45.jpg',
+    name: 'Ahmad Faizal',
+    handle: '@faizal_kl',
+    text: 'Best badminton court in Penang! Clean facilities and great value for members.',
+  },
+  {
+    avatarSrc: 'https://randomuser.me/api/portraits/women/68.jpg',
+    name: 'Li Wei',
+    handle: '@liwei_pg',
+    text: 'Love the online booking system. So convenient to reserve courts anytime.',
+  },
+  {
+    avatarSrc: 'https://randomuser.me/api/portraits/men/72.jpg',
+    name: 'Rajan Kumar',
+    handle: '@rajan_pg',
+    text: 'The coaching sessions are excellent. My game has improved so much this year.',
+  },
+]
+
+function LoginInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const rawCallback = searchParams.get('callbackUrl') || '/'
@@ -20,15 +37,12 @@ function LoginForm() {
   const t = useTranslations('auth.login')
   const tCommon = useTranslations('common')
 
-  const [identifier, setIdentifier] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSignIn = async (formData: FormData) => {
     setError('')
-    setLoading(true)
+    const identifier = formData.get('identifier') as string
+    const password = formData.get('password') as string
 
     try {
       const result = await signIn('credentials', {
@@ -45,92 +59,37 @@ function LoginForm() {
       }
     } catch {
       setError(tCommon('error'))
-    } finally {
-      setLoading(false)
     }
   }
 
   return (
-    <Card className="w-full max-w-md bg-card border border-border rounded-2xl">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-semibold text-foreground">{t('title')}</CardTitle>
-        <CardDescription className="text-muted-foreground">
-          {t('subtitle')}
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm">
-              {error}
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="identifier" className="text-muted-foreground">{t('emailOrPhone')}</Label>
-            <Input
-              id="identifier"
-              type="text"
-              placeholder={t('emailOrPhonePlaceholder')}
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              required
-              disabled={loading}
-              className="rounded-lg border-border bg-background text-foreground"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-muted-foreground">{t('password')}</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={loading}
-              className="rounded-lg border-border bg-background text-foreground"
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white rounded-full h-11" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {tCommon('loading')}
-              </>
-            ) : (
-              t('signIn')
-            )}
-          </Button>
-          <p className="text-sm text-muted-foreground text-center">
-            {t('noAccount')}{' '}
-            <Link href="/auth/register" className="text-primary font-medium hover:underline">
-              {t('signUp')}
-            </Link>
-          </p>
-        </CardFooter>
-      </form>
-    </Card>
+    <SignInPage
+      title={<span className="font-light tracking-tighter">{t('title')}</span>}
+      description={
+        error ? (
+          <span className="text-destructive">{error}</span>
+        ) : (
+          t('subtitle')
+        )
+      }
+      heroImageSrc="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=2160&q=80"
+      testimonials={TESTIMONIALS}
+      onSignIn={handleSignIn}
+      onCreateAccount={() => router.push('/auth/register')}
+    />
   )
 }
 
 export default function LoginPage() {
-  const t = useTranslations('auth.login')
-  const tCommon = useTranslations('common')
-
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 pt-20 pb-12 bg-background">
-      <Suspense fallback={
-        <Card className="w-full max-w-md bg-card border border-border rounded-2xl">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-semibold text-foreground">{t('title')}</CardTitle>
-            <CardDescription className="text-muted-foreground">{tCommon('loading')}</CardDescription>
-          </CardHeader>
-        </Card>
-      }>
-        <LoginForm />
-      </Suspense>
-    </div>
+    <Suspense
+      fallback={
+        <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-background">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <LoginInner />
+    </Suspense>
   )
 }

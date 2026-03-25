@@ -3,12 +3,12 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { ProductRevealCard } from '@/components/ui/product-reveal-card'
 import {
   Sheet,
   SheetContent,
@@ -25,11 +25,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Slider } from '@/components/ui/slider'
-import { Search, Filter, X, Wrench, Phone, Palette, Check, PackageSearch } from 'lucide-react'
-import Image from 'next/image'
+import { Search, Filter, X, Phone, Palette, Check, PackageSearch } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import {
-  STRING_INVENTORY,
   BRAND_COLORS,
   getUniqueBrands,
   filterStrings,
@@ -51,10 +49,8 @@ function StringCard({
   string,
   onSelect,
   selectLabel,
-  perRacketLabel,
   stockInfo,
   soldOutLabel = 'Sold Out',
-  colorsAvailableLabel = 'colors available',
 }: {
   string: StringProduct
   onSelect: (s: StringProduct) => void
@@ -64,139 +60,38 @@ function StringCard({
   soldOutLabel?: string
   colorsAvailableLabel?: string
 }) {
-  const [isHovered, setIsHovered] = useState(false)
   const isInStock = stockInfo?.inStock ?? true
   const availableColors = stockInfo?.colors?.filter((c) => c.inStock) || []
+  const colorNames = availableColors.map((c) => c.color)
+
+  const description = [
+    string.description,
+    string.gauge && `Gauge: ${string.gauge}`,
+    string.type && `Type: ${string.type}`,
+  ].filter(Boolean).join(' · ')
 
   return (
-    <Card
-      className={`transition-shadow overflow-visible ${
-        isInStock
-          ? 'hover:shadow-lg cursor-pointer'
-          : 'opacity-60 cursor-not-allowed'
-      }`}
-      onClick={() => isInStock && onSelect(string)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <CardContent className="p-0">
-        {/* Image Container - shows front or back based on hover */}
-        <div className="h-40 relative bg-secondary rounded-t-lg overflow-hidden">
-          {!isHovered ? (
-            string.image ? (
-              <img
-                src={string.image}
-                alt={string.fullName}
-                className="h-full w-full object-contain p-2"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement
-                  target.style.display = 'none'
-                  target.parentElement!.style.backgroundColor = BRAND_COLORS[string.brand] || '#666'
-                  target.parentElement!.innerHTML = `<span class="text-white text-2xl font-bold opacity-50">${string.brand}</span>`
-                }}
-              />
-            ) : (
-              <div
-                className="w-full h-full flex items-center justify-center"
-                style={{ backgroundColor: BRAND_COLORS[string.brand] || '#666' }}
-              >
-                <span className="text-white text-2xl font-bold opacity-50">
-                  {string.brand}
-                </span>
-              </div>
-            )
-          ) : (
-            <div className="h-full w-full bg-card flex items-center justify-center">
-              {string.backImage ? (
-                <img
-                  src={string.backImage}
-                  alt={`${string.fullName} specifications`}
-                  className="h-full w-full object-contain p-2"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.style.display = 'none'
-                    target.parentElement!.innerHTML = `
-                      <div class="text-center p-4">
-                        <p class="text-sm font-semibold text-foreground">${string.fullName}</p>
-                        <p class="text-xs text-muted-foreground mt-1">${string.gauge || ''}</p>
-                        <p class="text-xs text-muted-foreground">${string.type || ''}</p>
-                      </div>
-                    `
-                  }}
-                />
-              ) : (
-                <div className="text-center p-4">
-                  <p className="text-sm font-semibold text-foreground">{string.fullName}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{string.gauge}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{string.type}</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="p-4">
-          <div className="flex items-start justify-between mb-2">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                {string.brand}
-              </p>
-              <h3 className="font-semibold text-lg">{string.name}</h3>
-            </div>
-            {string.gauge && (
-              <Badge variant="outline" className="text-xs">
-                {string.gauge}
-              </Badge>
-            )}
-          </div>
-
-          {string.description && (
-            <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-              {string.description}
-            </p>
-          )}
-
-          {/* Available colors preview */}
-          {isInStock && availableColors.length > 0 && (
-            <div className="flex items-center gap-1 mb-3">
-              <div className="flex -space-x-1">
-                {availableColors.slice(0, 5).map((c) => (
-                  <div
-                    key={c.color}
-                    className="w-5 h-5 rounded-full border-2 border-white shadow-sm"
-                    style={{ backgroundColor: c.color.toLowerCase() }}
-                    title={c.color}
-                  />
-                ))}
-              </div>
-              <span className="text-xs text-muted-foreground ml-1">
-                {availableColors.length} {availableColors.length === 1 ? 'color available' : colorsAvailableLabel}
-              </span>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between">
-            <div>
-              <span className={`text-2xl font-bold ${isInStock ? 'text-foreground' : 'text-muted-foreground'}`}>
-                RM{string.price}
-              </span>
-              <span className="text-sm text-muted-foreground ml-1">
-                {perRacketLabel}
-              </span>
-            </div>
-            {isInStock ? (
-              <Button size="sm" className="bg-primary hover:bg-primary/90 rounded-full">
-                {selectLabel}
-              </Button>
-            ) : (
-              <Badge className="bg-card text-muted-foreground px-3 py-1">
-                {soldOutLabel}
-              </Badge>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <ProductRevealCard
+      name={string.name}
+      price={`RM${string.price}`}
+      image={string.image || `https://placehold.co/400x300/${(BRAND_COLORS[string.brand] || '#666').replace('#', '')}/${(BRAND_COLORS[string.brand] || '#666').replace('#', '')}?text=${encodeURIComponent(string.brand)}`}
+      description={description}
+      brand={string.brand}
+      badge={
+        !isInStock
+          ? soldOutLabel
+          : string.gauge
+            ? string.gauge
+            : undefined
+      }
+      badgeVariant={!isInStock ? 'muted' : 'primary'}
+      colors={colorNames.length > 0 ? colorNames : undefined}
+      ctaLabel={selectLabel}
+      onCtaClick={() => isInStock && onSelect(string)}
+      onAdd={() => isInStock && onSelect(string)}
+      enableAnimations
+      className="w-full"
+    />
   )
 }
 
@@ -373,7 +268,7 @@ export default function StringingPage() {
             <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards">
               Professional Service
             </p>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight leading-[1.1] mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold font-display text-foreground tracking-tight leading-[1.1] mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-forwards">
               {t('title')}
             </h1>
             <p className="text-lg text-muted-foreground mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-forwards">

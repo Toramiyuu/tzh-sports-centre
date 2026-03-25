@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Clock, MapPin, Phone } from "lucide-react";
+import { LocationTag } from "@/components/ui/location-tag";
 import { useTranslations } from "next-intl";
 
 export function LocationSection() {
@@ -47,11 +48,19 @@ export function LocationSection() {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-16 animate-in fade-in duration-700 fill-mode-forwards">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
-            <MapPin className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wider">{t("badge")}</span>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+              <MapPin className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider">{t("badge")}</span>
+            </div>
+            <LocationTag
+              city="Ayer Itam"
+              country="Malaysia"
+              timezone="MYT"
+              ianaTimezone="Asia/Kuala_Lumpur"
+            />
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-display text-foreground">
             {t("title")}
           </h2>
         </div>

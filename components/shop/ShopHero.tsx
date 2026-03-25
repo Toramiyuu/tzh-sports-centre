@@ -20,7 +20,7 @@ export function ShopHero() {
     <section ref={ref} className="relative py-16 md:py-24 overflow-hidden">
       {/* Background gradient with parallax */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-transparent"
+        className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent"
         style={{ y }}
       />
 

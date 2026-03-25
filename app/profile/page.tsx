@@ -291,7 +291,7 @@ function ProfileContent() {
               </label>
             </div>
             <div>
-              <h1 className="text-2xl font-semibold text-foreground">
+              <h1 className="text-2xl font-semibold font-display text-foreground">
                 {profile?.name}
               </h1>
               <p className="text-muted-foreground">{profile?.email}</p>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import { MapPin, Phone, Clock } from 'lucide-react'
+import { LocationTag } from '@/components/ui/location-tag'
 
 export function Footer() {
   const { data: session } = useSession()
@@ -22,9 +23,15 @@ export function Footer() {
               </div>
               <span className="text-base font-semibold text-foreground font-display">TZH Sports Centre</span>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               {t('description')}
             </p>
+            <LocationTag
+              city="Ayer Itam"
+              country="Malaysia"
+              timezone="MYT"
+              ianaTimezone="Asia/Kuala_Lumpur"
+            />
           </div>
 
           {/* Quick Links */}

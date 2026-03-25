@@ -5,10 +5,12 @@ import Link from "next/link";
 import { ArrowRight, Zap } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { motion, useReducedMotion } from "motion/react";
 
 export function SportsSection() {
   const t = useTranslations("home.availableSports");
   const tSports = useTranslations("home.sports");
+  const shouldReduceMotion = useReducedMotion();
 
   const sports = [
     {
@@ -40,7 +42,7 @@ export function SportsSection() {
             <Zap className="w-3.5 h-3.5 text-primary" />
             <span className="text-xs font-semibold text-primary uppercase tracking-wider">{tSports("badge")}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-display text-foreground">
             {tSports("title")}
           </h2>
         </div>
@@ -48,25 +50,49 @@ export function SportsSection() {
         {/* Sport Cards */}
         <div className="grid md:grid-cols-2 gap-8">
           {sports.map((sport) => (
-            <div
+            <motion.div
               key={sport.name}
-              className="group relative rounded-2xl overflow-hidden bg-card border border-border hover:border-primary/40 transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-forwards"
+              initial="rest"
+              whileHover={shouldReduceMotion ? undefined : "hover"}
+              variants={{
+                rest: { scale: 1, y: 0 },
+                hover: {
+                  scale: 1.02,
+                  y: -6,
+                  transition: { type: "spring", stiffness: 300, damping: 30 },
+                },
+              }}
+              className="group relative rounded-2xl overflow-hidden bg-card border border-border shadow-sm cursor-pointer hover:border-primary/40 transition-colors duration-300 hover:shadow-xl hover:shadow-primary/10 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-forwards"
             >
               {/* Image */}
               <div className="relative aspect-[16/10] overflow-hidden">
-                <Image
-                  src={sport.image}
-                  alt={sport.name}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                />
+                <motion.div
+                  className="absolute inset-0"
+                  variants={{
+                    rest: { scale: 1 },
+                    hover: { scale: 1.08, transition: { type: "spring", stiffness: 200, damping: 30 } },
+                  }}
+                >
+                  <Image
+                    src={sport.image}
+                    alt={sport.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover"
+                  />
+                </motion.div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
                 {/* Floating price badge */}
-                <div className="absolute top-4 right-4 px-4 py-2 rounded-full bg-white/90 dark:bg-black/70 backdrop-blur-sm shadow-lg">
+                <motion.div
+                  className="absolute top-4 right-4 px-4 py-2 rounded-full bg-white/90 dark:bg-black/70 backdrop-blur-sm shadow-lg"
+                  variants={{
+                    rest: { scale: 1 },
+                    hover: { scale: 1.1, transition: { type: "spring", stiffness: 400, damping: 25 } },
+                  }}
+                >
                   <span className="text-sm font-bold text-foreground">{sport.price}</span>
-                </div>
+                </motion.div>
 
                 {/* Courts badge */}
                 <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-primary/90 backdrop-blur-sm">
@@ -97,13 +123,13 @@ export function SportsSection() {
 
                 {/* CTA */}
                 <Link href={sport.href}>
-                  <Button className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg group/btn">
+                  <Button className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-medium rounded-full group/btn">
                     {tSports("bookNow")}
                     <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

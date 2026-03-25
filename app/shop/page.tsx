@@ -10,7 +10,6 @@ import {
 } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { motion, useReducedMotion } from "framer-motion";
 import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { ShopHero } from "@/components/shop/ShopHero";
 import { ShopCategoryTabs } from "@/components/shop/ShopCategoryTabs";
@@ -101,7 +100,6 @@ function ShopContent() {
       setSelectedCategory("all");
     }
   }, [categoryParam]);
-  const prefersReducedMotion = useReducedMotion();
   const [searchQuery, setSearchQuery] = useState("");
   const [priceSort, setPriceSort] = useState<"none" | "asc" | "desc">("none");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
@@ -270,7 +268,7 @@ function ShopContent() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div key={i} className="space-y-3">
-                    <div className="aspect-square bg-secondary/60 rounded-xl animate-pulse" />
+                    <div className="aspect-square bg-secondary/60 rounded-2xl animate-pulse" />
                     <div className="space-y-2 px-1">
                       <div className="h-3 bg-secondary/60 rounded-full w-1/3 animate-pulse" />
                       <div className="h-4 bg-secondary/60 rounded-full w-2/3 animate-pulse" />
@@ -281,25 +279,12 @@ function ShopContent() {
               </div>
             ) : filteredProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredProducts.map((product, index) => (
-                  <motion.div
+                {filteredProducts.map((product) => (
+                  <ShopProductCard
                     key={product.id}
-                    initial={
-                      prefersReducedMotion ? false : { opacity: 0, y: 20 }
-                    }
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: prefersReducedMotion ? 0 : 0.4,
-                      delay: prefersReducedMotion
-                        ? 0
-                        : Math.min(index * 0.05, 0.4),
-                    }}
-                  >
-                    <ShopProductCard
-                      product={product}
-                      onViewDetails={handleViewDetails}
-                    />
-                  </motion.div>
+                    product={product}
+                    onViewDetails={handleViewDetails}
+                  />
                 ))}
               </div>
             ) : (

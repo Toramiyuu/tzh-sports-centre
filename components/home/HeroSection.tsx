@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { Star, MapPin, Clock, Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export function HeroSection() {
@@ -36,7 +36,7 @@ export function HeroSection() {
           {t("hero.location")}
         </p>
 
-        <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-[0.95] mb-6 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
+        <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold font-display text-white tracking-tight leading-[0.95] mb-6 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
           {t("hero.headline")}
         </h1>
 
@@ -65,7 +65,7 @@ export function HeroSection() {
         </div>
 
         {/* No account needed + social proof */}
-        <div className="flex flex-col items-center gap-3 animate-in fade-in duration-700 delay-500 fill-mode-forwards">
+        <div className="flex flex-col items-center gap-3 animate-in fade-in duration-700 delay-600 fill-mode-forwards">
           <p className="text-xs text-white/50">{t("hero.noAccount")}</p>
           <div className="flex items-center gap-1.5">
             <div className="flex">
@@ -79,12 +79,23 @@ export function HeroSection() {
       </div>
 
       {/* Value prop strip */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 sm:gap-6 animate-in fade-in duration-700 delay-700 fill-mode-forwards">
-        <span className="text-xs text-white/50 uppercase tracking-wider">{t("hero.stat.courts")}</span>
-        <span className="w-1 h-1 rounded-full bg-white/30" />
-        <span className="text-xs text-white/50 uppercase tracking-wider">{t("hero.stat.price")}</span>
-        <span className="w-1 h-1 rounded-full bg-white/30" />
-        <span className="text-xs text-white/50 uppercase tracking-wider">{t("hero.stat.hours")}</span>
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-2xl px-4 animate-in fade-in duration-700 delay-700 fill-mode-forwards">
+        <div className="flex items-center justify-center gap-3 sm:gap-4 px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
+          <div className="flex items-center gap-2">
+            <Trophy className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />
+            <span className="text-xs text-white/80 font-medium whitespace-nowrap">{t("hero.stat.courts")}</span>
+          </div>
+          <span className="w-px h-4 bg-white/20" />
+          <div className="flex items-center gap-2">
+            <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+            <span className="text-xs text-white/80 font-medium whitespace-nowrap">{t("hero.stat.price")}</span>
+          </div>
+          <span className="w-px h-4 bg-white/20" />
+          <div className="flex items-center gap-2">
+            <Clock className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
+            <span className="text-xs text-white/80 font-medium whitespace-nowrap">{t("hero.stat.hours")}</span>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -32,7 +32,7 @@ export function StringingSection() {
             <span className="text-xs font-semibold text-white uppercase tracking-wider">Professional Service</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-4 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-display text-white mb-4 animate-in fade-in duration-700 delay-100 fill-mode-forwards">
             {t("title")}
           </h2>
           <p className="text-white/70 text-lg leading-relaxed mb-8 animate-in fade-in duration-700 delay-200 fill-mode-forwards">
@@ -50,7 +50,7 @@ export function StringingSection() {
           </div>
 
           <Link href="/stringing" className="animate-in fade-in duration-700 delay-400 fill-mode-forwards inline-block">
-            <Button className="h-12 px-6 sm:px-8 bg-white text-black hover:bg-white/90 font-medium rounded-lg group/btn">
+            <Button className="h-12 px-6 sm:px-8 bg-white text-black hover:bg-white/90 font-medium rounded-full group/btn">
               {t("cta")}
               <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
             </Button>

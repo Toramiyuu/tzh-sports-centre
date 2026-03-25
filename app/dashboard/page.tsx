@@ -84,11 +84,11 @@ export default function DashboardPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return <Badge className="bg-green-50 text-green-700">Confirmed</Badge>
+        return <Badge className="bg-green-500/10 text-green-600 dark:text-green-400">Confirmed</Badge>
       case 'pending':
-        return <Badge className="bg-amber-50 text-amber-700">Pending</Badge>
+        return <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400">Pending</Badge>
       case 'cancelled':
-        return <Badge className="bg-red-50 text-red-600">Cancelled</Badge>
+        return <Badge className="bg-red-500/10 text-red-600 dark:text-red-400">Cancelled</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
     }
@@ -103,7 +103,7 @@ export default function DashboardPage() {
   }
 
   const BookingCard = ({ booking }: { booking: Booking }) => (
-    <div className="flex items-center justify-between p-4 bg-secondary rounded-xl">
+    <div className="flex items-center justify-between p-5 bg-secondary rounded-xl">
       <div className="space-y-1">
         <div className="flex items-center gap-2">
           <span className="font-medium text-foreground">{booking.court.name}</span>
@@ -134,7 +134,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">My Bookings</h1>
+          <h1 className="text-3xl font-semibold font-display text-foreground mb-2">My Bookings</h1>
           <p className="text-muted-foreground">
             Welcome back, {session.user?.name}! Here are your court bookings.
           </p>

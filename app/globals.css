@@ -163,6 +163,33 @@
   .animate-spin-slow {
     animation: spin 1.5s linear infinite;
   }
+
+  /* sign-in component entrance animations */
+  .animate-element {
+    opacity: 0; filter: blur(4px); transform: translateY(12px);
+    animation: fadeSlideIn 0.5s ease-out forwards;
+  }
+  .animate-slide-right {
+    opacity: 0; filter: blur(4px); transform: translateX(40px);
+    animation: slideRightIn 0.6s ease-out forwards;
+  }
+  .animate-testimonial {
+    opacity: 0; filter: blur(4px); transform: translateY(12px) scale(0.95);
+    animation: testimonialIn 0.5s ease-out forwards;
+  }
+  /* Delay variants (100ms steps) */
+  .animate-delay-100  { animation-delay: 100ms; }
+  .animate-delay-200  { animation-delay: 200ms; }
+  .animate-delay-300  { animation-delay: 300ms; }
+  .animate-delay-400  { animation-delay: 400ms; }
+  .animate-delay-500  { animation-delay: 500ms; }
+  .animate-delay-600  { animation-delay: 600ms; }
+  .animate-delay-700  { animation-delay: 700ms; }
+  .animate-delay-800  { animation-delay: 800ms; }
+  .animate-delay-900  { animation-delay: 900ms; }
+  .animate-delay-1000 { animation-delay: 1000ms; }
+  .animate-delay-1200 { animation-delay: 1200ms; }
+  .animate-delay-1400 { animation-delay: 1400ms; }
 }
 
 @keyframes spin {
@@ -174,6 +201,109 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+@keyframes fadeSlideIn {
+  to { opacity: 1; filter: blur(0px); transform: translateY(0px); }
+}
+@keyframes slideRightIn {
+  to { opacity: 1; filter: blur(0px); transform: translateX(0px); }
+}
+@keyframes testimonialIn {
+  to { opacity: 1; filter: blur(0px); transform: translateY(0px) scale(1); }
+}
+
+/* ── Kinetic Navigation Overlay ─────────────────────────────────────────── */
+.nav-overlay-wrapper {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+.nav-overlay-wrapper .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.nav-overlay-wrapper .menu-content {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 100%;
+  max-width: 560px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 640px) {
+  .nav-overlay-wrapper .menu-content { max-width: 100%; }
+}
+.menu-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.backdrop-layer {
+  position: absolute;
+  inset: 0;
+  background: var(--card);
+}
+.backdrop-layer.first  { background: color-mix(in srgb, var(--primary) 10%, var(--card)); }
+.backdrop-layer.second { background: color-mix(in srgb, var(--primary)  5%, var(--card)); }
+.ambient-background-shapes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bg-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+.shape-element { opacity: 0; }
+.menu-content-wrapper {
+  position: relative;
+  z-index: 10;
+  padding: 4rem 2rem;
+}
+@media (min-width: 640px) {
+  .menu-content-wrapper { padding: 5rem 3.5rem; }
+}
+.menu-list { list-style: none; padding: 0; margin: 0; }
+.menu-list-item { overflow: hidden; }
+.nav-link {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 0.3rem 0.75rem;
+  text-decoration: none;
+  border-radius: 0.5rem;
+}
+.nav-link-text {
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--foreground);
+  line-height: 1.2;
+  transition: transform 0.35s ease;
+}
+.nav-link:hover .nav-link-text { transform: translateX(0.6rem); }
+.nav-link-hover-bg {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+  border-radius: 0.5rem;
+  opacity: 0;
+  transform: scaleX(0.96);
+  transform-origin: left;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.nav-link:hover .nav-link-hover-bg { opacity: 1; transform: scaleX(1); }
+/* ─────────────────────────────────────────────────────────────────────────── */
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {

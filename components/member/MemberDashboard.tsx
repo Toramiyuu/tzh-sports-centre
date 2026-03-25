@@ -318,7 +318,7 @@ export function MemberDashboard() {
           <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
             <GraduationCap className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h2 className="text-2xl font-semibold text-foreground mb-2">
+          <h2 className="text-2xl font-semibold font-display text-foreground mb-2">
             {t("membersOnly.title")}
           </h2>
           <p className="text-muted-foreground">
@@ -379,7 +379,7 @@ export function MemberDashboard() {
             <GraduationCap className="w-5 h-5 text-muted-foreground" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-foreground">
+            <h1 className="text-2xl font-semibold font-display text-foreground">
               {t("title")}
             </h1>
             <p className="text-muted-foreground">

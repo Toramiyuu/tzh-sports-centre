@@ -72,7 +72,7 @@ export default function LeaderboardPage() {
           <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
             <Lock className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h2 className="text-2xl font-semibold text-foreground mb-2">
+          <h2 className="text-2xl font-semibold font-display text-foreground mb-2">
             {t("membersOnly")}
           </h2>
           <p className="text-muted-foreground mb-6">{t("membersOnlyDesc")}</p>
@@ -87,7 +87,7 @@ export default function LeaderboardPage() {
         <div className="flex items-center gap-3 mb-6">
           <Trophy className="w-7 h-7 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
+            <h1 className="text-2xl font-bold font-display text-foreground">{t("title")}</h1>
             <p className="text-sm text-muted-foreground">
               Monthly player rankings
             </p>
@@ -231,7 +231,7 @@ export default function LeaderboardPage() {
                     {leaderboard.slice(3).map((entry) => (
                       <div
                         key={entry.rank}
-                        className="flex items-center py-3 gap-3"
+                        className="flex items-center py-3 gap-3 rounded-md hover:bg-secondary/60 transition-colors px-1 -mx-1"
                       >
                         <span className="w-8 text-center text-sm font-medium text-muted-foreground">
                           {entry.rank}
