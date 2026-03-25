@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
+import { HeroSection } from "@/components/home/HeroSection";
 import { Marquee } from "@/components/ui/marquee";
 import VerticalCutReveal from "@/components/ui/vertical-cut-reveal";
 import { CourtStatusSection } from "@/components/home/CourtStatusSection";
@@ -19,7 +19,7 @@ export default function Home() {
   }, []);
   return (
     <div className="min-h-screen bg-background">
-      <CinematicHero />
+      <HeroSection />
       <div className="bg-primary py-3">
         <Marquee duration={35} pauseOnHover fade fadeAmount={5}>
           {[
