@@ -69,7 +69,29 @@ export function CourtStatusSection() {
     return () => clearInterval(interval)
   }, [fetchStatus])
 
-  if (loading) return null
+  if (loading) {
+    return (
+      <section className="py-8 md:py-12 bg-background">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-4 h-4 rounded bg-muted animate-pulse" />
+            <div className="w-32 h-4 rounded bg-muted animate-pulse" />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-xl border border-border bg-card p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted animate-pulse" />
+                  <div className="w-24 h-4 rounded bg-muted animate-pulse" />
+                </div>
+                <div className="w-16 h-3 rounded bg-muted animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   if (error || courts.length === 0) return null
 
@@ -116,7 +138,7 @@ export function CourtStatusSection() {
               <Link
                 key={court.id}
                 href={`/booking?court=${court.id}`}
-                className={`relative rounded-xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-md ${
+                className={`relative rounded-xl border p-5 transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-md ${
                   isFreeNow
                     ? 'border-green-500/30 bg-green-500/5 hover:border-green-500/50'
                     : 'border-border bg-card hover:border-border'

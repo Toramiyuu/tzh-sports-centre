@@ -165,7 +165,7 @@ export function Navbar() {
               ) : (
                 <>
                   <Link href="/auth/login">
-                    <Button variant="ghost" className="text-sm text-muted-foreground hover:text-foreground hover:bg-white/10">
+                    <Button variant="ghost" className="text-sm text-muted-foreground hover:text-foreground hover:bg-accent">
                       {t("login")}
                     </Button>
                   </Link>

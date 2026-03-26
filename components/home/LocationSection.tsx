@@ -70,7 +70,7 @@ export function LocationSection() {
           {contactInfo.map((info) => (
             <div
               key={info.title}
-              className="rounded-2xl bg-card border border-border p-6 hover:border-primary/30 hover:shadow-md transition-all duration-300"
+              className="rounded-2xl bg-card border border-border p-6 hover:border-primary/30 hover:shadow-md transition-all duration-200 cursor-pointer"
             >
               <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                 <info.icon className="w-5 h-5 text-primary" />

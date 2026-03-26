@@ -48,11 +48,11 @@ export function ShopSection() {
 
           {/* Right: Category grid */}
           <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-right-8 duration-700 fill-mode-forwards">
-            {categories.map((cat, i) => (
+            {categories.map((cat) => (
               <Link
                 key={cat.name}
                 href={`/shop?category=${cat.name.toLowerCase()}`}
-                className="group relative aspect-square rounded-2xl overflow-hidden bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+                className="group relative aspect-square rounded-2xl overflow-hidden bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300 cursor-pointer"
               >
                 <Image
                   src={cat.image}

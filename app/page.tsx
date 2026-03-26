@@ -23,15 +23,16 @@ export default function Home() {
       <div className="bg-primary py-3">
         <Marquee duration={35} pauseOnHover fade fadeAmount={5}>
           {[
-            "🏸  Badminton — from RM 7.50 / 30 min",
-            "🏓  Pickleball — from RM 12.50 / 30 min",
-            "⏰  Peak pricing after 6 PM",
-            "📍  Ayer Itam, Penang",
-            "🎓  Professional coaching available",
-            "🛍  Pro shop & racket stringing on-site",
-            "🕗  Open daily · 8 AM – 12 AM",
+            "Badminton — from RM 7.50 / 30 min",
+            "Pickleball — from RM 12.50 / 30 min",
+            "Peak pricing after 6 PM",
+            "Ayer Itam, Penang",
+            "Professional coaching available",
+            "Pro shop & racket stringing on-site",
+            "Open daily · 8 AM – 12 AM",
           ].map((item) => (
-            <span key={item} className="mx-10 text-sm font-medium text-white/90 whitespace-nowrap">
+            <span key={item} className="mx-10 text-sm font-medium text-white/90 whitespace-nowrap flex items-center gap-3">
+              <span className="w-1 h-1 rounded-full bg-white/50 flex-shrink-0" />
               {item}
             </span>
           ))}
