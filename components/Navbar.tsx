@@ -5,8 +5,6 @@ import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
   Menu,
-  Moon,
-  Sun,
   CalendarDays,
   BookOpen,
   ShoppingBag,
@@ -16,15 +14,13 @@ import {
   Bell,
   Settings,
 } from "lucide-react";
-import { useState, useEffect, useSyncExternalStore } from "react";
-import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
 import { UserMenu } from "@/components/UserMenu";
 import { isAdmin } from "@/lib/admin";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 import { KineticNavOverlay, type KineticNavLink } from "@/components/ui/sterling-gate-kinetic-navigation";
-
-const emptySubscribe = () => () => {};
+import { AnimatedThemeToggle } from "@/components/ui/animated-theme-toggle";
 
 export function Navbar() {
   const [kineticOpen, setKineticOpen] = useState(false);
@@ -36,8 +32,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
-  const { theme, setTheme } = useTheme();
   const { data: session, status } = useSession();
 
   const userIsAdmin = isAdmin(session?.user?.email, session?.user?.isAdmin);
@@ -56,13 +50,7 @@ export function Navbar() {
   // Footer shown inside the kinetic overlay — includes theme, language, and auth
   const kineticFooter = (
     <div className="flex flex-wrap items-center gap-4">
-      <button
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
-        aria-label="Toggle theme"
-      >
-        {mounted && theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-      </button>
+      <AnimatedThemeToggle />
       <LanguageSwitcher />
       <div className="h-4 w-px bg-foreground/15" />
       {session?.user ? (
@@ -150,13 +138,7 @@ export function Navbar() {
 
             {/* Desktop right: theme, language, auth */}
             <div className="hidden lg:flex items-center gap-3">
-              <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                aria-label="Toggle theme"
-              >
-                {mounted && theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </button>
+              <AnimatedThemeToggle />
               <LanguageSwitcher />
               {status === "loading" ? (
                 <div className="w-8 h-8 rounded-full bg-card animate-pulse" />
