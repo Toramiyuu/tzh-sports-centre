@@ -251,9 +251,7 @@ export function HeroSection() {
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-400/15 flex items-center justify-center">
-                              <span className="text-sm">
-                                🏸
-                              </span>
+                              <svg className="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><path d="M9 11s-3 2-3 5 2.5 3 3 3 3-.5 3-3"/><path d="M15 11s3 2 3 5-2.5 3-3 3-3-.5-3-3"/></svg>
                             </div>
                             <div className="flex-1">
                               <p className="text-[11px] font-semibold text-white/85">
@@ -280,9 +278,7 @@ export function HeroSection() {
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-400/15 flex items-center justify-center">
-                              <span className="text-sm">
-                                🏓
-                              </span>
+                              <svg className="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/></svg>
                             </div>
                             <div className="flex-1">
                               <p className="text-[11px] font-semibold text-white/85">
@@ -309,9 +305,7 @@ export function HeroSection() {
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-400/15 flex items-center justify-center">
-                              <span className="text-sm">
-                                💳
-                              </span>
+                              <svg className="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
                             </div>
                             <div className="flex-1">
                               <p className="text-[11px] font-semibold text-white/85">
@@ -348,7 +342,7 @@ export function HeroSection() {
                 className="absolute -left-4 sm:-left-20 top-12 sm:top-16 bg-card/95 backdrop-blur-xl border border-border rounded-2xl p-3 sm:p-4 flex items-center gap-3 shadow-xl shadow-black/10 dark:shadow-black/30"
               >
                 <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-                  <span className="text-sm">🏸</span>
+                  <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><path d="M9 11s-3 2-3 5 2.5 3 3 3 3-.5 3-3"/><path d="M15 11s3 2 3 5-2.5 3-3 3-3-.5-3-3"/></svg>
                 </div>
                 <div>
                   <p className="text-xs font-bold text-foreground">
