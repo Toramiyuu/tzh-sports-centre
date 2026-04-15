@@ -26,6 +26,7 @@ const outfit = Outfit({
 })
 
 export const metadata: Metadata = {
+  robots: 'noindex, nofollow',
   metadataBase: new URL('https://tzh-sports-centre.vercel.app'),
   manifest: '/manifest.json',
   appleWebApp: {
